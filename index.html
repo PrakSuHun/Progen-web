@@ -86,11 +86,18 @@
                 <a href="#timeline" class="hover:text-white transition-colors">타임라인</a>
                 <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 md:gap-4">
+                <!-- 💡 모바일 전용 단체소개 버튼 추가 -->
+                <button onclick="openAboutModal(event)" class="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-ai-primary/10 border border-ai-primary/30 text-ai-primary rounded-full text-xs font-bold hover:bg-ai-primary/20 transition-colors active:scale-95">
+                    <i class="fa-solid fa-circle-info"></i> 단체소개
+                </button>
+                
                 <button onclick="sharePage()" class="text-gray-400 hover:text-white transition-colors p-2">
                     <i class="fa-solid fa-share-nodes text-lg"></i>
                 </button>
-                <a href="#apply" class="bg-ai-primary hover:bg-indigo-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-ai-primary/25">
+                
+                <!-- 데스크탑 전용 신청하기 (모바일은 하단 플로팅 버튼 활용) -->
+                <a href="#apply" class="hidden md:inline-block bg-ai-primary hover:bg-indigo-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-ai-primary/25">
                     신청하기
                 </a>
             </div>
