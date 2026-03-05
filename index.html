@@ -76,10 +76,11 @@
     <!-- 네비게이션 -->
     <nav class="fixed w-full z-50 glass border-b border-white/5">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="font-black text-2xl tracking-tighter italic flex items-center gap-2">
-                <span class="text-white tracking-widest uppercase">PRO</span><span class="text-ai-primary tracking-widest uppercase">GEN</span>
+            <div class="font-black text-2xl italic flex items-center">
+                <span class="text-white tracking-tight uppercase">PRO</span><span class="text-ai-primary tracking-tight uppercase">GEN</span>
             </div>
             <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
+                <a href="#" onclick="openAboutModal(event)" class="text-ai-primary hover:text-white transition-colors">단체소개</a>
                 <a href="#curriculum" class="hover:text-white transition-colors">커리큘럼</a>
                 <a href="#target" class="hover:text-white transition-colors">수강대상</a>
                 <a href="#timeline" class="hover:text-white transition-colors">타임라인</a>
@@ -135,8 +136,8 @@
         <div class="max-w-6xl mx-auto px-6">
             <p class="text-center text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 md:mb-6">Mastering The Most Powerful AI Tools</p>
             <div class="flex flex-wrap justify-center items-center gap-6 md:gap-16 text-gray-400">
-                <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-robot text-ai-primary"></i> ChatGPT-4o</div>
-                <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-brain text-ai-secondary"></i> Claude 3.5</div>
+                <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-robot text-ai-primary"></i> GPT-5.3</div>
+                <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-brain text-ai-secondary"></i> Claude 3.7</div>
                 <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-bolt text-ai-accent"></i> Perplexity</div>
                 <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> Gamma</div>
                 <div class="flex items-center gap-2 font-black text-lg md:text-xl hover:text-white transition-colors"><i class="fa-solid fa-book-open-reader text-gray-300"></i> Notion AI</div>
@@ -400,13 +401,11 @@
                     <div class="glass p-6 md:p-8 rounded-[24px] md:rounded-3xl space-y-5">
                         <div class="flex items-start gap-3 md:gap-4">
                             <span class="text-ai-primary font-black text-lg shrink-0 mt-0.5">1</span>
-                            <!-- ✅ 수정됨: 모바일에서도 정확히 <br> 위치에서만 떨어지게 함 -->
                             <p class="text-gray-300 font-medium leading-relaxed text-sm md:text-base">과제·레포트·자소서·기획서까지,<br><strong class="text-white text-base md:text-lg">대학생활에 바로 쓰는 AI 활용법</strong></p>
                         </div>
                         <div class="w-full h-px bg-white/10"></div>
                         <div class="flex items-start gap-3 md:gap-4">
                             <span class="text-ai-primary font-black text-lg shrink-0 mt-0.5">2</span>
-                            <!-- ✅ 수정됨: 모바일에서도 정확히 <br> 위치에서만 떨어지게 함 -->
                             <p class="text-gray-300 font-medium leading-relaxed text-sm md:text-base"><strong class="text-white text-base md:text-lg">AI 시대, 나의 경쟁력은</strong><br>어디서 찾아야 할까?</p>
                         </div>
                     </div>
@@ -510,8 +509,9 @@
     <!-- 최종 CTA -->
     <section id="apply" class="py-24 md:py-32 px-6 relative overflow-hidden text-center">
         <div class="max-w-4xl mx-auto relative z-10 reveal">
-            <h2 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black mb-8 md:mb-10 leading-[1.3] md:leading-tight tracking-tighter">
-                대학생 실전역량 강화 크루 <br class="block sm:hidden"><span class="inline-block"><span class="text-gradient">'PROGEN'</span>과 함께</span><br class="hidden sm:block"> AI 시대를 주도하세요.
+            <p class="text-lg md:text-2xl text-gray-400 font-bold mb-2 md:mb-4 tracking-tight">대학생 실전역량 강화 크루</p>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-8 md:mb-10 leading-[1.3] md:leading-tight tracking-tighter">
+                <span class="text-gradient">'PROGEN'</span> 과 함께<br> AI 시대를 주도하세요.
             </h2>
             
             <div class="bg-ai-card p-6 md:p-14 rounded-[30px] md:rounded-[50px] border border-white/10 shadow-3xl inline-block w-full max-w-3xl relative overflow-hidden">
@@ -522,13 +522,19 @@
                 <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 mb-10 md:mb-12 text-center bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 divide-y md:divide-y-0 md:divide-x divide-white/10 shadow-xl relative z-10">
                     <div class="w-full md:flex-1 py-3 md:py-0">
                         <p class="text-gray-500 text-xs uppercase tracking-widest font-bold mb-1 md:mb-2">신청 마감</p>
-                        <p class="text-lg md:text-xl font-black text-gray-300">03. 25 (수)</p>
+                        <p class="text-lg md:text-xl font-black text-gray-300">03. 26 (목)</p>
                     </div>
-                    <div class="w-full md:flex-1 py-5 md:py-0 transform md:scale-110 transition-transform">
+                    <div class="w-full md:flex-1 py-4 md:py-0">
                         <p class="text-ai-primary text-sm uppercase tracking-widest font-black mb-1 md:mb-2 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-calendar-check"></i> 행사 일시
                         </p>
-                        <p class="text-2xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">03. 28 (토)</p>
+                        <p class="text-xl md:text-2xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">03. 28 (토)</p>
+                    </div>
+                    <div class="w-full md:flex-1 py-4 md:py-0">
+                        <p class="text-ai-secondary text-sm uppercase tracking-widest font-black mb-1 md:mb-2 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-location-dot"></i> 장소
+                        </p>
+                        <p class="text-xl md:text-2xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">충남대학교</p>
                     </div>
                     <div class="w-full md:flex-1 py-3 md:py-0">
                         <p class="text-gray-500 text-xs uppercase tracking-widest font-bold mb-1 md:mb-2">모집 인원</p>
@@ -555,8 +561,8 @@
     <footer class="py-16 md:py-20 px-6 border-t border-white/5 bg-black pb-28 md:pb-20"> <!-- 모바일 플로팅 버튼 가림 방지 pb 증가 -->
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-10">
             <div class="text-center md:text-left">
-                <div class="font-black text-2xl md:text-3xl tracking-tighter italic mb-3 md:mb-4">
-                    <span class="text-white tracking-widest uppercase">PRO</span><span class="text-ai-primary tracking-widest uppercase">GEN</span>
+                <div class="font-black text-2xl md:text-3xl italic mb-3 md:mb-4">
+                    <span class="text-white tracking-tight uppercase">PRO</span><span class="text-ai-primary tracking-tight uppercase">GEN</span>
                 </div>
                 <p class="text-gray-500 text-xs md:text-sm max-w-xs leading-relaxed mx-auto md:mx-0">AI 시대, 도구를 지배하는 대학생들의 커뮤니티. 우리는 기술보다 통찰에 집중합니다.</p>
             </div>
@@ -571,7 +577,232 @@
         </div>
     </footer>
 
+    <!-- 💡 단체소개 모달 (팝업창) -->
+    <div id="aboutModalOverlay" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeAboutModal()"></div>
+    <div id="aboutModalContent" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[101] w-11/12 max-w-3xl bg-ai-card border border-white/10 rounded-[30px] p-8 md:p-10 shadow-[0_0_50px_rgba(99,102,241,0.2)] opacity-0 scale-95 transition-all duration-300 pointer-events-none flex flex-col max-h-[90vh]">
+        <!-- 모달 헤더 -->
+        <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4 shrink-0">
+            <h3 class="text-2xl md:text-3xl font-black italic">
+                <span class="text-white tracking-tight uppercase">PRO</span><span class="text-ai-primary tracking-tight uppercase">GEN</span> 이란?
+            </h3>
+            <button onclick="closeAboutModal()" class="text-gray-400 hover:text-white transition-colors text-2xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <!-- 모달 컨텐츠 (스크롤 가능 영역) -->
+        <div class="overflow-y-auto pr-2 flex-1 text-gray-300 leading-relaxed font-medium space-y-8 scrollbar-hide">
+            
+            <!-- 1. Hero: 슬로건 & 가치 -->
+            <div class="text-center mb-6">
+                <h4 class="text-xl md:text-2xl font-black text-white mb-4">🤖 PROGEN: 대학생 혁신 네트워크</h4>
+                <p class="text-xl md:text-2xl font-black text-gradient mb-4 leading-tight">"AI 시대를 생존하는 가장 확실한 방법,<br>기술을 내 무기로 만드는 통찰력을 기르는 것"</p>
+                <p class="text-sm md:text-base text-gray-400">대전 지역 대학생 혁신 네트워크 PROGEN은 AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 <strong class="text-white">'실전 무기'</strong>로 만듭니다.</p>
+            </div>
+
+            <!-- 2. Our Mission: 왜 PROGEN인가? -->
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-bullseye text-ai-primary"></i> Our Mission: 왜 PROGEN인가?</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/5 p-4 md:p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-primary mb-2">🔥 AI 생존 전략</h5>
+                        <p class="text-xs md:text-sm text-gray-400">모든 일자리가 위협받는 시대, 우리는 AI에게 대체되는 것이 아니라 AI를 다루는 법을 배웁니다.</p>
+                    </div>
+                    <div class="bg-white/5 p-4 md:p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-secondary mb-2">🌍 지역 기반 혁신</h5>
+                        <p class="text-xs md:text-sm text-gray-400">대전 지역 대학생들이 모여 지역 사회와 기업의 문제를 AI로 직접 해결합니다.</p>
+                    </div>
+                    <div class="bg-white/5 p-4 md:p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-accent mb-2">💼 실전형 스펙</h5>
+                        <p class="text-xs md:text-sm text-gray-400">단순 학습(Study)을 넘어, 이력서에 바로 쓸 수 있는 프로젝트 결과물(Output)을 만듭니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 파운더 소개 (박스 제거 및 가독성 대폭 개선) -->
+            <div class="border-y border-white/10 py-10 my-4">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-16 h-16 rounded-full bg-ai-primary/20 flex items-center justify-center text-3xl shrink-0">👤</div>
+                    <div>
+                        <h5 class="text-white font-black text-xl">박수훈 (Park Su-hun)</h5>
+                        <p class="text-ai-primary font-bold text-sm mt-1">Founder & President</p>
+                    </div>
+                </div>
+                
+                <ul class="text-sm space-y-2.5 mb-10 text-gray-400 font-medium">
+                    <li><i class="fa-solid fa-graduation-cap text-ai-primary w-6 text-center"></i> 충남대학교 자율운항시스템공학과 재학 (4학년)</li>
+                    <li><i class="fa-solid fa-building text-ai-secondary w-6 text-center"></i> 주식회사 인스피릿(Inspirit) 대표이사</li>
+                    <li><i class="fa-solid fa-chart-line text-ai-accent w-6 text-center"></i> 누적 매출 1.4억 원 달성 및 정부지원금 1억 원 유치</li>
+                    <li><i class="fa-solid fa-award text-yellow-500 w-6 text-center"></i> 골드칼라 공학도상 수상 및 청년창업사관학교 졸업</li>
+                </ul>
+                
+                <div class="relative px-2 md:px-6">
+                    <i class="fa-solid fa-quote-left text-5xl text-white/5 absolute -top-4 -left-2 md:-left-4"></i>
+                    <p class="text-[15px] md:text-[17px] leading-[1.9] text-gray-200 font-medium break-keep relative z-10">
+                        "안녕하세요, 저 역시 여러분과 똑같은 캠퍼스에서 내일을 고민하는 4학년 대학생 박수훈입니다. 2021년 창업 이후 1.4억 원의 누적 매출과 1억 원의 지원금을 유치하며 깨달은 것은, 결국 <strong class="text-white border-b-2 border-ai-primary/60 pb-0.5">'실행력'과 '도구의 활용'</strong>이 생존의 핵심이라는 점이었습니다.<br><br>
+                        제가 먼저 겪은 시행착오와 노하우를 혼자만의 자산으로 남기지 않고, PROGEN 동료들과 아낌없이 나누려 합니다. 함께 연구하고 서로 도우며, 우리 대전 지역 대학생들이 AI 시대를 당당하게 주도할 수 있는 기반을 만들겠습니다."
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3. 2026 Roadmap -->
+            <div>
+                <h4 class="text-white font-bold text-lg mb-2 flex items-center gap-2"><i class="fa-solid fa-map text-ai-secondary"></i> 2026 Roadmap: 상반기 성장 여정</h4>
+                <p class="text-sm text-gray-400 mb-6">상반기 동안 여러분은 '단순 사용자'에서 '시스템 설계자'로 거듭납니다.</p>
+                
+                <div class="space-y-6 border-l-2 border-white/10 ml-3 pl-6 mb-8">
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 bg-ai-primary rounded-full ring-4 ring-black"></div>
+                        <h5 class="text-white font-bold mb-2">[Phase 1] AI 기초 체험 <span class="text-xs text-gray-500 font-normal">(3~4월)</span></h5>
+                        <ul class="text-sm text-gray-400 space-y-2">
+                            <li><strong class="text-gray-300">AI 특강 (3/28):</strong> 생성형 AI의 개념을 잡고, 3~4개의 핵심 툴을 직접 써보며 "AI는 쉽다"는 확신을 얻습니다.</li>
+                            <li><strong class="text-gray-300">시험기간 실전 활용 (4/11):</strong> PPT 요약, 논문 정리, 예상문제 생성 등 대학생활의 질을 바꾸는 AI 활용법을 익힙니다.</li>
+                        </ul>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 bg-ai-secondary rounded-full ring-4 ring-black"></div>
+                        <h5 class="text-white font-bold mb-2">[Phase 2] 자동화 프로젝트 <span class="text-xs text-gray-500 font-normal">(5월)</span></h5>
+                        <ul class="text-sm text-gray-400 space-y-2">
+                            <li><strong class="text-gray-300">시스템 구축:</strong> Make, n8n 등의 툴을 활용해 "우리 학과에 꼭 필요한 자동화 시스템"을 팀별로 직접 기획하고 제작합니다.</li>
+                            <li><strong class="text-gray-300">멘토링 & 발표:</strong> 현업 전문가의 피드백을 통해 프로젝트를 고도화하고, 우수팀 시상을 통해 성취감을 얻습니다.</li>
+                        </ul>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 bg-pink-500 rounded-full ring-4 ring-black"></div>
+                        <h5 class="text-white font-bold mb-2">[Phase 3] 콘텐츠 & 실전 확장 <span class="text-xs text-gray-500 font-normal">(6~7월)</span></h5>
+                        <ul class="text-sm text-gray-400 space-y-2">
+                            <li><strong class="text-gray-300">콘텐츠 마스터리:</strong> 영상, 음악, 이미지 AI를 활용해 나만의 채널을 개설하고 브랜딩을 경험합니다.</li>
+                            <li><strong class="text-gray-300">실전 수익 실험:</strong> 제작한 캐릭터나 굿즈를 지역 축제와 연계해 실제 판매해보는 비즈니스 임팩트를 경험합니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 기존 공식 커리큘럼 테이블 -->
+                <h5 class="text-white font-bold text-sm mb-3">📅 상반기 공식 커리큘럼 일정</h5>
+                <div class="overflow-x-auto rounded-xl border border-white/10">
+                    <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                        <thead>
+                            <tr class="bg-white/10 text-white">
+                                <th class="p-3 font-bold">일정</th>
+                                <th class="p-3 font-bold">주제</th>
+                                <th class="p-3 font-bold">핵심 목표</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-gray-300 bg-white/5">
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">3/28</td>
+                                <td class="p-3 font-bold">AI 특강 & 단체 모집</td>
+                                <td class="p-3">AI에 대한 장벽 허물기 및 PROGEN 합류</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">4/11</td>
+                                <td class="p-3 font-bold">시험기간 AI 실전 활용</td>
+                                <td class="p-3">대학생활 효율 극대화 (PPT 요약, 학습 플랜)</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">5/02</td>
+                                <td class="p-3 font-bold">자동화 시스템 기초</td>
+                                <td class="p-3">노코드 툴(Make 등) 활용 자동화 설계 시작</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">5/16</td>
+                                <td class="p-3 font-bold">자동화 시스템 실전</td>
+                                <td class="p-3">API 및 GPT 연동 실무 프로젝트 구현</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">5/30</td>
+                                <td class="p-3 font-bold">데모데이 (Demo Day)</td>
+                                <td class="p-3">완성된 포트폴리오 발표 및 우수팀 시상</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">6월</td>
+                                <td class="p-3 font-bold">콘텐츠 AI 마스터리</td>
+                                <td class="p-3">영상/음악/이미지 AI 기반 퍼스널 브랜딩</td>
+                            </tr>
+                            <tr class="hover:bg-white/10 transition-colors">
+                                <td class="p-3 font-bold text-ai-primary whitespace-nowrap">7월</td>
+                                <td class="p-3 font-bold">실전 마켓 실험</td>
+                                <td class="p-3">제작물 판매 및 시장 반응 확인 (수익화 경험)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PROGEN 혜택 (기존) -->
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2">✨ PROGEN과 함께하면 얻게 될 4가지</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-primary mb-2">1. 압도적인 실전 스펙</h5>
+                        <p class="text-sm text-gray-400">실제 문제를 해결한 자동화 시스템 제작 경험을 쌓습니다.</p>
+                    </div>
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-secondary mb-2">2. 강력한 네트워크</h5>
+                        <p class="text-sm text-gray-400">대전 지역 대학생 및 현업 전문가와의 단단한 연결고리를 만듭니다.</p>
+                    </div>
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-ai-accent mb-2">3. 수익화 경험</h5>
+                        <p class="text-sm text-gray-400">내 아이디어로 실제 가치를 창출해본 '성공의 기억'을 갖습니다.</p>
+                    </div>
+                    <div class="bg-black/40 p-5 rounded-xl border border-white/5">
+                        <h5 class="font-bold text-pink-500 mb-2">4. 미래 생존력</h5>
+                        <p class="text-sm text-gray-400">어떤 환경에서도 AI를 도구로 살아남을 수 있는 자신감을 얻습니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 운영 철학 -->
+            <div class="bg-gradient-to-br from-ai-primary/10 to-ai-secondary/10 p-6 md:p-8 rounded-2xl border border-white/10">
+                <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-lightbulb text-yellow-400"></i> PROGEN의 운영 철학</h4>
+                <p class="text-white font-bold text-sm md:text-base italic mb-6">"우리는 AI 전문가 집단이 아닙니다. AI 도구를 활용해 문제를 해결하는 '플랫폼'입니다."</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-black/40 p-4 rounded-xl">
+                        <h5 class="text-ai-primary font-bold mb-1 text-sm"><i class="fa-solid fa-compass"></i> 운영진</h5>
+                        <p class="text-xs md:text-sm text-gray-400">방향성 제시와 실전 멘토링을 통해 여러분의 시행착오를 줄여줍니다.</p>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-xl">
+                        <h5 class="text-ai-secondary font-bold mb-1 text-sm"><i class="fa-solid fa-hands-holding-circle"></i> 참여자</h5>
+                        <p class="text-xs md:text-sm text-gray-400">직접 기획하고 제작하며, '함께 실험하는 문화'의 주인이 됩니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Closing -->
+            <div class="text-center bg-white/5 p-8 rounded-2xl border border-white/10">
+                <h4 class="text-2xl font-black text-white mb-3">함께 하세요!</h4>
+                <p class="text-gray-400 text-sm md:text-base mb-6">AI 시대를 정복하고 싶은 대전 지역 대학생이라면,<br class="hidden md:block"> 지금 PROGEN의 혁신에 동참하세요.</p>
+                <div class="inline-block bg-black/30 px-6 py-3 rounded-xl text-sm text-gray-300 mb-8 border border-white/5">
+                    <span class="text-ai-primary font-bold mr-2">모집 대상:</span> AI를 배우고 싶지만 막막한 대학생, 나만의 실전 프로젝트를 만들고 싶은 대학생
+                </div>
+                <br>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe401B0vscAxGMsSEB2lVqXE0bqkX32iHMM2eR6sJYBUbNYDw/viewform" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-ai-primary to-ai-secondary text-white font-black text-lg rounded-xl hover:scale-105 transition-transform shadow-lg shadow-ai-primary/20 w-full sm:w-auto">
+                    지금 합류하기 <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
     <script>
+        // 단체소개 모달 열기/닫기 함수
+        function openAboutModal(e) {
+            if(e) e.preventDefault();
+            document.getElementById('aboutModalOverlay').classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('aboutModalOverlay').classList.add('opacity-100', 'pointer-events-auto');
+            document.getElementById('aboutModalContent').classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+            document.getElementById('aboutModalContent').classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+            document.body.style.overflow = 'hidden'; // 모달 켜졌을 때 배경 스크롤 방지
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModalOverlay').classList.remove('opacity-100', 'pointer-events-auto');
+            document.getElementById('aboutModalOverlay').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('aboutModalContent').classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            document.getElementById('aboutModalContent').classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            document.body.style.overflow = ''; // 배경 스크롤 원상복구
+        }
+
         // Reveal 애니메이션
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -582,7 +813,7 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         // 카운트다운 로직
-        const targetDate = new Date("March 25, 2026 23:59:59").getTime();
+        const targetDate = new Date("March 26, 2026 23:59:59").getTime();
         let countdownInterval;
 
         function updateCountdown() {
