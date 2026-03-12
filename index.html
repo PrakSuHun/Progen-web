@@ -670,27 +670,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- 💡 26학번 이벤트 모달 (팝업창) -->
-<div id="eventModalOverlay" class="fixed inset-0 z-[120] bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-500" onclick="closeEventModal()"></div>
-<div id="eventModalContent" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[121] w-11/12 max-w-sm bg-ai-card border border-ai-primary/50 rounded-[30px] p-8 text-center shadow-[0_0_50px_rgba(99,102,241,0.3)] opacity-0 scale-95 pointer-events-none transition-all duration-500 flex flex-col">
-<button onclick="closeEventModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10">
-<i class="fa-solid fa-xmark"></i>
-</button>
-<div class="text-6xl mb-4 animate-bounce">🎉</div>
-<h3 class="text-2xl font-black text-white mb-2 break-keep">26학번 새내기<br>환영 이벤트!</h3>
-<p class="text-gray-400 text-sm mb-6 break-keep leading-relaxed">올해 입학한 26학번 새내기라면?<br><strong class="text-white">PROGEN 클래스 참가비 반값 할인!</strong></p>
-<div class="bg-black/50 rounded-2xl p-5 mb-6 border border-white/5">
-<div class="flex justify-center items-center gap-4">
-<span class="text-gray-500 line-through text-lg font-bold">10,000원</span>
-<i class="fa-solid fa-arrow-right text-ai-primary"></i>
-<span class="text-3xl font-black text-ai-primary drop-shadow-[0_0_15px_rgba(99,102,241,0.6)]">5,000원</span>
-</div>
-</div>
-<button onclick="closeEventModal()" class="w-full py-4 bg-gradient-to-r from-ai-primary to-ai-secondary text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-transform shadow-lg shadow-ai-primary/20 active:scale-95">
-확인하고 혜택 받기
-</button>
-</div>
-
 <script>
 // 단체소개 모달 열기/닫기 함수
 function openAboutModal(e) {
@@ -805,4 +784,5 @@ setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
 </script>
 </body>
 </html>
+
 
