@@ -65,7 +65,6 @@ transform: translateX(-50%); font-weight: 600; box-shadow: 0 10px 15px -3px rgba
 #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
 .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
-/* 💡 충돌 방지를 위해 active 대신 open 클래스를 사용하도록 수정 */
 .faq-item.open .faq-answer { max-height: 500px; padding-top: 1rem; }
 .faq-item.open .faq-icon { transform: rotate(180deg); }
 .faq-icon { pointer-events: none; }
@@ -99,7 +98,7 @@ transform: translateX(-50%); font-weight: 600; box-shadow: 0 10px 15px -3px rgba
 </button>
 
 <!-- 데스크탑 전용 신청하기 (모바일은 하단 플로팅 버튼 활용) -->
-<a href="#apply" class="hidden md:inline-block bg-ai-primary hover:bg-indigo-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-ai-primary/25">
+<a href="./apply.html" class="hidden md:inline-block bg-ai-primary hover:bg-indigo-500 text-white px-6 py-2 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-lg shadow-ai-primary/25">
 신청하기
 </a>
 </div>
@@ -130,7 +129,7 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </p>
 
 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 reveal">
-<a href="#apply" class="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-white text-black font-black rounded-2xl text-lg md:text-xl hover:bg-ai-primary hover:text-white transition-all duration-300 shadow-2xl shadow-white/10">
+<a href="./apply.html" class="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 bg-white text-black font-black rounded-2xl text-lg md:text-xl hover:bg-ai-primary hover:text-white transition-all duration-300 shadow-2xl shadow-white/10">
 지금 바로 참여하기
 </a>
 <a href="#curriculum" class="w-full sm:w-auto px-10 md:px-12 py-4 md:py-5 glass font-bold rounded-2xl text-lg md:text-xl hover:bg-white/5 transition-all">
@@ -179,12 +178,11 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </section>
 
-<!-- 💡 NEW: 얻어갈 것들 (Benefits) 섹션 -->
+<!-- 프로그램 주요 내용 섹션 -->
 <section id="benefits" class="pb-20 md:pb-24 px-6">
 <div class="max-w-4xl mx-auto">
 <h3 class="text-3xl md:text-5xl font-black text-center mb-12 md:mb-16 reveal">프로그램 주요 내용</h3>
 <div class="space-y-4 md:space-y-6">
-<!-- Card 1 -->
 <div class="glass p-8 md:p-10 rounded-3xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-8 reveal hover:border-ai-primary/50 transition-colors">
 <div class="text-5xl bg-ai-primary/10 p-4 rounded-2xl w-20 h-20 flex items-center justify-center shrink-0 shadow-lg shadow-ai-primary/10">📘</div>
 <div>
@@ -192,7 +190,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <p class="text-gray-300 leading-relaxed text-base md:text-lg break-keep">과제, 발표, 자료조사까지 대학생들이 가장 많이 하는 작업을 AI를 활용해 더 빠르고 효율적으로 해결하는 방법을 배웁니다.</p>
 </div>
 </div>
-<!-- Card 2 -->
 <div class="glass p-8 md:p-10 rounded-3xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-8 reveal hover:border-ai-secondary/50 transition-colors animation-delay-100">
 <div class="text-5xl bg-ai-secondary/10 p-4 rounded-2xl w-20 h-20 flex items-center justify-center shrink-0 shadow-lg shadow-ai-secondary/10">🧭</div>
 <div>
@@ -200,7 +197,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <p class="text-gray-300 leading-relaxed text-base md:text-lg break-keep">AI가 일상이 된 환경에서 대학생이 어떤 역량을 준비해야 하는지 실제 사례 중심으로 알아봅니다.</p>
 </div>
 </div>
-<!-- Card 3 -->
 <div class="glass p-8 md:p-10 rounded-3xl flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-8 reveal hover:border-ai-accent/50 transition-colors animation-delay-200">
 <div class="text-5xl bg-ai-accent/10 p-4 rounded-2xl w-20 h-20 flex items-center justify-center shrink-0 shadow-lg shadow-ai-accent/10">🤖</div>
 <div>
@@ -212,18 +208,15 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </section>
 
-<!-- 💡 NEW: 상세 커리큘럼 섹션 -->
+<!-- 상세 커리큘럼 섹션 -->
 <section id="curriculum" class="py-20 md:py-24 px-6 bg-white/[0.02] relative overflow-hidden">
 <div class="max-w-5xl mx-auto">
-<!-- Header -->
 <div class="text-center mb-16 md:mb-20 reveal">
 <p class="text-ai-primary font-bold mb-3 md:mb-4 tracking-widest text-sm md:text-base">AI 시대, 나만 뒤쳐진 것 같아 불안한 당신에게!</p>
 <h3 class="text-3xl sm:text-4xl md:text-5xl font-black mb-10 md:mb-12 leading-snug break-keep">
 <span class="text-gradient">압도적 효율을 만드는</span><br class="block md:hidden">
 <span class="text-gradient">대학생 필수 AI 프롬프트</span> 최초공개
 </h3>
-
-<!-- Promo Box -->
 <div class="glass border-ai-primary/30 p-6 md:p-10 rounded-[24px] md:rounded-[32px] inline-block w-full max-w-3xl relative overflow-hidden group">
 <div class="absolute inset-0 bg-gradient-to-r from-ai-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 text-center md:text-left">
@@ -237,35 +230,27 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- Part 1 -->
 <div class="mb-20 md:mb-24 reveal">
 <div class="text-center mb-8 md:mb-10">
 <h4 class="text-2xl md:text-3xl font-black text-ai-primary">Part 1 <span class="text-white ml-2">특강</span></h4>
 </div>
-<!-- ✅ md:grid-cols-2를 lg:grid-cols-2로 변경하여 아이패드 등 애매한 화면에서는 1열로 넓게 쓰도록 수정 -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
-<!-- Part 1 - Card 1 -->
 <div class="glass p-6 md:p-8 lg:p-10 rounded-[24px] md:rounded-[32px] hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
 <div class="absolute -right-4 -bottom-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110">📋</div>
 <div class="flex flex-row items-start gap-3 md:gap-4">
 <span class="bg-ai-primary text-white text-sm font-black px-3 py-1.5 rounded-lg shrink-0 mt-0.5 md:mt-1">#1</span>
-<!-- ✅ flex-1 min-w-0 추가: 글씨가 박스를 뚫고 나가는 것을 원천 차단 -->
 <div class="flex-1 min-w-0">
-<!-- ✅ 수정: hidden sm:block 완전 삭제, 모바일 글씨 크기(text-base) 및 자간(tracking-tight) 조절로 무조건 한줄에 나오게 함 -->
 <h5 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-2 md:mb-3 tracking-tight break-keep">과제·레포트·자소서·기획서까지<br>대학생활에 바로 쓰는 AI 활용법</h5>
 <p class="text-gray-400 font-medium leading-relaxed text-sm md:text-base lg:text-lg break-keep">단순히 AI 툴 강의가 아닌, 실제 과제할 때<br><strong class="text-white">바로 써먹을 수 있는 AI 실습 예제 제공</strong></p>
 </div>
 </div>
 </div>
 
-<!-- Part 1 - Card 2 -->
 <div class="glass p-6 md:p-8 lg:p-10 rounded-[24px] md:rounded-[32px] hover:-translate-y-2 transition-transform duration-300 animation-delay-100 relative overflow-hidden group">
 <div class="absolute -right-4 -bottom-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110">📣</div>
 <div class="flex flex-row items-start gap-3 md:gap-4">
 <span class="bg-ai-primary text-white text-sm font-black px-3 py-1.5 rounded-lg shrink-0 mt-0.5 md:mt-1">#2</span>
-<!-- ✅ flex-1 min-w-0 추가 -->
 <div class="flex-1 min-w-0">
-<!-- ✅ 수정: hidden sm:block 완전 삭제 -->
 <h5 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white leading-snug mb-2 md:mb-3 tracking-tight break-keep">AI 시대,<br>대학생이 갖춰야 할 역량은?</h5>
 <p class="text-gray-400 font-medium leading-relaxed text-sm md:text-base lg:text-lg break-keep">AI에게 대체되는 사람이 아닌,<br>AI와 함께 일할 수 있는 능력을 갖추어야 하는 이유</p>
 </div>
@@ -274,7 +259,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- Part 2 -->
 <div class="reveal relative">
 <div class="text-center mb-8 md:mb-10">
 <h4 class="text-2xl md:text-3xl font-black text-ai-secondary">Part 2 <span class="text-white ml-2">AI 활용 실습</span></h4>
@@ -288,7 +272,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <strong class="text-ai-secondary text-lg md:text-3xl mt-4 inline-block font-black">AI를 진짜 '내 걸로' 만들 수 있게 떠먹여드립니다.</strong>
 </p>
 
-<!-- Floating Tags/Folders -->
 <div class="flex flex-wrap justify-center gap-2 md:gap-4 mt-8 md:mt-12 relative z-10 text-[13px] md:text-base">
 <span class="bg-purple-600/20 text-purple-300 border border-purple-600/30 px-3 md:px-6 py-2.5 md:py-4 rounded-xl md:rounded-2xl font-bold shadow-lg transform rotate-2 hover:rotate-0 transition-all hover:bg-purple-600/30 backdrop-blur-md">notebooklm 로 자료 분석</span>
 <span class="bg-indigo-600/20 text-indigo-300 border border-indigo-600/30 px-3 md:px-6 py-2.5 md:py-4 rounded-xl md:rounded-2xl font-bold shadow-lg transform -rotate-1 hover:rotate-0 transition-all hover:bg-indigo-600/30 backdrop-blur-md">flowith로 딥리서치 하기</span>
@@ -300,7 +283,7 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </section>
 
-<!-- CNU 클래스 후기 섹션 -->
+<!-- 후기 섹션 -->
 <section class="py-20 md:py-24 px-6 border-y border-white/5 bg-black/50">
 <div class="max-w-6xl mx-auto">
 <div class="text-center mb-12 md:mb-16 reveal">
@@ -310,7 +293,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<!-- Review 1 -->
 <div class="glass p-8 rounded-3xl reveal hover:-translate-y-2 transition-transform duration-300">
 <div class="flex items-center gap-1 text-yellow-400 mb-4 text-sm">
 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
@@ -327,7 +309,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- Review 2 -->
 <div class="glass p-8 rounded-3xl reveal hover:-translate-y-2 transition-transform duration-300 animation-delay-100">
 <div class="flex items-center gap-1 text-yellow-400 mb-4 text-sm">
 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
@@ -344,7 +325,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- Review 3 -->
 <div class="glass p-8 rounded-3xl reveal hover:-translate-y-2 transition-transform duration-300 animation-delay-200">
 <div class="flex items-center gap-1 text-yellow-400 mb-4 text-sm">
 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
@@ -403,7 +383,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 
 <div class="relative border-l-2 border-ai-primary/30 ml-4 md:ml-10 space-y-12">
-<!-- Part 1 -->
 <div class="relative pl-6 md:pl-8 reveal">
 <div class="absolute -left-[9px] top-1 w-4 h-4 bg-ai-primary rounded-full shadow-[0_0_10px_#6366F1]"></div>
 <div class="mb-3 flex flex-wrap items-center gap-3">
@@ -427,7 +406,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- Part 2 -->
 <div class="relative pl-6 md:pl-8 reveal">
 <div class="absolute -left-[9px] top-1 w-4 h-4 bg-ai-secondary rounded-full shadow-[0_0_10px_#8B5CF6]"></div>
 <div class="mb-3 flex flex-wrap items-center gap-3">
@@ -484,7 +462,7 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <i class="fa-solid fa-chevron-down faq-icon transition-transform shrink-0"></i>
 </div>
 <div class="faq-answer text-gray-300 leading-relaxed text-sm md:text-base break-keep">
-신청 마감일인 3월 26일(목) 자정까지 취소 시 전액 환불해 드립니다. 행사 참가비는 전액 행사 운영에 사용되므로, 원활한 준비를 위해 행사 전날 및 당일 취소는 환불이 불가하니 양해 부탁드립니다.
+본 행사는 무료로 진행되나, 노쇼 방지를 위해 5,000원의 보증금을 받고 있습니다. 클래스 참석 시 보증금은 100% 환불됩니다. 불가피하게 참석이 어려우신 경우, 신청 마감일인 3월 26일(목) 자정까지 취소하시면 전액 환불해 드립니다. 단, 원활한 행사 준비를 위해 행사 전날 및 당일 취소(노쇼 포함) 시에는 보증금이 환불되지 않으니 양해 부탁드립니다.
 </div>
 </div>
 <div class="faq-item glass p-5 md:p-6 rounded-3xl cursor-pointer reveal" onclick="toggleFaq(this)">
@@ -547,7 +525,7 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
         <p class="text-ai-secondary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-location-dot"></i> 장소
         </p>
-        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep">충남대학교 인근</p>
+        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep">충남대학교</p>
       </div>
     </div>
     <p class="text-center text-gray-500 text-[10px] md:text-xs mt-3 font-medium">* 시간과 장소는 사정에 따라 변경될 수 있습니다.</p>
@@ -555,10 +533,11 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 
 </div>
 
-<!-- 💡 무료 안내 박스 (결제 관련 내용 싹 제거) -->
+<!-- 💡 참가비 안내 박스 (노쇼 방지 보증금) -->
 <div class="bg-black/30 border border-ai-primary/30 p-5 rounded-2xl mb-8 text-center relative z-10">
-  <p class="text-gray-400 text-xs md:text-sm font-bold mb-2">행사 참가비</p>
-  <p class="text-2xl md:text-3xl font-black text-ai-primary animate-pulse mb-3">전액 무료</p>
+  <p class="text-gray-400 text-xs md:text-sm font-bold mb-2">행사 참가비 (노쇼 방지 보증금)</p>
+  <p class="text-2xl md:text-3xl font-black text-ai-primary animate-pulse mb-3">5,000원</p>
+  <p class="text-xs text-gray-500 mb-3 break-keep">※ 클래스 참석 시 <strong class="text-white">100% 전액 환불</strong>해 드립니다.</p>
   <div class="inline-block bg-ai-secondary/20 text-ai-secondary border border-ai-secondary/50 px-3 py-1 rounded-full text-xs md:text-sm font-bold">
     🔥 선착순 100명 한정 (조기 마감 주의)
   </div>
@@ -579,40 +558,31 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </a>
 </div>
 
-<!-- 푸터 (컴팩트한 레이아웃으로 롤백 및 순서 변경) -->
+<!-- 푸터 -->
 <footer class="py-16 md:py-20 px-6 border-t border-white/5 bg-black pb-28 md:pb-20"> <!-- 모바일 플로팅 버튼 가림 방지 pb 증가 -->
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-10">
     
-    <!-- 왼쪽: 로고 및 설명 -->
     <div class="text-center md:text-left">
       <div class="font-black text-2xl md:text-3xl italic mb-3 md:mb-4">
         <span class="text-white tracking-tight uppercase">PRO</span><span class="text-ai-primary tracking-tight uppercase">GEN</span>
       </div>
-      <!-- 💡 문구 두 줄로 유지 -->
       <p class="text-gray-500 text-xs md:text-sm max-w-xs leading-relaxed mx-auto md:mx-0 break-keep">
         AI 시대, 도구를 지배하는 대학생들의 커뮤니티.<br>우리는 기술 가치보다 통찰에 집중합니다.
       </p>
     </div>
 
-    <!-- 오른쪽: 문의, 인스타, 카피라이트를 한 그룹으로 컴팩트하게 배치 -->
     <div class="flex flex-col items-center md:items-end gap-3 md:gap-4 mt-2 md:mt-0">
-      
       <div class="flex flex-row items-center gap-3">
-        <!-- 1. 기타 문의 버튼 -->
         <a href="https://open.kakao.com/o/sQqCopki" target="_blank" title="카카오톡 오픈채팅 문의하기" class="group flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-full py-1.5 pl-4 md:pl-5 pr-1.5 shadow-sm hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer">
           <span class="text-gray-500 text-[11px] md:text-xs font-medium tracking-tight group-hover:text-gray-300 transition-colors">기타 문의</span>
           <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#FEE500]/10 flex items-center justify-center text-[#FEE500] group-hover:bg-[#FEE500] group-hover:text-black transition-all text-xs md:text-sm">
             <i class="fa-solid fa-comment"></i>
           </div>
         </a>
-        
-        <!-- 2. 인스타그램 링크 -->
         <a href="https://www.instagram.com/progen_ai_?igsh=MWwwODhxNTNqd3o3Ng==" target="_blank" title="인스타그램 방문하기" class="w-10 h-10 md:w-11 md:h-11 rounded-full glass flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all text-lg md:text-xl">
           <i class="fa-brands fa-instagram"></i>
         </a>
       </div>
-      
-      <!-- 3. 카피라이트 텍스트 -->
       <p class="text-gray-600 text-[10px] md:text-xs mt-1">© 2026 PROGEN AI Studio. All rights reserved.</p>
     </div>
     
@@ -622,7 +592,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <!-- 💡 단체소개 모달 (팝업창) -->
 <div id="aboutModalOverlay" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeAboutModal()"></div>
 <div id="aboutModalContent" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[101] w-11/12 max-w-3xl bg-ai-card border border-white/10 rounded-[30px] p-6 md:p-10 shadow-[0_0_50px_rgba(99,102,241,0.2)] opacity-0 scale-95 transition-all duration-300 pointer-events-none flex flex-col max-h-[90vh]">
-<!-- 모달 헤더 -->
 <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4 shrink-0">
 <h3 class="text-2xl md:text-3xl font-black italic">
 <span class="text-white tracking-tight uppercase">PRO</span><span class="text-ai-primary tracking-tight uppercase">GEN</span> 이란?
@@ -632,10 +601,7 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </button>
 </div>
 
-<!-- 모달 컨텐츠 (스크롤 가능 영역) -->
 <div class="overflow-y-auto pr-2 flex-1 text-gray-300 font-medium space-y-8 scrollbar-hide">
-
-<!-- 1. Hero: 슬로건 & 가치 -->
 <div class="text-center mb-6">
 <h4 class="text-xl md:text-2xl font-black text-white mb-4 break-keep">🤖 PROGEN: 대학생 혁신 네트워크</h4>
 <p class="text-[15px] sm:text-xl md:text-2xl font-black text-gradient mb-4 leading-snug break-keep tracking-tight">
@@ -645,7 +611,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <p class="text-sm md:text-base text-gray-400 leading-relaxed break-keep">대전 지역 대학생 혁신 네트워크 PROGEN은 AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 <strong class="text-white">'실전 무기'</strong>로 만듭니다.</p>
 </div>
 
-<!-- 2. Our Mission: 왜 PROGEN인가? -->
 <div>
 <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2 break-keep"><i class="fa-solid fa-bullseye text-ai-primary"></i> Our Mission: 왜 PROGEN인가?</h4>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -664,7 +629,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 </div>
 
-<!-- 5. 운영 철학 -->
 <div class="bg-gradient-to-br from-ai-primary/10 to-ai-secondary/10 p-5 md:p-8 rounded-2xl border border-white/10">
 <h4 class="text-white font-bold text-lg mb-4 flex items-center gap-2 break-keep"><i class="fa-solid fa-lightbulb text-yellow-400"></i> PROGEN의 운영 철학</h4>
 <p class="text-white font-bold text-sm md:text-base italic mb-6 break-keep leading-relaxed">"우리는 AI 전문가 집단이 아닙니다. AI 도구를 활용해 문제를 해결하는 '플랫폼'입니다."</p>
@@ -684,14 +648,13 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 </div>
 
 <script>
-// 단체소개 모달 열기/닫기 함수
 function openAboutModal(e) {
 if(e) e.preventDefault();
 document.getElementById('aboutModalOverlay').classList.remove('opacity-0', 'pointer-events-none');
 document.getElementById('aboutModalOverlay').classList.add('opacity-100', 'pointer-events-auto');
 document.getElementById('aboutModalContent').classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
 document.getElementById('aboutModalContent').classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
-document.body.style.overflow = 'hidden'; // 모달 켜졌을 때 배경 스크롤 방지
+document.body.style.overflow = 'hidden';
 }
 
 function closeAboutModal() {
@@ -699,10 +662,9 @@ document.getElementById('aboutModalOverlay').classList.remove('opacity-100', 'po
 document.getElementById('aboutModalOverlay').classList.add('opacity-0', 'pointer-events-none');
 document.getElementById('aboutModalContent').classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
 document.getElementById('aboutModalContent').classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-document.body.style.overflow = ''; // 배경 스크롤 원상복구
+document.body.style.overflow = '';
 }
 
-// Reveal 애니메이션
 const observer = new IntersectionObserver((entries) => {
 entries.forEach(entry => {
 if (entry.isIntersecting) entry.target.classList.add('active');
@@ -711,7 +673,6 @@ if (entry.isIntersecting) entry.target.classList.add('active');
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// 카운트다운 로직
 const targetDate = new Date("March 26, 2026 23:59:59").getTime();
 let countdownInterval;
 
@@ -747,7 +708,6 @@ if(secondsEl) secondsEl.innerText = s.toString().padStart(2, '0');
 countdownInterval = setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// 💡 FAQ 토글 (open 클래스 사용으로 완전히 독립시킴)
 function toggleFaq(element) {
 if (!element) return;
 const isOpen = element.classList.contains('open');
@@ -757,14 +717,13 @@ element.classList.add('open');
 }
 }
 
-// 페이지 공유
 function sharePage() {
 if (navigator.share) {
 navigator.share({
 title: 'PROGEN | AI 시대 대학생으로 살아남기',
 text: '벼락치기부터 보고서 자동화까지, 대학생을 위한 실전 AI 강의 프로그램!',
 url: window.location.href
-}).catch(console.error); // 💡 공유 취소 시 발생하는 에러 로그 방지
+}).catch(console.error);
 } else {
 const el = document.createElement('textarea');
 el.value = window.location.href;
