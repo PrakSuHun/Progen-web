@@ -63,7 +63,8 @@ tailwind.config = {
       <p class="text-[11px] md:text-xs text-ai-primary font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5">
         <i class="fa-solid fa-calendar-check"></i> 행사 일시
       </p>
-      <p class="text-[15px] md:text-lg font-black text-white">03. 28 (토) 오후 2시</p>
+      <!-- 💡 모바일에서 '오후 2시'가 통째로 줄바꿈 되도록 block 요소로 분리 -->
+      <p class="text-[15px] md:text-lg font-black text-white">03. 28 (토) <span class="block md:inline mt-0.5 md:mt-0 text-[14px] md:text-lg">오후 2시</span></p>
     </div>
     <!-- 행사 장소 -->
     <div class="flex flex-col items-center text-center px-2 w-1/2">
