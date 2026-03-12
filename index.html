@@ -537,7 +537,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
         <p class="text-ai-primary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-calendar-check"></i> 행사 일시
         </p>
-        <!-- 💡 모바일에서 오후 2시 전체가 아래로 내려가도록 수정 -->
         <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">03. 28 (토) <span class="block md:inline mt-1 md:mt-0">오후 2시</span></p>
       </div>
       
@@ -548,32 +547,23 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
         <p class="text-ai-secondary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-location-dot"></i> 장소
         </p>
-        <!-- 💡 충남대학교 인근 으로 수정 -->
-        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep">충남대학교</p>
+        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep">충남대학교 인근</p>
       </div>
     </div>
-    <!-- 💡 시간과 장소 변경 안내 문구 추가 -->
     <p class="text-center text-gray-500 text-[10px] md:text-xs mt-3 font-medium">* 시간과 장소는 사정에 따라 변경될 수 있습니다.</p>
   </div>
 
 </div>
 
-<!-- 💡 참가비 및 할인 안내 박스 추가 -->
-<div class="bg-black/30 border border-ai-primary/30 p-5 rounded-2xl mb-8 flex flex-col md:flex-row items-center justify-between gap-4 text-left relative z-10">
-<div class="text-center md:text-left">
-<p class="text-gray-400 text-xs md:text-sm font-bold mb-1">행사 참가비</p>
-<div class="flex items-center justify-center md:justify-start gap-3">
-<p class="text-2xl md:text-3xl font-black text-white">10,000원</p>
-<span class="bg-ai-primary/20 text-ai-primary border border-ai-primary/50 text-xs font-bold px-2 py-1 rounded-md animate-pulse break-keep">26학번 50% 할인</span>
-</div>
-</div>
-<p class="text-xs text-gray-500 text-center md:text-right break-keep">
-※ 3월 26일(목)까지만 <strong class="text-gray-300">전액 환불</strong> 가능하며, 이후 환불 불가합니다.<br>
-※ 26학번 새내기는 <strong class="text-ai-primary">5,000원</strong>으로 혜택이 적용됩니다.
-</p>
+<!-- 💡 무료 안내 박스 (결제 관련 내용 싹 제거) -->
+<div class="bg-black/30 border border-ai-primary/30 p-5 rounded-2xl mb-8 text-center relative z-10">
+  <p class="text-gray-400 text-xs md:text-sm font-bold mb-2">행사 참가비</p>
+  <p class="text-2xl md:text-3xl font-black text-ai-primary animate-pulse mb-3">전액 무료</p>
+  <div class="inline-block bg-ai-secondary/20 text-ai-secondary border border-ai-secondary/50 px-3 py-1 rounded-full text-xs md:text-sm font-bold">
+    🔥 선착순 100명 한정 (조기 마감 주의)
+  </div>
 </div>
 
-<!-- ✅ 구글 폼 주소 대신 apply.html로 이동하도록 변경 -->
 <a href="./apply.html" class="block w-full py-5 md:py-7 bg-gradient-to-r from-ai-primary to-ai-secondary text-white font-black text-xl md:text-2xl rounded-2xl md:rounded-[30px] hover:shadow-[0_20px_50px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-2 relative z-10">
 지금 신청서 작성하기 <i class="fa-solid fa-arrow-right ml-2"></i>
 </a>
@@ -584,7 +574,6 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 
 <!-- 모바일 하단 플로팅 버튼 -->
 <div class="fixed bottom-6 left-4 right-4 z-40 md:hidden">
-<!-- ✅ 구글 폼 주소 대신 apply.html로 이동하도록 변경 -->
 <a href="./apply.html" class="flex items-center justify-center gap-2 w-full py-4 bg-ai-primary text-white font-black text-lg rounded-2xl shadow-[0_10px_25px_rgba(99,102,241,0.5)] active:scale-95 transition-all">
 <i class="fa-solid fa-graduation-cap"></i> 지금 바로 신청하기
 </a>
@@ -609,9 +598,9 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
     <div class="flex flex-col items-center md:items-end gap-3 md:gap-4 mt-2 md:mt-0">
       
       <div class="flex flex-row items-center gap-3">
-        <!-- 1. 환불 및 기타 문의 버튼 -->
+        <!-- 1. 기타 문의 버튼 -->
         <a href="https://open.kakao.com/o/sQqCopki" target="_blank" title="카카오톡 오픈채팅 문의하기" class="group flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-full py-1.5 pl-4 md:pl-5 pr-1.5 shadow-sm hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer">
-          <span class="text-gray-500 text-[11px] md:text-xs font-medium tracking-tight group-hover:text-gray-300 transition-colors">환불 및 기타 문의</span>
+          <span class="text-gray-500 text-[11px] md:text-xs font-medium tracking-tight group-hover:text-gray-300 transition-colors">기타 문의</span>
           <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#FEE500]/10 flex items-center justify-center text-[#FEE500] group-hover:bg-[#FEE500] group-hover:text-black transition-all text-xs md:text-sm">
             <i class="fa-solid fa-comment"></i>
           </div>
@@ -791,4 +780,3 @@ setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
 </script>
 </body>
 </html>
-
