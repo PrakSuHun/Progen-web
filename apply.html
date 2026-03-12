@@ -56,6 +56,24 @@ tailwind.config = {
     <p class="text-gray-400">AI 시대, 대학생으로 살아남기 프로젝트에 합류하세요!</p>
   </div>
 
+  <!-- 💡 신청서 상단에 행사 정보(일시/장소) 요약 칸 추가 -->
+  <div class="glass p-5 md:p-6 rounded-2xl border-ai-primary/30 mb-10 flex flex-row items-center justify-center gap-6 md:gap-12 bg-white/5 border border-white/10 shadow-lg divide-x divide-white/10">
+    <!-- 행사 일시 -->
+    <div class="flex flex-col items-center text-center px-2 w-1/2">
+      <p class="text-[11px] md:text-xs text-ai-primary font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-calendar-check"></i> 행사 일시
+      </p>
+      <p class="text-[15px] md:text-lg font-black text-white">03. 28 (토) 오후 2시</p>
+    </div>
+    <!-- 행사 장소 -->
+    <div class="flex flex-col items-center text-center px-2 w-1/2">
+      <p class="text-[11px] md:text-xs text-ai-secondary font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-location-dot"></i> 행사 장소
+      </p>
+      <p class="text-[15px] md:text-lg font-black text-white">충남대학교</p>
+    </div>
+  </div>
+
   <form id="applyForm" class="space-y-8">
     
     <!-- 1. 기본 정보 -->
