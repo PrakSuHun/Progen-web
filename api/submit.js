@@ -1,12 +1,11 @@
 export default async function handler(req, res) {
-  // POST 요청만 허용
   if (req.method !== 'POST') {
     return res.status(405).json({ message: '허용되지 않은 메서드입니다.' });
   }
 
-  const { name, age, phone, gender, school, major, grade, history, path, agree } = req.body;
+  // 💡 refundAccount가 추가되었습니다.
+  const { name, age, phone, gender, school, major, grade, history, path, refundAccount, agree } = req.body;
 
-  // Vercel 환경 변수에서 Notion 키와 DB ID 가져오기
   const notionApiKey = process.env.NOTION_API_KEY;
   const databaseId = process.env.NOTION_DATABASE_ID;
 
@@ -15,7 +14,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 노션 API 호출 (fetch)
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: {
@@ -26,37 +24,18 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: databaseId },
         properties: {
-          // 속성 이름(Key)은 노션 데이터베이스의 열(Column) 이름과 정확히 일치해야 합니다.
-          "이름": {
-            title: [ { text: { content: name } } ]
-          },
-          "만 나이": {
-            number: age
-          },
-          "연락처": {
-            rich_text: [ { text: { content: phone } } ]
-          },
-          "성별": {
-            select: { name: gender }
-          },
-          "학교명": {
-            select: { name: school }
-          },
-          "전공": {
-            rich_text: [ { text: { content: major } } ]
-          },
-          "학년": {
-            select: { name: grade }
-          },
-          "이력": {
-            rich_text: [ { text: { content: history || "없음" } } ]
-          },
-          "신청 경로": {
-            select: { name: path }
-          },
-          "개인정보 동의": {
-            checkbox: agree
-          }
+          "이름": { title: [ { text: { content: name } } ] },
+          "만 나이": { number: age },
+          "연락처": { rich_text: [ { text: { content: phone } } ] },
+          "성별": { select: { name: gender } },
+          "학교명": { select: { name: school } },
+          "전공": { rich_text: [ { text: { content: major } } ] },
+          "학년": { select: { name: grade } },
+          "이력": { rich_text: [ { text: { content: history || "없음" } } ] },
+          "신청 경로": { select: { name: path } },
+          // 💡 새로 추가된 환불 계좌 속성 (노션에 '환불 계좌'라는 텍스트 열이 있어야 함!)
+          "환불 계좌": { rich_text: [ { text: { content: refundAccount } } ] },
+          "개인정보 동의": { checkbox: agree }
         }
       })
     });
