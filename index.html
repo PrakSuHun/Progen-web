@@ -513,39 +513,42 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 <i class="fa-solid fa-quote-right text-4xl md:text-6xl text-white/5"></i>
 </div>
 
-<!-- 💡 한눈에 들어오도록 세로형 리스트 배치로 변경 -->
-<div class="bg-white/5 border border-white/10 rounded-3xl p-5 md:p-8 mb-10 md:mb-12 relative z-10 flex flex-col text-left divide-y divide-white/10 shadow-lg">
+<!-- 💡 신청마감/모집인원 가로 배치 & 행사 정보 강조 (두 칸 구조) -->
+<div class="flex flex-col gap-4 mb-10 md:mb-12 relative z-10 text-left">
   
-  <!-- 신청 마감 -->
-  <div class="flex flex-row items-center justify-between py-4">
-    <p class="text-gray-400 text-[12px] md:text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-      <i class="fa-solid fa-hourglass-half text-gray-500"></i> 신청 마감
-    </p>
-    <p class="text-base md:text-xl font-black text-gray-300">03. 26 (목) 자정</p>
-  </div>
-  
-  <!-- 모집 인원 -->
-  <div class="flex flex-row items-center justify-between py-4">
-    <p class="text-gray-400 text-[12px] md:text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-      <i class="fa-solid fa-users text-gray-500"></i> 모집 인원
-    </p>
-    <p class="text-base md:text-xl font-black text-gray-300">100명 한정</p>
+  <!-- 상단: 신청 마감 & 모집 인원 (가로 반반) -->
+  <div class="grid grid-cols-2 gap-3 md:gap-4">
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 text-center flex flex-col justify-center">
+      <p class="text-gray-500 text-[11px] md:text-xs uppercase tracking-widest font-bold mb-1 md:mb-2 flex justify-center items-center gap-1.5"><i class="fa-solid fa-hourglass-half text-gray-600"></i> 신청 마감</p>
+      <p class="text-sm md:text-xl font-black text-gray-300 break-keep">03. 26 (목)</p>
+    </div>
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 text-center flex flex-col justify-center">
+      <p class="text-gray-500 text-[11px] md:text-xs uppercase tracking-widest font-bold mb-1 md:mb-2 flex justify-center items-center gap-1.5"><i class="fa-solid fa-users text-gray-600"></i> 모집 인원</p>
+      <p class="text-sm md:text-xl font-black text-gray-300 break-keep">100명 한정</p>
+    </div>
   </div>
 
-  <!-- 행사 일시 -->
-  <div class="flex flex-row items-center justify-between py-4">
-    <p class="text-ai-primary text-[12px] md:text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-      <i class="fa-solid fa-calendar-check text-ai-primary"></i> 행사 일시
-    </p>
-    <p class="text-lg md:text-2xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">03. 28 (토) 오후 2시</p>
-  </div>
-
-  <!-- 장소 -->
-  <div class="flex flex-row items-center justify-between py-4">
-    <p class="text-ai-secondary text-[12px] md:text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-      <i class="fa-solid fa-location-dot text-ai-secondary"></i> 장소
-    </p>
-    <p class="text-lg md:text-2xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] break-keep">충남대학교</p>
+  <!-- 하단: 행사 일시 & 장소 (강조 박스) -->
+  <div class="bg-ai-card border border-ai-primary/40 rounded-2xl p-6 md:p-8 text-center flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 shadow-[0_0_25px_rgba(99,102,241,0.15)] relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-ai-primary/10 to-transparent pointer-events-none"></div>
+    
+    <div class="flex flex-col items-center relative z-10 w-full md:w-auto">
+      <p class="text-ai-primary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-calendar-check"></i> 행사 일시
+      </p>
+      <!-- 💡 모바일에서 오후 2시 전체가 아래로 내려가도록 수정 -->
+      <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">03. 28 (토) <span class="block md:inline mt-1 md:mt-0">오후 2시</span></p>
+    </div>
+    
+    <div class="hidden md:block w-px h-16 bg-white/10 relative z-10"></div>
+    <div class="block md:hidden w-1/2 h-px bg-white/10 my-2 relative z-10"></div>
+    
+    <div class="flex flex-col items-center relative z-10 w-full md:w-auto">
+      <p class="text-ai-secondary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-location-dot"></i> 장소
+      </p>
+      <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep">충남대학교</p>
+    </div>
   </div>
 
 </div>
