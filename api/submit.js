@@ -3,8 +3,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: '허용되지 않은 메서드입니다.' });
   }
 
-  // 💡 refundAccount가 추가되었습니다.
-  const { name, age, phone, gender, school, major, grade, history, path, refundAccount, agree } = req.body;
+  // 💡 프론트엔드에서 변경된 폼 데이터 구조에 맞춰 환불 계좌(refundAccount)를 제거했습니다.
+  const { name, age, phone, gender, school, major, grade, history, path, agree } = req.body;
 
   const notionApiKey = process.env.NOTION_API_KEY;
   const databaseId = process.env.NOTION_DATABASE_ID;
@@ -33,8 +33,6 @@ export default async function handler(req, res) {
           "학년": { select: { name: grade } },
           "이력": { rich_text: [ { text: { content: history || "없음" } } ] },
           "신청 경로": { select: { name: path } },
-          // 💡 새로 추가된 환불 계좌 속성 (노션에 '환불 계좌'라는 텍스트 열이 있어야 함!)
-          "환불 계좌": { rich_text: [ { text: { content: refundAccount } } ] },
           "개인정보 동의": { checkbox: agree }
         }
       })
