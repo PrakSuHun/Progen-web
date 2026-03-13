@@ -508,24 +508,25 @@ AI로 <span class="text-white font-bold">'시간'</span>을 벌고 <span class="
 
   <!-- 하단: 행사 일시 & 장소 (강조 박스) -->
   <div>
-    <div class="bg-ai-card border border-ai-primary/40 rounded-2xl p-6 md:p-8 text-center flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 shadow-[0_0_25px_rgba(99,102,241,0.15)] relative overflow-hidden">
+    <!-- gap을 줄이고 폰트 크기를 text-2xl로 조정. 데스크탑에서는 무조건 한 줄로 보이게 md:whitespace-nowrap 추가 -->
+    <div class="bg-ai-card border border-ai-primary/40 rounded-2xl p-6 md:p-8 text-center flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 lg:gap-12 shadow-[0_0_25px_rgba(99,102,241,0.15)] relative overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-ai-primary/10 to-transparent pointer-events-none"></div>
       
       <div class="flex flex-col items-center relative z-10 w-full md:w-auto">
         <p class="text-ai-primary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-calendar-check"></i> 행사 일시
         </p>
-        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">03. 28 (토) <span class="block md:inline mt-1 md:mt-0">오후 2시</span></p>
+        <p class="text-lg md:text-2xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] md:whitespace-nowrap">03. 28 (토) <span class="block md:inline mt-1 md:mt-0">오후 2시</span></p>
       </div>
       
-      <div class="hidden md:block w-px h-16 bg-white/10 relative z-10"></div>
-      <div class="block md:hidden w-1/2 h-px bg-white/10 my-2 relative z-10"></div>
+      <div class="hidden md:block w-px h-16 bg-white/10 relative z-10 shrink-0"></div>
+      <div class="block md:hidden w-1/2 h-px bg-white/10 my-2 relative z-10 shrink-0"></div>
       
       <div class="flex flex-col items-center relative z-10 w-full md:w-auto">
         <p class="text-ai-secondary text-[11px] md:text-xs uppercase tracking-widest font-black mb-2 flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-location-dot"></i> 장소
         </p>
-        <p class="text-xl md:text-3xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] break-keep">충남대학교 경상대학 우림홀</p>
+        <p class="text-lg md:text-2xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] break-keep md:whitespace-nowrap">충남대학교 경상대학 우림홀</p>
       </div>
     </div>
     <p class="text-center text-gray-500 text-[10px] md:text-xs mt-3 font-medium">* 시간과 장소는 사정에 따라 변경될 수 있습니다.</p>
@@ -739,7 +740,3 @@ setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
 </script>
 </body>
 </html>
-
-
-
-
