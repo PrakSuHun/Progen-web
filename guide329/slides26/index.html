@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노트북LM 슬라이드 디자인 스타일 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo','맑은 고딕','Malgun Gothic',sans-serif;background:#f5f4f0;color:#1a1a18;padding:1.5rem 1.25rem 3rem;font-size:14px;line-height:1.7;}
+.hd{text-align:center;margin-bottom:1.5rem;}
+.hd-title{font-size:22px;font-weight:700;margin-bottom:5px;}
+.hd-sub{font-size:11px;color:#888;line-height:1.6;}
+.topic-row{display:flex;gap:8px;justify-content:center;margin-bottom:1.25rem;}
+.topic-card{flex:1;max-width:160px;border-radius:12px;padding:10px 14px;text-align:center;border:2px solid transparent;}
+.t1{background:#E1F5EE;border-color:#5DCAA5;} .t2{background:#E6F1FB;border-color:#85B7EB;}
+.tc-e{font-size:20px;margin-bottom:4px;}
+.tc-n{font-size:13px;font-weight:700;} .n1{color:#085041;} .n2{color:#0C447C;}
+.tc-d{font-size:10px;margin-top:3px;line-height:1.4;} .d1{color:#0F6E56;} .d2{color:#185FA5;}
+.pipeline{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:1.25rem;border:1px solid #e8e5e0;}
+.pt{font-size:9px;font-weight:700;color:#aaa;letter-spacing:.06em;margin-bottom:10px;}
+.pr{display:flex;align-items:stretch;overflow-x:auto;gap:0;}
+.ps{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px;padding:0 2px;}
+.pi{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.pn{font-size:8px;font-weight:700;text-align:center;line-height:1.3;}
+.pa{font-size:7px;color:#999;text-align:center;line-height:1.35;margin-top:1px;}
+.parr{display:flex;align-items:center;padding-bottom:18px;color:#ccc;font-size:11px;flex-shrink:0;}
+.pchip{font-size:7px;font-weight:700;padding:2px 5px;border-radius:5px;margin-top:2px;white-space:nowrap;}
+.sec{margin-bottom:.875rem;border-radius:14px;overflow:hidden;border:1px solid #e0ddd8;}
+.sh{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none;}
+.sh:hover{opacity:.88;}
+.si{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.sw{display:flex;flex-direction:column;flex:1;}
+.ss{font-size:11px;font-weight:700;opacity:.6;}
+.sn{font-size:15px;font-weight:700;}
+.sb{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap;}
+.schv{font-size:10px;color:#bbb;}
+.sbody{background:#fff;display:block;}
+.c1{background:#E1F5EE;border-color:#9FE1CB!important;} .c1 .ss,.c1 .sn{color:#085041;} .c1 .sb{background:#9FE1CB;color:#085041;}
+.c2{background:#FAEEDA;border-color:#FAC775!important;} .c2 .ss,.c2 .sn{color:#633806;} .c2 .sb{background:#FAC775;color:#633806;}
+.c3{background:#E6F1FB;border-color:#B5D4F4!important;} .c3 .ss,.c3 .sn{color:#0C447C;} .c3 .sb{background:#B5D4F4;color:#0C447C;}
+.c4{background:#EEEDFE;border-color:#AFA9EC!important;} .c4 .ss,.c4 .sn{color:#3C3489;} .c4 .sb{background:#CECBF6;color:#3C3489;}
+.c5{background:#EAF3DE;border-color:#C0DD97!important;} .c5 .ss,.c5 .sn{color:#27500A;} .c5 .sb{background:#C0DD97;color:#27500A;}
+.io{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid #f0ede8;align-items:center;flex-wrap:wrap;}
+.io-in{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:7px;background:#F1EFE8;color:#5F5E5A;}
+.io-a{font-size:10px;color:#ccc;}
+.io-out{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:7px;background:#FAEEDA;color:#854F0B;}
+.rl{font-size:9px;font-weight:700;padding:6px 14px;letter-spacing:.04em;border-bottom:1px solid #f0ede8;}
+.rl1{color:#085041;background:#E1F5EE;} .rl2{color:#633806;background:#FAEEDA;}
+.rl3{color:#0C447C;background:#E6F1FB;} .rl4{color:#3C3489;background:#EEEDFE;}
+.pc{padding:11px 14px;border-bottom:1px solid #f0ede8;}
+.pc:last-child{border-bottom:none;}
+.pc-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px;}
+.pc-lbl{font-size:11px;font-weight:700;color:#333;}
+.pc-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:9px;}
+.pbox{background:#f5f4f0;border-radius:10px;padding:12px 14px;margin-bottom:2px;}
+.ptxt{font-size:13px;color:#1a1a18;line-height:1.9;font-family:'Courier New',Courier,monospace;white-space:pre-wrap;word-break:break-word;}
+.v{color:#7F77DD;font-weight:700;}
+.cbtn{
+  display:block;
+  width:100%;
+  margin-top:10px;
+  padding:9px 0;
+  font-size:13px;
+  font-weight:700;
+  font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;
+  border:1.5px solid #d0cdc6;
+  border-radius:8px;
+  background:#fff;
+  color:#555;
+  cursor:pointer;
+  letter-spacing:.02em;
+  transition:all .15s;
+}
+.cbtn:hover{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489;} .cbtn.ok{background:#f0fdf4;border-color:#86efac;color:#16a34a;}
+.cbtn.ok{color:#16a34a;border-color:#86efac;background:#f0fdf4;}
+.wtags{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;}
+.wtag{font-size:9px;padding:2px 6px;border-radius:8px;background:#EEEDFE;color:#534AB7;}
+.note{font-size:10.5px;color:#666;margin-top:5px;line-height:1.6;padding:0 2px;}
+.note code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;color:#333;}
+.team-box{margin:10px 14px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:10px 12px;}
+.team-title{font-size:10px;font-weight:700;color:#92400E;margin-bottom:5px;}
+.team-q{font-size:11px;color:#78350F;line-height:1.85;}
+.ubox{background:#faf9f6;padding:9px 14px;border-top:1px solid #f0ede8;}
+.utitle{font-size:9px;font-weight:700;color:#aaa;letter-spacing:.05em;margin-bottom:4px;}
+.uitem{font-size:10.5px;color:#555;line-height:1.8;}
+.uitem code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;color:#333;}
+.fc{display:flex;align-items:center;gap:6px;margin:4px 0;padding:5px 14px;}
+.fcl{flex:1;height:1px;background:#e0ddd8;}
+.fct{font-size:9px;font-weight:700;color:#bbb;background:#f5f4f0;padding:0 7px;white-space:nowrap;}
+.steps{padding:10px 14px 4px;}
+.step-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;}
+.step-n{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.step-t{font-size:11px;font-weight:700;color:#1a1a18;margin-bottom:2px;}
+.step-d{font-size:10.5px;color:#555;line-height:1.6;}
+.step-d code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;color:#333;}
+/* UI 가이드 박스 */
+.ui-guide{margin:8px 14px;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:10px 12px;}
+.ui-title{font-size:10px;font-weight:700;color:#0369A1;margin-bottom:6px;}
+.ui-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;}
+.ui-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.ui-desc{font-size:10.5px;color:#555;line-height:1.6;}
+.ui-desc code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;color:#333;}
+.ui-badge-gray{background:#F1EFE8;color:#444;}
+.ui-badge-blue{background:#DBEAFE;color:#1e40af;}
+.ui-badge-green{background:#D1FAE5;color:#065f46;}
+/* 슬라이드 설정 가이드 */
+.slide-dialog{margin:8px 14px;background:#FAFAF9;border:1px dashed #d0cdc6;border-radius:10px;padding:10px 12px;}
+.sd-title{font-size:10px;font-weight:700;color:#444;margin-bottom:8px;}
+.sd-field{margin-bottom:8px;}
+.sd-label{font-size:9px;font-weight:700;color:#888;margin-bottom:3px;}
+.sd-value{font-size:10.5px;color:#333;background:#f5f4f0;border-radius:6px;padding:5px 8px;line-height:1.6;}
+.sd-value code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;}
+.mf{padding:8px 14px;display:flex;flex-direction:column;gap:4px;}
+.mf-row{display:flex;gap:8px;align-items:flex-start;}
+.mf-left{display:flex;flex-direction:column;align-items:center;width:22px;flex-shrink:0;}
+.mf-c{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.mf-l{width:2px;flex:1;background:#e0ddd8;margin:2px auto;}
+.mf-box{flex:1;background:#f5f4f0;border-radius:9px;padding:7px 11px;margin-bottom:3px;}
+.mf-t{font-size:11px;font-weight:700;color:#1a1a18;margin-bottom:2px;}
+.mf-d{font-size:10.5px;color:#555;line-height:1.6;}
+.mf-d code{font-family:'Courier New',monospace;background:#eee;padding:1px 4px;border-radius:3px;font-size:9.5px;}
+.tip-div{display:flex;align-items:center;gap:10px;margin:1.25rem 0 .875rem;}
+.tip-line{flex:1;height:2px;background:linear-gradient(90deg,#CECBF6,#9FE1CB);}
+.tip-lbl{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:#1a1a18;color:#fff;white-space:nowrap;}
+.dc{margin:0 14px 8px;border-radius:10px;overflow:hidden;border:1px solid #e0ddd8;}
+.dc-h{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;}
+.dc-h:hover{opacity:.88;}
+.dc-num{font-size:9px;font-weight:700;opacity:.65;}
+.dc-name{font-size:12px;font-weight:700;flex:1;}
+.dc-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;}
+.dc-body{background:#fff;padding:10px 12px;display:none;}
+.ds1{background:#1a1a2e;} .ds1 .dc-num,.ds1 .dc-name{color:#e8e4ff;} .ds1 .dc-tag{background:#4a4080;color:#e8e4ff;}
+.ds2{background:#f0fdf4;} .ds2 .dc-num,.ds2 .dc-name{color:#14532d;} .ds2 .dc-tag{background:#86efac;color:#14532d;}
+.ds3{background:#FFF7ED;} .ds3 .dc-num,.ds3 .dc-name{color:#7C2D12;} .ds3 .dc-tag{background:#FED7AA;color:#7C2D12;}
+.ds4{background:#0f172a;} .ds4 .dc-num,.ds4 .dc-name{color:#7df9ff;} .ds4 .dc-tag{background:#164e63;color:#7df9ff;}
+.ds5{background:#fafafa;border:1px solid #ddd;} .ds5 .dc-num,.ds5 .dc-name{color:#111;} .ds5 .dc-tag{background:#e5e7eb;color:#374151;}
+.cl{background:#fff;border-radius:14px;padding:12px 14px;margin-top:.5rem;border:1px solid #e0ddd8;}
+.cl-t{font-size:11px;font-weight:700;color:#333;margin-bottom:8px;}
+.cl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cl-item{background:#f5f4f0;border-radius:8px;padding:8px 10px;}
+.cl-lbl{font-size:9px;font-weight:700;margin-bottom:2px;}
+.cl-desc{font-size:10.5px;color:#444;line-height:1.5;}
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 11px;margin-top:5px;}
+.info-box p{font-size:10.5px;color:#1e40af;line-height:1.6;}
+.optional-box{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:8px 11px;margin-top:5px;}
+.optional-box p{font-size:10.5px;color:#166534;line-height:1.6;}
+
+body { padding: 1.5rem 1.25rem 3rem; }
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-title">노트북LM 슬라이드 디자인 스타일 15종</div>
+  <div class="hd-sub">원하는 스타일 클릭 → 📋 프롬프트 복사 → 슬라이드 자료 맞춤설정 → 설명 칸에 붙여넣기</div>
+</div>
+
+<div style="background:#EEEDFE;border-radius:12px;padding:12px 16px;margin-bottom:1.25rem;font-size:13px;color:#3C3489;line-height:1.8;">
+  <strong>사용 방법</strong><br>
+  ① 원하는 스타일 카드 클릭 → ② <strong>📋 프롬프트 복사</strong> 클릭 → ③ 노트북LM 스튜디오 → 슬라이드 자료 → <strong>설명 칸</strong>에 붙여넣기
+</div>
+
+class="tip-div"><div class="tip-line"></div><div class="tip-lbl">TIP — 슬라이드 디자인 더 멋있게 만드는 방법</div><div class="tip-line"></div></div>
+
+<div class="sec">
+  <div class="sh" style="background:#EEEDFE;border-color:#AFA9EC!important;" onclick="tog('tip1')">
+    <div class="si" style="background:#CECBF6;">🎨</div>
+    <div class="sw"><span class="ss" style="color:#3C3489;">TIP</span><span class="sn" style="color:#3C3489;">슬라이드 디자인 스타일 5종 — 설명 칸 교체용</span></div>
+    <span class="sb" style="background:#CECBF6;color:#3C3489;">슬라이드 자료 맞춤설정 → 설명 칸</span>
+    <span class="schv" id="c-tip1">▼</span>
+  </div>
+  <div class="sbody" id="tip1">
+    <div style="padding:10px 14px 6px;font-size:10.5px;color:#666;line-height:1.6;">위 슬라이드 생성 프롬프트의 <strong>"디자인:"</strong> 부분을 아래 스타일 중 하나로 교체하면 분위기가 완전히 달라집니다.</div>
+
+    <div class="dc"><div class="dc-h ds1" onclick="togdc('d1')"><div style="font-size:14px;">🚀</div><div class="dc-num">STYLE 01</div><div class="dc-name">미니멀 테크 — 토스·애플 스타일</div><span class="dc-tag">다크·세련</span><span style="font-size:10px;color:#888;" id="c-d1">▼</span></div><div class="dc-body" id="d1"><img src="style01.png" class="style-img" alt="STYLE 01" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Ultra-minimalist dark tech presentation, Silicon Valley VC pitch style,
+bold oversized typography, single neon accent color on black background,
+Bento grid layout, high-end corporate aesthetic, stark contrast --ar 16:9
+색상: 순수 검정 or 딥 네이비 배경 + 네온 포인트 1색
+텍스트: 슬라이드당 3줄 이내, 핵심 수치 화면 40% 이상 강조
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h ds2" onclick="togdc('d2')"><div style="font-size:14px;">✏️</div><div class="dc-num">STYLE 02</div><div class="dc-name">비주얼 스토리텔링 — 카드뉴스 스타일</div><span class="dc-tag">밝고 친근</span><span style="font-size:10px;color:#555;" id="c-d2">▼</span></div><div class="dc-body" id="d2"><img src="style02.png" class="style-img" alt="STYLE 02" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Hand-drawn sketch note illustration style, warm and friendly visual storytelling,
+watercolor texture accents, organic shapes and loose linework,
+editorial infographic layout, approachable and engaging --ar 16:9
+색상: 밝은 크림 배경 + 노랑·청록·코랄 포인트
+텍스트: 각 슬라이드 제목은 질문 형태, Why → What → How 흐름
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h ds3" onclick="togdc('d3')"><div style="font-size:14px;">🎓</div><div class="dc-num">STYLE 03</div><div class="dc-name">TED-Ed 교육 스타일</div><span class="dc-tag">교육·강의</span><span style="font-size:10px;color:#7C2D12;" id="c-d3">▼</span></div><div class="dc-body" id="d3"><img src="style03.png" class="style-img" alt="STYLE 03" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: TED-Ed animation style, flat vector illustration, bright warm color palette,
+friendly and educational infographic, clean rounded shapes,
+step-by-step visual storytelling, Hook-Teach-Apply structure --ar 16:9
+색상: 밝고 따뜻한 팔레트 (노랑·청록·코랄), 흰 배경
+텍스트: 어려운 개념은 일상적 비유로, 발표자 노트 포함
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h ds4" onclick="togdc('d4')"><div style="font-size:14px;">🎮</div><div class="dc-num">STYLE 04</div><div class="dc-name">게이미피케이션 — 게임 HUD 스타일</div><span class="dc-tag">다크·임팩트</span><span style="font-size:10px;color:#7df9ff;" id="c-d4">▼</span></div><div class="dc-body" id="d4"><img src="style04.png" class="style-img" alt="STYLE 04" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Game HUD interface design, cyberpunk UI aesthetic,
+neon teal glowing elements on dark background,
+level-up progression system, futuristic dashboard layout,
+achievement badges and progress bars --ar 16:9
+색상: 순수 다크 배경 + 형광 청록·초록 포인트
+텍스트: STAGE 01, STAGE 02 순서 넘버링, 튜토리얼→미션→보상 구조
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h ds5" onclick="togdc('d5')"><div style="font-size:14px;">📰</div><div class="dc-num">STYLE 05</div><div class="dc-name">저널리즘 — 뉴욕타임스 스타일</div><span class="dc-tag">신뢰·데이터</span><span style="font-size:10px;color:#374151;" id="c-d5">▼</span></div><div class="dc-body" id="d5"><img src="style05.png" class="style-img" alt="STYLE 05" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: New York Times data journalism style, clean editorial infographic,
+black and grey grid layout with one accent color, authoritative sans-serif typography,
+evidence-based data visualization, newspaper aesthetic --ar 16:9
+색상: 흰 배경 + 검정·회색 + 강조색 1개
+텍스트: 객관적이고 권위 있는 어조, 수치·비교 데이터 중심
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#fafafa;border:1px solid #ddd;" onclick="togdc('d6')"><div style="font-size:14px;">📊</div><div class="dc-num" style="color:#888;">STYLE 06</div><div class="dc-name" style="color:#111;">비즈니스 미니멀 — 타임라인 인포그래픽</div><span class="dc-tag" style="background:#e5e7eb;color:#374151;">깔끔·기업형</span><span style="font-size:10px;color:#374151;" id="c-d6">▼</span></div><div class="dc-body" id="d6"><img src="style06.png" class="style-img" alt="STYLE 06" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Minimalist timeline infographic, simple flat vector art,
+clean data visualization, geometric shapes,
+corporate color palette, white background, highly legible
+색상: 흰 배경 + 기업 컬러 포인트 1~2색
+텍스트: 타임라인·단계별 흐름 구조
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#000;" onclick="togdc('d7')"><div style="font-size:14px;">💻</div><div class="dc-num" style="color:#00ff41;">STYLE 07</div><div class="dc-name" style="color:#00ff41;">도스/터미널 — 레트로 해커 스타일</div><span class="dc-tag" style="background:#001a00;color:#00ff41;">터미널·레트로</span><span style="font-size:10px;color:#00ff41;" id="c-d7">▼</span></div><div class="dc-body" id="d7"><img src="style07.png" class="style-img" alt="STYLE 07" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Retro CRT monitor screen, Matrix green text on black background,
+glowing phosphor, terminal code,
+vintage hacker aesthetic, scanlines
+색상: 순수 검정 배경 + 매트릭스 녹색 텍스트
+텍스트: 터미널 명령어 스타일, 타이핑 느낌
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#e8f5e9;" onclick="togdc('d8')"><div style="font-size:14px;">🧊</div><div class="dc-num" style="color:#1b5e20;">STYLE 08</div><div class="dc-name" style="color:#1b5e20;">복셀(3차원 픽셀) 아트 스타일</div><span class="dc-tag" style="background:#a5d6a7;color:#1b5e20;">3D·큐트</span><span style="font-size:10px;color:#1b5e20;" id="c-d8">▼</span></div><div class="dc-body" id="d8"><img src="style08.png" class="style-img" alt="STYLE 08" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Isometric voxel art, gamified office environment,
+highly detailed blocks, bright lighting,
+colorful pixel 3D, cute architectural diagram
+색상: 밝고 컬러풀한 팔레트, 입체 블록 느낌
+텍스트: 게임 UI 스타일 라벨
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#fce4ec;" onclick="togdc('d9')"><div style="font-size:14px;">🏺</div><div class="dc-num" style="color:#880e4f;">STYLE 09</div><div class="dc-name" style="color:#880e4f;">클레이 애니메이션 스타일</div><span class="dc-tag" style="background:#f48fb1;color:#880e4f;">3D·귀엽</span><span style="font-size:10px;color:#880e4f;" id="c-d9">▼</span></div><div class="dc-body" id="d9"><img src="style09.png" class="style-img" alt="STYLE 09" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Claymation style, tactile 3D illustration,
+cute office worker figurine, soft smooth lighting,
+playful stop-motion aesthetic, vibrant pastel colors
+색상: 부드러운 파스텔 계열, 클레이 질감 3D 오브젝트
+텍스트: 둥글고 귀여운 폰트 느낌, 장면 설명 스타일
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#1a0a00;" onclick="togdc('d10')"><div style="font-size:14px;">⚡</div><div class="dc-num" style="color:#ff6600;">STYLE 10</div><div class="dc-name" style="color:#ff6600;">역동적(하이 옥탄) 애니메이션 스타일</div><span class="dc-tag" style="background:#3d1500;color:#ff6600;">애니·역동</span><span style="font-size:10px;color:#ff6600;" id="c-d10">▼</span></div><div class="dc-body" id="d10"><img src="style10.png" class="style-img" alt="STYLE 10" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: High-octane anime style, intense dynamic action,
+speed lines, high energy, dramatic lighting,
+vivid colors, epic perspective
+색상: 선명하고 강렬한 원색, 속도감 있는 효과선
+텍스트: 굵고 강렬한 제목, 만화 말풍선 느낌
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#fdf6ee;" onclick="togdc('d11')"><div style="font-size:14px;">🌸</div><div class="dc-num" style="color:#6d2b5a;">STYLE 11</div><div class="dc-name" style="color:#6d2b5a;">로코코(프랑스·낭만적) 스타일</div><span class="dc-tag" style="background:#f7d6e8;color:#6d2b5a;">빈티지·럭셔리</span><span style="font-size:10px;color:#6d2b5a;" id="c-d11">▼</span></div><div class="dc-body" id="d11"><img src="style11.png" class="style-img" alt="STYLE 11" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Elegant Rococo style, romantic ornate aesthetic,
+soft pastel oil painting, intricate gold floral details,
+vintage luxury
+색상: 소프트 파스텔 크림·핑크·금색 장식
+텍스트: 우아하고 고전적인 세리프 분위기
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#f0f4ff;" onclick="togdc('d12')"><div style="font-size:14px;">💎</div><div class="dc-num" style="color:#1a237e;">STYLE 12</div><div class="dc-name" style="color:#1a237e;">글래스 모피즘 3D (투명) 스타일</div><span class="dc-tag" style="background:#c5cae9;color:#1a237e;">모던·고급</span><span style="font-size:10px;color:#1a237e;" id="c-d12">▼</span></div><div class="dc-body" id="d12"><img src="style12.png" class="style-img" alt="STYLE 12" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: 3D glassmorphism icons, frosted glass UI elements,
+modern tech aesthetic, soft studio lighting,
+clean white background, high-end corporate presentation style
+색상: 흰/연회색 배경 + 반투명 유리 오브젝트 + 파스텔 그라디언트
+텍스트: 세련된 산세리프, 투명 카드 위 배치
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#fff8f2;" onclick="togdc('d13')"><div style="font-size:14px;">📄</div><div class="dc-num" style="color:#5d4037;">STYLE 13</div><div class="dc-name" style="color:#5d4037;">페이퍼 컷아웃 아트 스타일</div><span class="dc-tag" style="background:#ffccbc;color:#5d4037;">핸드메이드·감성</span><span style="font-size:10px;color:#5d4037;" id="c-d13">▼</span></div><div class="dc-body" id="d13"><img src="style13.png" class="style-img" alt="STYLE 13" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Layered paper cutout art, conceptual office desk,
+soft shadows, pastel colored paper,
+clean and minimal storytelling, tactile texture --ar 16:9
+색상: 파스텔 종이 질감, 크림·민트·살구색 레이어
+텍스트: 손글씨 느낌 또는 둥근 산세리프
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#001a2e;" onclick="togdc('d14')"><div style="font-size:14px;">🚀</div><div class="dc-num" style="color:#64d8ff;">STYLE 14</div><div class="dc-name" style="color:#64d8ff;">플랫 벡터 모션그래픽 스타일</div><span class="dc-tag" style="background:#003355;color:#64d8ff;">과학·교육</span><span style="font-size:10px;color:#64d8ff;" id="c-d14">▼</span></div><div class="dc-body" id="d14"><img src="style14.png" class="style-img" alt="STYLE 14" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Flat vector illustration, science channel aesthetic,
+vibrant deep space colors, clean minimalist background,
+educational infographic, highly detailed yet simplified --ar 16:9
+색상: 딥 스페이스 네이비·청록·노랑 포인트
+텍스트: 깔끔한 교육용 라벨, 아이콘+설명 조합
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    <div class="dc"><div class="dc-h" style="background:#05050f;" onclick="togdc('d15')"><div style="font-size:14px;">🛸</div><div class="dc-num" style="color:#b0c4de;">STYLE 15</div><div class="dc-name" style="color:#b0c4de;">시네마틱 우주 SF 다큐멘터리 스타일</div><span class="dc-tag" style="background:#0d0d2b;color:#b0c4de;">영화·SF</span><span style="font-size:10px;color:#b0c4de;" id="c-d15">▼</span></div><div class="dc-body" id="d15"><img src="style15.png" class="style-img" alt="STYLE 15" onerror="this.style.display='none'"><div class="pbox"><div class="ptxt">[슬라이드 구성] 해당 소스에 작성된 슬라이드 제작 가이드를 참고합니다.
+
+디자인: Cinematic 3D render of a space station orbiting a gas giant,
+hard sci-fi aesthetic, hyper-realistic, dramatic lighting,
+volumetric scattering, 8k resolution, space documentary style --ar 16:9
+색상: 우주 블랙·딥 블루 배경 + 오렌지·흰색 드라마틱 조명
+텍스트: 영화 자막 스타일, 권위 있는 다큐 느낌
+언어: 한국어, 한글 깨짐 없이</div><button class="cbtn" onclick="cpBox(this)">📋 프롬프트 복사</button></div></div></div>
+
+    
+
+    <div style="margin:4px 14px 10px;background:#1a1a18;border-radius:10px;padding:10px 12px;">
+      <div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:6px;">✦ 나만의 스타일 만들기 — 이미지 → 프롬프트 자동 추출 (ChatGPT/Claude에 이미지 첨부)</div>
+      <div class="pbox" style="background:#2a2a28;">
+        <div class="ptxt" style="color:#e8e4e0;">첨부한 이미지의 슬라이드 디자인 스타일을 분석해서,
+동일한 스타일로 새 슬라이드를 제작할 수 있는
+노트북LM 슬라이드 스타일 프롬프트를 작성해줘.
+
+프롬프트에는 아래 요소가 반드시 포함되어야 해:
+- 전체적인 디자인 스타일
+- 톤앤매너
+- 색상 팔레트
+
+→ 노트북LM 슬라이드 자료 맞춤설정 → 설명 칸에 그대로 붙여넣을 거야.</div>
+        <button class="cbtn" onclick="cpBox(this)" style="background:#3a3a38;border-color:#555;color:#aaa;">📋 복사</button>
+      </div>
+      <div style="font-size:10px;color:#888;margin-top:5px;line-height:1.6;">사용법: behance.net / Pinterest에서 마음에 드는 슬라이드 캡처 → ChatGPT에 이미지 첨부 + 위 프롬프트 입력 → 결과를 노트북LM 설명 칸에 복붙</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:1.5rem;padding:14px;background:#E1F5EE;border-radius:12px;">
+  <a href="../guide/" style="font-size:14px;font-weight:700;color:#085041;text-decoration:none;">
+    📋 보고서 프롬프트 가이드로 돌아가기 →
+  </a>
+</div>
+
+<script>
+function cpBox(btn) {
+  const pbox = btn.closest('.pbox');
+  const ptxt = pbox ? pbox.querySelector('.ptxt') : null;
+  if (!ptxt) return;
+  const text = ptxt.innerText || ptxt.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ 복사됨!';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '📋 프롬프트 복사'; btn.classList.remove('ok'); }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✓ 복사됨!'; btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '📋 프롬프트 복사'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+function togdc(id) {
+  const b = document.getElementById(id);
+  const c = document.getElementById('c-' + id);
+  const o = b.style.display === 'block';
+  b.style.display = o ? 'none' : 'block';
+  if (c) c.textContent = o ? '▼' : '▲';
+}
+</script>
+</body>
+</html>
