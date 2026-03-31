@@ -2,15 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-interface CounterProps {
-  target: number
-  suffix?: string
-  duration?: number
-}
-
-function Counter({ target, suffix = '', duration = 2000 }: CounterProps) {
+function Counter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLSpanElement>(null)
   const started = useRef(false)
 
   useEffect(() => {
@@ -31,39 +25,37 @@ function Counter({ target, suffix = '', duration = 2000 }: CounterProps) {
       },
       { threshold: 0.5 }
     )
-
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
   }, [target, duration])
 
-  return (
-    <div ref={ref} className="text-5xl font-black text-purple-400">
-      {count}{suffix}
-    </div>
-  )
+  return <span ref={ref}>{count}{suffix}</span>
 }
+
+const stats = [
+  { value: '1.4억', label: '대표 누적 매출', note: '2021 — 현재' },
+  { value: '1억', label: '정부지원금 유치', note: '청년창업사관학교' },
+  { counter: 100, suffix: '+', label: '1회차 참여자', note: '충남대 AI 워크숍' },
+  { counter: 95, suffix: '%', label: '참가자 만족도', note: '실제 설문 결과' },
+]
 
 export function NumbersSection() {
   return (
-    <section className="bg-slate-800/50 border-y border-white/5 py-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 text-center">
-          <div>
-            <div className="text-5xl font-black text-purple-400">1.4억</div>
-            <div className="text-slate-400 mt-3 font-medium">대표 누적 매출</div>
-          </div>
-          <div>
-            <div className="text-5xl font-black text-purple-400">1억</div>
-            <div className="text-slate-400 mt-3 font-medium">정부지원금 유치</div>
-          </div>
-          <div>
-            <Counter target={100} suffix="명+" />
-            <div className="text-slate-400 mt-3 font-medium">1회차 참여자</div>
-          </div>
-          <div>
-            <Counter target={95} suffix="%" />
-            <div className="text-slate-400 mt-3 font-medium">참가자 만족도</div>
-          </div>
+    <section className="border-t border-[#1a1a1a]">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4">
+          {stats.map((s, i) => (
+            <div
+              key={i}
+              className={`py-10 px-6 ${i < stats.length - 1 ? 'border-r border-[#1a1a1a]' : ''}`}
+            >
+              <div className="text-4xl md:text-5xl font-black text-white mb-2 tabular-nums">
+                {'value' in s ? s.value : <Counter target={s.counter!} suffix={s.suffix} />}
+              </div>
+              <div className="text-[#666] text-sm font-medium mb-1">{s.label}</div>
+              <div className="text-[#333] text-xs">{s.note}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

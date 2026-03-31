@@ -1,33 +1,65 @@
 'use client'
 
+const navLinks = [
+  ['/', '홈'],
+  ['/about', '소개'],
+  ['/seminar', '세미나'],
+  ['/archive', '아카이브'],
+  ['/community', '커뮤니티'],
+  ['/recruit', '운영진 모집'],
+]
+
+const contactLinks = [
+  ['/apply', '크루 지원하기'],
+  ['/recruit', '운영진 모집'],
+  ['https://open.kakao.com/o/sQqCopki', '카카오 문의'],
+]
+
 export function Footer() {
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 mt-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">PROGEN</h3>
-            <p className="text-slate-400">
-              프로젝트 기반 커뮤니티
+    <footer className="border-t border-[#1a1a1a] py-16 px-6 lg:px-8 bg-[#080808]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="md:col-span-2">
+            <div className="text-2xl font-black text-white mb-4">
+              PRO<span className="text-violet-400">GEN</span>
+            </div>
+            <p className="text-[#444] text-sm leading-relaxed max-w-xs">
+              AI 시대, 도구를 지배하는 대학생들의 커뮤니티.<br />
+              우리는 기술 가치보다 통찰에 집중합니다.
             </p>
           </div>
+
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">링크</h4>
-            <ul className="space-y-2 text-slate-400">
-              <li><a href="/" className="hover:text-white transition">홈</a></li>
-              <li><a href="/about" className="hover:text-white transition">소개</a></li>
-              <li><a href="/apply" className="hover:text-white transition">지원</a></li>
+            <h4 className="text-[#333] text-xs tracking-widest uppercase mb-5">Navigate</h4>
+            <ul className="space-y-3">
+              {navLinks.map(([href, label]) => (
+                <li key={href}>
+                  <a href={href} className="text-[#555] hover:text-white transition-colors text-sm">
+                    {label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
+
           <div>
-            <h4 className="text-sm font-semibold text-white mb-4">문의</h4>
-            <p className="text-slate-400">
-              contact@progen.com
-            </p>
+            <h4 className="text-[#333] text-xs tracking-widest uppercase mb-5">Contact</h4>
+            <ul className="space-y-3">
+              {contactLinks.map(([href, label]) => (
+                <li key={href}>
+                  <a href={href} className="text-[#555] hover:text-white transition-colors text-sm">
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-        <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
-          <p>&copy; 2026 PROGEN. All rights reserved.</p>
+
+        <div className="border-t border-[#1a1a1a] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[#2a2a2a] text-xs">&copy; 2026 PROGEN. All rights reserved.</p>
+          <p className="text-[#2a2a2a] text-xs">대전 · 대학생 AI 커뮤니티</p>
         </div>
       </div>
     </footer>

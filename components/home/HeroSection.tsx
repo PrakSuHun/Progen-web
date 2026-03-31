@@ -2,51 +2,64 @@
 
 export function HeroSection() {
   return (
-    <section className="relative pt-40 pb-28 px-6 overflow-hidden text-center">
-      {/* 블롭 배경 */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+    <section className="min-h-screen flex flex-col justify-end pb-20 px-6 lg:px-8 pt-24 relative overflow-hidden">
+      {/* Subtle grid */}
+      <div
+        className="absolute inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
 
-      <div className="max-w-5xl mx-auto relative z-10">
-        {/* 배지 */}
-        <div className="inline-flex items-center gap-2 mb-8 px-5 py-2 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-sm font-bold">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-400" />
-          </span>
-          대전 유일무이 대학생 AI 활용 단체 · PROGEN 1기 크루 모집 중
+      {/* Very dim violet glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-violet-700/6 rounded-full blur-[160px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto w-full relative z-10">
+        {/* Label */}
+        <div className="flex items-center gap-3 mb-14 text-[#444] text-xs tracking-[0.2em] uppercase">
+          <span className="w-8 h-px bg-[#2a2a2a]" />
+          대전 · 대학생 AI 커뮤니티 · 1기 크루 모집 중
+          <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
         </div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black mb-10 leading-tight tracking-tight text-white">
-          AI 시대<br />
-          <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-            대학생으로 살아남기
-          </span>
+        {/* Main headline */}
+        <h1 className="font-black leading-[0.88] tracking-tight text-white mb-14"
+          style={{ fontSize: 'clamp(3rem, 9vw, 9rem)' }}
+        >
+          AI 시대,<br />
+          <span className="text-[#2a2a2a]">도구를 지배하는</span><br />
+          대학생의 커뮤니티.
         </h1>
 
-        <p className="text-lg md:text-2xl text-slate-300 mb-6 font-medium leading-relaxed max-w-4xl mx-auto">
-          AI에게 대체될 것인가, AI를 리드할 것인가.<br />
-          AI로 <span className="text-white font-bold">&apos;시간&apos;</span>을 벌고{' '}
-          <span className="text-white font-bold italic">&apos;진짜 중요한 것&apos;</span>에 투자하는 법
-        </p>
+        {/* Bottom row */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-10 border-t border-[#1a1a1a] pt-10">
+          <div className="max-w-md">
+            <p className="text-[#666] text-base leading-relaxed">
+              우리는 기술 가치보다 통찰에 집중합니다.<br />
+              AI로 <span className="text-white font-medium">'시간'</span>을 벌고,{' '}
+              <span className="text-white font-medium">'진짜 중요한 것'</span>에 투자하세요.
+            </p>
+            <p className="text-[#333] text-sm mt-3">
+              4월 ~ 7월 · 총 4회차 커리큘럼 · 참가비 무료
+            </p>
+          </div>
 
-        <p className="text-base text-slate-500 mb-12 font-medium">
-          4월 ~ 7월 · 총 4회차 커리큘럼 · 참가비 무료
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-          <a
-            href="/apply"
-            className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black rounded-2xl text-xl hover:bg-purple-500 hover:text-white transition-all duration-300 shadow-2xl shadow-white/10"
-          >
-            1기 크루 지원하기
-          </a>
-          <a
-            href="#curriculum"
-            className="w-full sm:w-auto px-12 py-5 bg-white/5 border border-white/20 text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition-all"
-          >
-            커리큘럼 보기
-          </a>
+          <div className="flex items-center gap-6 shrink-0">
+            <a
+              href="/apply"
+              className="px-8 py-4 bg-white text-black font-bold rounded-full text-sm hover:bg-violet-400 hover:text-white transition-all duration-300"
+            >
+              1기 크루 지원하기
+            </a>
+            <a
+              href="#curriculum"
+              className="text-[#555] hover:text-white transition-colors text-sm flex items-center gap-2"
+            >
+              커리큘럼 보기 <span>↓</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
