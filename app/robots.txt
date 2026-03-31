@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkin
+Disallow: /event-reg
+Disallow: /feedback
+
+Allow: /
+Allow: /about
+Allow: /apply
