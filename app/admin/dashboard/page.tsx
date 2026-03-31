@@ -401,7 +401,7 @@ export default function AdminDashboardPage() {
         {/* 섹션 1 */}
         <section>
           <h2 className="text-xl font-bold text-white mb-1">오늘 행사 분석</h2>
-          <p className="text-slate-500 text-sm mb-5">좌: 전체 출석자 / 우: 생명만</p>
+          <p className="text-slate-500 text-sm mb-5">좌: 전체 출석자 / 우: 일반만</p>
           {s1 ? (
             <div className="space-y-6">
               {[
@@ -418,7 +418,7 @@ export default function AdminDashboardPage() {
                       {type === 'pie' ? <MiniPieChart data={all} /> : <MiniBarChart data={all} />}
                     </div>
                     <div className="bg-slate-800 rounded-xl p-4">
-                      <p className="text-slate-500 text-xs mb-2">생명만</p>
+                      <p className="text-slate-500 text-xs mb-2">일반만</p>
                       {type === 'pie' ? <MiniPieChart data={sm} /> : <MiniBarChart data={sm} color="#34d399" />}
                     </div>
                   </div>
@@ -439,7 +439,7 @@ export default function AdminDashboardPage() {
                 { label: '게스트 출석 인원', value: `${s2.guest_attended}명`, color: 'text-white' },
                 { label: '크루 전환 수', value: `${s2.crew_conversion_count}명`, color: 'text-purple-400' },
                 { label: '크루 전환율', value: `${s2.crew_conversion_rate}%`, color: 'text-purple-400' },
-                { label: '누적 크루(생명)', value: `${s2.total_saengmyung}명`, color: 'text-white' },
+                { label: '누적 크루(일반)', value: `${s2.total_saengmyung}명`, color: 'text-white' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-slate-800 rounded-xl p-5">
                   <p className="text-slate-400 text-sm">{label}</p>
