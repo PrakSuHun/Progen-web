@@ -21,6 +21,14 @@ interface Stats {
   feedback_responses: number
 }
 
+interface EventItem {
+  id: string
+  title: string
+  event_date: string
+  is_mandatory: boolean
+  created_at: string
+}
+
 interface FunnelItem { label: string; value: number; color: string }
 interface SchoolItem { school: string; 신청: number; 출석: number; 출석률: number }
 interface GradeItem { grade: string; 신청: number; 출석: number; 출석률: number }
@@ -42,8 +50,12 @@ export default function AdminDashboardPage() {
   const [dateData, setDateData] = useState<DateItem[]>([])
   const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [events, setEvents] = useState<EventItem[]>([])
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [newEvent, setNewEvent] = useState({ title: '', event_date: '', is_mandatory: false })
+  const [eventLoading, setEventLoading] = useState(false)
 
-  useEffect(() => { fetchAll() }, [])
+  useEffect(() => { fetchAll(); fetchEvents() }, [])
 
   const fetchAll = async () => {
     setLoading(true)
@@ -79,6 +91,34 @@ export default function AdminDashboardPage() {
     router.push('/admin')
   }
 
+  const fetchEvents = async () => {
+    const res = await fetch('/api/admin/events')
+    if (res.ok) { const d = await res.json(); setEvents(d.data || []) }
+  }
+
+  const handleCreateEvent = async () => {
+    if (!newEvent.title || !newEvent.event_date) return
+    setEventLoading(true)
+    try {
+      const res = await fetch('/api/admin/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newEvent),
+      })
+      if (res.ok) {
+        showToast('이벤트가 생성되었습니다', 'success')
+        setShowEventModal(false)
+        setNewEvent({ title: '', event_date: '', is_mandatory: false })
+        fetchEvents()
+        fetchAll()
+      } else {
+        showToast('이벤트 생성 실패', 'error')
+      }
+    } finally {
+      setEventLoading(false)
+    }
+  }
+
   const handleExport = () => {
     window.location.href = '/api/admin/export'
   }
@@ -103,6 +143,7 @@ export default function AdminDashboardPage() {
           <div className="flex gap-3">
             <Button variant="secondary" onClick={fetchAll}>🔄 새로고침</Button>
             <Button variant="secondary" onClick={handleExport}>📥 CSV 내보내기</Button>
+            <Button variant="primary" onClick={() => setShowEventModal(true)}>➕ 이벤트 추가</Button>
             <Button variant="secondary" onClick={handleLogout}>로그아웃</Button>
           </div>
         </div>
@@ -168,12 +209,81 @@ export default function AdminDashboardPage() {
           </>
         )}
 
+        {/* 이벤트 목록 */}
+        <div className="bg-slate-800 p-6 rounded-xl mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">이벤트 목록 <span className="text-sm text-purple-400 font-normal">(최신 이벤트가 자동 활성)</span></h2>
+          {events.length === 0 ? (
+            <p className="text-slate-400">이벤트가 없습니다. 추가해주세요.</p>
+          ) : (
+            <div className="space-y-2">
+              {events.map((e, i) => (
+                <div key={e.id} className={`flex items-center justify-between p-4 rounded-xl border ${i === 0 ? 'border-purple-500/50 bg-purple-500/10' : 'border-white/10 bg-white/5'}`}>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-semibold">{e.title}</span>
+                      {i === 0 && <span className="text-xs px-2 py-0.5 bg-purple-500 text-white rounded-full">활성</span>}
+                      {e.is_mandatory && <span className="text-xs px-2 py-0.5 bg-indigo-500/30 text-indigo-300 rounded-full">필수</span>}
+                    </div>
+                    <p className="text-slate-400 text-sm mt-0.5">{e.event_date ? new Date(e.event_date).toLocaleDateString('ko-KR') : '날짜 없음'}</p>
+                  </div>
+                  <p className="text-slate-500 text-xs font-mono">{e.id.slice(0, 8)}...</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* 출석 명단 */}
         <div className="bg-slate-800 p-6 rounded-xl">
           <h2 className="text-xl font-semibold text-white mb-4">신청자 명단</h2>
           <MembersTable />
         </div>
       </div>
+
+      {/* 이벤트 추가 모달 */}
+      {showEventModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-slate-800 border border-white/10 rounded-2xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-bold text-white mb-6">새 이벤트 추가</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-slate-300 text-sm mb-1 block">이벤트 제목 *</label>
+                <input
+                  type="text"
+                  value={newEvent.title}
+                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                  placeholder="예: PROGEN 1기 2회차 세미나"
+                  className="w-full bg-slate-700 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+              <div>
+                <label className="text-slate-300 text-sm mb-1 block">날짜 *</label>
+                <input
+                  type="datetime-local"
+                  value={newEvent.event_date}
+                  onChange={(e) => setNewEvent({ ...newEvent, event_date: e.target.value })}
+                  className="w-full bg-slate-700 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newEvent.is_mandatory}
+                  onChange={(e) => setNewEvent({ ...newEvent, is_mandatory: e.target.checked })}
+                  className="w-4 h-4 accent-purple-500"
+                />
+                <span className="text-slate-300 text-sm">필수 참석 이벤트</span>
+              </label>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <Button variant="secondary" onClick={() => setShowEventModal(false)} className="flex-1">취소</Button>
+              <Button variant="primary" onClick={handleCreateEvent} disabled={eventLoading} className="flex-1">
+                {eventLoading ? '생성 중...' : '생성하기'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
