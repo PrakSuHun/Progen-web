@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getLatestEventId } from '@/lib/getLatestEventId'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -13,30 +14,23 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = process.env.NEXT_PUBLIC_EVENT_ID
+    const eventId = await getLatestEventId(supabase)
 
-    if (!eventId) {
-      return NextResponse.json({ message: '행사 ID가 설정되지 않았습니다' }, { status: 500 })
-    }
-
-    // 신청자 수 (crew_members participant)
     const { count: applicants } = await supabase
       .from('crew_members')
       .select('*', { count: 'exact', head: true })
       .eq('role', 'participant')
 
-    // 사전 신청자 수
-    const { count: registered } = await supabase
+    const { count: registered } = eventId ? await supabase
       .from('event_registrations')
       .select('*', { count: 'exact', head: true })
-      .eq('event_id', eventId)
+      .eq('event_id', eventId) : { count: 0 }
 
-    // 출석자 수
-    const { count: attended } = await supabase
+    const { count: attended } = eventId ? await supabase
       .from('event_registrations')
       .select('*', { count: 'exact', head: true })
       .eq('event_id', eventId)
-      .eq('status', '출석완료')
+      .eq('status', '출석완료') : { count: 0 }
 
     return NextResponse.json({
       data: [
