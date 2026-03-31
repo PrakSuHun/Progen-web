@@ -22,24 +22,19 @@ export async function GET(request: NextRequest) {
 
     const { data: feedbacks } = await supabase
       .from('feedbacks')
-      .select('score_overall, score_content, score_practice, score_network, good_tags, bad_tags, good_points, bad_points')
+      .select('good_tags, bad_tags, good_points, bad_points, would_return, join_interest')
       .eq('event_id', eventId)
 
     if (!feedbacks || feedbacks.length === 0) {
       return NextResponse.json({
-        avg_overall: 0,
-        avg_content: 0,
-        avg_practice: 0,
-        avg_network: 0,
         good_tags: [],
         bad_tags: [],
         responses: [],
+        would_return_count: 0,
+        join_interest_count: 0,
+        total: 0,
       })
     }
-
-    const count = feedbacks.length
-    const avg = (key: keyof typeof feedbacks[0]) =>
-      feedbacks.reduce((sum, f) => sum + (Number(f[key]) || 0), 0) / count
 
     // 태그 빈도 집계
     const goodTagCount: Record<string, number> = {}
@@ -60,10 +55,9 @@ export async function GET(request: NextRequest) {
         .sort((a, b) => b.count - a.count)
 
     return NextResponse.json({
-      avg_overall: avg('score_overall'),
-      avg_content: avg('score_content'),
-      avg_practice: avg('score_practice'),
-      avg_network: avg('score_network'),
+      total: feedbacks.length,
+      would_return_count: feedbacks.filter((f) => f.would_return).length,
+      join_interest_count: feedbacks.filter((f) => f.join_interest).length,
       good_tags: toSortedArray(goodTagCount),
       bad_tags: toSortedArray(badTagCount),
       responses: feedbacks.map((f) => ({

@@ -123,19 +123,15 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 |------|------|------|
 | id | UUID (PK) | 자동 생성 |
 | event_id | UUID (FK → events) | 어느 행사인지 |
-| crew_id | UUID (FK → crew_members) | 크루면 연결 |
-| guest_id | UUID (FK → guests) | 게스트면 연결 |
-| score_overall | SMALLINT (1~5) | 전반적 만족도 |
-| score_content | SMALLINT (1~5) | 강의 내용 만족도 |
-| score_practice | SMALLINT (1~5) | 실습 경험 만족도 |
-| score_network | SMALLINT (1~5) | 네트워킹 만족도 |
-| good_tags | TEXT[] | 좋았던 점 태그 |
-| good_points | TEXT | 좋았던 점 자유 의견 |
-| bad_tags | TEXT[] | 아쉬운 점 태그 |
-| bad_points | TEXT | 아쉬운 점 자유 의견 |
+| good_tags | TEXT[] | 좋았던 점 태그 (선택) |
+| good_points | TEXT | 좋았던 점 자유 의견 (필수) |
+| bad_tags | TEXT[] | 아쉬운 점 태그 (선택) |
+| bad_points | TEXT | 아쉬운 점 자유 의견 (필수) |
 | would_return | BOOLEAN | 다음에도 참여 의향 |
 | join_interest | BOOLEAN | PROGEN 가입 관심 |
 | created_at | TIMESTAMPTZ | 제출일 |
+
+> **익명 제출**: crew_id, guest_id, score 컬럼 모두 제거. 개인정보 미수집.
 
 ---
 

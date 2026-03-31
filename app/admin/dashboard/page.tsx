@@ -9,7 +9,6 @@ import { SchoolChart } from '@/components/dashboard/SchoolChart'
 import { GradeChart } from '@/components/dashboard/GradeChart'
 import { PathChart } from '@/components/dashboard/PathChart'
 import { DateChart } from '@/components/dashboard/DateChart'
-import { FeedbackRadar } from '@/components/dashboard/FeedbackRadar'
 import { FeedbackTagChart } from '@/components/dashboard/FeedbackTagChart'
 import { MembersTable } from '@/components/dashboard/MembersTable'
 import { showToast } from '@/components/Toast'
@@ -27,9 +26,12 @@ interface GradeItem { grade: string; 신청: number; 출석: number; 출석률: 
 interface PathItem { path: string; count: number }
 interface DateItem { date: string; 신청: number; 출석: number }
 interface FeedbackStats {
-  avg_overall: number; avg_content: number; avg_practice: number; avg_network: number
+  total: number
+  would_return_count: number
+  join_interest_count: number
   good_tags: { tag: string; count: number }[]
   bad_tags: { tag: string; count: number }[]
+  responses: { good_points: string; bad_points: string }[]
 }
 
 export default function AdminDashboardPage() {
@@ -148,16 +150,6 @@ export default function AdminDashboardPage() {
         {/* 피드백 분석 */}
         {feedbackStats && (
           <>
-            <div className="bg-slate-800 p-6 rounded-xl mb-8">
-              <h2 className="text-xl font-semibold text-white mb-4">만족도 레이더</h2>
-              <FeedbackRadar
-                score_overall={feedbackStats.avg_overall}
-                score_content={feedbackStats.avg_content}
-                score_practice={feedbackStats.avg_practice}
-                score_network={feedbackStats.avg_network}
-              />
-            </div>
-
             <div className="bg-slate-800 p-6 rounded-xl mb-8">
               <h2 className="text-xl font-semibold text-white mb-4">피드백 태그 분석</h2>
               <FeedbackTagChart
