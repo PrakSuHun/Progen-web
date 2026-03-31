@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       // Find and update registration
       const { data: registrations, error: findError } = await supabase
         .from('event_registrations')
-        .select('id')
+        .select('id, status')
         .eq('event_id', eventId)
         .or(crewId ? `crew_id.eq.${crewId}` : `guest_id.eq.${guestId}`)
         .single()
@@ -135,6 +135,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           { message: '사전 신청 정보를 찾을 수 없습니다' },
           { status: 404 }
+        )
+      }
+
+      if (registrations.status === '출석완료') {
+        return NextResponse.json(
+          { message: '이미 출석체크되었습니다', name },
+          { status: 409 }
         )
       }
 

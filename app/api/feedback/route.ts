@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       join_interest,
     } = body
 
-    if (!name || !phone || !score_overall) {
+    if (!name || !phone || !score_overall || !score_content || !score_practice || !score_network) {
       return NextResponse.json(
         { message: '필수 항목을 입력해주세요' },
         { status: 400 }

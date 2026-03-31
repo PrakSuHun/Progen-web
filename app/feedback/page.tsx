@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
@@ -28,6 +29,7 @@ interface FeedbackData {
 }
 
 export default function FeedbackPage() {
+  const router = useRouter()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FeedbackData>({
@@ -100,7 +102,7 @@ export default function FeedbackPage() {
       })
 
       if (response.ok) {
-        setStep(8) // Complete step
+        setStep(7) // Complete step
         showToast('피드백이 저장되었습니다!', 'success')
       } else if (response.status === 409) {
         showToast('이미 피드백을 제출하셨습니다', 'error')
@@ -296,7 +298,7 @@ export default function FeedbackPage() {
         )}
 
         {/* Step 7: Complete */}
-        {step === 8 && (
+        {step === 7 && (
           <div className="bg-slate-800 p-8 rounded-lg text-center space-y-6">
             <h2 className="text-3xl font-bold text-white">감사합니다! 🎉</h2>
             <p className="text-slate-300">
@@ -307,13 +309,13 @@ export default function FeedbackPage() {
                 <p className="text-purple-300">
                   PROGEN 단체에 관심을 가져주셨습니다!
                 </p>
-                <Button variant="primary" className="mt-4 w-full">
+                <Button variant="primary" className="mt-4 w-full" onClick={() => router.push('/apply')}>
                   지원하러 가기
                 </Button>
               </div>
             )}
             <Button
-              onClick={() => (window.location.href = '/')}
+              onClick={() => router.push('/')}
               className="w-full"
             >
               홈으로 돌아가기
