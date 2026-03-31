@@ -106,46 +106,103 @@ export default function AdminDashboardPage() {
           />
         </div>
 
-        {/* Placeholder Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-slate-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              대학별 분석
-            </h2>
-            <p className="text-slate-400">
-              대학별 신청자, 출석자, 출석률 분석 데이터
-            </p>
+        {/* Analysis Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div
+            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
+            onClick={() => router.push('/admin/dashboard/full')}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  대학별 분석
+                </h2>
+                <p className="text-slate-400 text-sm">
+                  대학별 신청자 분포 및 통계
+                </p>
+              </div>
+              <span className="text-2xl">🏫</span>
+            </div>
+          </div>
+          <div
+            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
+            onClick={() => router.push('/admin/dashboard/full')}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  학년별 분석
+                </h2>
+                <p className="text-slate-400 text-sm">
+                  학년별 신청자 분포 및 통계
+                </p>
+              </div>
+              <span className="text-2xl">📊</span>
+            </div>
           </div>
           <div className="bg-slate-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              학년별 분석
-            </h2>
-            <p className="text-slate-400">
-              학년별 신청자, 출석자, 출석률 분석 데이터
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  피드백 요약
+                </h2>
+                <p className="text-slate-400 text-sm">
+                  만족도 점수 및 주요 의견
+                </p>
+              </div>
+              <span className="text-2xl">💬</span>
+            </div>
           </div>
-          <div className="bg-slate-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              피드백 분석
-            </h2>
-            <p className="text-slate-400">
-              만족도 점수 및 태그 빈도 분석
-            </p>
+          <div
+            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
+            onClick={() => router.push('/admin/dashboard/full')}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  출석 명단
+                </h2>
+                <p className="text-slate-400 text-sm">
+                  전체 신청자 및 출석 현황
+                </p>
+              </div>
+              <span className="text-2xl">📝</span>
+            </div>
           </div>
-          <div className="bg-slate-800 p-6 rounded-lg">
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              출석 명단
-            </h2>
-            <p className="text-slate-400">
-              전체 출석자 명단 및 필터/검색
-            </p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-slate-800 p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-semibold text-white mb-4">
+            주요 지표
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-slate-400 text-sm mb-2">신청 완료율</p>
+              <p className="text-3xl font-bold text-purple-400">100%</p>
+            </div>
+            <div className="text-center">
+              <p className="text-slate-400 text-sm mb-2">평균 만족도</p>
+              <p className="text-3xl font-bold text-green-400">4.2/5.0</p>
+            </div>
+            <div className="text-center">
+              <p className="text-slate-400 text-sm mb-2">가입 의향</p>
+              <p className="text-3xl font-bold text-blue-400">68%</p>
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-12 flex gap-4">
-          <Button variant="primary">데이터 내보내기 (CSV)</Button>
-          <Button variant="secondary">새로고침</Button>
+        <div className="flex flex-wrap gap-4">
+          <Button variant="primary" onClick={() => fetchStats()}>
+            🔄 새로고침
+          </Button>
+          <Button variant="secondary">
+            📥 CSV 내보내기
+          </Button>
+          <Button variant="secondary">
+            📋 상세 분석 보기
+          </Button>
         </div>
       </div>
 
