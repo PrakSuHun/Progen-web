@@ -14,7 +14,7 @@ export function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-400" />
           </span>
-          2026 대학생 실전 AI툴 강의 (PROGEN 주최)
+          대전 유일무이 대학생 AI 활용 단체 · PROGEN 1기 크루 모집 중
         </div>
 
         <h1 className="text-5xl sm:text-6xl md:text-8xl font-black mb-10 leading-tight tracking-tight text-white">
@@ -24,10 +24,14 @@ export function HeroSection() {
           </span>
         </h1>
 
-        <p className="text-lg md:text-2xl text-slate-300 mb-14 font-medium leading-relaxed max-w-4xl mx-auto">
+        <p className="text-lg md:text-2xl text-slate-300 mb-6 font-medium leading-relaxed max-w-4xl mx-auto">
           AI에게 대체될 것인가, AI를 리드할 것인가.<br />
           AI로 <span className="text-white font-bold">&apos;시간&apos;</span>을 벌고{' '}
           <span className="text-white font-bold italic">&apos;진짜 중요한 것&apos;</span>에 투자하는 법
+        </p>
+
+        <p className="text-base text-slate-500 mb-12 font-medium">
+          4월 ~ 7월 · 총 4회차 커리큘럼 · 참가비 무료
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
@@ -35,13 +39,13 @@ export function HeroSection() {
             href="/apply"
             className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black rounded-2xl text-xl hover:bg-purple-500 hover:text-white transition-all duration-300 shadow-2xl shadow-white/10"
           >
-            지금 바로 참여하기
+            1기 크루 지원하기
           </a>
           <a
-            href="#about"
+            href="#curriculum"
             className="w-full sm:w-auto px-12 py-5 bg-white/5 border border-white/20 text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition-all"
           >
-            단체 소개 보기
+            커리큘럼 보기
           </a>
         </div>
       </div>

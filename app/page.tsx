@@ -3,6 +3,7 @@ import { Footer } from '@/components/layout/Footer'
 import { HeroSection } from '@/components/home/HeroSection'
 import { NumbersSection } from '@/components/home/NumbersSection'
 import { AboutSection } from '@/components/home/AboutSection'
+import { CurriculumSection } from '@/components/home/CurriculumSection'
 import { ActivitiesSection } from '@/components/home/ActivitiesSection'
 import { CtaBanner } from '@/components/home/CtaBanner'
 
@@ -13,6 +14,7 @@ export default function Home() {
       <HeroSection />
       <NumbersSection />
       <AboutSection />
+      <CurriculumSection />
       <ActivitiesSection />
       <CtaBanner />
       <Footer />
