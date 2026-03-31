@@ -49,8 +49,12 @@ export function NumbersSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 text-center">
           <div>
-            <Counter target={4} suffix="회" />
-            <div className="text-slate-400 mt-3 font-medium">1기 커리큘럼</div>
+            <div className="text-5xl font-black text-purple-400">1.4억</div>
+            <div className="text-slate-400 mt-3 font-medium">대표 누적 매출</div>
+          </div>
+          <div>
+            <div className="text-5xl font-black text-purple-400">1억</div>
+            <div className="text-slate-400 mt-3 font-medium">정부지원금 유치</div>
           </div>
           <div>
             <Counter target={100} suffix="명+" />
@@ -59,10 +63,6 @@ export function NumbersSection() {
           <div>
             <Counter target={95} suffix="%" />
             <div className="text-slate-400 mt-3 font-medium">참가자 만족도</div>
-          </div>
-          <div>
-            <Counter target={5} suffix="년차" />
-            <div className="text-slate-400 mt-3 font-medium">대표 창업 경력</div>
           </div>
         </div>
       </div>

@@ -1,76 +1,98 @@
 export function AboutSection() {
-  const values = [
+  const missions = [
     {
-      icon: '🤖',
-      title: '직접 써보는 AI',
-      desc: 'AI를 배우기 위해 유튜브 강의 보고 끝나는 곳이 아닙니다. AI를 직접 써보고, 만들어보며, 실제로 써먹는 크루입니다.',
-      color: 'bg-purple-500/10 text-purple-400',
+      icon: '🔥',
+      title: 'AI 생존 전략',
+      desc: '모든 일자리가 위협받는 시대, AI에게 대체되는 것이 아니라 AI를 다루는 법을 배웁니다.',
+      color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
     },
     {
-      icon: '⚡',
-      title: '압도적인 시간 단축',
-      desc: '남들 3시간 걸릴 레포트를 30분 만에. 시험범위 정리, PPT 자동화, 수업 녹음 → 노트까지 AI로 한번에 해결합니다.',
-      color: 'bg-indigo-500/10 text-indigo-400',
+      icon: '🌍',
+      title: '지역 기반 혁신',
+      desc: '대전 지역 대학생들이 모여 지역 사회와 기업의 문제를 AI로 직접 해결합니다.',
+      color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
     },
     {
-      icon: '💰',
-      title: '실전 수익 창출',
-      desc: 'AI로 영상·음악·굿즈를 만들어 플리마켓에 직접 판매합니다. 방학에 알바 말고 AI로 수익 구조를 만드는 경험.',
-      color: 'bg-emerald-500/10 text-emerald-400',
+      icon: '💼',
+      title: '실전형 스펙',
+      desc: '단순 학습(Study)을 넘어, 이력서에 바로 쓸 수 있는 프로젝트 결과물(Output)을 만듭니다.',
+      color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     },
   ]
 
   return (
     <section id="about" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
+
         {/* 헤더 */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <p className="text-purple-400 font-bold tracking-widest text-sm uppercase mb-3">
             What is PROGEN?
           </p>
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-            AI를 도구로{' '}
+            AI 시대를 생존하는{' '}
             <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-              대학생의 실전 경쟁력
+              가장 확실한 방법
             </span>
-            을 만드는 크루
           </h2>
           <p className="text-slate-400 text-lg leading-relaxed">
-            대전에서는 유일무이한 대학생 AI 활용 단체입니다.<br />
-            누구나 쉽게 접근할 수 있는 AI 커뮤니티를 지향합니다.
+            대전 지역 대학생 혁신 네트워크 PROGEN은<br />
+            AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 &lsquo;실전 무기&rsquo;로 만듭니다.
           </p>
         </div>
 
-        {/* 가치 카드 */}
+        {/* 미션 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          {values.map((v) => (
+          {missions.map((m) => (
             <div
-              key={v.title}
-              className="bg-slate-800/50 border border-white/10 p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300"
+              key={m.title}
+              className={`border ${m.color} bg-slate-800/50 p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-300`}
             >
-              <div className={`w-14 h-14 rounded-full ${v.color} flex items-center justify-center text-2xl mb-6`}>
-                {v.icon}
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4">{v.title}</h3>
-              <p className="text-slate-400 leading-relaxed">{v.desc}</p>
+              <div className="text-4xl mb-5">{m.icon}</div>
+              <h3 className="text-xl font-bold text-white mb-3">{m.title}</h3>
+              <p className="text-slate-400 leading-relaxed text-sm">{m.desc}</p>
             </div>
           ))}
         </div>
 
-        {/* 설립 계기 */}
+        {/* 대표 소개 */}
         <div className="bg-slate-800/40 border border-white/10 rounded-3xl p-8 md:p-12 mb-20">
-          <p className="text-purple-400 font-bold tracking-widest text-sm uppercase mb-4">설립 계기</p>
-          <blockquote className="text-2xl md:text-3xl font-black text-white leading-snug mb-6">
-            &ldquo;이건 혼자 알 게 아니라,<br />
-            <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-              우리 대학생들이 반드시 가져야 할 생존 무기다.
-            </span>&rdquo;
-          </blockquote>
-          <p className="text-slate-400 text-lg leading-relaxed max-w-3xl">
-            PROGEN 대표는 창업 5년차이자 충남대 재학생입니다. 창업동아리 회장을 맡으며 늘 시간에 쫓겼지만,
-            AI를 적극 활용한 이후 레포트를 30분 만에 끝내고 교수님께 &ldquo;인사이트가 훌륭하다&rdquo;는 칭찬을 들었습니다.
-            대학을 다니며 누적 매출 1억 5천만 원, 전액 장학금까지. 이 경험이 PROGEN의 출발점입니다.
-          </p>
+          <p className="text-purple-400 font-bold tracking-widest text-sm uppercase mb-8">Founder</p>
+          <div className="flex flex-col md:flex-row gap-10">
+            {/* 프로필 */}
+            <div className="flex-shrink-0">
+              <div className="w-20 h-20 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-3xl font-black text-purple-400 mb-4">
+                박
+              </div>
+              <p className="text-white font-black text-lg">박수훈</p>
+              <p className="text-slate-500 text-sm">Park Su-hun</p>
+              <p className="text-slate-500 text-sm mt-1">Founder &amp; President</p>
+            </div>
+            {/* 내용 */}
+            <div className="flex-1">
+              <div className="flex flex-wrap gap-2 mb-5">
+                {[
+                  '충남대 자율운항시스템공학과 4학년',
+                  '인스피릿(Inspirit) 대표이사',
+                  '누적 매출 1.4억',
+                  '정부지원금 1억 유치',
+                  '골드칼라 공학도상',
+                  '청년창업사관학교 졸업',
+                ].map((tag) => (
+                  <span key={tag} className="px-3 py-1 bg-white/5 border border-white/10 text-slate-300 text-xs rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <blockquote className="text-slate-300 text-base leading-relaxed">
+                &ldquo;저 역시 여러분과 똑같은 캠퍼스에서 내일을 고민하는 4학년 대학생입니다.
+                2021년 창업 이후 1.4억 원의 누적 매출과 1억 원의 지원금을 유치하며 깨달은 것은,
+                결국 <span className="text-white font-bold">&lsquo;실행력&rsquo;과 &lsquo;도구의 활용&rsquo;</span>이 생존의 핵심이라는 점이었습니다.
+                제가 먼저 겪은 시행착오와 노하우를 혼자만의 자산으로 남기지 않고,
+                PROGEN 동료들과 아낌없이 나누려 합니다.&rdquo;
+              </blockquote>
+            </div>
+          </div>
         </div>
 
         {/* 수강 대상 */}
@@ -81,10 +103,10 @@ export function AboutSection() {
           </div>
           <div className="max-w-3xl mx-auto space-y-4">
             {[
+              'AI를 배우고 싶지만 어디서부터 시작해야 할지 막막한 대학생',
               'ChatGPT를 써봤지만 원하는 답변을 못 얻고 시간만 낭비한 분',
-              '남들 3시간 걸리는 레포트를 더 빠르고 잘 끝내고 싶은 분',
-              'AI를 활용해 실제로 수익 구조를 만들어보고 싶은 분',
-              '단순한 강의가 아니라 함께 성장할 동료와 커뮤니티를 원하는 분',
+              '나만의 실전 프로젝트를 만들어 이력서에 남기고 싶은 분',
+              '단순한 강의가 아니라 함께 성장할 동료와 네트워크를 원하는 분',
             ].map((text, i) => (
               <div
                 key={i}
