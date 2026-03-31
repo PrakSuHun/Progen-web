@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getLatestEventId } from '@/lib/getLatestEventId'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -13,10 +14,10 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = process.env.NEXT_PUBLIC_EVENT_ID
+    const eventId = await getLatestEventId(supabase)
 
     if (!eventId) {
-      return NextResponse.json({ message: '행사 ID가 설정되지 않았습니다' }, { status: 500 })
+      return NextResponse.json({ avg_overall: 0, avg_content: 0, avg_practice: 0, avg_network: 0, good_tags: [], bad_tags: [], responses: [] })
     }
 
     const { data: feedbacks } = await supabase
@@ -25,38 +26,22 @@ export async function GET(request: NextRequest) {
       .eq('event_id', eventId)
 
     if (!feedbacks || feedbacks.length === 0) {
-      return NextResponse.json({
-        avg_overall: 0,
-        avg_content: 0,
-        avg_practice: 0,
-        avg_network: 0,
-        good_tags: [],
-        bad_tags: [],
-        responses: [],
-      })
+      return NextResponse.json({ avg_overall: 0, avg_content: 0, avg_practice: 0, avg_network: 0, good_tags: [], bad_tags: [], responses: [] })
     }
 
     const count = feedbacks.length
     const avg = (key: keyof typeof feedbacks[0]) =>
       feedbacks.reduce((sum, f) => sum + (Number(f[key]) || 0), 0) / count
 
-    // 태그 빈도 집계
     const goodTagCount: Record<string, number> = {}
     const badTagCount: Record<string, number> = {}
-
     for (const f of feedbacks) {
-      if (Array.isArray(f.good_tags)) {
-        for (const tag of f.good_tags) goodTagCount[tag] = (goodTagCount[tag] || 0) + 1
-      }
-      if (Array.isArray(f.bad_tags)) {
-        for (const tag of f.bad_tags) badTagCount[tag] = (badTagCount[tag] || 0) + 1
-      }
+      if (Array.isArray(f.good_tags)) for (const tag of f.good_tags) goodTagCount[tag] = (goodTagCount[tag] || 0) + 1
+      if (Array.isArray(f.bad_tags)) for (const tag of f.bad_tags) badTagCount[tag] = (badTagCount[tag] || 0) + 1
     }
 
     const toSortedArray = (map: Record<string, number>) =>
-      Object.entries(map)
-        .map(([tag, count]) => ({ tag, count }))
-        .sort((a, b) => b.count - a.count)
+      Object.entries(map).map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count)
 
     return NextResponse.json({
       avg_overall: avg('score_overall'),
@@ -65,10 +50,7 @@ export async function GET(request: NextRequest) {
       avg_network: avg('score_network'),
       good_tags: toSortedArray(goodTagCount),
       bad_tags: toSortedArray(badTagCount),
-      responses: feedbacks.map((f) => ({
-        good_points: f.good_points,
-        bad_points: f.bad_points,
-      })),
+      responses: feedbacks.map((f) => ({ good_points: f.good_points, bad_points: f.bad_points })),
     })
   } catch (error) {
     console.error('Feedback admin error:', error)
