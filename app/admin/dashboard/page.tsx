@@ -422,8 +422,15 @@ export default function AdminDashboardPage() {
     const arrived = data?.checked_in_count ?? 0
     const missing = Math.max(0, pre - arrived)
 
-    const allCheckedIn = [...(data?.unassigned ?? []), ...Object.values(data?.assigned ?? {}).flat()]
-    const notArrived = data?.not_arrived ?? []
+    const assignedAll = Object.values(data?.assigned ?? {}).flat()
+    const allCheckedIn = [
+      ...(data?.unassigned ?? []),
+      ...assignedAll.filter((p) => p.status === '출석완료'),
+    ]
+    const notArrived = [
+      ...(data?.not_arrived ?? []),
+      ...assignedAll.filter((p) => p.status === '사전신청'),
+    ]
 
     const q = searchQuery.toLowerCase()
     const filteredCheckedIn = sortAttendees(
