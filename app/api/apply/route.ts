@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createAdminClient()
+    const supabase = createAdminClient()
 
     // Check for duplicate by phone
     const { data: existing } = await supabase

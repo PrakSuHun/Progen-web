@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = await createAdminClient()
+    const supabase = createAdminClient()
 
     // Get grade stats
     const { data, error } = await supabase

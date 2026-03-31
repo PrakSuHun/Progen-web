@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createAdminClient()
+    const supabase = createAdminClient()
     const eventId = process.env.NEXT_PUBLIC_EVENT_ID
 
     if (!eventId) {
