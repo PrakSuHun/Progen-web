@@ -239,9 +239,9 @@ export default function ApplyPage() {
       >
         <p className="text-slate-300 mb-2">지원해주셔서 감사합니다!</p>
         <p className="text-slate-400 text-sm mb-6">
-          선발 결과는 개별 안내드릴 예정이에요.
+          지원과 동시에 크루 확정이에요.
           <br />
-          그 전에 카카오톡 오픈채팅에서 먼저 만나요!
+          아래 링크로 카카오톡 팀 채팅방에 바로 입장해주세요!
         </p>
         <a
           href="https://invite.kakao.com/tc/Y2VGimsEqA"
@@ -249,7 +249,7 @@ export default function ApplyPage() {
           rel="noopener noreferrer"
           className="block w-full text-center bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-semibold px-6 py-3 rounded-lg transition-colors mb-3"
         >
-          카카오톡 채널 참여하기
+          카카오톡 팀 채팅방 입장하기
         </a>
         <button
           onClick={() => {

@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, phone, age, school, major, walkin } = body
+    const { name, phone, age, school, grade, major, path, project, gender, motivation, walkin } = body
 
     if (!name || !phone || !age) {
       return NextResponse.json(
@@ -49,7 +49,12 @@ export async function POST(request: NextRequest) {
               phone,
               age,
               school: school || null,
+              grade: grade || null,
               major: major || null,
+              path: path || null,
+              project: project || null,
+              gender: gender || null,
+              motivation: motivation || null,
             },
             { onConflict: 'phone' }
           )

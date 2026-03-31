@@ -73,6 +73,21 @@ export async function POST(request: NextRequest) {
       guestId = guest.id
     }
 
+    // 중복 신청 명시적 체크
+    const { data: existing } = await supabase
+      .from('event_registrations')
+      .select('id')
+      .eq('event_id', eventId)
+      .eq(crewId ? 'crew_id' : 'guest_id', (crewId || guestId) as string)
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json(
+        { message: '이미 신청하셨습니다' },
+        { status: 409 }
+      )
+    }
+
     // Insert event registration
     const { data, error } = await supabase
       .from('event_registrations')
@@ -87,12 +102,6 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      if (error.code === '23505') {
-        return NextResponse.json(
-          { message: '이미 신청하셨습니다' },
-          { status: 409 }
-        )
-      }
       throw error
     }
 

@@ -188,7 +188,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 2. `POST /api/apply` 호출
 3. 서버: 연락처(phone)로 중복 확인 → 이미 있으면 409
 4. 새 레코드를 `crew_members`에 삽입 (role='participant', status='지원완료')
-5. 성공 → 완료 모달 표시 (카카오톡 오픈채팅 초대 링크 버튼 포함: https://invite.kakao.com/tc/Y2VGimsEqA) → 닫으면 홈으로 이동
+5. 성공 → 완료 모달 표시 (별도 선발 없음, 지원 즉시 크루 확정 → 카카오톡 팀 채팅방 입장 안내 버튼: https://invite.kakao.com/tc/Y2VGimsEqA) → 닫으면 홈으로 이동
 6. 중복(409) → Toast 대신 중앙 모달 표시 (문의하기 버튼: https://open.kakao.com/o/sQqCopki)
 
 ---
@@ -205,7 +205,8 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 - **크루**: `crew_members`에서 이름+연락처로 조회 → 없으면 404 ("먼저 지원해주세요")
 - **게스트**: `guests`에 upsert (연락처 기준, 전체 필드 저장) → 자동 등록
 - 공통: `event_registrations`에 `status='사전신청'`으로 삽입
-- 이미 신청한 경우 409
+- 이미 신청한 경우 409 → 중앙 Modal 표시 (문의하기 버튼: https://open.kakao.com/o/sQqCopki)
+- 중복 체크: DB 제약 의존 대신 insert 전 명시적으로 조회하여 확인
 - 성공 → 완료 팝업 Modal 표시 후 닫으면 폼 초기화
 
 **게스트 데이터 목적**: 유입 경로 분석, 크루 전환율 추적, 홍보 채널 효과 측정
@@ -226,9 +227,14 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 
 **경로 B: 현장 등록 (walk-in)**
 - 사전 신청자 조회 실패(404) 시 자동으로 현장 등록 폼 표시
-- 이름 + 연락처 + 나이 + 학교 + 전공 추가 입력
+- 지원서와 동일한 10개 필드 (이름, 연락처, 학교, 학년, 나이, 전공, 경로, 관심프로젝트, 성별, 참여동기)
 - `POST /api/checkin` (walkin: true)
-- 서버: crew 조회 실패 시 `guests`에 upsert → `event_registrations`에 status='출석완료'로 즉시 삽입
+- 서버: crew 조회 실패 시 `guests`에 upsert (전체 필드) → `event_registrations`에 status='출석완료'로 즉시 삽입
+
+**팝업 처리**:
+- 성공 → 중앙 Modal ("OOO님 출석 완료!")
+- 중복 출석 (409) → 중앙 Modal ("이미 출석하셨어요")
+- 404 → walk-in 폼 표시 (Toast 없음)
 
 > **중요**: 크루도 사전 신청 없이 당일 현장 walk-in 출석 가능 (출석 인정)
 > **QR 코드 방식**: `/checkin` URL을 외부 QR 생성 도구로 인쇄하여 현장 비치

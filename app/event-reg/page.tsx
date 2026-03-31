@@ -50,6 +50,7 @@ export default function EventRegPage() {
 
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [showDuplicate, setShowDuplicate] = useState(false)
   const [crewErrors, setCrewErrors] = useState<Partial<CrewFormData>>({})
   const [guestErrors, setGuestErrors] = useState<Partial<GuestFormData>>({})
 
@@ -120,7 +121,7 @@ export default function EventRegPage() {
       } else if (response.status === 404) {
         showToast('크루 정보를 찾을 수 없습니다. 먼저 지원해주세요.', 'error')
       } else if (response.status === 409) {
-        showToast('이미 신청하셨습니다', 'error')
+        setShowDuplicate(true)
       } else {
         showToast(data.message || '신청 중 오류가 발생했습니다', 'error')
       }
@@ -318,6 +319,32 @@ export default function EventRegPage() {
           className="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
         >
           확인
+        </button>
+      </Modal>
+
+      {/* Duplicate Modal */}
+      <Modal
+        isOpen={showDuplicate}
+        onClose={() => setShowDuplicate(false)}
+        title="이미 신청하셨어요"
+      >
+        <p className="text-slate-300 mb-2">이미 이번 행사에 신청하셨어요.</p>
+        <p className="text-slate-400 text-sm mb-6">
+          문제가 있으시면 아래 버튼으로 문의해주세요.
+        </p>
+        <a
+          href="https://open.kakao.com/o/sQqCopki"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full text-center bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors mb-3"
+        >
+          문의하기
+        </a>
+        <button
+          onClick={() => setShowDuplicate(false)}
+          className="block w-full text-center text-slate-400 hover:text-white text-sm transition-colors"
+        >
+          닫기
         </button>
       </Modal>
 
