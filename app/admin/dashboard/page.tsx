@@ -181,7 +181,10 @@ export default function AdminDashboardPage() {
   const [fullStats, setFullStats] = useState<FullStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [autoMatchLoading, setAutoMatchLoading] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
+  // 세션 중 생성된 팀 이름 추적 — fetchAll 후에도 빈 팀 카드 유지
+  const knownTeamsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => { fetchAll() }, [])
 
@@ -193,7 +196,20 @@ export default function AdminDashboardPage() {
         fetch('/api/admin/full-stats'),
       ])
       if (dashRes.status === 401) { router.push('/admin'); return }
-      if (dashRes.ok) setData(await dashRes.json())
+      if (dashRes.ok) {
+        const newData: DashboardData = await dashRes.json()
+        // 새 팀 이름을 knownTeams에 등록
+        for (const name of Object.keys(newData.assigned)) {
+          knownTeamsRef.current.add(name)
+        }
+        // 세션 중 생성된 빈 팀 카드 복원
+        for (const name of knownTeamsRef.current) {
+          if (!newData.assigned[name]) {
+            newData.assigned[name] = []
+          }
+        }
+        setData(newData)
+      }
       if (statsRes.ok) setFullStats(await statsRes.json())
     } catch {
       showToast('데이터를 불러올 수 없습니다', 'error')
@@ -237,6 +253,7 @@ export default function AdminDashboardPage() {
       }
       return { ...prev, unassigned: newUnassigned, assigned: newAssigned }
     })
+    if (targetTeam) knownTeamsRef.current.add(targetTeam)
     assignTeam(person.registration_id, targetTeam)
   }
 
@@ -244,7 +261,9 @@ export default function AdminDashboardPage() {
     if (!data) return
     const nums = Object.keys(data.assigned).map((n) => parseInt(n)).filter(Boolean)
     const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
-    handleDrop(`${next}팀`)
+    const newTeamName = `${next}팀`
+    knownTeamsRef.current.add(newTeamName)
+    handleDrop(newTeamName)
   }
 
   const handleRenameTeam = (oldName: string, newName: string) => {
@@ -263,12 +282,33 @@ export default function AdminDashboardPage() {
   const handleAutoMatch = async () => {
     setAutoMatchLoading(true)
     try {
-      const res = await fetch('/api/admin/auto-match', { method: 'POST' })
+      const allTeamNums = [...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n))
+      const clientMaxTeam = allTeamNums.length > 0 ? Math.max(...allTeamNums) : 0
+      const res = await fetch('/api/admin/auto-match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientMaxTeam }),
+      })
       const d = await res.json()
       if (res.ok) { showToast('자동 매칭 완료!', 'success'); await fetchAll() }
       else showToast(d.message || '오류 발생', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
     finally { setAutoMatchLoading(false) }
+  }
+
+  const handleReset = async () => {
+    if (!confirm('모든 팀 배정을 초기화하시겠습니까?')) return
+    setResetLoading(true)
+    try {
+      const res = await fetch('/api/admin/reset-teams', { method: 'POST' })
+      const d = await res.json()
+      if (res.ok) {
+        knownTeamsRef.current.clear()
+        showToast('팀 배정이 초기화되었습니다', 'success')
+        await fetchAll()
+      } else showToast(d.message || '오류 발생', 'error')
+    } catch { showToast('오류가 발생했습니다', 'error') }
+    finally { setResetLoading(false) }
   }
 
   // ── Tab 1: 출석체크 ──
@@ -354,7 +394,14 @@ export default function AdminDashboardPage() {
               <p className="text-slate-500 text-sm text-center pt-8">출석자가 없습니다</p>
             )}
           </div>
-          <div className="p-3 border-t border-slate-700">
+          <div className="p-3 border-t border-slate-700 space-y-2">
+            <button
+              onClick={handleReset}
+              disabled={resetLoading}
+              className="w-full py-2 bg-slate-700 hover:bg-red-900 disabled:opacity-50 text-slate-300 hover:text-red-300 text-sm font-semibold rounded-lg transition-colors border border-slate-600 hover:border-red-700"
+            >
+              {resetLoading ? '초기화 중...' : '팀 배정 초기화'}
+            </button>
             <button
               onClick={handleAutoMatch}
               disabled={autoMatchLoading || unassigned.length === 0}

@@ -96,19 +96,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
-    // 기존 팀 최대 번호 파악 (충돌 방지)
+    // 기존 팀 최대 번호 파악 (DB + 클라이언트 전달값 중 큰 값 사용)
+    const body = await request.json().catch(() => ({}))
+    const clientMaxTeam = typeof body.clientMaxTeam === 'number' ? body.clientMaxTeam : 0
+
     const { data: existing } = await supabase
       .from('event_registrations')
       .select('team_name')
       .eq('event_id', eventId)
       .not('team_name', 'is', null)
 
-    const maxTeamNum = (existing ?? []).reduce((max, r) => {
+    const dbMaxTeam = (existing ?? []).reduce((max, r) => {
       const n = parseInt(r.team_name ?? '0')
       return isNaN(n) ? max : Math.max(max, n)
     }, 0)
 
-    const startTeamNum = maxTeamNum + 1
+    const startTeamNum = Math.max(dbMaxTeam, clientMaxTeam) + 1
 
     // 미배정 출석자만
     const { data: registrations, error } = await supabase
