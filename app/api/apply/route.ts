@@ -76,10 +76,14 @@ export async function POST(request: NextRequest) {
       message: '지원이 완료되었습니다',
       data,
     })
-  } catch (error) {
-    console.error('Apply error:', error)
+  } catch (error: unknown) {
+    const err = error as { message?: string; code?: string; details?: string; hint?: string }
+    console.error('Apply error code:', err?.code)
+    console.error('Apply error message:', err?.message)
+    console.error('Apply error details:', err?.details)
+    console.error('Apply error hint:', err?.hint)
     return NextResponse.json(
-      { message: '오류가 발생했습니다' },
+      { message: '오류가 발생했습니다', debug: err?.message },
       { status: 500 }
     )
   }
