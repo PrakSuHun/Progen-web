@@ -1,7 +1,6 @@
 'use client'
 
 import { formatPhone } from '@/lib/constants'
-import { useState } from 'react'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -17,17 +16,16 @@ export function Input({
   onChange,
   ...props
 }: InputProps) {
-  const [displayValue, setDisplayValue] = useState(value || '')
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newValue = e.target.value
-
     if (phoneFormat) {
-      newValue = formatPhone(newValue)
+      const formatted = formatPhone(e.target.value)
+      const syntheticEvent = Object.assign({}, e, {
+        target: Object.assign({}, e.target, { value: formatted }),
+      })
+      onChange?.(syntheticEvent)
+    } else {
+      onChange?.(e)
     }
-
-    setDisplayValue(newValue)
-    onChange?.(e)
   }
 
   return (
@@ -39,7 +37,7 @@ export function Input({
       )}
       <input
         {...props}
-        value={displayValue}
+        value={value ?? ''}
         onChange={handleChange}
         className={`w-full px-4 py-2.5 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-opacity-20 transition ${
           error

@@ -16,29 +16,42 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
+    const eventId = process.env.NEXT_PUBLIC_EVENT_ID
 
-    // Get grade stats
-    const { data, error } = await supabase
+    if (!eventId) {
+      return NextResponse.json({ message: '행사 ID가 설정되지 않았습니다' }, { status: 500 })
+    }
+
+    const { data: members, error } = await supabase
       .from('crew_members')
-      .select('grade, id')
+      .select(`
+        grade,
+        event_registrations!left(status, event_id)
+      `)
       .eq('role', 'participant')
+      .eq('event_registrations.event_id', eventId)
 
     if (error) throw error
 
-    const gradeStats = data?.reduce(
-      (acc, member) => {
-        const existing = acc.find((g) => g.grade === member.grade)
-        if (existing) {
-          existing.count += 1
-        } else {
-          acc.push({ grade: member.grade, count: 1 })
-        }
-        return acc
-      },
-      [] as Array<{ grade: string; count: number }>
-    )
+    const gradeMap: Record<string, { 신청: number; 출석: number }> = {}
+    for (const m of members || []) {
+      const grade = m.grade
+      if (!gradeMap[grade]) gradeMap[grade] = { 신청: 0, 출석: 0 }
+      gradeMap[grade].신청 += 1
+      const reg = Array.isArray(m.event_registrations) ? m.event_registrations[0] : null
+      if (reg?.status === '출석완료') gradeMap[grade].출석 += 1
+    }
 
-    return NextResponse.json({ data: gradeStats || [] })
+    const data = Object.entries(gradeMap)
+      .map(([grade, counts]) => ({
+        grade,
+        신청: counts.신청,
+        출석: counts.출석,
+        출석률: counts.신청 > 0 ? Math.round((counts.출석 / counts.신청) * 100) : 0,
+      }))
+      .sort((a, b) => a.grade.localeCompare(b.grade))
+
+    return NextResponse.json({ data })
   } catch (error) {
     console.error('Grade stats error:', error)
     return NextResponse.json(

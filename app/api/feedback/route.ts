@@ -60,6 +60,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (!crewId && !guestId) {
+      return NextResponse.json(
+        { message: '사전 신청 또는 출석 정보를 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
+
     // Insert feedback
     const { data, error } = await supabase
       .from('feedbacks')
@@ -72,9 +79,9 @@ export async function POST(request: NextRequest) {
           score_content,
           score_practice,
           score_network,
-          good_tags: good_tags.join(','),
+          good_tags: Array.isArray(good_tags) ? good_tags : [],
           good_points,
-          bad_tags: bad_tags.join(','),
+          bad_tags: Array.isArray(bad_tags) ? bad_tags : [],
           bad_points,
           would_return,
           join_interest,

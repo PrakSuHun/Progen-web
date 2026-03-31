@@ -25,27 +25,36 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get school stats
-    const { data, error } = await supabase.from('crew_members').select(
-      'school, id'
-    )
+    const { data: members, error } = await supabase
+      .from('crew_members')
+      .select(`
+        school,
+        event_registrations!left(status, event_id)
+      `)
+      .eq('role', 'participant')
+      .eq('event_registrations.event_id', eventId)
 
     if (error) throw error
 
-    const schoolStats = data?.reduce(
-      (acc, member) => {
-        const existing = acc.find((s) => s.school === member.school)
-        if (existing) {
-          existing.count += 1
-        } else {
-          acc.push({ school: member.school, count: 1 })
-        }
-        return acc
-      },
-      [] as Array<{ school: string; count: number }>
-    )
+    const schoolMap: Record<string, { 신청: number; 출석: number }> = {}
+    for (const m of members || []) {
+      const school = m.school
+      if (!schoolMap[school]) schoolMap[school] = { 신청: 0, 출석: 0 }
+      schoolMap[school].신청 += 1
+      const reg = Array.isArray(m.event_registrations) ? m.event_registrations[0] : null
+      if (reg?.status === '출석완료') schoolMap[school].출석 += 1
+    }
 
-    return NextResponse.json({ data: schoolStats || [] })
+    const data = Object.entries(schoolMap)
+      .map(([school, counts]) => ({
+        school,
+        신청: counts.신청,
+        출석: counts.출석,
+        출석률: counts.신청 > 0 ? Math.round((counts.출석 / counts.신청) * 100) : 0,
+      }))
+      .sort((a, b) => b.신청 - a.신청)
+
+    return NextResponse.json({ data })
   } catch (error) {
     console.error('School stats error:', error)
     return NextResponse.json(

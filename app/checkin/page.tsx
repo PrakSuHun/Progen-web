@@ -78,9 +78,6 @@ export default function CheckInPage() {
         showToast(`${data.name}님 출석 완료! 🎉`, 'success')
         setCheckInData({ name: '', phone: '', age: '' })
         setShowWalkIn(false)
-        setTimeout(() => {
-          // Auto-reset after 3 seconds
-        }, 3000)
       } else if (response.status === 404) {
         setShowWalkIn(true)
         showToast('사전 신청 정보를 찾을 수 없습니다. 현장 등록을 진행해주세요.', 'info')
