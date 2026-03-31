@@ -4,16 +4,18 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  PieChart, Pie, Cell, Legend,
 } from 'recharts'
 import { showToast } from '@/components/Toast'
 
 // ───────────── Types ─────────────
 type Tab = 'checkin' | 'team' | 'analysis'
+type SortKey = 'none' | 'name' | 'school' | 'grade' | 'gender'
 
 interface Attendee {
   registration_id: string
   name: string
+  phone: string
   school: string
   grade: string
   age: string
@@ -59,9 +61,27 @@ interface FullStats {
   }
 }
 
-// ───────────── Sub-components ─────────────
+// ───────────── Helpers ─────────────
 const PIE_COLORS = ['#8b5cf6', '#34d399', '#f472b6', '#60a5fa', '#fbbf24']
 
+function genderColor(gender: string) {
+  if (gender === '남성' || gender === '남') return 'text-blue-400'
+  if (gender === '여성' || gender === '여') return 'text-pink-400'
+  return 'text-slate-400'
+}
+
+function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
+  if (sortBy === 'none') return list
+  return [...list].sort((a, b) => {
+    if (sortBy === 'name') return a.name.localeCompare(b.name, 'ko')
+    if (sortBy === 'school') return a.school.localeCompare(b.school, 'ko')
+    if (sortBy === 'grade') return a.grade.localeCompare(b.grade, 'ko')
+    if (sortBy === 'gender') return a.gender.localeCompare(b.gender, 'ko')
+    return 0
+  })
+}
+
+// ───────────── Sub-components ─────────────
 function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: string }) {
   if (!data.length) return <p className="text-slate-500 text-sm py-4 text-center">데이터 없음</p>
   return (
@@ -79,29 +99,40 @@ function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: s
 function MiniPieChart({ data }: { data: DistItem[] }) {
   if (!data.length) return <p className="text-slate-500 text-sm py-4 text-center">데이터 없음</p>
   return (
-    <ResponsiveContainer width="100%" height={180}>
+    <ResponsiveContainer width="100%" height={220}>
       <PieChart>
-        <Pie data={data} dataKey="count" nameKey="name" cx="50%" cy="50%" outerRadius={65}
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-          labelLine={false}
+        <Pie
+          data={data}
+          dataKey="count"
+          nameKey="name"
+          cx="50%"
+          cy="45%"
+          outerRadius={70}
         >
           {data.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
         </Pie>
         <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: 8 }} />
+        <Legend
+          formatter={(value) => <span style={{ color: '#94a3b8', fontSize: 12 }}>{value}</span>}
+        />
       </PieChart>
     </ResponsiveContainer>
   )
 }
 
-function PersonCard({ person, dimmed = false, draggable: isDraggable = false, onDragStart }: {
-  person: Attendee; dimmed?: boolean; draggable?: boolean; onDragStart?: () => void
+function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDraggable = false, onDragStart }: {
+  person: Attendee
+  showPhone?: boolean
+  dimmed?: boolean
+  draggable?: boolean
+  onDragStart?: () => void
 }) {
   const isTarget = person.noshow_count >= 2
   return (
     <div
       draggable={isDraggable}
       onDragStart={onDragStart}
-      className={`px-3 py-2 rounded-lg text-sm select-none transition-opacity
+      className={`px-3 py-2 rounded-lg text-sm select-none transition-opacity w-full
         ${isDraggable ? 'cursor-grab active:cursor-grabbing' : ''}
         ${dimmed ? 'opacity-40' : ''}
         ${isTarget ? 'bg-red-900 border border-red-600' : 'bg-slate-700 border border-slate-600'}`}
@@ -109,17 +140,38 @@ function PersonCard({ person, dimmed = false, draggable: isDraggable = false, on
       <div className="flex items-center gap-1 font-medium text-white">
         <span>{person.name}</span>
         {person.is_member && <span>🍇</span>}
-        {isTarget && <span className="ml-auto text-red-400 text-xs font-normal">박탈대상</span>}
+        {person.team_name && (
+          <span className="ml-auto text-purple-400 text-xs font-normal">{person.team_name}</span>
+        )}
+        {isTarget && !person.team_name && (
+          <span className="ml-auto text-red-400 text-xs font-normal">박탈대상</span>
+        )}
       </div>
-      <div className="text-slate-400 text-xs mt-0.5">
-        {person.school} · {person.grade} · {person.age}세 · {person.gender}
+      <div className="text-xs mt-0.5 flex items-center gap-1 flex-wrap">
+        <span className="text-slate-400">{person.school}</span>
+        <span className="text-slate-500">·</span>
+        <span className="text-slate-400">{person.grade}</span>
+        <span className="text-slate-500">·</span>
+        <span className="text-slate-400">{person.age}세</span>
+        <span className="text-slate-500">·</span>
+        <span className={genderColor(person.gender)}>{person.gender}</span>
       </div>
+      {showPhone && person.phone && (
+        <a
+          href={`tel:${person.phone}`}
+          className="text-xs text-blue-400 hover:text-blue-300 mt-0.5 block"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {person.phone}
+        </a>
+      )}
     </div>
   )
 }
 
 function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename }: {
-  teamName: string; members: Attendee[]
+  teamName: string
+  members: Attendee[]
   onDrop: (t: string) => void
   onDragStartMember: (p: Attendee, from: string) => void
   onRename: (old: string, next: string) => void
@@ -182,8 +234,9 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [autoMatchLoading, setAutoMatchLoading] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState<SortKey>('none')
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
-  // 세션 중 생성된 팀 이름 추적 — fetchAll 후에도 빈 팀 카드 유지
   const knownTeamsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => { fetchAll() }, [])
@@ -191,6 +244,9 @@ export default function AdminDashboardPage() {
   const fetchAll = async () => {
     setLoading(true)
     try {
+      // Compact team numbers first (removes gaps, starts from 1팀)
+      await fetch('/api/admin/compact-teams', { method: 'POST' })
+
       const [dashRes, statsRes] = await Promise.all([
         fetch('/api/admin/dashboard-data'),
         fetch('/api/admin/full-stats'),
@@ -198,15 +254,11 @@ export default function AdminDashboardPage() {
       if (dashRes.status === 401) { router.push('/admin'); return }
       if (dashRes.ok) {
         const newData: DashboardData = await dashRes.json()
-        // 새 팀 이름을 knownTeams에 등록
-        for (const name of Object.keys(newData.assigned)) {
-          knownTeamsRef.current.add(name)
-        }
-        // 세션 중 생성된 빈 팀 카드 복원
+        // Rebuild knownTeams from fresh (compacted) data
+        knownTeamsRef.current = new Set(Object.keys(newData.assigned))
+        // Restore empty team cards that exist in session but not in DB
         for (const name of knownTeamsRef.current) {
-          if (!newData.assigned[name]) {
-            newData.assigned[name] = []
-          }
+          if (!newData.assigned[name]) newData.assigned[name] = []
         }
         setData(newData)
       }
@@ -240,7 +292,6 @@ export default function AdminDashboardPage() {
       if (fromTeam === null) {
         newUnassigned = newUnassigned.filter((a) => a.registration_id !== person.registration_id)
       } else {
-        // 팀이 비어도 삭제하지 않음 (빈 팀 카드 유지)
         newAssigned[fromTeam] = (newAssigned[fromTeam] || []).filter((a) => a.registration_id !== person.registration_id)
       }
 
@@ -248,7 +299,10 @@ export default function AdminDashboardPage() {
         newUnassigned = [person, ...newUnassigned]
       } else {
         if (!newAssigned[targetTeam]) newAssigned[targetTeam] = []
-        if (newAssigned[targetTeam].length >= 4) { showToast('팀이 가득 찼습니다 (최대 4명)', 'error'); return prev }
+        if (newAssigned[targetTeam].length >= 4) {
+          showToast('팀이 가득 찼습니다 (최대 4명)', 'error')
+          return prev
+        }
         newAssigned[targetTeam] = [...newAssigned[targetTeam], person]
       }
       return { ...prev, unassigned: newUnassigned, assigned: newAssigned }
@@ -259,8 +313,9 @@ export default function AdminDashboardPage() {
 
   const handleDropOnNewTeam = () => {
     if (!data) return
-    const nums = Object.keys(data.assigned).map((n) => parseInt(n)).filter(Boolean)
-    const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
+    const allNums = [...Object.keys(data.assigned), ...knownTeamsRef.current]
+      .map((n) => parseInt(n)).filter((n) => !isNaN(n))
+    const next = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
     const newTeamName = `${next}팀`
     knownTeamsRef.current.add(newTeamName)
     handleDrop(newTeamName)
@@ -270,6 +325,8 @@ export default function AdminDashboardPage() {
     if (!data) return
     if (data.assigned[newName]) { showToast('이미 존재하는 팀명입니다', 'error'); return }
     const members = data.assigned[oldName] || []
+    knownTeamsRef.current.delete(oldName)
+    knownTeamsRef.current.add(newName)
     setData((prev) => {
       if (!prev) return prev
       const a = { ...prev.assigned }
@@ -282,8 +339,7 @@ export default function AdminDashboardPage() {
   const handleAutoMatch = async () => {
     setAutoMatchLoading(true)
     try {
-      const allTeamNums = [...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n))
-      const clientMaxTeam = allTeamNums.length > 0 ? Math.max(...allTeamNums) : 0
+      const clientMaxTeam = Object.keys(data?.assigned ?? {}).length
       const res = await fetch('/api/admin/auto-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -316,12 +372,32 @@ export default function AdminDashboardPage() {
     const pre = data?.pre_registered_count ?? 0
     const arrived = data?.checked_in_count ?? 0
     const missing = Math.max(0, pre - arrived)
-    const checkedIn = [...(data?.unassigned ?? []), ...Object.values(data?.assigned ?? {}).flat()]
+
+    const allCheckedIn = [...(data?.unassigned ?? []), ...Object.values(data?.assigned ?? {}).flat()]
     const notArrived = data?.not_arrived ?? []
+
+    const q = searchQuery.toLowerCase()
+    const filteredCheckedIn = sortAttendees(
+      q ? allCheckedIn.filter((p) => p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)) : allCheckedIn,
+      sortBy
+    )
+    const filteredNotArrived = sortAttendees(
+      q ? notArrived.filter((p) => p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)) : notArrived,
+      sortBy
+    )
+
+    const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+      { key: 'none', label: '기본' },
+      { key: 'name', label: '가나다' },
+      { key: 'school', label: '학교' },
+      { key: 'grade', label: '학년' },
+      { key: 'gender', label: '성별' },
+    ]
 
     return (
       <div className="p-6 overflow-y-auto h-full">
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        {/* 숫자 카드 */}
+        <div className="grid grid-cols-3 gap-4 mb-5">
           {[
             { label: '오기로 한 인원', value: pre, color: 'text-white' },
             { label: '현재 온 인원', value: arrived, color: 'text-green-400' },
@@ -333,24 +409,60 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </div>
+
+        {/* 검색 + 정렬 */}
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="이름 또는 학교 검색..."
+            className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 w-52 outline-none focus:border-purple-500 placeholder:text-slate-500"
+          />
+          <div className="flex items-center gap-1">
+            <span className="text-slate-500 text-xs mr-1">정렬:</span>
+            {SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setSortBy(key)}
+                className={`px-2.5 py-1 text-xs rounded-lg transition-colors
+                  ${sortBy === key ? 'bg-purple-600 text-white' : 'bg-slate-700 text-slate-400 hover:text-white hover:bg-slate-600'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 두 열 */}
         <div className="grid grid-cols-2 gap-6">
           <div className="bg-slate-800 rounded-xl p-4">
-            <h3 className="text-white font-semibold mb-3">출석완료 <span className="text-green-400 font-normal text-sm">{checkedIn.length}명</span></h3>
-            <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-              {checkedIn.length === 0 && <p className="text-slate-500 text-sm text-center py-6">아직 출석자가 없습니다</p>}
-              {checkedIn.map((p) => (
-                <div key={p.registration_id} className="flex items-center gap-2">
-                  <PersonCard person={p} />
-                  {p.team_name && <span className="text-purple-400 text-xs whitespace-nowrap">{p.team_name}</span>}
-                </div>
+            <h3 className="text-white font-semibold mb-3">
+              출석완료 <span className="text-green-400 font-normal text-sm">{allCheckedIn.length}명</span>
+            </h3>
+            <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+              {filteredCheckedIn.length === 0 && (
+                <p className="text-slate-500 text-sm text-center py-6">
+                  {q ? '검색 결과 없음' : '아직 출석자가 없습니다'}
+                </p>
+              )}
+              {filteredCheckedIn.map((p) => (
+                <PersonCard key={p.registration_id} person={p} />
               ))}
             </div>
           </div>
           <div className="bg-slate-800 rounded-xl p-4">
-            <h3 className="text-white font-semibold mb-3">미출석 <span className="text-red-400 font-normal text-sm">{notArrived.length}명</span></h3>
-            <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-              {notArrived.length === 0 && <p className="text-slate-500 text-sm text-center py-6">모두 출석했습니다 🎉</p>}
-              {notArrived.map((p) => <PersonCard key={p.registration_id} person={p} dimmed />)}
+            <h3 className="text-white font-semibold mb-3">
+              미출석 <span className="text-red-400 font-normal text-sm">{notArrived.length}명</span>
+            </h3>
+            <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+              {filteredNotArrived.length === 0 && (
+                <p className="text-slate-500 text-sm text-center py-6">
+                  {q ? '검색 결과 없음' : '모두 출석했습니다 🎉'}
+                </p>
+              )}
+              {filteredNotArrived.map((p) => (
+                <PersonCard key={p.registration_id} person={p} showPhone dimmed />
+              ))}
             </div>
           </div>
         </div>
@@ -363,8 +475,13 @@ export default function AdminDashboardPage() {
     const unassigned = data?.unassigned ?? []
     const assigned = data?.assigned ?? {}
     const notArrived = data?.not_arrived ?? []
-    const teamNames = Object.keys(assigned).sort((a, b) => parseInt(a) - parseInt(b))
-    const nextNum = teamNames.length > 0 ? Math.max(...teamNames.map((n) => parseInt(n)).filter(Boolean)) + 1 : 1
+    const teamNames = Object.keys(assigned).sort((a, b) => {
+      const na = parseInt(a); const nb = parseInt(b)
+      if (!isNaN(na) && !isNaN(nb)) return na - nb
+      return a.localeCompare(b)
+    })
+    const allNums = teamNames.map((n) => parseInt(n)).filter((n) => !isNaN(n))
+    const nextNum = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
 
     return (
       <div className="flex h-full overflow-hidden">

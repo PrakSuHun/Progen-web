@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
         team_name,
         crew_id,
         guest_id,
-        crew_members ( name, school, grade, age, gender, is_member, noshow_count ),
-        guests ( name, school, grade, age, gender )
+        crew_members ( name, phone, school, grade, age, gender, is_member, noshow_count ),
+        guests ( name, phone, school, grade, age, gender )
       `)
       .eq('event_id', eventId)
 
@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
         status: reg.status,
         team_name: reg.team_name ?? null,
         name: person?.name ?? '알 수 없음',
+        phone: person?.phone ?? '',
         school: person?.school ?? '',
         grade: person?.grade ?? '',
         age: person?.age ?? '',
