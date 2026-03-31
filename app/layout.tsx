@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ToastContainer } from '@/components/Toast'
+import { StarField } from '@/components/StarField'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 1기 크루 모집',
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
+        <StarField />
         {children}
         <ToastContainer />
       </body>
