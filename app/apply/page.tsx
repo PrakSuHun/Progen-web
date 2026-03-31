@@ -17,11 +17,7 @@ import {
   isValidPhone,
   formatPhone,
 } from '@/lib/constants'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-}
 
 interface FormData {
   name: string

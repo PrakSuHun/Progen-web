@@ -7,11 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { showToast } from '@/components/Toast'
 import { formatPhone, isValidPhone } from '@/lib/constants'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-}
 
 interface CheckInData {
   name: string

@@ -10,11 +10,7 @@ import { StarRating } from '@/components/feedback/StarRating'
 import { TagSelector } from '@/components/feedback/TagSelector'
 import { showToast } from '@/components/Toast'
 import { isValidPhone, formatPhone, GOOD_TAGS, BAD_TAGS } from '@/lib/constants'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-}
 
 interface FeedbackData {
   name: string

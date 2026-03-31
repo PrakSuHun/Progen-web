@@ -7,11 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { showToast } from '@/components/Toast'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-}
 
 export default function AdminLoginPage() {
   const router = useRouter()
