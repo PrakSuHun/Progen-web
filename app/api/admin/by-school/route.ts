@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getLatestEventId } from '@/lib/getLatestEventId'
 import { NextRequest, NextResponse } from 'next/server'
 
 async function checkAuth(request: NextRequest) {
@@ -9,40 +10,26 @@ async function checkAuth(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     if (!(await checkAuth(request))) {
-      return NextResponse.json(
-        { message: '인증이 필요합니다' },
-        { status: 401 }
-      )
+      return NextResponse.json({ message: '인증이 필요합니다' }, { status: 401 })
     }
 
     const supabase = createAdminClient()
-    const eventId = process.env.NEXT_PUBLIC_EVENT_ID
-
-    if (!eventId) {
-      return NextResponse.json(
-        { message: '행사 ID가 설정되지 않았습니다' },
-        { status: 500 }
-      )
-    }
+    const eventId = await getLatestEventId(supabase)
 
     const { data: members, error } = await supabase
       .from('crew_members')
-      .select(`
-        school,
-        event_registrations!left(status, event_id)
-      `)
+      .select(`school, event_registrations!left(status, event_id)`)
       .eq('role', 'participant')
-      .eq('event_registrations.event_id', eventId)
+      .eq('event_registrations.event_id', eventId || '')
 
     if (error) throw error
 
     const schoolMap: Record<string, { 신청: number; 출석: number }> = {}
     for (const m of members || []) {
-      const school = m.school
-      if (!schoolMap[school]) schoolMap[school] = { 신청: 0, 출석: 0 }
-      schoolMap[school].신청 += 1
+      if (!schoolMap[m.school]) schoolMap[m.school] = { 신청: 0, 출석: 0 }
+      schoolMap[m.school].신청 += 1
       const reg = Array.isArray(m.event_registrations) ? m.event_registrations[0] : null
-      if (reg?.status === '출석완료') schoolMap[school].출석 += 1
+      if (reg?.status === '출석완료') schoolMap[m.school].출석 += 1
     }
 
     const data = Object.entries(schoolMap)
@@ -57,9 +44,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ data })
   } catch (error) {
     console.error('School stats error:', error)
-    return NextResponse.json(
-      { message: '오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
   }
 }
