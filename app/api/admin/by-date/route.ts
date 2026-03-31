@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getLatestEventId } from '@/lib/getLatestEventId'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -13,11 +14,9 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = process.env.NEXT_PUBLIC_EVENT_ID
+    const eventId = await getLatestEventId(supabase)
 
-    if (!eventId) {
-      return NextResponse.json({ message: '행사 ID가 설정되지 않았습니다' }, { status: 500 })
-    }
+    if (!eventId) return NextResponse.json({ data: [] })
 
     const { data: registrations } = await supabase
       .from('event_registrations')
@@ -25,28 +24,17 @@ export async function GET(request: NextRequest) {
       .eq('event_id', eventId)
       .order('created_at')
 
-    if (!registrations) {
-      return NextResponse.json({ data: [] })
-    }
+    if (!registrations) return NextResponse.json({ data: [] })
 
-    // 날짜별 집계
     const dateMap: Record<string, { 신청: number; 출석: number }> = {}
-
     for (const reg of registrations) {
-      const date = new Date(reg.created_at).toLocaleDateString('ko-KR', {
-        month: '2-digit',
-        day: '2-digit',
-      })
+      const date = new Date(reg.created_at).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })
       if (!dateMap[date]) dateMap[date] = { 신청: 0, 출석: 0 }
       dateMap[date].신청 += 1
       if (reg.status === '출석완료') dateMap[date].출석 += 1
     }
 
-    const data = Object.entries(dateMap).map(([date, counts]) => ({
-      date,
-      ...counts,
-    }))
-
+    const data = Object.entries(dateMap).map(([date, counts]) => ({ date, ...counts }))
     return NextResponse.json({ data })
   } catch (error) {
     console.error('By-date error:', error)
