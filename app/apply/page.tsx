@@ -24,6 +24,7 @@ interface FormData {
   phone: string
   school: string
   grade: string
+  age: string
   major: string
   path: string
   project: string
@@ -37,6 +38,7 @@ export default function ApplyPage() {
     phone: '',
     school: '',
     grade: '',
+    age: '',
     major: '',
     path: '',
     project: '',
@@ -55,6 +57,7 @@ export default function ApplyPage() {
     if (!isValidPhone(formData.phone)) newErrors.phone = '올바른 연락처를 입력해주세요'
     if (!formData.school) newErrors.school = '학교를 선택해주세요'
     if (!formData.grade) newErrors.grade = '학년을 선택해주세요'
+    if (!formData.age.trim()) newErrors.age = '나이를 입력해주세요'
     if (!formData.major.trim()) newErrors.major = '전공을 입력해주세요'
     if (!formData.path) newErrors.path = '경로를 선택해주세요'
     if (!formData.project) newErrors.project = '프로젝트를 선택해주세요'
@@ -147,6 +150,16 @@ export default function ApplyPage() {
             value={formData.grade}
             onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
             error={errors.grade}
+          />
+
+          {/* Age */}
+          <Input
+            label="나이"
+            type="number"
+            placeholder="20"
+            value={formData.age}
+            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+            error={errors.age}
           />
 
           {/* Major */}

@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, phone, school, major, walkin } = body
+    const { name, phone, age, school, major, walkin } = body
 
-    if (!name || !phone) {
+    if (!name || !phone || !age) {
       return NextResponse.json(
         { message: '필수 항목을 입력해주세요' },
         { status: 400 }
@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
             {
               name,
               phone,
+              age,
               school: school || null,
               major: major || null,
             },

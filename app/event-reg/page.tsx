@@ -15,6 +15,7 @@ type UserMode = 'crew' | 'guest' | null
 interface FormData {
   name: string
   phone: string
+  age: string
   school?: string
   major?: string
 }
@@ -24,6 +25,7 @@ export default function EventRegPage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     phone: '',
+    age: '',
     school: '',
     major: '',
   })
@@ -35,6 +37,7 @@ export default function EventRegPage() {
 
     if (!formData.name.trim()) newErrors.name = '이름을 입력해주세요'
     if (!isValidPhone(formData.phone)) newErrors.phone = '올바른 연락처를 입력해주세요'
+    if (!formData.age.trim()) newErrors.age = '나이를 입력해주세요'
     if (mode === 'guest') {
       if (!formData.school?.trim()) newErrors.school = '학교를 입력해주세요'
       if (!formData.major?.trim()) newErrors.major = '전공을 입력해주세요'
@@ -62,6 +65,7 @@ export default function EventRegPage() {
           mode,
           name: formData.name,
           phone: formatPhone(formData.phone),
+          age: formData.age,
           school: formData.school,
           major: formData.major,
         }),
@@ -72,7 +76,7 @@ export default function EventRegPage() {
       if (response.ok) {
         showToast('신청이 완료되었습니다!', 'success')
         setMode(null)
-        setFormData({ name: '', phone: '', school: '', major: '' })
+        setFormData({ name: '', phone: '', age: '', school: '', major: '' })
       } else if (response.status === 404) {
         showToast('크루 정보를 찾을 수 없습니다. 먼저 지원해주세요.', 'error')
       } else if (response.status === 409) {
@@ -151,6 +155,16 @@ export default function EventRegPage() {
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               error={errors.phone}
               phoneFormat
+            />
+
+            {/* Age */}
+            <Input
+              label="나이"
+              type="number"
+              placeholder="20"
+              value={formData.age}
+              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+              error={errors.age}
             />
 
             {/* Guest Only Fields */}

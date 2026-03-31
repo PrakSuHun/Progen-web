@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
       phone,
       school,
       grade,
+      age,
       major,
       path,
       project,
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     } = body
 
     // Validate input
-    if (!name || !phone || !school || !grade || !major || !path || !project || !gender || !motivation) {
+    if (!name || !phone || !school || !grade || !age || !major || !path || !project || !gender || !motivation) {
       return NextResponse.json(
         { message: '필수 항목을 입력해주세요' },
         { status: 400 }
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
           phone,
           school,
           grade,
+          age,
           major,
           path,
           project,

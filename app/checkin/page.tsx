@@ -12,6 +12,7 @@ import { formatPhone, isValidPhone } from '@/lib/constants'
 interface CheckInData {
   name: string
   phone: string
+  age: string
 }
 
 interface WalkInData extends CheckInData {
@@ -23,10 +24,12 @@ export default function CheckInPage() {
   const [checkInData, setCheckInData] = useState<CheckInData>({
     name: '',
     phone: '',
+    age: '',
   })
   const [walkInData, setWalkInData] = useState<WalkInData>({
     name: '',
     phone: '',
+    age: '',
     school: '',
     major: '',
   })
@@ -38,6 +41,7 @@ export default function CheckInPage() {
     const newErrors: Record<string, string> = {}
     if (!checkInData.name.trim()) newErrors.name = '이름을 입력해주세요'
     if (!isValidPhone(checkInData.phone)) newErrors.phone = '올바른 연락처를 입력해주세요'
+    if (!checkInData.age.trim()) newErrors.age = '나이를 입력해주세요'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -46,6 +50,7 @@ export default function CheckInPage() {
     const newErrors: Record<string, string> = {}
     if (!walkInData.name.trim()) newErrors.name = '이름을 입력해주세요'
     if (!isValidPhone(walkInData.phone)) newErrors.phone = '올바른 연락처를 입력해주세요'
+    if (!walkInData.age.trim()) newErrors.age = '나이를 입력해주세요'
     if (!walkInData.school.trim()) newErrors.school = '학교를 입력해주세요'
     if (!walkInData.major.trim()) newErrors.major = '전공을 입력해주세요'
     setErrors(newErrors)
@@ -64,13 +69,14 @@ export default function CheckInPage() {
         body: JSON.stringify({
           name: checkInData.name,
           phone: formatPhone(checkInData.phone),
+          age: checkInData.age,
         }),
       })
 
       if (response.ok) {
         const data = await response.json()
         showToast(`${data.name}님 출석 완료! 🎉`, 'success')
-        setCheckInData({ name: '', phone: '' })
+        setCheckInData({ name: '', phone: '', age: '' })
         setShowWalkIn(false)
         setTimeout(() => {
           // Auto-reset after 3 seconds
@@ -100,6 +106,7 @@ export default function CheckInPage() {
         body: JSON.stringify({
           name: walkInData.name,
           phone: formatPhone(walkInData.phone),
+          age: walkInData.age,
           school: walkInData.school,
           major: walkInData.major,
           walkin: true,
@@ -108,9 +115,9 @@ export default function CheckInPage() {
 
       if (response.ok) {
         showToast(`${walkInData.name}님 현장 등록 + 출석 완료! 🎉`, 'success')
-        setWalkInData({ name: '', phone: '', school: '', major: '' })
+        setWalkInData({ name: '', phone: '', age: '', school: '', major: '' })
         setShowWalkIn(false)
-        setCheckInData({ name: '', phone: '' })
+        setCheckInData({ name: '', phone: '', age: '' })
       } else {
         showToast('오류가 발생했습니다', 'error')
       }
@@ -149,6 +156,15 @@ export default function CheckInPage() {
             phoneFormat
           />
 
+          <Input
+            label="나이"
+            type="number"
+            placeholder="20"
+            value={checkInData.age}
+            onChange={(e) => setCheckInData({ ...checkInData, age: e.target.value })}
+            error={errors.age}
+          />
+
           <Button type="submit" disabled={loading} className="w-full" size="lg">
             {loading ? '확인 중...' : '출석체크'}
           </Button>
@@ -176,6 +192,15 @@ export default function CheckInPage() {
               onChange={(e) => setWalkInData({ ...walkInData, phone: e.target.value })}
               error={errors.phone}
               phoneFormat
+            />
+
+            <Input
+              label="나이"
+              type="number"
+              placeholder="20"
+              value={walkInData.age}
+              onChange={(e) => setWalkInData({ ...walkInData, age: e.target.value })}
+              error={errors.age}
             />
 
             <Input
