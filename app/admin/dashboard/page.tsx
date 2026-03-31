@@ -224,8 +224,8 @@ export default function AdminDashboardPage() {
       if (fromTeam === null) {
         newUnassigned = newUnassigned.filter((a) => a.registration_id !== person.registration_id)
       } else {
+        // 팀이 비어도 삭제하지 않음 (빈 팀 카드 유지)
         newAssigned[fromTeam] = (newAssigned[fromTeam] || []).filter((a) => a.registration_id !== person.registration_id)
-        if (newAssigned[fromTeam].length === 0) delete newAssigned[fromTeam]
       }
 
       if (targetTeam === null) {

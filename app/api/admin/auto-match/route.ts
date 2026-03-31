@@ -17,71 +17,64 @@ interface Attendee {
   noshow_count: number
 }
 
-function autoMatch(unassigned: Attendee[]): { registration_id: string; team_name: string }[] {
+function autoMatch(
+  unassigned: Attendee[],
+  startTeamNum: number
+): { registration_id: string; team_name: string }[] {
   const podo = unassigned.filter((a) => a.is_member)
-  const saengmyung = unassigned.filter((a) => !a.is_member)
+  const regular = unassigned.filter((a) => !a.is_member)
 
   const used = new Set<string>()
   const teams: Attendee[][] = []
 
-  // 포도 기준으로 팀 구성
+  // 포도 기준 팀 구성
   for (const p of podo) {
     const team: Attendee[] = [p]
     const pAge = Number(p.age)
 
-    // 1순위: 같은 학교 + 동성 + 나이 어린 생명
-    const pri = saengmyung
-      .filter((s) => !used.has(s.registration_id) && s.school === p.school && s.gender === p.gender && Number(s.age) <= pAge)
-      .sort((a, b) => Number(b.age) - Number(a.age)) // 나이 가까운 순
+    // 후보: 동성 + 포도보다 나이 어린 사람
+    const candidates = regular.filter(
+      (s) => !used.has(s.registration_id) && s.gender === p.gender && Number(s.age) <= pAge
+    )
 
-    for (const c of pri) {
+    // 2순위: 같은 학교 + 나이 어린 순 (오름차순 = 제일 어린 사람부터)
+    const sameSchool = candidates
+      .filter((s) => s.school === p.school)
+      .sort((a, b) => Number(a.age) - Number(b.age))
+
+    // 1순위(나이 어린 순) 중 다른 학교
+    const otherSchool = candidates
+      .filter((s) => s.school !== p.school)
+      .sort((a, b) => Number(a.age) - Number(b.age))
+
+    // 같은 학교 우선 → 나머지 어린 순
+    const ordered = [...sameSchool, ...otherSchool]
+
+    for (const c of ordered) {
       if (team.length >= 4) break
+      if (used.has(c.registration_id)) continue
       team.push(c)
       used.add(c.registration_id)
-    }
-
-    // 2순위: 동성 + 나이 어린 생명 (학교 무관)
-    if (team.length < 4) {
-      const sec = saengmyung
-        .filter((s) => !used.has(s.registration_id) && s.gender === p.gender && Number(s.age) <= pAge)
-        .sort((a, b) => Number(b.age) - Number(a.age))
-      for (const c of sec) {
-        if (team.length >= 4) break
-        team.push(c)
-        used.add(c.registration_id)
-      }
     }
 
     teams.push(team)
   }
 
-  // 남은 인원 (미매칭 생명 등) — 성별→나이 순 정렬 후 4인씩 묶기
-  const leftover = saengmyung.filter((s) => !used.has(s.registration_id))
+  // 남은 인원 — 성별→나이 오름차순 정렬 후 4인씩 묶기
+  const leftover = regular.filter((s) => !used.has(s.registration_id))
   leftover.sort((a, b) => {
     if (a.gender !== b.gender) return a.gender.localeCompare(b.gender)
     return Number(a.age) - Number(b.age)
   })
 
-  // 기존 팀 빈 자리 먼저 채우기
-  for (const team of teams) {
-    while (team.length < 4 && leftover.length > 0) {
-      const idx = leftover.findIndex((s) => !used.has(s.registration_id))
-      if (idx === -1) break
-      const [person] = leftover.splice(idx, 1)
-      team.push(person)
-      used.add(person.registration_id)
-    }
-  }
-
-  // 완전히 새 팀으로 4인씩
   for (let i = 0; i < leftover.length; i += 4) {
     teams.push(leftover.slice(i, i + 4))
   }
 
-  // 팀번호 할당
+  // 팀번호 할당: 기존 팀 번호 이후부터
   const result: { registration_id: string; team_name: string }[] = []
   teams.forEach((team, i) => {
-    const teamName = `${i + 1}팀`
+    const teamName = `${startTeamNum + i}팀`
     for (const member of team) {
       result.push({ registration_id: member.registration_id, team_name: teamName })
     }
@@ -103,11 +96,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
-    // 미배정 출석자만 가져오기
+    // 기존 팀 최대 번호 파악 (충돌 방지)
+    const { data: existing } = await supabase
+      .from('event_registrations')
+      .select('team_name')
+      .eq('event_id', eventId)
+      .not('team_name', 'is', null)
+
+    const maxTeamNum = (existing ?? []).reduce((max, r) => {
+      const n = parseInt(r.team_name ?? '0')
+      return isNaN(n) ? max : Math.max(max, n)
+    }, 0)
+
+    const startTeamNum = maxTeamNum + 1
+
+    // 미배정 출석자만
     const { data: registrations, error } = await supabase
       .from('event_registrations')
       .select(`
-        id, team_name,
+        id,
         crew_members ( name, school, grade, age, gender, is_member, noshow_count ),
         guests ( name, school, grade, age, gender )
       `)
@@ -137,9 +144,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '배정할 인원이 없습니다', assignments: [] })
     }
 
-    const assignments = autoMatch(unassigned)
+    const assignments = autoMatch(unassigned, startTeamNum)
 
-    // DB에 일괄 저장
     for (const { registration_id, team_name } of assignments) {
       await supabase
         .from('event_registrations')
