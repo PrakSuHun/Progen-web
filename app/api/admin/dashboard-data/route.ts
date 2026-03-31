@@ -59,11 +59,11 @@ export async function GET(request: NextRequest) {
     const preRegistered = all.filter((a) => a.status === '사전신청' || a.status === '출석완료')
     const checkedIn = all.filter((a) => a.status === '출석완료')
     const unassigned = checkedIn.filter((a) => !a.team_name)
-    const notArrived = all.filter((a) => a.status === '사전신청')
+    const notArrived = all.filter((a) => a.status === '사전신청' && !a.team_name)
 
-    // Group assigned people by team
-    const assigned: Record<string, typeof unassigned> = {}
-    for (const a of checkedIn.filter((a) => a.team_name)) {
+    // Group assigned people by team (출석완료 + 미출석 모두 포함)
+    const assigned: Record<string, typeof all> = {}
+    for (const a of all.filter((a) => a.team_name)) {
       const t = a.team_name!
       if (!assigned[t]) assigned[t] = []
       assigned[t].push(a)

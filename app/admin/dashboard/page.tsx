@@ -63,6 +63,7 @@ interface FullStats {
 
 // ───────────── Helpers ─────────────
 const PIE_COLORS = ['#8b5cf6', '#34d399', '#f472b6', '#60a5fa', '#fbbf24']
+const FROM_NOT_ARRIVED = '__NOT_ARRIVED__'
 
 function genderColor(gender: string) {
   if (gender === '남성' || gender === '남') return 'text-blue-400'
@@ -128,18 +129,27 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   onDragStart?: () => void
 }) {
   const isTarget = person.noshow_count >= 2
+  const isNotArrived = person.status === '사전신청'
   return (
     <div
       draggable={isDraggable}
       onDragStart={onDragStart}
       className={`px-3 py-2 rounded-lg text-sm select-none transition-opacity w-full
         ${isDraggable ? 'cursor-grab active:cursor-grabbing' : ''}
-        ${dimmed ? 'opacity-40' : ''}
-        ${isTarget ? 'bg-red-900 border border-red-600' : 'bg-slate-700 border border-slate-600'}`}
+        ${dimmed ? 'opacity-50' : ''}
+        ${isTarget
+          ? 'bg-red-900 border border-red-600'
+          : isNotArrived
+            ? 'bg-amber-950/60 border border-amber-700/70'
+            : 'bg-slate-700 border border-slate-600'
+        }`}
     >
       <div className="flex items-center gap-1 font-medium text-white">
         <span>{person.name}</span>
         {person.is_member && <span>🍇</span>}
+        {isNotArrived && (
+          <span className="text-amber-500 text-xs font-normal">미출석</span>
+        )}
         {person.team_name && (
           <span className="ml-auto text-purple-400 text-xs font-normal">{person.team_name}</span>
         )}
@@ -292,26 +302,36 @@ export default function AdminDashboardPage() {
     setData((prev) => {
       if (!prev) return prev
       let newUnassigned = [...prev.unassigned]
+      let newNotArrived = [...prev.not_arrived]
       const newAssigned: Record<string, Attendee[]> = {}
       for (const k of Object.keys(prev.assigned)) newAssigned[k] = [...prev.assigned[k]]
 
+      // 소스에서 제거
       if (fromTeam === null) {
         newUnassigned = newUnassigned.filter((a) => a.registration_id !== person.registration_id)
+      } else if (fromTeam === FROM_NOT_ARRIVED) {
+        newNotArrived = newNotArrived.filter((a) => a.registration_id !== person.registration_id)
       } else {
         newAssigned[fromTeam] = (newAssigned[fromTeam] || []).filter((a) => a.registration_id !== person.registration_id)
       }
 
+      // 타겟에 추가
       if (targetTeam === null) {
-        newUnassigned = [person, ...newUnassigned]
+        // 왼쪽 패널로 되돌리기 — 상태에 따라 구분
+        if (person.status === '사전신청') {
+          newNotArrived = [{ ...person, team_name: null }, ...newNotArrived]
+        } else {
+          newUnassigned = [{ ...person, team_name: null }, ...newUnassigned]
+        }
       } else {
         if (!newAssigned[targetTeam]) newAssigned[targetTeam] = []
         if (newAssigned[targetTeam].length >= 4) {
           showToast('팀이 가득 찼습니다 (최대 4명)', 'error')
           return prev
         }
-        newAssigned[targetTeam] = [...newAssigned[targetTeam], person]
+        newAssigned[targetTeam] = [...newAssigned[targetTeam], { ...person, team_name: targetTeam }]
       }
-      return { ...prev, unassigned: newUnassigned, assigned: newAssigned }
+      return { ...prev, unassigned: newUnassigned, not_arrived: newNotArrived, assigned: newAssigned }
     })
     if (targetTeam) knownTeamsRef.current.add(targetTeam)
     assignTeam(person.registration_id, targetTeam)
@@ -525,6 +545,12 @@ export default function AdminDashboardPage() {
             <span className="text-slate-400 text-xs">{unassigned.length}명</span>
           </div>
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {unassigned.length > 0 && (
+              <div className="flex items-center gap-1.5 pb-1">
+                <span className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                <span className="text-slate-500 text-xs">출석완료 ({unassigned.length}명)</span>
+              </div>
+            )}
             {unassigned.map((p) => (
               <PersonCard key={p.registration_id} person={p} draggable
                 onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
@@ -532,12 +558,19 @@ export default function AdminDashboardPage() {
             ))}
             {notArrived.length > 0 && (
               <>
-                <div className="text-slate-500 text-xs pt-2 pb-1 border-t border-slate-700">미출석 ({notArrived.length}명)</div>
-                {notArrived.map((p) => <PersonCard key={p.registration_id} person={p} dimmed />)}
+                <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-700">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+                  <span className="text-slate-500 text-xs">미출석 ({notArrived.length}명)</span>
+                </div>
+                {notArrived.map((p) => (
+                  <PersonCard key={p.registration_id} person={p} draggable
+                    onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
+                  />
+                ))}
               </>
             )}
             {unassigned.length === 0 && notArrived.length === 0 && (
-              <p className="text-slate-500 text-sm text-center pt-8">출석자가 없습니다</p>
+              <p className="text-slate-500 text-sm text-center pt-8">배정할 인원이 없습니다</p>
             )}
           </div>
           <div className="p-3 border-t border-slate-700 space-y-2">
