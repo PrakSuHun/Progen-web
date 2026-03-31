@@ -1,0 +1,84 @@
+import { createAdminClient } from '@/lib/supabase-admin'
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const {
+      name,
+      phone,
+      school,
+      grade,
+      major,
+      path,
+      project,
+      gender,
+      motivation,
+    } = body
+
+    // Validate input
+    if (!name || !phone || !school || !grade || !major || !path || !project || !gender || !motivation) {
+      return NextResponse.json(
+        { message: '필수 항목을 입력해주세요' },
+        { status: 400 }
+      )
+    }
+
+    const supabase = await createAdminClient()
+
+    // Check for duplicate by phone
+    const { data: existing } = await supabase
+      .from('crew_members')
+      .select('id')
+      .eq('phone', phone)
+      .single()
+
+    if (existing) {
+      return NextResponse.json(
+        { message: '이미 지원하셨습니다' },
+        { status: 409 }
+      )
+    }
+
+    // Insert new crew member
+    const { data, error } = await supabase
+      .from('crew_members')
+      .insert([
+        {
+          name,
+          phone,
+          school,
+          grade,
+          major,
+          path,
+          project,
+          gender,
+          motivation,
+          role: 'participant',
+          status: '지원완료',
+        },
+      ])
+      .select()
+
+    if (error) {
+      if (error.code === '23505') {
+        return NextResponse.json(
+          { message: '이미 지원하셨습니다' },
+          { status: 409 }
+        )
+      }
+      throw error
+    }
+
+    return NextResponse.json({
+      message: '지원이 완료되었습니다',
+      data,
+    })
+  } catch (error) {
+    console.error('Apply error:', error)
+    return NextResponse.json(
+      { message: '오류가 발생했습니다' },
+      { status: 500 }
+    )
+  }
+}
