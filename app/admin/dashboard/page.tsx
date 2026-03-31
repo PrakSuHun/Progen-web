@@ -169,12 +169,13 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   )
 }
 
-function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename }: {
+function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDelete }: {
   teamName: string
   members: Attendee[]
   onDrop: (t: string) => void
   onDragStartMember: (p: Attendee, from: string) => void
   onRename: (old: string, next: string) => void
+  onDelete: (t: string) => void
 }) {
   const [editing, setEditing] = useState(false)
   const [inputVal, setInputVal] = useState(teamName)
@@ -195,7 +196,12 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename }: {
       onDragLeave={() => setOver(false)}
       onDrop={() => { setOver(false); onDrop(teamName) }}
     >
-      {podoOnly && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-purple-500" />}
+      {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-purple-500" />}
+      <button
+        onClick={() => onDelete(teamName)}
+        className="absolute top-1.5 right-2 text-slate-500 hover:text-red-400 transition-colors text-xs leading-none"
+        title="팀 삭제"
+      >✕</button>
       <div className="mb-2">
         {editing ? (
           <input autoFocus value={inputVal}
@@ -350,6 +356,29 @@ export default function AdminDashboardPage() {
       else showToast(d.message || '오류 발생', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
     finally { setAutoMatchLoading(false) }
+  }
+
+  const handleDeleteTeam = async (teamName: string) => {
+    if (!data) return
+    const members = data.assigned[teamName] ?? []
+
+    // 로컬 상태 즉시 업데이트 (멤버 → 미배정, 팀 카드 제거)
+    knownTeamsRef.current.delete(teamName)
+    setData((prev) => {
+      if (!prev) return prev
+      const newAssigned = { ...prev.assigned }
+      delete newAssigned[teamName]
+      return {
+        ...prev,
+        unassigned: [...members.map((m) => ({ ...m, team_name: null })), ...prev.unassigned],
+        assigned: newAssigned,
+      }
+    })
+
+    // DB 업데이트: 멤버들 미배정 처리 후 팀 번호 재정렬
+    await Promise.all(members.map((m) => assignTeam(m.registration_id, null)))
+    await fetch('/api/admin/compact-teams', { method: 'POST' })
+    await fetchAll()
   }
 
   const handleReset = async () => {
@@ -537,6 +566,7 @@ export default function AdminDashboardPage() {
                 onDrop={handleDrop}
                 onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
                 onRename={handleRenameTeam}
+                onDelete={handleDeleteTeam}
               />
             ))}
             {teamNames.length < 30 && (
