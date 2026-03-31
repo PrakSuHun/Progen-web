@@ -85,7 +85,11 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | motivation | TEXT | 지원 동기 |
 | role | TEXT | 'participant' 또는 'staff' |
 | status | TEXT | '지원완료' (기본값) |
+| is_member | BOOLEAN | true=포도, false/null=생명 (내부 전용) |
+| noshow_count | INT | 누적 노쇼 횟수 (기본값 0) |
 | created_at | TIMESTAMPTZ | 지원일 |
+
+> **용어 (내부 전용)**: 포도(is_member=true) — 화면에 이름 옆 🍇 표시. 생명(is_member=false/null) — 별도 표기 없음. 노쇼 2회 이상 시 박탈 대상.
 
 ### 4-3. guests (게스트)
 | 컬럼 | 타입 | 설명 |
@@ -113,6 +117,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | crew_id | UUID (FK → crew_members) | 크루면 연결 |
 | guest_id | UUID (FK → guests) | 게스트면 연결 |
 | status | TEXT | '사전신청' 또는 '출석완료' |
+| team_name | TEXT | 팀 배정명 (예: '1팀', null=미배정) |
 | checked_in_at | TIMESTAMPTZ | 출석 시각 |
 | created_at | TIMESTAMPTZ | 신청일 |
 
@@ -319,33 +324,44 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 ---
 
 ### 5-13. 관리자 대시보드 `/admin/dashboard`
-**목적**: 행사 데이터를 시각화하여 운영 현황을 파악한다.
+**목적**: 행사 당일 운영 전용. 출석 현황 + 팀 매칭.
 
 **인증**: `middleware.ts`가 모든 `/admin/**` 및 `/api/admin/**` 경로를 쿠키로 보호
 
-**표시 데이터**:
-| 섹션 | 차트 종류 | API |
-|------|-----------|-----|
-| 핵심 지표 카드 | 숫자 카드 4개 | `/api/admin/stats` |
-| 신청→출석 퍼널 | 퍼널 차트 | `/api/admin/funnel` |
-| 대학별 분석 | 바 차트 | `/api/admin/by-school` |
-| 학년별 분석 | 바 차트 | `/api/admin/by-grade` |
-| 신청 경로 분석 | 파이/바 차트 | `/api/admin/by-path` |
-| 신청 시기별 출석률 | 라인 차트 | `/api/admin/by-date` |
-| 만족도 레이더 | 레이더 차트 | `/api/admin/feedback` |
-| 피드백 태그 분석 | 바 차트 | `/api/admin/feedback` |
-| 신청자 명단 테이블 | 테이블 | `/api/admin/members` |
+**상단 현황바** (3개 숫자 카드):
+- 오기로 한 인원: 해당 행사 사전신청자 수
+- 현재 온 인원: status='출석완료' 수
+- 미출석: 오기로 한 인원 - 현재 온 인원
 
-**기능 버튼**:
-- 새로고침: 전체 데이터 재조회
-- CSV 내보내기: 신청자 전체 데이터를 엑셀 호환 CSV로 다운로드
-- 로그아웃: 쿠키 삭제 후 `/admin`으로 이동
+**팀 매칭 보드**:
+- 좌측 패널: 출석완료 + 미배정 인원 카드 목록 (포도=🍇, 노쇼후보=흐린색, noshow_count≥2=강조)
+- 우측 패널: 최대 30팀 슬롯 (4자리), 드래그앤드롭으로 팀 간 이동
+- 팀명 직접 수정 가능 (기본값: '1팀', '2팀'...)
+- 팀에 포도가 혼자이거나 포도끼리만 있으면 우상단 보라색 점(•) 표시
+- 자동 매칭 버튼: 포도 기준(같은 학교+동성+나이 어린 생명 우선), 이미 배정된 인원은 이동 안 함
+- 팀 배정 즉시 DB 저장 (`event_registrations.team_name`)
 
-**핵심 지표**:
-- 총 신청자: `crew_members`에서 role='participant' 수
-- 출석 인원: `event_registrations`에서 status='출석완료' 수
-- 출석률: 출석 인원 / 총 신청자 × 100
-- 피드백 응답: `feedbacks` 수
+**하단**: "전체 분석 보기 →" 버튼 → `/admin/dashboard/full`
+
+**API**: `/api/admin/dashboard-data` (GET), `/api/admin/assign-team` (POST), `/api/admin/auto-match` (POST)
+
+### 5-14. 전체 분석 `/admin/dashboard/full`
+**목적**: 행사 데이터 분석 및 운영 현황 파악.
+
+**섹션 1** — 오늘 행사 분석 (좌: 전체 / 우: 생명만):
+- 학교별 분포 (바 차트)
+- 학년별 분포 (바 차트)
+- 알게 된 경로 (바 차트)
+- 성별 분포 (파이 차트)
+
+**섹션 2** — 게스트 & 크루 전환 분석:
+- 총 게스트 신청 수, 게스트 참석률, 크루 전환율, 누적 크루(생명) 인원
+
+**섹션 3** — 피드백 분석:
+- 좋았던 점/아쉬운 점 태그 바 차트
+- 피드백 텍스트 카드 목록 (good_points/bad_points 스크롤 열람)
+
+**API**: `/api/admin/full-stats` (GET)
 
 ---
 
