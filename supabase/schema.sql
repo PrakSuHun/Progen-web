@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS crew_members (
   phone TEXT NOT NULL UNIQUE,
   school TEXT NOT NULL,
   grade TEXT NOT NULL,
+  age TEXT,
   major TEXT NOT NULL,
   path TEXT NOT NULL,
   project TEXT NOT NULL,
@@ -32,14 +33,9 @@ CREATE TABLE IF NOT EXISTS guests (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   phone TEXT NOT NULL UNIQUE,
+  age TEXT,
   school TEXT,
   major TEXT,
-  grade TEXT,
-  path TEXT,
-  project TEXT,
-  gender TEXT,
-  motivation TEXT,
-  is_member BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -47,51 +43,43 @@ CREATE TABLE IF NOT EXISTS guests (
 CREATE TABLE IF NOT EXISTS event_registrations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   event_id UUID REFERENCES events(id) ON DELETE CASCADE,
-  crew_id UUID REFERENCES crew_members(id) ON DELETE CASCADE,
-  guest_id UUID REFERENCES guests(id) ON DELETE CASCADE,
+  crew_id UUID REFERENCES crew_members(id) ON DELETE SET NULL,
+  guest_id UUID REFERENCES guests(id) ON DELETE SET NULL,
   status TEXT DEFAULT '사전신청', -- '사전신청' or '출석완료'
-  registered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   checked_in_at TIMESTAMP WITH TIME ZONE,
-  UNIQUE(event_id, COALESCE(crew_id, guest_id))
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(event_id, crew_id),
+  UNIQUE(event_id, guest_id)
 );
 
 -- Feedbacks Table
 CREATE TABLE IF NOT EXISTS feedbacks (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   event_id UUID REFERENCES events(id) ON DELETE CASCADE,
-  crew_id UUID REFERENCES crew_members(id) ON DELETE CASCADE,
-  guest_id UUID REFERENCES guests(id) ON DELETE CASCADE,
-  score_overall INTEGER CHECK (score_overall >= 1 AND score_overall <= 5),
-  score_content INTEGER CHECK (score_content >= 1 AND score_content <= 5),
-  score_practice INTEGER CHECK (score_practice >= 1 AND score_practice <= 5),
-  score_network INTEGER CHECK (score_network >= 1 AND score_network <= 5),
-  good_tags TEXT,
-  good_points TEXT,
-  bad_tags TEXT,
-  bad_points TEXT,
+  crew_id UUID REFERENCES crew_members(id) ON DELETE SET NULL,
+  guest_id UUID REFERENCES guests(id) ON DELETE SET NULL,
+  score_overall SMALLINT NOT NULL CHECK (score_overall >= 1 AND score_overall <= 5),
+  score_content SMALLINT NOT NULL CHECK (score_content >= 1 AND score_content <= 5),
+  score_practice SMALLINT NOT NULL CHECK (score_practice >= 1 AND score_practice <= 5),
+  score_network SMALLINT NOT NULL CHECK (score_network >= 1 AND score_network <= 5),
+  good_tags TEXT[] DEFAULT '{}',
+  good_points TEXT DEFAULT '',
+  bad_tags TEXT[] DEFAULT '{}',
+  bad_points TEXT DEFAULT '',
   would_return BOOLEAN DEFAULT false,
   join_interest BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(event_id, COALESCE(crew_id, guest_id))
+  UNIQUE(event_id, crew_id),
+  UNIQUE(event_id, guest_id)
 );
 
--- 1st Class Member Table
-CREATE TABLE IF NOT EXISTS 1st_class_member (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  school TEXT NOT NULL,
-  grade TEXT NOT NULL,
-  major TEXT NOT NULL,
-  gender TEXT,
-  age TEXT,
-  phone TEXT NOT NULL,
-  path TEXT,
-  project TEXT,
-  motivation TEXT,
-  history TEXT,
-  is_member BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- ============================================================
+-- 마이그레이션: 기존 DB에 age 컬럼 추가 (이미 생성된 경우 실행)
+-- ============================================================
+ALTER TABLE crew_members ADD COLUMN IF NOT EXISTS age TEXT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS age TEXT;
+-- feedbacks good_tags/bad_tags TEXT → TEXT[] 변환은 수동으로 처리 필요
+-- (데이터 없으면: DROP TABLE feedbacks; 후 재생성)
 
 -- Create indexes for faster queries
 CREATE INDEX IF NOT EXISTS idx_crew_members_phone ON crew_members(phone);

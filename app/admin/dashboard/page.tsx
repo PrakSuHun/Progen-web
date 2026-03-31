@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
 import { StatCard } from '@/components/dashboard/StatCard'
+import { FunnelChart } from '@/components/dashboard/FunnelChart'
+import { SchoolChart } from '@/components/dashboard/SchoolChart'
+import { GradeChart } from '@/components/dashboard/GradeChart'
+import { PathChart } from '@/components/dashboard/PathChart'
+import { DateChart } from '@/components/dashboard/DateChart'
+import { FeedbackRadar } from '@/components/dashboard/FeedbackRadar'
+import { FeedbackTagChart } from '@/components/dashboard/FeedbackTagChart'
+import { MembersTable } from '@/components/dashboard/MembersTable'
 import { showToast } from '@/components/Toast'
 
 interface Stats {
@@ -15,198 +21,159 @@ interface Stats {
   feedback_responses: number
 }
 
+interface FunnelItem { label: string; value: number; color: string }
+interface SchoolItem { school: string; 신청: number; 출석: number; 출석률: number }
+interface GradeItem { grade: string; 신청: number; 출석: number; 출석률: number }
+interface PathItem { path: string; count: number }
+interface DateItem { date: string; 신청: number; 출석: number }
+interface FeedbackStats {
+  avg_overall: number; avg_content: number; avg_practice: number; avg_network: number
+  good_tags: { tag: string; count: number }[]
+  bad_tags: { tag: string; count: number }[]
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter()
-  const [stats, setStats] = useState<Stats>({
-    total_applicants: 0,
-    total_attended: 0,
-    attendance_rate: 0,
-    feedback_responses: 0,
-  })
+  const [stats, setStats] = useState<Stats>({ total_applicants: 0, total_attended: 0, attendance_rate: 0, feedback_responses: 0 })
+  const [funnel, setFunnel] = useState<FunnelItem[]>([])
+  const [schoolData, setSchoolData] = useState<SchoolItem[]>([])
+  const [gradeData, setGradeData] = useState<GradeItem[]>([])
+  const [pathData, setPathData] = useState<PathItem[]>([])
+  const [dateData, setDateData] = useState<DateItem[]>([])
+  const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchStats()
-  }, [])
+  useEffect(() => { fetchAll() }, [])
 
-  const fetchStats = async () => {
+  const fetchAll = async () => {
+    setLoading(true)
     try {
-      const response = await fetch('/api/admin/stats')
-      if (response.ok) {
-        const data = await response.json()
-        setStats(data)
-      } else if (response.status === 401) {
-        router.push('/admin')
-      }
-    } catch (error) {
-      showToast('통계를 불러올 수 없습니다', 'error')
+      const [statsRes, funnelRes, schoolRes, gradeRes, pathRes, dateRes, feedbackRes] = await Promise.all([
+        fetch('/api/admin/stats'),
+        fetch('/api/admin/funnel'),
+        fetch('/api/admin/by-school'),
+        fetch('/api/admin/by-grade'),
+        fetch('/api/admin/by-path'),
+        fetch('/api/admin/by-date'),
+        fetch('/api/admin/feedback'),
+      ])
+
+      if (statsRes.status === 401) { router.push('/admin'); return }
+
+      if (statsRes.ok) setStats(await statsRes.json())
+      if (funnelRes.ok) { const d = await funnelRes.json(); setFunnel(d.data || []) }
+      if (schoolRes.ok) { const d = await schoolRes.json(); setSchoolData(d.data || []) }
+      if (gradeRes.ok) { const d = await gradeRes.json(); setGradeData(d.data || []) }
+      if (pathRes.ok) { const d = await pathRes.json(); setPathData(d.data || []) }
+      if (dateRes.ok) { const d = await dateRes.json(); setDateData(d.data || []) }
+      if (feedbackRes.ok) setFeedbackStats(await feedbackRes.json())
+    } catch {
+      showToast('데이터를 불러올 수 없습니다', 'error')
     } finally {
       setLoading(false)
     }
   }
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/admin/logout', { method: 'POST' })
-      router.push('/admin')
-    } catch (error) {
-      showToast('로그아웃 중 오류가 발생했습니다', 'error')
-    }
+    await fetch('/api/admin/logout', { method: 'POST' })
+    router.push('/admin')
+  }
+
+  const handleExport = () => {
+    window.location.href = '/api/admin/export'
   }
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-900">
-        <Navbar />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <p className="text-center text-white">로딩 중...</p>
-        </div>
-        <Footer />
+      <main className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <p className="text-white text-xl">로딩 중...</p>
       </main>
     )
   }
 
   return (
     <main className="min-h-screen bg-slate-900">
-      <Navbar />
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-white">관리자 대시보드</h1>
-          <Button variant="secondary" onClick={handleLogout}>
-            로그아웃
-          </Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* 헤더 */}
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-4xl font-bold text-white">관리자 대시보드</h1>
+            <p className="text-slate-400 mt-1">PROGEN 행사 통계 분석</p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={fetchAll}>🔄 새로고침</Button>
+            <Button variant="secondary" onClick={handleExport}>📥 CSV 내보내기</Button>
+            <Button variant="secondary" onClick={handleLogout}>로그아웃</Button>
+          </div>
         </div>
 
-        {/* Key Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard
-            label="총 신청자"
-            value={stats.total_applicants}
-            icon="👥"
-            variant="primary"
-          />
-          <StatCard
-            label="출석 인원"
-            value={stats.total_attended}
-            icon="✅"
-            variant="success"
-          />
-          <StatCard
-            label="출석률"
-            value={`${stats.attendance_rate.toFixed(1)}%`}
-            icon="📈"
-            variant="secondary"
-          />
-          <StatCard
-            label="피드백 응답"
-            value={stats.feedback_responses}
-            icon="💬"
-            variant="danger"
-          />
+        {/* 핵심 지표 카드 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <StatCard label="총 신청자" value={stats.total_applicants} icon="👥" variant="primary" />
+          <StatCard label="출석 인원" value={stats.total_attended} icon="✅" variant="success" />
+          <StatCard label="출석률" value={`${stats.attendance_rate.toFixed(1)}%`} icon="📈" variant="secondary" />
+          <StatCard label="피드백 응답" value={stats.feedback_responses} icon="💬" variant="danger" />
         </div>
 
-        {/* Analysis Sections */}
+        {/* 퍼널 차트 */}
+        <div className="bg-slate-800 p-6 rounded-xl mb-8">
+          <h2 className="text-xl font-semibold text-white mb-6">신청 → 출석 퍼널</h2>
+          <FunnelChart data={funnel} />
+        </div>
+
+        {/* 학교 + 학년 분석 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div
-            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
-            onClick={() => router.push('/admin/dashboard/full')}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-2">
-                  대학별 분석
-                </h2>
-                <p className="text-slate-400 text-sm">
-                  대학별 신청자 분포 및 통계
-                </p>
-              </div>
-              <span className="text-2xl">🏫</span>
-            </div>
+          <div className="bg-slate-800 p-6 rounded-xl">
+            <h2 className="text-xl font-semibold text-white mb-4">대학별 분석</h2>
+            <SchoolChart data={schoolData} />
           </div>
-          <div
-            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
-            onClick={() => router.push('/admin/dashboard/full')}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-2">
-                  학년별 분석
-                </h2>
-                <p className="text-slate-400 text-sm">
-                  학년별 신청자 분포 및 통계
-                </p>
-              </div>
-              <span className="text-2xl">📊</span>
-            </div>
-          </div>
-          <div className="bg-slate-800 p-6 rounded-lg">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-2">
-                  피드백 요약
-                </h2>
-                <p className="text-slate-400 text-sm">
-                  만족도 점수 및 주요 의견
-                </p>
-              </div>
-              <span className="text-2xl">💬</span>
-            </div>
-          </div>
-          <div
-            className="bg-slate-800 p-6 rounded-lg cursor-pointer hover:bg-slate-750 transition"
-            onClick={() => router.push('/admin/dashboard/full')}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-semibold text-white mb-2">
-                  출석 명단
-                </h2>
-                <p className="text-slate-400 text-sm">
-                  전체 신청자 및 출석 현황
-                </p>
-              </div>
-              <span className="text-2xl">📝</span>
-            </div>
+          <div className="bg-slate-800 p-6 rounded-xl">
+            <h2 className="text-xl font-semibold text-white mb-4">학년별 분석</h2>
+            <GradeChart data={gradeData} />
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="bg-slate-800 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            주요 지표
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="text-center">
-              <p className="text-slate-400 text-sm mb-2">신청 완료율</p>
-              <p className="text-3xl font-bold text-purple-400">100%</p>
-            </div>
-            <div className="text-center">
-              <p className="text-slate-400 text-sm mb-2">평균 만족도</p>
-              <p className="text-3xl font-bold text-green-400">4.2/5.0</p>
-            </div>
-            <div className="text-center">
-              <p className="text-slate-400 text-sm mb-2">가입 의향</p>
-              <p className="text-3xl font-bold text-blue-400">68%</p>
-            </div>
+        {/* 경로 + 날짜 분석 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="bg-slate-800 p-6 rounded-xl">
+            <h2 className="text-xl font-semibold text-white mb-4">신청 경로 분석</h2>
+            <PathChart data={pathData} />
+          </div>
+          <div className="bg-slate-800 p-6 rounded-xl">
+            <h2 className="text-xl font-semibold text-white mb-4">신청 시기별 출석률</h2>
+            <DateChart data={dateData} />
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4">
-          <Button variant="primary" onClick={() => fetchStats()}>
-            🔄 새로고침
-          </Button>
-          <Button variant="secondary">
-            📥 CSV 내보내기
-          </Button>
-          <Button variant="secondary">
-            📋 상세 분석 보기
-          </Button>
+        {/* 피드백 분석 */}
+        {feedbackStats && (
+          <>
+            <div className="bg-slate-800 p-6 rounded-xl mb-8">
+              <h2 className="text-xl font-semibold text-white mb-4">만족도 레이더</h2>
+              <FeedbackRadar
+                score_overall={feedbackStats.avg_overall}
+                score_content={feedbackStats.avg_content}
+                score_practice={feedbackStats.avg_practice}
+                score_network={feedbackStats.avg_network}
+              />
+            </div>
+
+            <div className="bg-slate-800 p-6 rounded-xl mb-8">
+              <h2 className="text-xl font-semibold text-white mb-4">피드백 태그 분석</h2>
+              <FeedbackTagChart
+                goodTags={feedbackStats.good_tags}
+                badTags={feedbackStats.bad_tags}
+              />
+            </div>
+          </>
+        )}
+
+        {/* 출석 명단 */}
+        <div className="bg-slate-800 p-6 rounded-xl">
+          <h2 className="text-xl font-semibold text-white mb-4">신청자 명단</h2>
+          <MembersTable />
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }
