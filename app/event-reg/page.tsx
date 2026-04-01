@@ -95,14 +95,14 @@ export default function EventRegPage() {
             Event Registration
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">행사 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-8">크루 또는 게스트로 사전 신청하세요</p>
+          <p className="text-[#888] text-sm mb-8">크루 또는 비회원로 사전 신청하세요</p>
 
           {/* Mode Selection */}
           <Modal isOpen={mode === null} onClose={() => {}} title="신청 유형 선택">
             <p className="text-[#555] mb-6">신청 유형을 선택해주세요</p>
             <div className="flex gap-3">
               <button onClick={() => setMode('crew')} className="flex-1 py-3 bg-violet-500 hover:bg-violet-600 text-white font-bold rounded-full transition-colors">크루</button>
-              <button onClick={() => setMode('guest')} className="flex-1 py-3 bg-[#f0f0f0] hover:bg-[#e5e5e5] text-[#333] font-bold rounded-full border border-[#e0e0e0] transition-colors">게스트</button>
+              <button onClick={() => setMode('guest')} className="flex-1 py-3 bg-[#f0f0f0] hover:bg-[#e5e5e5] text-[#333] font-bold rounded-full border border-[#e0e0e0] transition-colors">비회원</button>
             </div>
           </Modal>
 
