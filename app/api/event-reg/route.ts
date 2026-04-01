@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         throw guestError
       }
 
-      guestId = guest.id
+      guestId = guest?.id ?? null
     }
 
     // 중복 신청 명시적 체크
