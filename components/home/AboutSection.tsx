@@ -22,70 +22,63 @@ const forWho = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-20 md:py-32 px-5 lg:px-8 border-t border-[#e0e0e0]">
+    <section id="about" className="py-16 md:py-28 px-5 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
-        <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-12 md:mb-20">
-          <span className="w-6 h-px bg-[#ccc]" />
+        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
           What is PROGEN?
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mb-20 md:mb-24">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-black text-black leading-[1.05] mb-6">
-              AI 시대를<br />
-              생존하는<br />
-              <span className="text-[#ccc]">가장 확실한 방법</span>
-            </h2>
-            <a href="/about" className="inline-flex items-center gap-2 text-[#999] hover:text-black transition-colors text-sm">
-              더 알아보기 <span>→</span>
-            </a>
-          </div>
-          <div className="flex flex-col justify-end">
-            <p className="text-[#555] text-base md:text-lg leading-relaxed mb-8">
-              대전 지역 대학생 혁신 네트워크 PROGEN은
-              AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 실전 무기로 만듭니다.
-            </p>
-            <div>
-              {missions.map((m) => (
-                <div key={m.num} className="flex gap-5 border-t border-[#e0e0e0] py-5">
-                  <span className="text-[#ccc] font-black text-sm shrink-0 mt-0.5 tabular-nums">{m.num}</span>
-                  <div>
-                    <h3 className="text-black font-bold mb-1 text-sm">{m.title}</h3>
-                    <p className="text-[#666] text-sm leading-relaxed">{m.desc}</p>
-                  </div>
-                </div>
-              ))}
+        {/* Header */}
+        <div className="mb-12 md:mb-20">
+          <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mb-4">
+            AI 시대를 생존하는<br />
+            <span className="text-violet-500">가장 확실한 방법</span>
+          </h2>
+          <p className="text-[#555] text-base md:text-lg leading-relaxed max-w-xl">
+            대전 지역 대학생 혁신 네트워크 PROGEN은
+            AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 실전 무기로 만듭니다.
+          </p>
+        </div>
+
+        {/* Mission cards — stacked on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16 md:mb-24">
+          {missions.map((m) => (
+            <div key={m.num} className="p-5 md:p-7 rounded-2xl bg-[#fafafa] border border-[#eee] hover:border-violet-200 transition-colors">
+              <span className="inline-block w-8 h-8 rounded-lg bg-violet-500 text-white font-black text-xs flex items-center justify-center mb-4">{m.num}</span>
+              <h3 className="text-black font-bold text-base mb-2">{m.title}</h3>
+              <p className="text-[#666] text-sm leading-relaxed">{m.desc}</p>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Founder */}
-        <div className="border border-[#e0e0e0] rounded-2xl p-6 md:p-12 mb-20 md:mb-24">
-          <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-8">
-            <span className="w-6 h-px bg-[#ccc]" />
+        <div className="rounded-2xl bg-[#fafafa] border border-[#eee] p-5 md:p-10 mb-16 md:mb-24">
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
             Founder
           </div>
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="shrink-0">
-              <div className="w-14 h-14 rounded-xl bg-[#f5f5f5] border border-[#e0e0e0] flex items-center justify-center text-xl font-black text-violet-500 mb-3">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+            <div className="shrink-0 flex items-start gap-4 md:flex-col">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-violet-500 flex items-center justify-center text-lg md:text-xl font-black text-white">
                 박
               </div>
-              <p className="text-black font-black text-sm">박수훈</p>
-              <p className="text-[#999] text-xs mt-0.5">Founder &amp; President</p>
+              <div>
+                <p className="text-black font-black text-sm">박수훈</p>
+                <p className="text-[#999] text-xs mt-0.5">Founder &amp; President</p>
+              </div>
             </div>
             <div className="flex-1">
-              <div className="flex flex-wrap gap-1.5 mb-5">
+              <div className="flex flex-wrap gap-1.5 mb-4">
                 {founderTags.map((tag) => (
-                  <span key={tag} className="px-2.5 py-1 bg-[#f5f5f5] border border-[#e8e8e8] text-[#666] text-xs rounded-full">
+                  <span key={tag} className="px-2.5 py-1 bg-white border border-[#e0e0e0] text-[#555] text-xs rounded-full">
                     {tag}
                   </span>
                 ))}
               </div>
-              <blockquote className="text-[#555] text-sm leading-relaxed">
+              <blockquote className="text-[#444] text-sm leading-[1.8]">
                 &ldquo;저 역시 여러분과 똑같은 캠퍼스에서 내일을 고민하는 4학년 대학생입니다.
                 2021년 창업 이후 1.4억 원의 누적 매출과 1억 원의 지원금을 유치하며 깨달은 것은,
-                결국 <span className="text-black font-semibold">&lsquo;실행력&rsquo;과 &lsquo;도구의 활용&rsquo;</span>이 생존의 핵심이라는 점이었습니다.
+                결국 <span className="text-violet-600 font-semibold">&lsquo;실행력&rsquo;과 &lsquo;도구의 활용&rsquo;</span>이 생존의 핵심이라는 점이었습니다.
                 제가 먼저 겪은 시행착오와 노하우를 아낌없이 나누려 합니다.&rdquo;
               </blockquote>
             </div>
@@ -93,24 +86,20 @@ export function AboutSection() {
         </div>
 
         {/* For who */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-          <div>
-            <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-6">
-              <span className="w-6 h-px bg-[#ccc]" />
-              Who is this for?
-            </div>
-            <h3 className="text-3xl md:text-5xl font-black text-black leading-tight">
-              이런 분들께<br />
-              <span className="text-[#ccc]">추천해요</span>
-            </h3>
+        <div>
+          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            Who is this for?
           </div>
-          <div>
+          <h3 className="text-2xl md:text-4xl font-black text-black leading-tight mb-8">
+            이런 분들께 추천해요
+          </h3>
+          <div className="space-y-3">
             {forWho.map((text, i) => (
-              <div key={i} className="flex items-start gap-4 py-4 border-t border-[#e0e0e0]">
-                <span className="text-[#ccc] font-black text-xs shrink-0 mt-1 tabular-nums">
-                  {String(i + 1).padStart(2, '0')}
+              <div key={i} className="flex items-start gap-4 p-4 md:p-5 rounded-xl bg-[#fafafa] border border-[#eee]">
+                <span className="w-7 h-7 rounded-lg bg-violet-100 text-violet-600 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                  {i + 1}
                 </span>
-                <p className="text-[#555] text-sm leading-relaxed">{text}</p>
+                <p className="text-[#444] text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>

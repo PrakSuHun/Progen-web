@@ -21,35 +21,30 @@ const reviews = [
 
 export function ActivitiesSection() {
   return (
-    <section className="py-20 md:py-32 px-5 lg:px-8 border-t border-[#e0e0e0]">
+    <section className="py-16 md:py-28 px-5 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
-        <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-12 md:mb-20">
-          <span className="w-6 h-px bg-[#ccc]" />
+        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
           Proven Track Record
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mb-12 md:mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-black leading-tight">
-            이미 수많은 대학생이<br />
-            <span className="text-[#ccc]">혁신을 경험했습니다.</span>
-          </h2>
-          <div className="flex items-end">
-            <p className="text-[#555] leading-relaxed text-sm">
-              성황리에 마친 지난 CNU AI 워크숍<br />실제 참가자 후기
-            </p>
-          </div>
-        </div>
+        <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mb-3">
+          이미 수많은 대학생이<br />
+          <span className="text-violet-500">혁신을 경험했습니다.</span>
+        </h2>
+        <p className="text-[#777] text-sm md:text-base mb-10 md:mb-14">
+          성황리에 마친 지난 CNU AI 워크숍 · 실제 참가자 후기
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:border-t md:border-l md:border-[#e0e0e0]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {reviews.map((r) => (
-            <div key={r.name} className="p-6 md:p-8 border border-[#e0e0e0] md:border-0 md:border-b md:border-r md:border-[#e0e0e0] rounded-xl md:rounded-none flex flex-col justify-between bg-[#fafafa] md:bg-transparent">
+            <div key={r.name} className="p-5 md:p-7 bg-[#fafafa] border border-[#eee] rounded-2xl flex flex-col justify-between hover:border-violet-200 transition-colors">
               <div>
-                <div className="text-yellow-500 text-xs tracking-widest mb-5">★ ★ ★ ★ ★</div>
-                <p className="text-[#444] text-sm leading-relaxed mb-6">&ldquo;{r.text}&rdquo;</p>
+                <div className="text-violet-400 text-xs tracking-wider mb-4">★ ★ ★ ★ ★</div>
+                <p className="text-[#444] text-sm leading-[1.8] mb-6">&ldquo;{r.text}&rdquo;</p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#f0f0f0] border border-[#e0e0e0] flex items-center justify-center text-xs font-black text-violet-500 shrink-0">
+              <div className="flex items-center gap-3 pt-4 border-t border-[#eee]">
+                <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center text-xs font-black text-violet-600 shrink-0">
                   {r.name[0]}
                 </div>
                 <div>

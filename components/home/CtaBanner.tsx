@@ -10,35 +10,33 @@ export function CtaBanner() {
   ]
 
   return (
-    <section id="apply" className="py-20 md:py-32 px-5 lg:px-8 border-t border-[#e0e0e0] bg-[#fafafa]">
+    <section id="apply" className="py-16 md:py-28 px-5 lg:px-8 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
 
-        <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-12 md:mb-20">
-          <span className="w-6 h-px bg-[#ccc]" />
+        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
           Join PROGEN
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           <div>
-            <h2 className="text-4xl md:text-6xl font-black text-black leading-[1.05] mb-6">
-              격차를 당하는<br />
-              쪽이 아니라<br />
-              <span className="text-[#ccc]">격차를 만드는<br />주인공이 되세요</span>
+            <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mb-5">
+              격차를 당하는 쪽이 아니라<br />
+              <span className="text-violet-500">격차를 만드는 주인공</span>이 되세요
             </h2>
-            <p className="text-[#666] text-[15px] leading-relaxed">
+            <p className="text-[#555] text-sm md:text-base leading-relaxed">
               &ldquo;AI가 여러분의 일자리를 뺏는 게 아닙니다.<br />
               AI를 쓰는 사람이, 못 쓰는 사람의 자리를 뺏는 것입니다.&rdquo;
             </p>
           </div>
 
           <div>
-            <div className="border border-[#e0e0e0] rounded-2xl overflow-hidden bg-white mb-5">
+            <div className="bg-white border border-[#eee] rounded-2xl overflow-hidden mb-5">
               {details.map((d, i) => (
                 <div
                   key={d.label}
-                  className={`flex gap-4 md:gap-6 px-5 py-3.5 ${i < details.length - 1 ? 'border-b border-[#e0e0e0]' : ''}`}
+                  className={`flex gap-4 px-5 py-3.5 ${i < details.length - 1 ? 'border-b border-[#f0f0f0]' : ''}`}
                 >
-                  <span className="text-[#999] text-sm shrink-0 w-16 md:w-20">{d.label}</span>
+                  <span className="text-violet-500 text-sm font-semibold shrink-0 w-16 md:w-20">{d.label}</span>
                   <span className="text-[#333] text-sm">{d.value}</span>
                 </div>
               ))}
@@ -46,7 +44,7 @@ export function CtaBanner() {
 
             <a
               href="/apply"
-              className="w-full block text-center bg-black text-white font-black py-4 rounded-full text-base hover:bg-violet-500 transition-all duration-300"
+              className="w-full block text-center bg-violet-500 text-white font-black py-4 rounded-full text-base hover:bg-violet-600 transition-all duration-200 shadow-lg shadow-violet-500/20"
             >
               PROGEN 1기 크루 지원하기 →
             </a>
