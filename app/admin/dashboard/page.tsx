@@ -331,37 +331,28 @@ export default function AdminDashboardPage() {
   const handleEventChange = (newEventId: string) => {
     setSelectedEventId(newEventId)
     fetchAll(newEventId)
-    // Always refresh members when event changes (will load on tab switch)
-    setMembers([])
+    setMembers([]) // clear so it reloads on tab switch
   }
 
   const [membersMode, setMembersMode] = useState<'event' | 'all'>('event')
-  const membersEventRef = useRef<string>('')
 
-  const fetchMembers = async (eventId?: string, mode?: 'event' | 'all') => {
+  const fetchMembers = async (mode?: 'event' | 'all') => {
     setMembersLoading(true)
     const m = mode ?? membersMode
-    const eid = eventId || selectedEventId
-    const qs = m === 'all' ? '?mode=all' : `?eventId=${eid}`
+    const qs = m === 'all' ? '?mode=all' : `?eventId=${selectedEventId}`
     try {
       const res = await fetch(`/api/admin/members-list${qs}`)
       if (res.ok) {
         const json = await res.json()
         setMembers(json.members ?? [])
-        membersEventRef.current = m === 'all' ? 'all' : eid
       }
     } catch { showToast('신청자 목록을 불러올 수 없습니다', 'error') }
     finally { setMembersLoading(false) }
   }
 
   useEffect(() => {
-    if (activeTab === 'members') {
-      const needsRefresh = membersMode === 'all'
-        ? membersEventRef.current !== 'all'
-        : membersEventRef.current !== selectedEventId
-      if (needsRefresh || members.length === 0) fetchMembers()
-    }
-  }, [activeTab, selectedEventId, membersMode])
+    if (activeTab === 'members' && selectedEventId) fetchMembers()
+  }, [activeTab, selectedEventId])
 
   const assignTeam = (registration_id: string, team_name: string | null) =>
     fetch('/api/admin/assign-team', {
@@ -885,13 +876,13 @@ export default function AdminDashboardPage() {
         {/* 모드 토글 + 검색 + 정렬 */}
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5">
-            <button onClick={() => { setMembersMode('event'); fetchMembers(undefined, 'event') }}
+            <button onClick={() => { setMembersMode('event'); fetchMembers('event') }}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'event' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
-              행사 참여자
+              행사 신청자
             </button>
-            <button onClick={() => { setMembersMode('all'); fetchMembers(undefined, 'all') }}
+            <button onClick={() => { setMembersMode('all'); fetchMembers('all') }}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'all' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
-              크루 전체
+              누적 크루 신청자
             </button>
           </div>
           <input
