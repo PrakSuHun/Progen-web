@@ -53,9 +53,14 @@ interface FullStats {
     saengmyung: { school: DistItem[]; grade: DistItem[]; path: DistItem[]; gender: DistItem[] }
   }
   section2: {
+    total_registrations: number
+    checked_in_count: number
+    total_crews: number
     total_guests: number
     guest_attended: number
     guest_attendance_rate: number
+    crew_from_event: number
+    guests_from_event: number
     crew_conversion_count: number
     crew_conversion_rate: number
     total_saengmyung: number
