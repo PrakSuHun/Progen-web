@@ -31,7 +31,7 @@ export function Input({
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <label className="block text-sm font-medium text-[#333] mb-2">
           {label}
         </label>
       )}
@@ -39,14 +39,12 @@ export function Input({
         {...props}
         value={value ?? ''}
         onChange={handleChange}
-        className={`w-full px-4 py-2.5 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-opacity-20 transition ${
-          error
-            ? 'border-red-500'
-            : 'border-slate-600 focus:border-purple-500'
+        className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] placeholder-[#aaa] focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition text-base ${
+          error ? 'border-red-400' : 'border-[#e0e0e0]'
         }`}
       />
       {error && (
-        <p className="text-red-400 text-sm mt-1">{error}</p>
+        <p className="text-red-500 text-xs mt-1.5">{error}</p>
       )}
     </div>
   )
