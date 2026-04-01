@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 
@@ -16,11 +17,8 @@ const events = [
     participants: 100,
     desc: '생성형 AI 개념과 핵심 툴(ChatGPT, Gamma, Perplexity 등)을 직접 체험하며 AI 장벽을 허무는 첫 번째 세션. 대전 13개 대학교에서 100명 이상 참여.',
     tags: ['AI', 'ChatGPT', 'Gamma', '실습'],
-    highlights: [
-      '100명+ 참가자',
-      '13개 대학교 참여',
-      '만족도 95%',
-    ],
+    highlights: ['100명+ 참가자', '13개 대학교 참여', '만족도 95%'],
+    photos: ['/archive/0328-1.JPG', '/archive/0328-2.JPG'],
   },
 ]
 
@@ -31,7 +29,6 @@ export default function ArchivePage() {
 
       <div className="pt-20 md:pt-24">
 
-        {/* Hero */}
         <section className="px-5 lg:px-8 py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
             <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
@@ -46,11 +43,26 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        {/* Events */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="max-w-7xl mx-auto space-y-10">
             {events.map((e) => (
               <div key={e.title} className="bg-[#fafafa] border border-[#eee] rounded-2xl overflow-hidden">
+                {/* Photos */}
+                <div className="grid grid-cols-1 sm:grid-cols-2">
+                  {e.photos.map((src, i) => (
+                    <div key={i} className="relative aspect-[4/3] overflow-hidden">
+                      <Image
+                        src={src}
+                        alt={`${e.title} 사진 ${i + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Info */}
                 <div className="p-5 md:p-8">
                   <div className="flex flex-wrap items-center gap-2 mb-4">
                     {e.tags.map((tag) => (
@@ -65,7 +77,6 @@ export default function ArchivePage() {
                   </p>
                   <p className="text-[#555] text-sm leading-relaxed mb-6">{e.desc}</p>
 
-                  {/* Highlights */}
                   <div className="flex flex-wrap gap-3">
                     {e.highlights.map((h) => (
                       <div key={h} className="px-4 py-2 bg-white border border-[#e0e0e0] rounded-xl text-sm font-semibold text-[#333]">
@@ -79,7 +90,6 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        {/* Empty state hint */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
             <div className="bg-violet-50 border border-violet-100 rounded-2xl p-6 md:p-10 text-center">
