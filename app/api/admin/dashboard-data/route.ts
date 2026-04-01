@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = await getActiveEventId()
+    const paramEventId = request.nextUrl.searchParams.get('eventId')
+    const eventId = paramEventId || await getActiveEventId()
 
     if (!eventId) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })

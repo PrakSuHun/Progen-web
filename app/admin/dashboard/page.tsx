@@ -9,7 +9,7 @@ import {
 import { showToast } from '@/components/Toast'
 
 // ───────────── Types ─────────────
-type Tab = 'checkin' | 'team' | 'analysis'
+type Tab = 'checkin' | 'team' | 'analysis' | 'members'
 type SortKey = 'none' | 'name' | 'school' | 'grade' | 'gender'
 
 interface Attendee {
@@ -33,6 +33,15 @@ interface DashboardData {
   unassigned: Attendee[]
   assigned: Record<string, Attendee[]>
   not_arrived: Attendee[]
+}
+
+interface EventItem { id: string; title: string; event_date: string }
+
+interface CrewMember {
+  id: string; name: string; phone: string; school: string; grade: string
+  age: string; major: string; path: string; project: string; gender: string
+  motivation: string; role: string; status: string; is_member: boolean
+  noshow_count: number; created_at: string
 }
 
 interface DistItem { name: string; count: number }
@@ -255,17 +264,40 @@ export default function AdminDashboardPage() {
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
   const knownTeamsRef = useRef<Set<string>>(new Set())
 
-  useEffect(() => { fetchAll() }, [])
+  // Event selector
+  const [events, setEvents] = useState<EventItem[]>([])
+  const [selectedEventId, setSelectedEventId] = useState<string>('')
 
-  const fetchAll = async () => {
+  // Members tab
+  const [members, setMembers] = useState<CrewMember[]>([])
+  const [membersLoading, setMembersLoading] = useState(false)
+  const [memberSearch, setMemberSearch] = useState('')
+  const [memberSort, setMemberSort] = useState<SortKey>('none')
+
+  useEffect(() => {
+    // Load events list first, then fetch dashboard data
+    fetch('/api/admin/events').then(async (res) => {
+      if (res.ok) {
+        const json = await res.json()
+        const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date }))
+        setEvents(list)
+        if (list.length > 0) setSelectedEventId(list[0].id)
+      }
+    })
+    fetchAll()
+  }, [])
+
+  const fetchAll = async (eventId?: string) => {
     setLoading(true)
+    const eid = eventId || selectedEventId
+    const qs = eid ? `?eventId=${eid}` : ''
     try {
       // Compact team numbers first (removes gaps, starts from 1팀)
       await fetch('/api/admin/compact-teams', { method: 'POST' })
 
       const [dashRes, statsRes] = await Promise.all([
-        fetch('/api/admin/dashboard-data'),
-        fetch('/api/admin/full-stats'),
+        fetch(`/api/admin/dashboard-data${qs}`),
+        fetch(`/api/admin/full-stats${qs}`),
       ])
       if (dashRes.status === 401) { router.push('/admin'); return }
       if (dashRes.ok) {
@@ -285,6 +317,24 @@ export default function AdminDashboardPage() {
       setLoading(false)
     }
   }
+
+  const handleEventChange = (newEventId: string) => {
+    setSelectedEventId(newEventId)
+    fetchAll(newEventId)
+  }
+
+  const fetchMembers = async () => {
+    setMembersLoading(true)
+    try {
+      const res = await fetch('/api/admin/members-list')
+      if (res.ok) setMembers(await res.json())
+    } catch { showToast('신청자 목록을 불러올 수 없습니다', 'error') }
+    finally { setMembersLoading(false) }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'members' && members.length === 0) fetchMembers()
+  }, [activeTab])
 
   const assignTeam = (registration_id: string, team_name: string | null) =>
     fetch('/api/admin/assign-team', {
@@ -743,11 +793,138 @@ export default function AdminDashboardPage() {
     )
   }
 
+  // ── Tab 4: 신청자 ──
+  const renderMembers = () => {
+    if (membersLoading) return <div className="flex items-center justify-center h-full"><p className="text-white">로딩 중...</p></div>
+
+    const q = memberSearch.toLowerCase()
+    let filtered = q
+      ? members.filter((m) => m.name.includes(q) || m.phone.includes(q) || m.school.includes(q) || m.major.includes(q))
+      : members
+
+    if (memberSort !== 'none') {
+      filtered = [...filtered].sort((a, b) => {
+        if (memberSort === 'name') return a.name.localeCompare(b.name, 'ko')
+        if (memberSort === 'school') return a.school.localeCompare(b.school, 'ko')
+        if (memberSort === 'grade') return a.grade.localeCompare(b.grade, 'ko')
+        if (memberSort === 'gender') return a.gender.localeCompare(b.gender, 'ko')
+        return 0
+      })
+    }
+
+    // Stats
+    const total = members.length
+    const schools = new Set(members.map((m) => m.school)).size
+    const genderCounts: Record<string, number> = {}
+    members.forEach((m) => { genderCounts[m.gender] = (genderCounts[m.gender] || 0) + 1 })
+    const memberCount = members.filter((m) => m.is_member).length
+
+    const MEMBER_SORT_OPTIONS: { key: SortKey; label: string }[] = [
+      { key: 'none', label: '최신순' },
+      { key: 'name', label: '가나다' },
+      { key: 'school', label: '학교' },
+      { key: 'grade', label: '학년' },
+      { key: 'gender', label: '성별' },
+    ]
+
+    return (
+      <div className="p-6 overflow-y-auto h-full">
+        {/* 통계 카드 */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+          {[
+            { label: '총 신청자', value: total, color: 'text-white' },
+            { label: '학교 수', value: schools, color: 'text-purple-400' },
+            { label: '포도(정회원)', value: memberCount, color: 'text-green-400' },
+            { label: '남/여', value: `${genderCounts['남성'] || 0}/${genderCounts['여성'] || 0}`, color: 'text-blue-400' },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="bg-slate-800 rounded-xl p-4 text-center">
+              <div className={`text-2xl font-bold ${color}`}>{value}</div>
+              <div className="text-slate-400 text-xs mt-1">{label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 검색 + 정렬 */}
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <input
+            value={memberSearch}
+            onChange={(e) => setMemberSearch(e.target.value)}
+            placeholder="이름, 연락처, 학교, 전공 검색..."
+            className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 w-64 outline-none focus:border-purple-500 placeholder:text-slate-500"
+          />
+          <div className="flex items-center gap-1">
+            <span className="text-slate-500 text-xs mr-1">정렬:</span>
+            {MEMBER_SORT_OPTIONS.map(({ key, label }) => (
+              <button key={key} onClick={() => setMemberSort(key)}
+                className={`px-2.5 py-1 text-xs rounded-lg transition-colors ${memberSort === key ? 'bg-purple-600 text-white' : 'bg-slate-700 text-slate-400 hover:text-white'}`}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <button onClick={fetchMembers} className="ml-auto text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+            새로고침
+          </button>
+        </div>
+
+        {/* 테이블 */}
+        <div className="bg-slate-800 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-700/50 text-slate-400 text-xs uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left font-semibold">#</th>
+                  <th className="px-4 py-3 text-left font-semibold">이름</th>
+                  <th className="px-4 py-3 text-left font-semibold">연락처</th>
+                  <th className="px-4 py-3 text-left font-semibold">나이</th>
+                  <th className="px-4 py-3 text-left font-semibold">성별</th>
+                  <th className="px-4 py-3 text-left font-semibold">학교</th>
+                  <th className="px-4 py-3 text-left font-semibold">전공</th>
+                  <th className="px-4 py-3 text-left font-semibold">학년</th>
+                  <th className="px-4 py-3 text-left font-semibold">경로</th>
+                  <th className="px-4 py-3 text-left font-semibold">관심</th>
+                  <th className="px-4 py-3 text-left font-semibold">포도</th>
+                  <th className="px-4 py-3 text-left font-semibold">신청일</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {filtered.map((m, i) => (
+                  <tr key={m.id} className="hover:bg-slate-700/30 transition-colors">
+                    <td className="px-4 py-3 text-slate-500 text-xs">{i + 1}</td>
+                    <td className="px-4 py-3 text-white font-medium whitespace-nowrap">
+                      {m.is_member && <span className="mr-1">🍇</span>}{m.name}
+                    </td>
+                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
+                      <a href={`tel:${m.phone}`} className="text-blue-400 hover:text-blue-300">{m.phone}</a>
+                    </td>
+                    <td className="px-4 py-3 text-slate-300">{m.age}</td>
+                    <td className={`px-4 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
+                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{m.school}</td>
+                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{m.major}</td>
+                    <td className="px-4 py-3 text-slate-300">{m.grade}</td>
+                    <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{m.path}</td>
+                    <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{m.project}</td>
+                    <td className="px-4 py-3">{m.is_member ? <span className="text-green-400 text-xs">✓</span> : <span className="text-slate-600 text-xs">—</span>}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(m.created_at).toLocaleDateString('ko-KR')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {filtered.length === 0 && (
+            <p className="text-slate-500 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
+          )}
+        </div>
+        <p className="text-slate-500 text-xs mt-3 text-right">총 {filtered.length}명 표시 / 전체 {members.length}명</p>
+      </div>
+    )
+  }
+
   // ───────────── Render ─────────────
   const tabs: { id: Tab; label: string }[] = [
     { id: 'checkin', label: '출석체크' },
     { id: 'team', label: '팀 배정' },
     { id: 'analysis', label: '전체 분석' },
+    { id: 'members', label: '신청자' },
   ]
 
   if (loading) {
@@ -762,9 +939,24 @@ export default function AdminDashboardPage() {
     <div className="h-screen bg-slate-900 flex flex-col overflow-hidden">
       {/* 헤더 */}
       <header className="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <h1 className="text-lg font-bold text-white">운영 대시보드</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-bold text-white">운영 대시보드</h1>
+          {events.length > 0 && (
+            <select
+              value={selectedEventId}
+              onChange={(e) => handleEventChange(e.target.value)}
+              className="bg-slate-700 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 outline-none focus:border-purple-500 cursor-pointer"
+            >
+              {events.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title} ({new Date(ev.event_date).toLocaleDateString('ko-KR')})
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
         <div className="flex gap-2">
-          <button onClick={fetchAll} className="text-slate-400 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+          <button onClick={() => fetchAll()} className="text-slate-400 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
             새로고침
           </button>
           <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); router.push('/admin') }}
@@ -781,6 +973,7 @@ export default function AdminDashboardPage() {
           {activeTab === 'checkin' && renderCheckin()}
           {activeTab === 'team' && renderTeam()}
           {activeTab === 'analysis' && renderAnalysis()}
+          {activeTab === 'members' && renderMembers()}
         </div>
 
         {/* 우측 책갈피 탭 */}
