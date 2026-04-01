@@ -90,14 +90,14 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = await getActiveEventId()
+    const body = await request.json().catch(() => ({}))
+    const eventId = body.eventId || await getActiveEventId()
 
     if (!eventId) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
     // 기존 팀 최대 번호 파악 (DB + 클라이언트 전달값 중 큰 값 사용)
-    const body = await request.json().catch(() => ({}))
     const clientMaxTeam = typeof body.clientMaxTeam === 'number' ? body.clientMaxTeam : 0
 
     const { data: existing } = await supabase

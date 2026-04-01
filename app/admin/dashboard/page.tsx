@@ -275,16 +275,22 @@ export default function AdminDashboardPage() {
   const [memberSort, setMemberSort] = useState<SortKey>('none')
 
   useEffect(() => {
-    // Load events list first, then fetch dashboard data
+    // Load events list first, then fetch dashboard data with that event
     fetch('/api/admin/events').then(async (res) => {
       if (res.ok) {
         const json = await res.json()
         const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date }))
         setEvents(list)
-        if (list.length > 0) setSelectedEventId(list[0].id)
+        if (list.length > 0) {
+          setSelectedEventId(list[0].id)
+          fetchAll(list[0].id)
+        } else {
+          fetchAll()
+        }
+      } else {
+        fetchAll()
       }
     })
-    fetchAll()
   }, [])
 
   const fetchAll = async (eventId?: string) => {
@@ -293,7 +299,11 @@ export default function AdminDashboardPage() {
     const qs = eid ? `?eventId=${eid}` : ''
     try {
       // Compact team numbers first (removes gaps, starts from 1팀)
-      await fetch('/api/admin/compact-teams', { method: 'POST' })
+      await fetch('/api/admin/compact-teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: eid }),
+      })
 
       const [dashRes, statsRes] = await Promise.all([
         fetch(`/api/admin/dashboard-data${qs}`),
@@ -321,6 +331,7 @@ export default function AdminDashboardPage() {
   const handleEventChange = (newEventId: string) => {
     setSelectedEventId(newEventId)
     fetchAll(newEventId)
+    if (activeTab === 'members') fetchMembers(newEventId)
   }
 
   const [membersMode, setMembersMode] = useState<'event' | 'all'>('event')
@@ -427,7 +438,7 @@ export default function AdminDashboardPage() {
       const res = await fetch('/api/admin/auto-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientMaxTeam }),
+        body: JSON.stringify({ clientMaxTeam, eventId: selectedEventId }),
       })
       const d = await res.json()
       if (res.ok) { showToast('자동 매칭 완료!', 'success'); await fetchAll() }
@@ -455,7 +466,11 @@ export default function AdminDashboardPage() {
 
     // DB 업데이트: 멤버들 미배정 처리 후 팀 번호 재정렬
     await Promise.all(members.map((m) => assignTeam(m.registration_id, null)))
-    await fetch('/api/admin/compact-teams', { method: 'POST' })
+    await fetch('/api/admin/compact-teams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId: selectedEventId }),
+    })
     await fetchAll()
   }
 
@@ -463,7 +478,11 @@ export default function AdminDashboardPage() {
     if (!confirm('모든 팀 배정을 초기화하시겠습니까?')) return
     setResetLoading(true)
     try {
-      const res = await fetch('/api/admin/reset-teams', { method: 'POST' })
+      const res = await fetch('/api/admin/reset-teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: selectedEventId }),
+      })
       const d = await res.json()
       if (res.ok) {
         knownTeamsRef.current.clear()
