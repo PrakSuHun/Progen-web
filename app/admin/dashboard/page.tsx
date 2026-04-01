@@ -331,10 +331,12 @@ export default function AdminDashboardPage() {
   const handleEventChange = (newEventId: string) => {
     setSelectedEventId(newEventId)
     fetchAll(newEventId)
-    if (activeTab === 'members') fetchMembers(newEventId)
+    // Always refresh members when event changes (will load on tab switch)
+    setMembers([])
   }
 
   const [membersMode, setMembersMode] = useState<'event' | 'all'>('event')
+  const membersEventRef = useRef<string>('')
 
   const fetchMembers = async (eventId?: string, mode?: 'event' | 'all') => {
     setMembersLoading(true)
@@ -346,14 +348,20 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         const json = await res.json()
         setMembers(json.members ?? [])
+        membersEventRef.current = m === 'all' ? 'all' : eid
       }
     } catch { showToast('신청자 목록을 불러올 수 없습니다', 'error') }
     finally { setMembersLoading(false) }
   }
 
   useEffect(() => {
-    if (activeTab === 'members') fetchMembers()
-  }, [activeTab, selectedEventId])
+    if (activeTab === 'members') {
+      const needsRefresh = membersMode === 'all'
+        ? membersEventRef.current !== 'all'
+        : membersEventRef.current !== selectedEventId
+      if (needsRefresh || members.length === 0) fetchMembers()
+    }
+  }, [activeTab, selectedEventId, membersMode])
 
   const assignTeam = (registration_id: string, team_name: string | null) =>
     fetch('/api/admin/assign-team', {
@@ -711,8 +719,8 @@ export default function AdminDashboardPage() {
       <div className="p-6 overflow-y-auto h-full space-y-10">
         {/* 섹션 1 */}
         <section>
-          <h2 className="text-xl font-bold text-white mb-1">오늘 행사 분석</h2>
-          <p className="text-slate-500 text-sm mb-5">좌: 전체 출석자 / 우: 일반만</p>
+          <h2 className="text-xl font-bold text-white mb-1">행사 참여자 분석</h2>
+          <p className="text-slate-500 text-sm mb-5">좌: 전체 참여자 / 우: 일반만</p>
           {s1 ? (
             <div className="space-y-6">
               {[
@@ -741,16 +749,16 @@ export default function AdminDashboardPage() {
 
         {/* 섹션 2 */}
         <section>
-          <h2 className="text-xl font-bold text-white mb-5">게스트 & 크루 전환</h2>
+          <h2 className="text-xl font-bold text-white mb-5">행사 참여 현황</h2>
           {s2 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {[
-                { label: '총 게스트 신청', value: `${s2.total_guests}명`, color: 'text-white' },
-                { label: '게스트 참석률', value: `${s2.guest_attendance_rate}%`, color: 'text-green-400' },
-                { label: '게스트 출석 인원', value: `${s2.guest_attended}명`, color: 'text-white' },
-                { label: '크루 전환 수', value: `${s2.crew_conversion_count}명`, color: 'text-purple-400' },
-                { label: '크루 전환율', value: `${s2.crew_conversion_rate}%`, color: 'text-purple-400' },
-                { label: '누적 크루(일반)', value: `${s2.total_saengmyung}명`, color: 'text-white' },
+                { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-white' },
+                { label: '출석완료', value: `${s2.checked_in_count}명`, color: 'text-green-400' },
+                { label: '크루 참여', value: `${s2.total_crews}명`, color: 'text-purple-400' },
+                { label: '게스트 참여', value: `${s2.total_guests}명`, color: 'text-blue-400' },
+                { label: '게스트 출석', value: `${s2.guest_attended}명`, color: 'text-blue-400' },
+                { label: '크루(일반)', value: `${s2.total_saengmyung}명`, color: 'text-white' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-slate-800 rounded-xl p-5">
                   <p className="text-slate-400 text-sm">{label}</p>
@@ -876,11 +884,11 @@ export default function AdminDashboardPage() {
           <div className="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5">
             <button onClick={() => { setMembersMode('event'); fetchMembers(undefined, 'event') }}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'event' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
-              행사별
+              행사 참여자
             </button>
             <button onClick={() => { setMembersMode('all'); fetchMembers(undefined, 'all') }}
               className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'all' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
-              전체
+              크루 전체
             </button>
           </div>
           <input
