@@ -9,7 +9,7 @@ import { CtaBanner } from '@/components/home/CtaBanner'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#080808]">
+    <main className="min-h-screen bg-white">
       <Navbar />
       <HeroSection />
       <NumbersSection />

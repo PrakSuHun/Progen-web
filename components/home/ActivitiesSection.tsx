@@ -21,43 +21,40 @@ const reviews = [
 
 export function ActivitiesSection() {
   return (
-    <section className="py-32 px-6 lg:px-8 border-t border-[#222]">
+    <section className="py-20 md:py-32 px-5 lg:px-8 border-t border-[#e0e0e0]">
       <div className="max-w-7xl mx-auto">
 
-        {/* Section label */}
-        <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-20">
-          <span className="w-8 h-px bg-[#333]" />
+        <div className="flex items-center gap-3 text-[#999] text-[11px] tracking-[0.2em] uppercase mb-12 md:mb-20">
+          <span className="w-6 h-px bg-[#ccc]" />
           Proven Track Record
         </div>
 
-        {/* Header */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
-          <h2 className="text-5xl font-black text-white leading-tight">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mb-12 md:mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-black leading-tight">
             이미 수많은 대학생이<br />
-            <span className="text-[#555]">혁신을 경험했습니다.</span>
+            <span className="text-[#ccc]">혁신을 경험했습니다.</span>
           </h2>
           <div className="flex items-end">
-            <p className="text-[#aaa] leading-relaxed text-sm">
+            <p className="text-[#555] leading-relaxed text-sm">
               성황리에 마친 지난 CNU AI 워크숍<br />실제 참가자 후기
             </p>
           </div>
         </div>
 
-        {/* Review grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-[#222]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 md:border-t md:border-l md:border-[#e0e0e0]">
           {reviews.map((r) => (
-            <div key={r.name} className="p-8 border-b border-r border-[#222] flex flex-col justify-between">
+            <div key={r.name} className="p-6 md:p-8 border border-[#e0e0e0] md:border-0 md:border-b md:border-r md:border-[#e0e0e0] rounded-xl md:rounded-none flex flex-col justify-between bg-[#fafafa] md:bg-transparent">
               <div>
-                <div className="text-yellow-500/70 text-xs tracking-widest mb-6">★ ★ ★ ★ ★</div>
-                <p className="text-[#aaa] text-sm leading-relaxed mb-8">&ldquo;{r.text}&rdquo;</p>
+                <div className="text-yellow-500 text-xs tracking-widest mb-5">★ ★ ★ ★ ★</div>
+                <p className="text-[#444] text-sm leading-relaxed mb-6">&ldquo;{r.text}&rdquo;</p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#111] border border-[#222] flex items-center justify-center text-xs font-black text-violet-400 shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#f0f0f0] border border-[#e0e0e0] flex items-center justify-center text-xs font-black text-violet-500 shrink-0">
                   {r.name[0]}
                 </div>
                 <div>
-                  <p className="text-white text-sm font-bold">{r.name} · {r.school}</p>
-                  <p className="text-[#666] text-xs">{r.major}</p>
+                  <p className="text-black text-sm font-bold">{r.name} · {r.school}</p>
+                  <p className="text-[#999] text-xs">{r.major}</p>
                 </div>
               </div>
             </div>
