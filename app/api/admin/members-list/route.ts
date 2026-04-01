@@ -38,12 +38,12 @@ export async function GET(request: NextRequest) {
   const { data: regs, error } = await supabase
     .from('event_registrations')
     .select(`
-      id, status, team_name, crew_id, guest_id, created_at,
+      id, status, team_name, crew_id, guest_id, registered_at,
       crew_members ( id, name, phone, school, grade, age, major, path, project, gender, motivation, is_member, noshow_count, created_at ),
       guests ( id, name, phone, school, grade, age, major, path, project, gender, motivation, created_at )
     `)
     .eq('event_id', eventId)
-    .order('created_at', { ascending: false })
+    .order('registered_at', { ascending: false })
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 })
 
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
       is_crew: !!r.crew_members,
       reg_status: r.status,
       team_name: r.team_name,
-      created_at: person?.created_at ?? r.created_at,
+      created_at: person?.created_at ?? r.registered_at,
     }
   })
 
