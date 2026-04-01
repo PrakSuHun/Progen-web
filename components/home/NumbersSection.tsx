@@ -41,19 +41,19 @@ const stats = [
 
 export function NumbersSection() {
   return (
-    <section className="border-t border-[#1a1a1a]">
+    <section className="border-t border-[#222]">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {stats.map((s, i) => (
             <div
               key={i}
-              className={`py-10 px-6 ${i < stats.length - 1 ? 'border-r border-[#1a1a1a]' : ''}`}
+              className={`py-10 px-6 ${i < stats.length - 1 ? 'border-r border-[#222]' : ''}`}
             >
               <div className="text-4xl md:text-5xl font-black text-white mb-2 tabular-nums">
                 {'value' in s ? s.value : <Counter target={s.counter!} suffix={s.suffix} />}
               </div>
-              <div className="text-[#666] text-sm font-medium mb-1">{s.label}</div>
-              <div className="text-[#333] text-xs">{s.note}</div>
+              <div className="text-[#aaa] text-sm font-medium mb-1">{s.label}</div>
+              <div className="text-[#555] text-xs">{s.note}</div>
             </div>
           ))}
         </div>

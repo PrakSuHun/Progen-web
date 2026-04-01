@@ -10,12 +10,12 @@ export function CtaBanner() {
   ]
 
   return (
-    <section id="apply" className="py-32 px-6 lg:px-8 border-t border-[#1a1a1a]">
+    <section id="apply" className="py-32 px-6 lg:px-8 border-t border-[#222]">
       <div className="max-w-7xl mx-auto">
 
         {/* Section label */}
-        <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-20">
-          <span className="w-8 h-px bg-[#2a2a2a]" />
+        <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-20">
+          <span className="w-8 h-px bg-[#333]" />
           Join PROGEN
         </div>
 
@@ -24,23 +24,23 @@ export function CtaBanner() {
             <h2 className="text-5xl md:text-6xl font-black text-white leading-[1.0] mb-8">
               격차를 당하는<br />
               쪽이 아니라<br />
-              <span className="text-[#2a2a2a]">격차를 만드는<br />주인공이 되세요</span>
+              <span className="text-[#555]">격차를 만드는<br />주인공이 되세요</span>
             </h2>
-            <p className="text-[#555] text-base leading-relaxed">
+            <p className="text-[#888] text-base leading-relaxed">
               &ldquo;AI가 여러분의 일자리를 뺏는 게 아닙니다.<br />
               AI를 쓰는 사람이, 못 쓰는 사람의 자리를 뺏는 것입니다.&rdquo;
             </p>
           </div>
 
           <div>
-            <div className="border border-[#1a1a1a] rounded-2xl overflow-hidden mb-6">
+            <div className="border border-[#222] rounded-2xl overflow-hidden mb-6">
               {details.map((d, i) => (
                 <div
                   key={d.label}
-                  className={`flex gap-6 px-6 py-4 ${i < details.length - 1 ? 'border-b border-[#1a1a1a]' : ''}`}
+                  className={`flex gap-6 px-6 py-4 ${i < details.length - 1 ? 'border-b border-[#222]' : ''}`}
                 >
-                  <span className="text-[#444] text-sm shrink-0 w-20">{d.label}</span>
-                  <span className="text-[#aaa] text-sm">{d.value}</span>
+                  <span className="text-[#666] text-sm shrink-0 w-20">{d.label}</span>
+                  <span className="text-[#ccc] text-sm">{d.value}</span>
                 </div>
               ))}
             </div>
@@ -51,7 +51,7 @@ export function CtaBanner() {
             >
               PROGEN 1기 크루 지원하기 →
             </a>
-            <p className="text-[#333] text-xs text-center mt-4">
+            <p className="text-[#444] text-xs text-center mt-4">
               부담 갖지 마세요. 필요한 클래스만 골라서 참석해도 좋습니다.
             </p>
           </div>

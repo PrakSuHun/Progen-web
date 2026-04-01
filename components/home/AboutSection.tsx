@@ -34,12 +34,12 @@ const forWho = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-32 px-6 lg:px-8 border-t border-[#1a1a1a]">
+    <section id="about" className="py-32 px-6 lg:px-8 border-t border-[#222]">
       <div className="max-w-7xl mx-auto">
 
         {/* Section label */}
-        <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-20">
-          <span className="w-8 h-px bg-[#2a2a2a]" />
+        <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-20">
+          <span className="w-8 h-px bg-[#333]" />
           What is PROGEN?
         </div>
 
@@ -49,24 +49,24 @@ export function AboutSection() {
             <h2 className="text-5xl md:text-6xl font-black text-white leading-[1.0] mb-8">
               AI 시대를<br />
               생존하는<br />
-              <span className="text-[#2a2a2a]">가장 확실한 방법</span>
+              <span className="text-[#555]">가장 확실한 방법</span>
             </h2>
-            <a href="/about" className="inline-flex items-center gap-2 text-[#555] hover:text-white transition-colors text-sm">
+            <a href="/about" className="inline-flex items-center gap-2 text-[#888] hover:text-white transition-colors text-sm">
               더 알아보기 <span>→</span>
             </a>
           </div>
           <div className="flex flex-col justify-end">
-            <p className="text-[#777] text-lg leading-relaxed mb-10">
+            <p className="text-[#aaa] text-lg leading-relaxed mb-10">
               대전 지역 대학생 혁신 네트워크 PROGEN은
               AI 기술을 단순한 지식이 아닌, 나의 경쟁력을 높이는 실전 무기로 만듭니다.
             </p>
             <div className="space-y-0">
               {missions.map((m) => (
-                <div key={m.num} className="flex gap-6 border-t border-[#1a1a1a] py-6">
-                  <span className="text-[#2a2a2a] font-black text-sm shrink-0 mt-0.5 tabular-nums">{m.num}</span>
+                <div key={m.num} className="flex gap-6 border-t border-[#222] py-6">
+                  <span className="text-[#444] font-black text-sm shrink-0 mt-0.5 tabular-nums">{m.num}</span>
                   <div>
                     <h3 className="text-white font-bold mb-1 text-sm">{m.title}</h3>
-                    <p className="text-[#666] text-sm leading-relaxed">{m.desc}</p>
+                    <p className="text-[#888] text-sm leading-relaxed">{m.desc}</p>
                   </div>
                 </div>
               ))}
@@ -75,28 +75,28 @@ export function AboutSection() {
         </div>
 
         {/* Founder */}
-        <div className="border border-[#1a1a1a] rounded-2xl p-8 md:p-12 mb-24">
-          <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-10">
-            <span className="w-8 h-px bg-[#2a2a2a]" />
+        <div className="border border-[#222] rounded-2xl p-8 md:p-12 mb-24">
+          <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-10">
+            <span className="w-8 h-px bg-[#333]" />
             Founder
           </div>
           <div className="flex flex-col md:flex-row gap-10">
             <div className="shrink-0">
-              <div className="w-16 h-16 rounded-xl bg-[#111] border border-[#1a1a1a] flex items-center justify-center text-2xl font-black text-violet-400 mb-4">
+              <div className="w-16 h-16 rounded-xl bg-[#111] border border-[#222] flex items-center justify-center text-2xl font-black text-violet-400 mb-4">
                 박
               </div>
               <p className="text-white font-black text-sm">박수훈</p>
-              <p className="text-[#444] text-xs mt-0.5">Founder &amp; President</p>
+              <p className="text-[#666] text-xs mt-0.5">Founder &amp; President</p>
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap gap-2 mb-6">
                 {founderTags.map((tag) => (
-                  <span key={tag} className="px-3 py-1 bg-[#0d0d0d] border border-[#1a1a1a] text-[#666] text-xs rounded-full">
+                  <span key={tag} className="px-3 py-1 bg-[#111] border border-[#222] text-[#888] text-xs rounded-full">
                     {tag}
                   </span>
                 ))}
               </div>
-              <blockquote className="text-[#777] text-sm leading-relaxed">
+              <blockquote className="text-[#aaa] text-sm leading-relaxed">
                 &ldquo;저 역시 여러분과 똑같은 캠퍼스에서 내일을 고민하는 4학년 대학생입니다.
                 2021년 창업 이후 1.4억 원의 누적 매출과 1억 원의 지원금을 유치하며 깨달은 것은,
                 결국 <span className="text-white">&lsquo;실행력&rsquo;과 &lsquo;도구의 활용&rsquo;</span>이 생존의 핵심이라는 점이었습니다.
@@ -109,22 +109,22 @@ export function AboutSection() {
         {/* For who */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div>
-            <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-8">
-              <span className="w-8 h-px bg-[#2a2a2a]" />
+            <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-8">
+              <span className="w-8 h-px bg-[#333]" />
               Who is this for?
             </div>
             <h3 className="text-4xl md:text-5xl font-black text-white leading-tight">
               이런 분들께<br />
-              <span className="text-[#2a2a2a]">추천해요</span>
+              <span className="text-[#555]">추천해요</span>
             </h3>
           </div>
           <div>
             {forWho.map((text, i) => (
-              <div key={i} className="flex items-start gap-5 py-5 border-t border-[#1a1a1a]">
-                <span className="text-[#2a2a2a] font-black text-xs shrink-0 mt-1 tabular-nums">
+              <div key={i} className="flex items-start gap-5 py-5 border-t border-[#222]">
+                <span className="text-[#444] font-black text-xs shrink-0 mt-1 tabular-nums">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <p className="text-[#777] text-sm leading-relaxed">{text}</p>
+                <p className="text-[#aaa] text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>

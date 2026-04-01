@@ -41,12 +41,12 @@ const benefits = [
 
 export function CurriculumSection() {
   return (
-    <section id="curriculum" className="py-32 px-6 lg:px-8 border-t border-[#1a1a1a]">
+    <section id="curriculum" className="py-32 px-6 lg:px-8 border-t border-[#222]">
       <div className="max-w-7xl mx-auto">
 
         {/* Section label */}
-        <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-20">
-          <span className="w-8 h-px bg-[#2a2a2a]" />
+        <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-20">
+          <span className="w-8 h-px bg-[#333]" />
           2026 Roadmap
         </div>
 
@@ -54,10 +54,10 @@ export function CurriculumSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
           <h2 className="text-5xl md:text-6xl font-black text-white leading-[1.0]">
             &lsquo;단순 사용자&rsquo;에서<br />
-            <span className="text-[#2a2a2a]">&lsquo;시스템 설계자&rsquo;로</span>
+            <span className="text-[#555]">&lsquo;시스템 설계자&rsquo;로</span>
           </h2>
           <div className="flex items-end">
-            <p className="text-[#666] text-lg leading-relaxed">
+            <p className="text-[#aaa] text-lg leading-relaxed">
               상반기 3단계 성장 여정<br />
               3월 ~ 7월 · 참가비 무료
             </p>
@@ -67,21 +67,21 @@ export function CurriculumSection() {
         {/* Phase list */}
         <div className="mb-28">
           {phases.map((phase) => (
-            <div key={phase.label} className="grid grid-cols-1 md:grid-cols-3 border-t border-[#1a1a1a] py-10 gap-8">
+            <div key={phase.label} className="grid grid-cols-1 md:grid-cols-3 border-t border-[#222] py-10 gap-8">
               <div>
-                <div className="text-[#333] text-xs font-bold tracking-widest uppercase mb-2">{phase.label}</div>
+                <div className="text-[#555] text-xs font-bold tracking-widest uppercase mb-2">{phase.label}</div>
                 <div className="text-white font-black text-xl mb-1">{phase.title}</div>
-                <div className="text-[#444] text-sm">{phase.period}</div>
+                <div className="text-[#666] text-sm">{phase.period}</div>
               </div>
               <div className="md:col-span-2">
-                <p className="text-[#666] text-sm mb-6 leading-relaxed">{phase.desc}</p>
+                <p className="text-[#aaa] text-sm mb-6 leading-relaxed">{phase.desc}</p>
                 <div className="space-y-2">
                   {phase.sessions.map((s) => (
-                    <div key={s.date} className="flex gap-6 bg-[#0d0d0d] border border-[#1a1a1a] rounded-xl px-5 py-4">
+                    <div key={s.date} className="flex gap-6 bg-[#0d0d0d] border border-[#222] rounded-xl px-5 py-4">
                       <span className="text-violet-400 font-black text-sm shrink-0 w-12 tabular-nums">{s.date}</span>
                       <div>
                         <p className="text-white font-semibold text-sm">{s.title}</p>
-                        <p className="text-[#444] text-xs mt-0.5 leading-relaxed">{s.detail}</p>
+                        <p className="text-[#777] text-xs mt-0.5 leading-relaxed">{s.detail}</p>
                       </div>
                     </div>
                   ))}
@@ -93,26 +93,23 @@ export function CurriculumSection() {
 
         {/* Benefits */}
         <div className="mb-28">
-          <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-12">
-            <span className="w-8 h-px bg-[#2a2a2a]" />
+          <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-12">
+            <span className="w-8 h-px bg-[#333]" />
             Benefits
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-12">
             <h3 className="text-4xl md:text-5xl font-black text-white leading-tight">
               PROGEN과 함께하면<br />
-              <span className="text-[#2a2a2a]">얻게 될 4가지</span>
+              <span className="text-[#555]">얻게 될 4가지</span>
             </h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-l border-[#1a1a1a]">
-            {benefits.map((b, i) => (
-              <div
-                key={b.num}
-                className="flex gap-6 p-8 border-b border-r border-[#1a1a1a]"
-              >
-                <span className="text-[#2a2a2a] font-black text-xl shrink-0 tabular-nums">{b.num}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-l border-[#222]">
+            {benefits.map((b) => (
+              <div key={b.num} className="flex gap-6 p-8 border-b border-r border-[#222]">
+                <span className="text-[#444] font-black text-xl shrink-0 tabular-nums">{b.num}</span>
                 <div>
                   <h4 className="text-white font-bold mb-2 text-sm">{b.title}</h4>
-                  <p className="text-[#666] text-sm leading-relaxed">{b.desc}</p>
+                  <p className="text-[#888] text-sm leading-relaxed">{b.desc}</p>
                 </div>
               </div>
             ))}
@@ -120,23 +117,23 @@ export function CurriculumSection() {
         </div>
 
         {/* Philosophy */}
-        <div className="border-t border-[#1a1a1a] pt-20">
-          <div className="flex items-center gap-3 text-[#444] text-xs tracking-[0.2em] uppercase mb-10">
-            <span className="w-8 h-px bg-[#2a2a2a]" />
+        <div className="border-t border-[#222] pt-20">
+          <div className="flex items-center gap-3 text-[#666] text-xs tracking-[0.2em] uppercase mb-10">
+            <span className="w-8 h-px bg-[#333]" />
             운영 철학
           </div>
           <blockquote className="text-3xl md:text-4xl font-black text-white leading-snug max-w-3xl mb-14">
             &ldquo;우리는 AI 전문가 집단이 아닙니다.<br />
             AI 도구를 활용해 문제를 해결하는 &lsquo;플랫폼&rsquo;입니다.&rdquo;
           </blockquote>
-          <div className="grid grid-cols-1 md:grid-cols-2 border-t border-[#1a1a1a]">
-            <div className="py-8 md:pr-12 md:border-r border-[#1a1a1a]">
+          <div className="grid grid-cols-1 md:grid-cols-2 border-t border-[#222]">
+            <div className="py-8 md:pr-12 md:border-r border-[#222]">
               <p className="text-white font-bold text-sm mb-2">운영진</p>
-              <p className="text-[#666] text-sm leading-relaxed">방향성 제시와 실전 멘토링을 통해 여러분의 시행착오를 줄여줍니다.</p>
+              <p className="text-[#888] text-sm leading-relaxed">방향성 제시와 실전 멘토링을 통해 여러분의 시행착오를 줄여줍니다.</p>
             </div>
-            <div className="py-8 md:pl-12 border-t md:border-t-0 border-[#1a1a1a]">
+            <div className="py-8 md:pl-12 border-t md:border-t-0 border-[#222]">
               <p className="text-white font-bold text-sm mb-2">참여자</p>
-              <p className="text-[#666] text-sm leading-relaxed">직접 기획하고 제작하며, &lsquo;함께 실험하는 문화&rsquo;의 주인이 됩니다.</p>
+              <p className="text-[#888] text-sm leading-relaxed">직접 기획하고 제작하며, &lsquo;함께 실험하는 문화&rsquo;의 주인이 됩니다.</p>
             </div>
           </div>
         </div>
