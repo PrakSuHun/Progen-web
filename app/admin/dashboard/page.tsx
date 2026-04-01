@@ -323,18 +323,26 @@ export default function AdminDashboardPage() {
     fetchAll(newEventId)
   }
 
-  const fetchMembers = async () => {
+  const [membersMode, setMembersMode] = useState<'event' | 'all'>('event')
+
+  const fetchMembers = async (eventId?: string, mode?: 'event' | 'all') => {
     setMembersLoading(true)
+    const m = mode ?? membersMode
+    const eid = eventId || selectedEventId
+    const qs = m === 'all' ? '?mode=all' : `?eventId=${eid}`
     try {
-      const res = await fetch('/api/admin/members-list')
-      if (res.ok) setMembers(await res.json())
+      const res = await fetch(`/api/admin/members-list${qs}`)
+      if (res.ok) {
+        const json = await res.json()
+        setMembers(json.members ?? [])
+      }
     } catch { showToast('신청자 목록을 불러올 수 없습니다', 'error') }
     finally { setMembersLoading(false) }
   }
 
   useEffect(() => {
-    if (activeTab === 'members' && members.length === 0) fetchMembers()
-  }, [activeTab])
+    if (activeTab === 'members') fetchMembers()
+  }, [activeTab, selectedEventId])
 
   const assignTeam = (registration_id: string, team_name: string | null) =>
     fetch('/api/admin/assign-team', {
@@ -844,13 +852,23 @@ export default function AdminDashboardPage() {
           ))}
         </div>
 
-        {/* 검색 + 정렬 */}
+        {/* 모드 토글 + 검색 + 정렬 */}
         <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5">
+            <button onClick={() => { setMembersMode('event'); fetchMembers(undefined, 'event') }}
+              className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'event' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+              행사별
+            </button>
+            <button onClick={() => { setMembersMode('all'); fetchMembers(undefined, 'all') }}
+              className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'all' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+              전체
+            </button>
+          </div>
           <input
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
             placeholder="이름, 연락처, 학교, 전공 검색..."
-            className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 w-64 outline-none focus:border-purple-500 placeholder:text-slate-500"
+            className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 w-52 outline-none focus:border-purple-500 placeholder:text-slate-500"
           />
           <div className="flex items-center gap-1">
             <span className="text-slate-500 text-xs mr-1">정렬:</span>
@@ -861,7 +879,7 @@ export default function AdminDashboardPage() {
               </button>
             ))}
           </div>
-          <button onClick={fetchMembers} className="ml-auto text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+          <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
             새로고침
           </button>
         </div>
@@ -872,39 +890,59 @@ export default function AdminDashboardPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-700/50 text-slate-400 text-xs uppercase tracking-wider">
-                  <th className="px-4 py-3 text-left font-semibold">#</th>
-                  <th className="px-4 py-3 text-left font-semibold">이름</th>
-                  <th className="px-4 py-3 text-left font-semibold">연락처</th>
-                  <th className="px-4 py-3 text-left font-semibold">나이</th>
-                  <th className="px-4 py-3 text-left font-semibold">성별</th>
-                  <th className="px-4 py-3 text-left font-semibold">학교</th>
-                  <th className="px-4 py-3 text-left font-semibold">전공</th>
-                  <th className="px-4 py-3 text-left font-semibold">학년</th>
-                  <th className="px-4 py-3 text-left font-semibold">경로</th>
-                  <th className="px-4 py-3 text-left font-semibold">관심</th>
-                  <th className="px-4 py-3 text-left font-semibold">포도</th>
-                  <th className="px-4 py-3 text-left font-semibold">신청일</th>
+                  <th className="px-3 py-3 text-left font-semibold">#</th>
+                  <th className="px-3 py-3 text-left font-semibold">이름</th>
+                  <th className="px-3 py-3 text-left font-semibold">연락처</th>
+                  <th className="px-3 py-3 text-left font-semibold">나이</th>
+                  <th className="px-3 py-3 text-left font-semibold">성별</th>
+                  <th className="px-3 py-3 text-left font-semibold">학교</th>
+                  <th className="px-3 py-3 text-left font-semibold">전공</th>
+                  <th className="px-3 py-3 text-left font-semibold">학년</th>
+                  <th className="px-3 py-3 text-left font-semibold">경로</th>
+                  <th className="px-3 py-3 text-left font-semibold">관심</th>
+                  <th className="px-3 py-3 text-left font-semibold">포도</th>
+                  {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">출석</th>}
+                  {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">유형</th>}
+                  {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">팀</th>}
+                  <th className="px-3 py-3 text-left font-semibold">신청일</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700">
-                {filtered.map((m, i) => (
-                  <tr key={m.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-4 py-3 text-slate-500 text-xs">{i + 1}</td>
-                    <td className="px-4 py-3 text-white font-medium whitespace-nowrap">
+                {filtered.map((m: any, i: number) => (
+                  <tr key={m.registration_id || m.id} className="hover:bg-slate-700/30 transition-colors">
+                    <td className="px-3 py-3 text-slate-500 text-xs">{i + 1}</td>
+                    <td className="px-3 py-3 text-white font-medium whitespace-nowrap">
                       {m.is_member && <span className="mr-1">🍇</span>}{m.name}
                     </td>
-                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
+                    <td className="px-3 py-3 text-slate-300 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-blue-400 hover:text-blue-300">{m.phone}</a>
                     </td>
-                    <td className="px-4 py-3 text-slate-300">{m.age}</td>
-                    <td className={`px-4 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
-                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{m.school}</td>
-                    <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{m.major}</td>
-                    <td className="px-4 py-3 text-slate-300">{m.grade}</td>
-                    <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{m.path}</td>
-                    <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">{m.project}</td>
-                    <td className="px-4 py-3">{m.is_member ? <span className="text-green-400 text-xs">✓</span> : <span className="text-slate-600 text-xs">—</span>}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(m.created_at).toLocaleDateString('ko-KR')}</td>
+                    <td className="px-3 py-3 text-slate-300">{m.age}</td>
+                    <td className={`px-3 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
+                    <td className="px-3 py-3 text-slate-300 whitespace-nowrap">{m.school}</td>
+                    <td className="px-3 py-3 text-slate-300 whitespace-nowrap">{m.major}</td>
+                    <td className="px-3 py-3 text-slate-300">{m.grade}</td>
+                    <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{m.path}</td>
+                    <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{m.project}</td>
+                    <td className="px-3 py-3">{m.is_member ? <span className="text-green-400 text-xs">✓</span> : <span className="text-slate-600 text-xs">—</span>}</td>
+                    {membersMode === 'event' && (
+                      <td className="px-3 py-3">
+                        {m.reg_status === '출석완료'
+                          ? <span className="text-green-400 text-xs font-medium">출석</span>
+                          : <span className="text-amber-400 text-xs font-medium">미출석</span>}
+                      </td>
+                    )}
+                    {membersMode === 'event' && (
+                      <td className="px-3 py-3">
+                        {m.is_crew
+                          ? <span className="text-purple-400 text-xs">크루</span>
+                          : <span className="text-slate-400 text-xs">게스트</span>}
+                      </td>
+                    )}
+                    {membersMode === 'event' && (
+                      <td className="px-3 py-3 text-slate-400 text-xs">{m.team_name || '—'}</td>
+                    )}
+                    <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(m.created_at).toLocaleDateString('ko-KR')}</td>
                   </tr>
                 ))}
               </tbody>
