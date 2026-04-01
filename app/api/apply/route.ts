@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getActiveEventId } from '@/lib/get-active-event'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -41,7 +42,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Insert new crew member
+    // Insert new crew member with source_event_id
+    const sourceEventId = await getActiveEventId()
     const { data, error } = await supabase
       .from('crew_members')
       .insert([
@@ -58,6 +60,7 @@ export async function POST(request: NextRequest) {
           motivation,
           role: 'participant',
           status: '지원완료',
+          source_event_id: sourceEventId,
         },
       ])
       .select()

@@ -45,26 +45,33 @@ export async function POST(request: NextRequest) {
 
       crewId = crewMember.id
     } else if (mode === 'guest') {
-      // Upsert guest
-      const { data: guest, error: guestError } = await supabase
+      // Upsert guest (source_event_id only set on first insert)
+      const { data: existingGuest } = await supabase
         .from('guests')
-        .upsert(
-          {
-            name,
-            phone,
-            age,
-            school: school || null,
-            grade: grade || null,
-            major: major || null,
-            path: path || null,
-            project: project || null,
-            gender: gender || null,
-            motivation: motivation || null,
-          },
-          { onConflict: 'phone' }
-        )
         .select('id')
-        .single()
+        .eq('phone', phone)
+        .maybeSingle()
+
+      let guest
+      let guestError
+      if (existingGuest) {
+        // Update existing guest info but keep source_event_id
+        const { data: g, error: e } = await supabase
+          .from('guests')
+          .update({ name, age, school: school || null, grade: grade || null, major: major || null, path: path || null, project: project || null, gender: gender || null, motivation: motivation || null })
+          .eq('phone', phone)
+          .select('id')
+          .single()
+        guest = g; guestError = e
+      } else {
+        // New guest: set source_event_id
+        const { data: g, error: e } = await supabase
+          .from('guests')
+          .insert({ name, phone, age, school: school || null, grade: grade || null, major: major || null, path: path || null, project: project || null, gender: gender || null, motivation: motivation || null, source_event_id: eventId })
+          .select('id')
+          .single()
+        guest = g; guestError = e
+      }
 
       if (guestError) {
         throw guestError

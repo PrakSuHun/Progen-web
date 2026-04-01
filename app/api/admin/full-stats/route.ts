@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
-    // 섹션 1: 이 행사의 모든 참여자 분석 (사전신청 + 출석완료 모두 포함)
+    // ── 섹션 1: 이 행사 참여자(event_registrations) 기반 분석 ──
     const { data: registrations } = await supabase
       .from('event_registrations')
       .select(`
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const saengmyung = attendees.filter((a: any) => !a.is_member)
+    const nonMembers = attendees.filter((a: any) => !a.is_member)
 
     const section1 = {
       all: {
@@ -66,30 +66,70 @@ export async function GET(request: NextRequest) {
         gender: countBy(attendees, (a) => a.gender),
       },
       saengmyung: {
-        school: countBy(saengmyung, (a) => a.school),
-        grade: countBy(saengmyung, (a) => a.grade),
-        path: countBy(saengmyung, (a) => a.path),
-        gender: countBy(saengmyung, (a) => a.gender),
+        school: countBy(nonMembers, (a) => a.school),
+        grade: countBy(nonMembers, (a) => a.grade),
+        path: countBy(nonMembers, (a) => a.path),
+        gender: countBy(nonMembers, (a) => a.gender),
       },
     }
 
-    // 섹션 2: 이 행사의 게스트 & 크루 전환 분석
-    const eventGuests = attendees.filter((a: any) => !a.is_crew)
-    const eventGuestsAttended = eventGuests.filter((a: any) => a.status === '출석완료')
+    // ── 섹션 2: 이 행사 기준 게스트 & 크루 통계 ──
+    // event_registrations에서 이 행사의 크루/게스트 분리
     const eventCrews = attendees.filter((a: any) => a.is_crew)
-    const eventCrewsNonMember = eventCrews.filter((a: any) => !a.is_member)
+    const eventGuests = attendees.filter((a: any) => !a.is_crew)
+    const eventGuestsCheckedIn = eventGuests.filter((a: any) => a.status === '출석완료')
+    const totalCheckedIn = attendees.filter((a: any) => a.status === '출석완료').length
+
+    // source_event_id 기반: 이 행사를 계기로 크루 가입한 수
+    const { count: crewFromThisEvent } = await supabase
+      .from('crew_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('source_event_id', eventId)
+
+    // source_event_id 기반: 이 행사를 계기로 처음 온 게스트 수
+    const { count: guestsFromThisEvent } = await supabase
+      .from('guests')
+      .select('*', { count: 'exact', head: true })
+      .eq('source_event_id', eventId)
+
+    // 이 행사 게스트 중 나중에 크루로 전환한 수 (phone 매칭)
+    const guestIdsInEvent = (registrations ?? [])
+      .filter((r: any) => r.guest_id)
+      .map((r: any) => r.guest_id)
+
+    let crewConversionCount = 0
+    if (guestIdsInEvent.length > 0) {
+      const { data: guestPhones } = await supabase
+        .from('guests')
+        .select('phone')
+        .in('id', guestIdsInEvent)
+
+      if (guestPhones && guestPhones.length > 0) {
+        const phones = guestPhones.map((g: any) => g.phone)
+        const { count } = await supabase
+          .from('crew_members')
+          .select('*', { count: 'exact', head: true })
+          .in('phone', phones)
+        crewConversionCount = count ?? 0
+      }
+    }
 
     const section2 = {
       total_registrations: attendees.length,
+      checked_in_count: totalCheckedIn,
       total_crews: eventCrews.length,
       total_guests: eventGuests.length,
-      guest_attended: eventGuestsAttended.length,
-      guest_attendance_rate: eventGuests.length > 0 ? Math.round((eventGuestsAttended.length / eventGuests.length) * 100) : 0,
-      checked_in_count: attendees.filter((a: any) => a.status === '출석완료').length,
-      total_saengmyung: eventCrewsNonMember.length,
+      guest_attended: eventGuestsCheckedIn.length,
+      guest_attendance_rate: eventGuests.length > 0
+        ? Math.round((eventGuestsCheckedIn.length / eventGuests.length) * 100) : 0,
+      crew_from_event: crewFromThisEvent ?? 0,
+      guests_from_event: guestsFromThisEvent ?? 0,
+      crew_conversion_count: crewConversionCount,
+      crew_conversion_rate: eventGuests.length > 0
+        ? Math.round((crewConversionCount / eventGuests.length) * 100) : 0,
     }
 
-    // 섹션 3: 피드백 분석
+    // ── 섹션 3: 피드백 분석 ──
     const { data: feedbacks } = await supabase
       .from('feedbacks')
       .select('good_tags, bad_tags, good_points, bad_points, would_return, join_interest')

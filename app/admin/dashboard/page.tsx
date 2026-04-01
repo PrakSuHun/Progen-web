@@ -758,7 +758,10 @@ export default function AdminDashboardPage() {
                 { label: '크루 참여', value: `${s2.total_crews}명`, color: 'text-purple-400' },
                 { label: '게스트 참여', value: `${s2.total_guests}명`, color: 'text-blue-400' },
                 { label: '게스트 출석', value: `${s2.guest_attended}명`, color: 'text-blue-400' },
-                { label: '크루(일반)', value: `${s2.total_saengmyung}명`, color: 'text-white' },
+                { label: '게스트 참석률', value: `${s2.guest_attendance_rate}%`, color: 'text-blue-400' },
+                { label: '이 행사 계기 크루 가입', value: `${s2.crew_from_event}명`, color: 'text-purple-400' },
+                { label: '이 행사 신규 게스트', value: `${s2.guests_from_event}명`, color: 'text-cyan-400' },
+                { label: '게스트→크루 전환', value: `${s2.crew_conversion_count}명 (${s2.crew_conversion_rate}%)`, color: 'text-yellow-400' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="bg-slate-800 rounded-xl p-5">
                   <p className="text-slate-400 text-sm">{label}</p>
