@@ -105,21 +105,6 @@ export default function SeminarPage() {
           </div>
         </section>
 
-        <section className="px-5 lg:px-8 pb-16 md:pb-24">
-          <div className="max-w-7xl mx-auto">
-            <div className="bg-violet-500 text-white rounded-2xl p-6 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-              <div>
-                <h2 className="text-xl md:text-2xl font-black mb-1">세미나 강의노트</h2>
-                <p className="text-white/70 text-sm">지난 세미나 자료를 언제든지 복습하세요.</p>
-              </div>
-              <Link href="/docs"
-                className="shrink-0 px-6 py-3 bg-white text-violet-600 font-bold rounded-full text-sm hover:bg-violet-50 transition-colors text-center">
-                강의노트 보기 →
-              </Link>
-            </div>
-          </div>
-        </section>
-
       </div>
       <Footer />
     </main>
