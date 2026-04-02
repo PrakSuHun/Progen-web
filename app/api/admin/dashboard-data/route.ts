@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         grade: person?.grade ?? '',
         age: person?.age ?? '',
         gender: person?.gender ?? '',
-        is_member: crew?.is_member ?? podoPhones.has(phone),
+        is_member: crew?.is_member ?? podoPhones.has(phone) ?? phone.startsWith('PODO-'),
         noshow_count: crew?.noshow_count ?? 0,
         is_crew: !!crew,
       }
