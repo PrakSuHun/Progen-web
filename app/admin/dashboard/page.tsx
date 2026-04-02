@@ -938,7 +938,7 @@ export default function AdminDashboardPage() {
                   <tr key={m.registration_id || m.id} className="hover:bg-slate-700/30 transition-colors">
                     <td className="px-3 py-3 text-slate-500 text-xs">{i + 1}</td>
                     <td className="px-3 py-3 text-white font-medium whitespace-nowrap">
-                      {m.is_member && <span className="mr-1">🍇</span>}{m.name}
+                      {m.name}
                     </td>
                     <td className="px-3 py-3 text-slate-300 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-blue-400 hover:text-blue-300">{m.phone}</a>
@@ -950,7 +950,7 @@ export default function AdminDashboardPage() {
                     <td className="px-3 py-3 text-slate-300">{m.grade}</td>
                     <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{m.path}</td>
                     <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{m.project}</td>
-                    <td className="px-3 py-3">{m.is_member ? <span className="text-green-400 text-xs">✓</span> : <span className="text-slate-600 text-xs">—</span>}</td>
+                    <td className="px-3 py-3">{m.is_member ? <span>🍇</span> : <span className="text-slate-600 text-xs">—</span>}</td>
                     {membersMode === 'event' && (
                       <td className="px-3 py-3">
                         {m.reg_status === '출석완료'
