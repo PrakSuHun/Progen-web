@@ -121,13 +121,13 @@ export default function EventRegPage() {
               {mode === 'guest' && (
                 <>
                   <Input label="이름" placeholder="홍길동" value={guestForm.name} onChange={(e) => setGuest('name', e.target.value)} error={guestErrors.name} />
+                  <Select label="성별" options={GENDERS} value={guestForm.gender} onChange={(e) => setGuest('gender', e.target.value)} error={guestErrors.gender} />
                   <Input label="연락처" placeholder="010-1234-5678" value={guestForm.phone} onChange={(e) => setGuest('phone', e.target.value)} error={guestErrors.phone} phoneFormat />
+                  <Input label="나이" type="number" placeholder="20" value={guestForm.age} onChange={(e) => setGuest('age', e.target.value)} error={guestErrors.age} />
                   <Select label="학교" options={SCHOOLS} value={guestForm.school} onChange={(e) => setGuest('school', e.target.value)} error={guestErrors.school} />
                   <Select label="학년" options={GRADES} value={guestForm.grade} onChange={(e) => setGuest('grade', e.target.value)} error={guestErrors.grade} />
-                  <Input label="나이" type="number" placeholder="20" value={guestForm.age} onChange={(e) => setGuest('age', e.target.value)} error={guestErrors.age} />
                   <Input label="전공" placeholder="컴퓨터과학" value={guestForm.major} onChange={(e) => setGuest('major', e.target.value)} error={guestErrors.major} />
                   <Select label="우리를 알게 된 경로" options={PATHS} value={guestForm.path} onChange={(e) => setGuest('path', e.target.value)} error={guestErrors.path} />
-                  <Select label="성별" options={GENDERS} value={guestForm.gender} onChange={(e) => setGuest('gender', e.target.value)} error={guestErrors.gender} />
                 </>
               )}
 

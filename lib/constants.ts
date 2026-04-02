@@ -49,7 +49,6 @@ export const PROJECTS = [
 export const GENDERS = [
   '남성',
   '여성',
-  '선택 안함',
 ]
 
 // Feedback Tags - Good

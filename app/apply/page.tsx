@@ -78,14 +78,14 @@ export default function ApplyPage() {
 
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={formData.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
+            <Select label="성별" options={GENDERS} value={formData.gender} onChange={(e) => set('gender', e.target.value)} error={errors.gender} />
             <Input label="연락처" type="tel" placeholder="010-1234-5678" value={formData.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
+            <Input label="나이" type="number" placeholder="20" value={formData.age} onChange={(e) => set('age', e.target.value)} error={errors.age} />
             <Select label="학교" options={SCHOOLS} value={formData.school} onChange={(e) => set('school', e.target.value)} error={errors.school} />
             <Select label="학년" options={GRADES} value={formData.grade} onChange={(e) => set('grade', e.target.value)} error={errors.grade} />
-            <Input label="나이" type="number" placeholder="20" value={formData.age} onChange={(e) => set('age', e.target.value)} error={errors.age} />
             <Input label="전공" placeholder="컴퓨터과학" value={formData.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />
             <Select label="우리를 알게 된 경로" options={PATHS} value={formData.path} onChange={(e) => set('path', e.target.value)} error={errors.path} />
             <Select label="관심 프로젝트" options={PROJECTS} value={formData.project} onChange={(e) => set('project', e.target.value)} error={errors.project} />
-            <Select label="성별" options={GENDERS} value={formData.gender} onChange={(e) => set('gender', e.target.value)} error={errors.gender} />
             <div>
               <label className="block text-sm font-medium text-[#333] mb-2">지원 동기</label>
               <textarea

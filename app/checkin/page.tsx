@@ -125,13 +125,13 @@ export default function CheckInPage() {
               <p className="text-[#888] text-sm">사전 신청 내역이 없어요. 아래 정보를 입력하면 바로 출석 처리됩니다.</p>
 
               <Input label="이름" placeholder="홍길동" value={walkInData.name} onChange={(e) => setWI('name', e.target.value)} error={walkInErrors.name} />
+              <Select label="성별" options={GENDERS} value={walkInData.gender} onChange={(e) => setWI('gender', e.target.value)} error={walkInErrors.gender} />
               <Input label="연락처" placeholder="010-1234-5678" value={walkInData.phone} onChange={(e) => setWI('phone', e.target.value)} error={walkInErrors.phone} phoneFormat />
+              <Input label="나이" type="number" placeholder="20" value={walkInData.age} onChange={(e) => setWI('age', e.target.value)} error={walkInErrors.age} />
               <Select label="학교" options={SCHOOLS} value={walkInData.school} onChange={(e) => setWI('school', e.target.value)} error={walkInErrors.school} />
               <Select label="학년" options={GRADES} value={walkInData.grade} onChange={(e) => setWI('grade', e.target.value)} error={walkInErrors.grade} />
-              <Input label="나이" type="number" placeholder="20" value={walkInData.age} onChange={(e) => setWI('age', e.target.value)} error={walkInErrors.age} />
               <Input label="전공" placeholder="컴퓨터과학" value={walkInData.major} onChange={(e) => setWI('major', e.target.value)} error={walkInErrors.major} />
               <Select label="우리를 알게 된 경로" options={PATHS} value={walkInData.path} onChange={(e) => setWI('path', e.target.value)} error={walkInErrors.path} />
-              <Select label="성별" options={GENDERS} value={walkInData.gender} onChange={(e) => setWI('gender', e.target.value)} error={walkInErrors.gender} />
               <Button type="submit" disabled={loading} className="w-full" size="lg">
                 {loading ? '등록 중...' : '현장 등록 및 출석'}
               </Button>
