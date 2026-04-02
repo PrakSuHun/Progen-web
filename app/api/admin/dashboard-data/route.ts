@@ -36,21 +36,30 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
+    // Fetch crew_members phone→is_member map for guest matching
+    const { data: crewList } = await supabase
+      .from('crew_members')
+      .select('phone, is_member, noshow_count')
+      .eq('is_member', true)
+
+    const podoPhones = new Set((crewList ?? []).filter((c: any) => c.is_member).map((c: any) => c.phone))
+
     const toAttendee = (reg: any) => {
       const crew = reg.crew_members
       const guest = reg.guests
       const person = crew || guest
+      const phone = person?.phone ?? ''
       return {
         registration_id: reg.id,
         status: reg.status,
         team_name: reg.team_name ?? null,
         name: person?.name ?? '알 수 없음',
-        phone: person?.phone ?? '',
+        phone,
         school: person?.school ?? '',
         grade: person?.grade ?? '',
         age: person?.age ?? '',
         gender: person?.gender ?? '',
-        is_member: crew?.is_member ?? false,
+        is_member: crew?.is_member ?? podoPhones.has(phone),
         noshow_count: crew?.noshow_count ?? 0,
         is_crew: !!crew,
       }
