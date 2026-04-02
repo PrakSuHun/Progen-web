@@ -160,7 +160,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
     >
       <div className="flex items-center gap-1 font-medium text-white">
         <span>{person.name}</span>
-        {person.is_member && <span>🍇</span>}
+        {person.is_member && <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />}
         {isNotArrived && (
           <span className="text-amber-500 text-xs font-normal">미출석</span>
         )}
