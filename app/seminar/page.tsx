@@ -71,34 +71,32 @@ export default function SeminarPage() {
           <div className="max-w-7xl mx-auto space-y-4">
             {seminars.map((s) => (
               <div key={s.title} className="bg-[#fafafa] border border-[#eee] rounded-2xl p-5 md:p-7 hover:border-violet-200 transition-colors">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                  <div className="flex gap-4 md:gap-6 flex-1">
-                    <div className="shrink-0">
-                      <div className="w-14 h-14 rounded-xl bg-violet-500 text-white flex flex-col items-center justify-center">
-                        <span className="text-[8px] font-bold tracking-widest uppercase leading-none">MONTH</span>
-                        <span className="text-xl font-black leading-none mt-0.5">{s.month}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${s.statusColor}`}>{s.status}</span>
-                      </div>
-                      <h3 className="text-black font-bold text-base md:text-lg mb-1">{s.title}</h3>
-                      <p className="text-[#666] text-sm mb-2">{s.desc}</p>
-                      <p className="text-[#aaa] text-xs mb-3">{s.date} · {s.speaker} · 정원 {s.capacity}명</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {s.tags.map((tag) => (
-                          <span key={tag} className="px-2 py-0.5 bg-white border border-[#e0e0e0] text-[#555] text-xs rounded-full">{tag}</span>
-                        ))}
-                      </div>
+                <div className="flex gap-4 md:gap-6">
+                  <div className="shrink-0">
+                    <div className="w-14 h-14 rounded-xl bg-violet-500 text-white flex flex-col items-center justify-center">
+                      <span className="text-[8px] font-bold tracking-widest uppercase leading-none">MONTH</span>
+                      <span className="text-xl font-black leading-none mt-0.5">{s.month}</span>
                     </div>
                   </div>
-                  {s.status === '모집 중' && (
-                    <Link href="/event-reg"
-                      className="shrink-0 px-6 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-sm font-bold rounded-full transition-colors self-start">
-                      사전 신청
-                    </Link>
-                  )}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2.5 py-0.5 text-xs font-bold rounded-full ${s.statusColor}`}>{s.status}</span>
+                    </div>
+                    <h3 className="text-black font-bold text-base md:text-lg mb-1">{s.title}</h3>
+                    <p className="text-[#666] text-sm mb-2">{s.desc}</p>
+                    <p className="text-[#aaa] text-xs mb-3">{s.date} · {s.speaker} · 정원 {s.capacity}명</p>
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {s.tags.map((tag) => (
+                        <span key={tag} className="px-2 py-0.5 bg-white border border-[#e0e0e0] text-[#555] text-xs rounded-full">{tag}</span>
+                      ))}
+                    </div>
+                    {s.status === '모집 중' && (
+                      <Link href="/event-reg"
+                        className="inline-block px-6 py-2.5 bg-violet-500 hover:bg-violet-600 text-white text-sm font-bold rounded-full transition-colors">
+                        사전 신청 →
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
