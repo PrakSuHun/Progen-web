@@ -127,7 +127,7 @@ export default function EventRegPage() {
                   <Select label="학교" options={SCHOOLS} value={guestForm.school} onChange={(e) => setGuest('school', e.target.value)} error={guestErrors.school} />
                   <Select label="학년" options={GRADES} value={guestForm.grade} onChange={(e) => setGuest('grade', e.target.value)} error={guestErrors.grade} />
                   <Input label="전공" placeholder="컴퓨터과학" value={guestForm.major} onChange={(e) => setGuest('major', e.target.value)} error={guestErrors.major} />
-                  <Select label="우리를 알게 된 경로" options={PATHS} value={guestForm.path} onChange={(e) => setGuest('path', e.target.value)} error={guestErrors.path} />
+                  <Select label="행사 참여 경로" options={PATHS} value={guestForm.path} onChange={(e) => setGuest('path', e.target.value)} error={guestErrors.path} />
                 </>
               )}
 
