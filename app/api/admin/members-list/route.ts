@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     .select(`
       id, status, team_name, crew_id, guest_id, registered_at,
       crew_members ( id, name, phone, school, grade, age, major, path, project, gender, motivation, is_member, noshow_count, created_at ),
-      guests ( id, name, phone, school, grade, age, major, path, project, gender, motivation, created_at )
+      guests ( id, name, phone, school, grade, age, major, path, gender, created_at )
     `)
     .eq('event_id', eventId)
     .order('registered_at', { ascending: false })

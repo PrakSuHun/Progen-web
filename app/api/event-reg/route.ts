@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { mode, name, phone, age, school, grade, major, path, project, gender, motivation } = body
+    const { mode, name, phone, age, school, grade, major, path, gender } = body
 
     if (!mode || !name || !phone || !age) {
       return NextResponse.json(
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         // Update existing guest info but keep source_event_id
         const { data: g, error: e } = await supabase
           .from('guests')
-          .update({ name, age, school: school || null, grade: grade || null, major: major || null, path: path || null, project: project || null, gender: gender || null, motivation: motivation || null })
+          .update({ name, age, school: school || null, grade: grade || null, major: major || null, path: path || null, gender: gender || null })
           .eq('phone', phone)
           .select('id')
           .single()
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         // New guest: set source_event_id
         const { data: g, error: e } = await supabase
           .from('guests')
-          .insert({ name, phone, age, school: school || null, grade: grade || null, major: major || null, path: path || null, project: project || null, gender: gender || null, motivation: motivation || null, source_event_id: eventId })
+          .insert({ name, phone, age, school: school || null, grade: grade || null, major: major || null, path: path || null, gender: gender || null, source_event_id: eventId })
           .select('id')
           .single()
         guest = g; guestError = e

@@ -9,7 +9,7 @@ import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/Modal'
 import { showToast } from '@/components/Toast'
 import {
-  SCHOOLS, GRADES, PATHS, PROJECTS, GENDERS,
+  SCHOOLS, GRADES, PATHS, GENDERS,
   formatPhone, isValidPhone,
 } from '@/lib/constants'
 
@@ -18,7 +18,7 @@ type UserMode = 'crew' | 'guest' | null
 interface CrewFormData { name: string; phone: string; age: string }
 interface GuestFormData {
   name: string; phone: string; age: string; school: string; grade: string
-  major: string; path: string; project: string; gender: string; motivation: string
+  major: string; path: string; gender: string
 }
 
 export default function EventRegPage() {
@@ -26,7 +26,7 @@ export default function EventRegPage() {
   const [crewForm, setCrewForm] = useState<CrewFormData>({ name: '', phone: '', age: '' })
   const [guestForm, setGuestForm] = useState<GuestFormData>({
     name: '', phone: '', age: '', school: '', grade: '',
-    major: '', path: '', project: '', gender: '', motivation: '',
+    major: '', path: '', gender: '',
   })
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -51,9 +51,7 @@ export default function EventRegPage() {
     if (!guestForm.grade) e.grade = '학년을 선택해주세요'
     if (!guestForm.major.trim()) e.major = '전공을 입력해주세요'
     if (!guestForm.path) e.path = '경로를 선택해주세요'
-    if (!guestForm.project) e.project = '프로젝트를 선택해주세요'
     if (!guestForm.gender) e.gender = '성별을 선택해주세요'
-    if (!guestForm.motivation.trim()) e.motivation = '참여 동기를 입력해주세요'
     setGuestErrors(e); return Object.keys(e).length === 0
   }
 
@@ -78,7 +76,7 @@ export default function EventRegPage() {
 
   const resetForms = () => {
     setCrewForm({ name: '', phone: '', age: '' })
-    setGuestForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', project: '', gender: '', motivation: '' })
+    setGuestForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '' })
     setCrewErrors({}); setGuestErrors({})
   }
 
@@ -95,7 +93,7 @@ export default function EventRegPage() {
             Event Registration
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">행사 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-8">크루 또는 비회원로 사전 신청하세요</p>
+          <p className="text-[#888] text-sm mb-8">크루 또는 비회원으로 사전 신청하세요</p>
 
           {/* Mode Selection */}
           <Modal isOpen={mode === null} onClose={() => {}} title="신청 유형 선택">
@@ -129,15 +127,7 @@ export default function EventRegPage() {
                   <Input label="나이" type="number" placeholder="20" value={guestForm.age} onChange={(e) => setGuest('age', e.target.value)} error={guestErrors.age} />
                   <Input label="전공" placeholder="컴퓨터과학" value={guestForm.major} onChange={(e) => setGuest('major', e.target.value)} error={guestErrors.major} />
                   <Select label="우리를 알게 된 경로" options={PATHS} value={guestForm.path} onChange={(e) => setGuest('path', e.target.value)} error={guestErrors.path} />
-                  <Select label="관심 프로젝트" options={PROJECTS} value={guestForm.project} onChange={(e) => setGuest('project', e.target.value)} error={guestErrors.project} />
                   <Select label="성별" options={GENDERS} value={guestForm.gender} onChange={(e) => setGuest('gender', e.target.value)} error={guestErrors.gender} />
-                  <div>
-                    <label className="block text-sm font-medium text-[#333] mb-2">참여 동기</label>
-                    <textarea placeholder="이번 행사에 참여하는 이유를 알려주세요" value={guestForm.motivation} onChange={(e) => setGuest('motivation', e.target.value)}
-                      className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] placeholder-[#aaa] focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition h-32 text-base ${guestErrors.motivation ? 'border-red-400' : 'border-[#e0e0e0]'}`}
-                    />
-                    {guestErrors.motivation && <p className="text-red-500 text-xs mt-1.5">{guestErrors.motivation}</p>}
-                  </div>
                 </>
               )}
 
