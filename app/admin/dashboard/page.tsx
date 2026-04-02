@@ -833,15 +833,15 @@ export default function AdminDashboardPage() {
 
     const q = memberSearch.toLowerCase()
     let filtered = q
-      ? members.filter((m) => m.name.includes(q) || m.phone.includes(q) || m.school.includes(q) || m.major.includes(q))
+      ? members.filter((m) => (m.name || '').toLowerCase().includes(q) || (m.phone || '').includes(q) || (m.school || '').toLowerCase().includes(q) || (m.major || '').toLowerCase().includes(q))
       : members
 
     if (memberSort !== 'none') {
       filtered = [...filtered].sort((a, b) => {
-        if (memberSort === 'name') return a.name.localeCompare(b.name, 'ko')
-        if (memberSort === 'school') return a.school.localeCompare(b.school, 'ko')
-        if (memberSort === 'grade') return a.grade.localeCompare(b.grade, 'ko')
-        if (memberSort === 'gender') return a.gender.localeCompare(b.gender, 'ko')
+        if (memberSort === 'name') return (a.name || '').localeCompare(b.name || '', 'ko')
+        if (memberSort === 'school') return (a.school || '').localeCompare(b.school || '', 'ko')
+        if (memberSort === 'grade') return (a.grade || '').localeCompare(b.grade || '', 'ko')
+        if (memberSort === 'gender') return (a.gender || '').localeCompare(b.gender || '', 'ko')
         return 0
       })
     }
