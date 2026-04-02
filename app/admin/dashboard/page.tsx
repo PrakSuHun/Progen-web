@@ -868,7 +868,7 @@ export default function AdminDashboardPage() {
           {[
             { label: '총 신청자', value: total, color: 'text-white' },
             { label: '학교 수', value: schools, color: 'text-purple-400' },
-            { label: '포도(정회원)', value: memberCount, color: 'text-green-400' },
+            { label: '일반(비포도)', value: total - memberCount, color: 'text-green-400' },
             { label: '남/여', value: `${genderCounts['남성'] || 0}/${genderCounts['여성'] || 0}`, color: 'text-blue-400' },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-slate-800 rounded-xl p-4 text-center">
