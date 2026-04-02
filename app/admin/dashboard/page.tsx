@@ -862,41 +862,41 @@ export default function AdminDashboardPage() {
     ]
 
     return (
-      <div className="p-6 overflow-y-auto h-full">
+      <div className="p-3 md:p-6 overflow-y-auto h-full">
         {/* 통계 카드 */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-4 mb-4">
           {[
             { label: '총 신청자', value: total, color: 'text-white' },
             { label: '학교 수', value: schools, color: 'text-purple-400' },
             { label: '일반(비포도)', value: total - memberCount, color: 'text-green-400' },
             { label: '남/여', value: `${genderCounts['남성'] || 0}/${genderCounts['여성'] || 0}`, color: 'text-blue-400' },
           ].map(({ label, value, color }) => (
-            <div key={label} className="bg-slate-800 rounded-xl p-4 text-center">
-              <div className={`text-2xl font-bold ${color}`}>{value}</div>
-              <div className="text-slate-400 text-xs mt-1">{label}</div>
+            <div key={label} className="bg-slate-800 rounded-xl p-3 md:p-4 text-center">
+              <div className={`text-xl md:text-2xl font-bold ${color}`}>{value}</div>
+              <div className="text-slate-400 text-[10px] md:text-xs mt-0.5">{label}</div>
             </div>
           ))}
         </div>
 
         {/* 모드 토글 + 검색 + 정렬 */}
-        <div className="flex items-center gap-3 mb-4 flex-wrap">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 flex-wrap">
           <div className="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5">
             <button onClick={() => { setMembersMode('event'); fetchMembers('event') }}
-              className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'event' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+              className={`px-2 md:px-3 py-1 text-[10px] md:text-xs rounded-md transition-colors ${membersMode === 'event' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
               행사 신청자
             </button>
             <button onClick={() => { setMembersMode('all'); fetchMembers('all') }}
-              className={`px-3 py-1 text-xs rounded-md transition-colors ${membersMode === 'all' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
-              누적 크루 신청자
+              className={`px-2 md:px-3 py-1 text-[10px] md:text-xs rounded-md transition-colors ${membersMode === 'all' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+              누적 크루
             </button>
           </div>
           <input
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
-            placeholder="이름, 연락처, 학교, 전공 검색..."
-            className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 w-52 outline-none focus:border-purple-500 placeholder:text-slate-500"
+            placeholder="이름, 학교 검색..."
+            className="bg-slate-800 border border-slate-600 text-white text-xs rounded-lg px-2.5 py-1.5 w-36 md:w-52 outline-none focus:border-purple-500 placeholder:text-slate-500"
           />
-          <div className="flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1">
             <span className="text-slate-500 text-xs mr-1">정렬:</span>
             {MEMBER_SORT_OPTIONS.map(({ key, label }) => (
               <button key={key} onClick={() => setMemberSort(key)}
@@ -905,13 +905,44 @@ export default function AdminDashboardPage() {
               </button>
             ))}
           </div>
-          <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+          <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-white text-xs px-2 md:px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
             새로고침
           </button>
         </div>
 
-        {/* 테이블 */}
-        <div className="bg-slate-800 rounded-xl overflow-hidden">
+        {/* 모바일: 카드형 리스트 */}
+        <div className="md:hidden space-y-2">
+          {filtered.map((m: any, i: number) => (
+            <div key={m.registration_id || m.id} className="bg-slate-800 rounded-xl p-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-bold text-sm">{m.name}</span>
+                  {m.is_member && <span className="text-xs">🍇</span>}
+                  {membersMode === 'event' && m.reg_status && (
+                    <span className={`text-[10px] font-bold ${m.reg_status === '출석완료' ? 'text-green-400' : 'text-amber-400'}`}>
+                      {m.reg_status === '출석완료' ? '출석' : '미출석'}
+                    </span>
+                  )}
+                </div>
+                <span className="text-slate-500 text-[10px]">{new Date(m.created_at).toLocaleDateString('ko-KR')}</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                {m.school && <span>{m.school}</span>}
+                {m.grade && <><span className="text-slate-600">·</span><span>{m.grade}</span></>}
+                {m.gender && <><span className="text-slate-600">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
+              </div>
+              {m.phone && (
+                <a href={`tel:${m.phone}`} className="text-blue-400 text-xs mt-1 block">{m.phone}</a>
+              )}
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-slate-500 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
+          )}
+        </div>
+
+        {/* 데스크톱: 테이블 */}
+        <div className="hidden md:block bg-slate-800 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -937,9 +968,7 @@ export default function AdminDashboardPage() {
                 {filtered.map((m: any, i: number) => (
                   <tr key={m.registration_id || m.id} className="hover:bg-slate-700/30 transition-colors">
                     <td className="px-3 py-3 text-slate-500 text-xs">{i + 1}</td>
-                    <td className="px-3 py-3 text-white font-medium whitespace-nowrap">
-                      {m.name}
-                    </td>
+                    <td className="px-3 py-3 text-white font-medium whitespace-nowrap">{m.name}</td>
                     <td className="px-3 py-3 text-slate-300 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-blue-400 hover:text-blue-300">{m.phone}</a>
                     </td>
@@ -1002,14 +1031,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="h-screen bg-slate-900 flex flex-col overflow-hidden">
       {/* 헤더 */}
-      <header className="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-4">
-          <h1 className="text-lg font-bold text-white">운영 대시보드</h1>
+      <header className="bg-slate-800 border-b border-slate-700 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+          <h1 className="text-sm md:text-lg font-bold text-white shrink-0">대시보드</h1>
           {events.length > 0 && (
             <select
               value={selectedEventId}
               onChange={(e) => handleEventChange(e.target.value)}
-              className="bg-slate-700 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 outline-none focus:border-purple-500 cursor-pointer"
+              className="bg-slate-700 border border-slate-600 text-white text-xs md:text-sm rounded-lg px-2 md:px-3 py-1.5 outline-none focus:border-purple-500 cursor-pointer min-w-0 flex-1 md:flex-none"
             >
               {events.map((ev) => (
                 <option key={ev.id} value={ev.id}>
@@ -1019,16 +1048,31 @@ export default function AdminDashboardPage() {
             </select>
           )}
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => fetchAll()} className="text-slate-400 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+        <div className="flex gap-2 shrink-0">
+          <button onClick={() => fetchAll()} className="text-slate-400 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
             새로고침
           </button>
           <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); router.push('/admin') }}
-            className="text-slate-400 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
+            className="hidden md:block text-slate-400 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-slate-600 hover:border-slate-400 transition-colors">
             로그아웃
           </button>
         </div>
       </header>
+
+      {/* 모바일 하단 탭바 */}
+      <div className="md:hidden flex border-b border-slate-700 bg-slate-800 shrink-0">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2.5 text-xs font-bold transition-colors ${
+              activeTab === tab.id ? 'text-purple-400 border-b-2 border-purple-400' : 'text-slate-500'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
       {/* 본문 + 탭 */}
       <div className="flex flex-1 overflow-hidden relative">
@@ -1040,8 +1084,8 @@ export default function AdminDashboardPage() {
           {activeTab === 'members' && renderMembers()}
         </div>
 
-        {/* 우측 책갈피 탭 */}
-        <div className="flex-shrink-0 flex flex-col justify-center gap-0 absolute right-0 top-1/2 -translate-y-1/2 z-20">
+        {/* 우측 책갈피 탭 (데스크톱만) */}
+        <div className="hidden md:flex flex-shrink-0 flex-col justify-center gap-0 absolute right-0 top-1/2 -translate-y-1/2 z-20">
           {tabs.map((tab, i) => (
             <button
               key={tab.id}
