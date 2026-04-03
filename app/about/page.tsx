@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 const founderTags = [
   '충남대 자율운항시스템공학과 4학년',
   '인스피릿(Inspirit) 대표이사',
-  '누적 매출 1.4억',
-  '정부지원금 1억 유치',
+  '누적 매출 1.5억',
+  '정부지원금 1.2억 유치',
   '골드칼라 공학도상',
   '청년창업사관학교 졸업',
 ]
@@ -24,8 +24,8 @@ const values = [
 ]
 
 const stats = [
-  { value: '1.4억', label: '대표 누적 매출' },
-  { value: '1억', label: '정부지원금 유치' },
+  { value: '1.5억', label: '대표 누적 매출' },
+  { value: '1.2억', label: '정부지원금 유치' },
   { value: '100+', label: '1회차 참여자' },
   { value: '95%', label: '참가자 만족도' },
 ]
@@ -113,7 +113,7 @@ export default function About() {
                   </div>
                   <blockquote className="text-[#444] text-sm leading-[1.8]">
                     &ldquo;저 역시 여러분과 똑같은 캠퍼스에서 내일을 고민하는 4학년 대학생입니다.
-                    2021년 창업 이후 1.4억 원의 누적 매출과 1억 원의 지원금을 유치하며 깨달은 것은,
+                    2021년 창업 이후 1.5억 원의 누적 매출과 1.2억 원의 지원금을 유치하며 깨달은 것은,
                     결국 <span className="text-violet-600 font-semibold">&lsquo;실행력&rsquo;과 &lsquo;도구의 활용&rsquo;</span>이 생존의 핵심이라는 점이었습니다.
                     제가 먼저 겪은 시행착오와 노하우를 아낌없이 나누려 합니다.&rdquo;
                   </blockquote>
