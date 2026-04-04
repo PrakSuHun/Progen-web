@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { getActiveEventId } from '@/lib/get-active-event'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -13,9 +14,10 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from('events')
     .select('id, title, event_date, is_mandatory, created_at')
-    .order('created_at', { ascending: false })
+    .order('event_date', { ascending: true })
   if (error) return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
-  return NextResponse.json({ data })
+  const activeEventId = await getActiveEventId()
+  return NextResponse.json({ data, activeEventId })
 }
 
 export async function POST(request: NextRequest) {

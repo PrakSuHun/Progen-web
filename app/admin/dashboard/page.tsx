@@ -10,7 +10,7 @@ import { showToast } from '@/components/Toast'
 
 // ───────────── Types ─────────────
 type Tab = 'checkin' | 'team' | 'analysis' | 'members'
-type SortKey = 'none' | 'name' | 'school' | 'grade' | 'gender'
+type SortKey = 'none' | 'name' | 'school' | 'grade' | 'gender' | 'crew'
 
 interface Attendee {
   registration_id: string
@@ -81,8 +81,8 @@ const FROM_NOT_ARRIVED = '__NOT_ARRIVED__'
 
 function genderColor(gender: string) {
   if (gender === '남성' || gender === '남') return 'text-blue-600'
-  if (gender === '여성' || gender === '여') return 'text-pink-500'
-  return 'text-gray-400'
+  if (gender === '여성' || gender === '여') return 'text-pink-600'
+  return 'text-slate-400'
 }
 
 function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
@@ -98,7 +98,7 @@ function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
 
 // ───────────── Sub-components ─────────────
 function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: string }) {
-  if (!data.length) return <p className="text-gray-400 text-sm py-4 text-center">데이터 없음</p>
+  if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={180}>
       <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 4 }}>
@@ -112,7 +112,7 @@ function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: s
 }
 
 function MiniPieChart({ data }: { data: DistItem[] }) {
-  if (!data.length) return <p className="text-gray-400 text-sm py-4 text-center">데이터 없음</p>
+  if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={220}>
       <PieChart>
@@ -155,10 +155,10 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
           ? 'bg-red-50 border border-red-300'
           : isNotArrived
             ? 'bg-amber-50 border border-amber-200'
-            : 'bg-white border border-gray-200 shadow-sm'
+            : 'bg-slate-50 border border-slate-200'
         }`}
     >
-      <div className="flex items-center gap-1 font-medium text-gray-900">
+      <div className="flex items-center gap-1 font-medium text-slate-800">
         <span>{person.name}</span>
         {person.is_member && <span className="w-2 h-2 rounded-full bg-violet-500 inline-block" />}
         {isNotArrived && (
@@ -172,12 +172,12 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
         )}
       </div>
       <div className="text-xs mt-0.5 flex items-center gap-1 flex-wrap">
-        <span className="text-gray-500">{person.school}</span>
-        <span className="text-gray-300">·</span>
-        <span className="text-gray-500">{person.grade}</span>
-        <span className="text-gray-300">·</span>
-        <span className="text-gray-500">{person.age}세</span>
-        <span className="text-gray-300">·</span>
+        <span className="text-slate-500">{person.school}</span>
+        <span className="text-slate-300">·</span>
+        <span className="text-slate-500">{person.grade}</span>
+        <span className="text-slate-300">·</span>
+        <span className="text-slate-500">{person.age}세</span>
+        <span className="text-slate-300">·</span>
         <span className={genderColor(person.gender)}>{person.gender}</span>
       </div>
       {showPhone && person.phone && (
@@ -214,8 +214,8 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
 
   return (
     <div
-      className={`relative bg-white border-2 rounded-xl p-3 min-h-[120px] transition-colors shadow-sm
-        ${over ? 'border-violet-400 bg-violet-50' : 'border-gray-200'}`}
+      className={`relative bg-white border-2 rounded-xl p-3 min-h-[120px] transition-colors
+        ${over ? 'border-violet-400 bg-violet-50 shadow-md' : 'border-slate-200 shadow-sm'}`}
       onDragOver={(e) => { e.preventDefault(); setOver(true) }}
       onDragLeave={() => setOver(false)}
       onDrop={() => { setOver(false); onDrop(teamName) }}
@@ -223,7 +223,7 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
       {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-violet-500" />}
       <button
         onClick={() => onDelete(teamName)}
-        className="absolute top-1.5 right-2 text-gray-300 hover:text-red-400 transition-colors text-xs leading-none"
+        className="absolute top-1.5 right-2 text-slate-300 hover:text-red-400 transition-colors text-xs leading-none"
         title="팀 삭제"
       >✕</button>
       <div className="mb-2">
@@ -232,10 +232,10 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
             onChange={(e) => setInputVal(e.target.value)}
             onBlur={confirmRename}
             onKeyDown={(e) => e.key === 'Enter' && confirmRename()}
-            className="bg-gray-50 text-gray-900 text-sm font-semibold px-2 py-0.5 rounded w-full outline-none border border-violet-400"
+            className="bg-slate-50 text-slate-800 text-sm font-semibold px-2 py-0.5 rounded w-full outline-none border border-violet-400"
           />
         ) : (
-          <button onClick={() => setEditing(true)} className="text-gray-900 text-sm font-semibold hover:text-violet-500 transition-colors">
+          <button onClick={() => setEditing(true)} className="text-slate-800 text-sm font-semibold hover:text-violet-500 transition-colors">
             {teamName}
           </button>
         )}
@@ -247,10 +247,10 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
           </div>
         ))}
         {Array.from({ length: Math.max(0, 4 - members.length) }).map((_, i) => (
-          <div key={i} className="h-8 rounded-lg border border-dashed border-gray-200 bg-gray-50/50" />
+          <div key={i} className="h-8 rounded-lg border border-dashed border-slate-200 bg-slate-50/50" />
         ))}
       </div>
-      <div className="mt-2 text-right text-xs text-gray-400">{members.length} / 4</div>
+      <div className="mt-2 text-right text-xs text-slate-400">{members.length} / 4</div>
     </div>
   )
 }
@@ -286,8 +286,11 @@ export default function AdminDashboardPage() {
         const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date }))
         setEvents(list)
         if (list.length > 0) {
-          setSelectedEventId(list[0].id)
-          fetchAll(list[0].id)
+          // 서버에서 내려준 activeEventId(다음 예정 행사)를 기본값으로 사용
+          const activeId = json.activeEventId
+          const defaultId = activeId && list.some((e) => e.id === activeId) ? activeId : list[0].id
+          setSelectedEventId(defaultId)
+          fetchAll(defaultId)
         } else {
           fetchAll()
         }
@@ -527,13 +530,13 @@ export default function AdminDashboardPage() {
         {/* 숫자 카드 */}
         <div className="grid grid-cols-3 gap-3 md:gap-4 mb-5">
           {[
-            { label: '오기로 한 인원', value: pre, color: 'text-gray-900', bg: 'bg-white' },
-            { label: '현재 온 인원', value: arrived, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-            { label: '미출석', value: missing, color: 'text-red-500', bg: 'bg-red-50' },
+            { label: '오기로 한 인원', value: pre, color: 'text-violet-700', bg: 'bg-violet-50 border-violet-200' },
+            { label: '현재 온 인원', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
+            { label: '미출석', value: missing, color: 'text-red-600', bg: 'bg-red-50 border-red-200' },
           ].map(({ label, value, color, bg }) => (
-            <div key={label} className={`${bg} border border-gray-100 rounded-2xl p-4 md:p-5 text-center shadow-sm`}>
+            <div key={label} className={`${bg} border rounded-2xl p-4 md:p-5 text-center`}>
               <div className={`text-3xl md:text-4xl font-bold ${color}`}>{value}</div>
-              <div className="text-gray-500 text-xs md:text-sm mt-1">{label}</div>
+              <div className="text-slate-600 text-xs md:text-sm mt-1 font-medium">{label}</div>
             </div>
           ))}
         </div>
@@ -544,16 +547,16 @@ export default function AdminDashboardPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="이름 또는 학교 검색..."
-            className="bg-white border border-gray-200 text-gray-900 text-sm rounded-xl px-3 py-2 w-48 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-gray-400"
+            className="bg-white border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2 w-48 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
           />
           <div className="flex items-center gap-1">
-            <span className="text-gray-400 text-xs mr-1">정렬:</span>
+            <span className="text-slate-400 text-xs mr-1">정렬:</span>
             {SORT_OPTIONS.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setSortBy(key)}
-                className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors
-                  ${sortBy === key ? 'bg-violet-500 text-white' : 'bg-gray-100 text-gray-500 hover:text-gray-700 hover:bg-gray-200'}`}
+                className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors font-medium
+                  ${sortBy === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 border border-slate-200'}`}
               >
                 {label}
               </button>
@@ -563,13 +566,14 @@ export default function AdminDashboardPage() {
 
         {/* 두 열 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-            <h3 className="text-gray-900 font-semibold mb-3">
-              출석완료 <span className="text-emerald-500 font-normal text-sm">{allCheckedIn.length}명</span>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
             </h3>
             <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
               {filteredCheckedIn.length === 0 && (
-                <p className="text-gray-400 text-sm text-center py-6">
+                <p className="text-slate-400 text-sm text-center py-6">
                   {q ? '검색 결과 없음' : '아직 출석자가 없습니다'}
                 </p>
               )}
@@ -578,13 +582,14 @@ export default function AdminDashboardPage() {
               ))}
             </div>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-            <h3 className="text-gray-900 font-semibold mb-3">
-              미출석 <span className="text-red-400 font-normal text-sm">{notArrived.length}명</span>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-400" />
+              미출석 <span className="text-red-500 font-normal text-sm">{notArrived.length}명</span>
             </h3>
             <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
               {filteredNotArrived.length === 0 && (
-                <p className="text-gray-400 text-sm text-center py-6">
+                <p className="text-slate-400 text-sm text-center py-6">
                   {q ? '검색 결과 없음' : '모두 출석했습니다'}
                 </p>
               )}
@@ -615,19 +620,19 @@ export default function AdminDashboardPage() {
       <div className="flex h-full overflow-hidden">
         {/* 좌측 패널 */}
         <div
-          className="w-56 md:w-64 flex-shrink-0 border-r border-gray-200 flex flex-col bg-gray-50"
+          className="w-56 md:w-64 flex-shrink-0 border-r border-slate-200 flex flex-col bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={() => handleDrop(null)}
         >
-          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-            <span className="text-gray-900 font-semibold text-sm">미배정 출석자</span>
-            <span className="text-gray-400 text-xs">{unassigned.length}명</span>
+          <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+            <span className="text-slate-800 font-semibold text-sm">미배정 출석자</span>
+            <span className="text-violet-500 text-xs font-bold">{unassigned.length}명</span>
           </div>
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {unassigned.length > 0 && (
               <div className="flex items-center gap-1.5 pb-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                <span className="text-gray-400 text-xs">출석완료 ({unassigned.length}명)</span>
+                <span className="text-slate-500 text-xs">출석완료 ({unassigned.length}명)</span>
               </div>
             )}
             {unassigned.map((p) => (
@@ -637,9 +642,9 @@ export default function AdminDashboardPage() {
             ))}
             {notArrived.length > 0 && (
               <>
-                <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-gray-200">
+                <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-200">
                   <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                  <span className="text-gray-400 text-xs">미출석 ({notArrived.length}명)</span>
+                  <span className="text-slate-500 text-xs">미출석 ({notArrived.length}명)</span>
                 </div>
                 {notArrived.map((p) => (
                   <PersonCard key={p.registration_id} person={p} draggable
@@ -649,21 +654,21 @@ export default function AdminDashboardPage() {
               </>
             )}
             {unassigned.length === 0 && notArrived.length === 0 && (
-              <p className="text-gray-400 text-sm text-center pt-8">배정할 인원이 없습니다</p>
+              <p className="text-slate-400 text-sm text-center pt-8">배정할 인원이 없습니다</p>
             )}
           </div>
-          <div className="p-3 border-t border-gray-200 space-y-2">
+          <div className="p-3 border-t border-slate-200 space-y-2">
             <button
               onClick={handleReset}
               disabled={resetLoading}
-              className="w-full py-2 bg-white hover:bg-red-50 disabled:opacity-50 text-gray-500 hover:text-red-500 text-sm font-semibold rounded-xl transition-colors border border-gray-200 hover:border-red-300"
+              className="w-full py-2 bg-slate-50 hover:bg-red-50 disabled:opacity-50 text-slate-500 hover:text-red-500 text-sm font-semibold rounded-xl transition-colors border border-slate-200 hover:border-red-300"
             >
               {resetLoading ? '초기화 중...' : '팀 배정 초기화'}
             </button>
             <button
               onClick={handleAutoMatch}
               disabled={autoMatchLoading || unassigned.length === 0}
-              className="w-full py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-gray-200 disabled:text-gray-400 text-white text-sm font-semibold rounded-xl transition-colors"
+              className="w-full py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
             >
               {autoMatchLoading ? '매칭 중...' : '자동 매칭'}
             </button>
@@ -671,7 +676,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* 팀 그리드 */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-50/50">
+        <div className="flex-1 overflow-y-auto p-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {teamNames.map((t) => (
               <TeamCard key={t} teamName={t} members={assigned[t] || []}
@@ -683,7 +688,7 @@ export default function AdminDashboardPage() {
             ))}
             {teamNames.length < 30 && (
               <div
-                className="bg-white/60 border-2 border-dashed border-gray-200 rounded-xl p-3 min-h-[120px] flex items-center justify-center text-gray-400 text-sm hover:border-violet-300 hover:text-violet-400 transition-colors"
+                className="bg-white/60 border-2 border-dashed border-slate-300 rounded-xl p-3 min-h-[120px] flex items-center justify-center text-slate-400 text-sm hover:border-violet-300 hover:text-violet-500 transition-colors"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDropOnNewTeam}
               >
@@ -706,8 +711,8 @@ export default function AdminDashboardPage() {
       <div className="p-4 md:p-6 overflow-y-auto h-full space-y-10">
         {/* 섹션 1 */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-1">행사 참여자 분석</h2>
-          <p className="text-gray-400 text-sm mb-5">좌: 전체 참여자 / 우: 일반만</p>
+          <h2 className="text-xl font-bold text-slate-800 mb-1">행사 참여자 분석</h2>
+          <p className="text-slate-400 text-sm mb-5">좌: 전체 참여자 / 우: 일반만</p>
           {s1 ? (
             <div className="space-y-6">
               {[
@@ -717,30 +722,30 @@ export default function AdminDashboardPage() {
                 { label: '성별 분포', all: s1.all.gender, sm: s1.saengmyung.gender, type: 'pie' },
               ].map(({ label, all, sm, type }) => (
                 <div key={label}>
-                  <h3 className="text-gray-700 font-medium mb-3">{label}</h3>
+                  <h3 className="text-slate-700 font-medium mb-3">{label}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-                      <p className="text-gray-400 text-xs mb-2">전체</p>
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                      <p className="text-slate-400 text-xs mb-2">전체</p>
                       {type === 'pie' ? <MiniPieChart data={all} /> : <MiniBarChart data={all} />}
                     </div>
-                    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-                      <p className="text-gray-400 text-xs mb-2">일반만</p>
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                      <p className="text-slate-400 text-xs mb-2">일반만</p>
                       {type === 'pie' ? <MiniPieChart data={sm} /> : <MiniBarChart data={sm} color="#34d399" />}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          ) : <p className="text-gray-400">데이터 없음</p>}
+          ) : <p className="text-slate-400">데이터 없음</p>}
         </section>
 
         {/* 섹션 2 */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-5">행사 참여 현황</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-5">행사 참여 현황</h2>
           {s2 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {[
-                { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-gray-900' },
+                { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
                 { label: '출석완료', value: `${s2.checked_in_count}명`, color: 'text-emerald-600' },
                 { label: '크루 참여', value: `${s2.total_crews}명`, color: 'text-violet-600' },
                 { label: '게스트 참여', value: `${s2.total_guests}명`, color: 'text-blue-600' },
@@ -750,60 +755,60 @@ export default function AdminDashboardPage() {
                 { label: '이 행사 신규 게스트', value: `${s2.guests_from_event}명`, color: 'text-cyan-600' },
                 { label: '게스트→크루 전환', value: `${s2.crew_conversion_count}명 (${s2.crew_conversion_rate}%)`, color: 'text-amber-600' },
               ].map(({ label, value, color }) => (
-                <div key={label} className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm">
-                  <p className="text-gray-500 text-xs md:text-sm">{label}</p>
+                <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+                  <p className="text-slate-500 text-xs md:text-sm">{label}</p>
                   <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
                 </div>
               ))}
             </div>
-          ) : <p className="text-gray-400">데이터 없음</p>}
+          ) : <p className="text-slate-400">데이터 없음</p>}
         </section>
 
         {/* 섹션 3 */}
         <section>
-          <h2 className="text-xl font-bold text-gray-900 mb-5">피드백 분석</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-5">피드백 분석</h2>
           {s3 ? (
             <>
               <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
                 {[
-                  { label: '총 응답 수', value: s3.total_responses, color: 'text-gray-900' },
+                  { label: '총 응답 수', value: s3.total_responses, color: 'text-slate-800' },
                   { label: '재참여 희망', value: s3.would_return_count, color: 'text-emerald-600' },
                   { label: '가입 관심', value: s3.join_interest_count, color: 'text-violet-600' },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 shadow-sm">
-                    <p className="text-gray-500 text-xs md:text-sm">{label}</p>
+                  <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+                    <p className="text-slate-500 text-xs md:text-sm">{label}</p>
                     <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
                   </div>
                 ))}
               </div>
               {s3.good_tags.length > 0 && (
-                <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-4 shadow-sm">
-                  <h3 className="text-gray-700 font-medium mb-3">좋았던 점 태그</h3>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
+                  <h3 className="text-slate-700 font-medium mb-3">좋았던 점 태그</h3>
                   <MiniBarChart data={s3.good_tags.map((t) => ({ name: t.tag, count: t.count }))} color="#34d399" />
                 </div>
               )}
               {s3.bad_tags.length > 0 && (
-                <div className="bg-white border border-gray-100 rounded-2xl p-5 mb-4 shadow-sm">
-                  <h3 className="text-gray-700 font-medium mb-3">아쉬운 점 태그</h3>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
+                  <h3 className="text-slate-700 font-medium mb-3">아쉬운 점 태그</h3>
                   <MiniBarChart data={s3.bad_tags.map((t) => ({ name: t.tag, count: t.count }))} color="#f87171" />
                 </div>
               )}
               {s3.responses.length > 0 && (
-                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-                  <h3 className="text-gray-700 font-medium mb-4">피드백 원문 ({s3.responses.length}개)</h3>
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                  <h3 className="text-slate-700 font-medium mb-4">피드백 원문 ({s3.responses.length}개)</h3>
                   <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                     {s3.responses.map((r, i) => (
-                      <div key={i} className="bg-gray-50 rounded-xl p-4 space-y-2 border border-gray-100">
+                      <div key={i} className="bg-slate-50 rounded-xl p-4 space-y-2 border border-slate-200">
                         {r.good_points && (
                           <div>
                             <span className="text-emerald-600 text-xs font-medium">좋았던 점</span>
-                            <p className="text-gray-700 text-sm mt-0.5">{r.good_points}</p>
+                            <p className="text-slate-700 text-sm mt-0.5">{r.good_points}</p>
                           </div>
                         )}
                         {r.bad_points && (
                           <div>
                             <span className="text-red-500 text-xs font-medium">아쉬운 점</span>
-                            <p className="text-gray-700 text-sm mt-0.5">{r.bad_points}</p>
+                            <p className="text-slate-700 text-sm mt-0.5">{r.bad_points}</p>
                           </div>
                         )}
                       </div>
@@ -812,15 +817,41 @@ export default function AdminDashboardPage() {
                 </div>
               )}
             </>
-          ) : <p className="text-gray-400">피드백 데이터 없음</p>}
+          ) : <p className="text-slate-400">피드백 데이터 없음</p>}
         </section>
       </div>
     )
   }
 
+  const handleDeleteMember = async (m: any) => {
+    const label = m.name || '알 수 없음'
+    const desc = m.is_crew
+      ? `"${label}" 님의 행사 신청을 삭제하시겠습니까?\n(크루 정보는 유지됩니다)`
+      : `"${label}" 님을 삭제하시겠습니까?\n(게스트 정보도 함께 삭제됩니다)`
+    if (!confirm(desc)) return
+    try {
+      const res = await fetch('/api/admin/delete-member', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registration_id: m.registration_id,
+          is_crew: m.is_crew,
+          guest_id: m.guest_id ?? null,
+        }),
+      })
+      if (res.ok) {
+        showToast(`${label} 삭제 완료`, 'success')
+        setMembers((prev) => prev.filter((p: any) => p.registration_id !== m.registration_id))
+      } else {
+        const d = await res.json()
+        showToast(d.message || '삭제 실패', 'error')
+      }
+    } catch { showToast('삭제 중 오류', 'error') }
+  }
+
   // ── Tab 4: 신청자 ──
   const renderMembers = () => {
-    if (membersLoading) return <div className="flex items-center justify-center h-full"><p className="text-gray-500">로딩 중...</p></div>
+    if (membersLoading) return <div className="flex items-center justify-center h-full"><p className="text-slate-500">로딩 중...</p></div>
 
     const q = memberSearch.toLowerCase()
     let filtered = q
@@ -833,19 +864,21 @@ export default function AdminDashboardPage() {
         if (memberSort === 'school') return (a.school || '').localeCompare(b.school || '', 'ko')
         if (memberSort === 'grade') return (a.grade || '').localeCompare(b.grade || '', 'ko')
         if (memberSort === 'gender') return (a.gender || '').localeCompare(b.gender || '', 'ko')
+        if (memberSort === 'crew') return (a.is_crew === b.is_crew ? 0 : a.is_crew ? -1 : 1)
         return 0
       })
     }
 
     // Stats
     const total = members.length
-    const schools = new Set(members.map((m) => m.school)).size
+    const guestCount = members.filter((m: any) => !m.is_crew).length
     const memberCount = members.filter((m) => m.is_member).length
 
     const MEMBER_SORT_OPTIONS: { key: SortKey; label: string }[] = [
       { key: 'none', label: '최신순' },
       { key: 'name', label: '가나다' },
       { key: 'school', label: '학교' },
+      { key: 'crew', label: '크루' },
       { key: 'grade', label: '학년' },
       { key: 'gender', label: '성별' },
     ]
@@ -855,27 +888,27 @@ export default function AdminDashboardPage() {
         {/* 통계 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4">
           {[
-            { label: '총 신청자', value: total, color: 'text-gray-900' },
-            { label: '학교 수', value: schools, color: 'text-violet-600' },
+            { label: '총 신청자', value: total, color: 'text-slate-800' },
+            { label: '게스트', value: guestCount, color: 'text-violet-600' },
             { label: '일반(비포도)', value: total - memberCount, color: 'text-emerald-600' },
             { label: '남/여 (비포도)', value: (() => { const nonPodo = members.filter((m: any) => !m.is_member); const m = nonPodo.filter((x: any) => x.gender === '남성').length; const f = nonPodo.filter((x: any) => x.gender === '여성').length; return `${m}/${f}` })(), color: 'text-blue-600' },
           ].map(({ label, value, color }) => (
-            <div key={label} className="bg-white border border-gray-100 rounded-2xl p-3 md:p-4 text-center shadow-sm">
+            <div key={label} className="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 text-center shadow-sm">
               <div className={`text-xl md:text-2xl font-bold ${color}`}>{value}</div>
-              <div className="text-gray-400 text-[10px] md:text-xs mt-0.5">{label}</div>
+              <div className="text-slate-500 text-[10px] md:text-xs mt-0.5">{label}</div>
             </div>
           ))}
         </div>
 
         {/* 모드 토글 + 검색 + 정렬 */}
         <div className="flex items-center gap-2 md:gap-3 mb-3 flex-wrap">
-          <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-0.5">
+          <div className="flex items-center gap-1 bg-slate-200 rounded-xl p-0.5">
             <button onClick={() => { setMembersMode('event'); fetchMembers('event') }}
-              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'event' ? 'bg-violet-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'event' ? 'bg-violet-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
               행사 신청자
             </button>
             <button onClick={() => { setMembersMode('all'); fetchMembers('all') }}
-              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'all' ? 'bg-violet-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'all' ? 'bg-violet-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
               누적 크루
             </button>
           </div>
@@ -883,18 +916,18 @@ export default function AdminDashboardPage() {
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
             placeholder="이름, 학교 검색..."
-            className="bg-white border border-gray-200 text-gray-900 text-xs rounded-xl px-2.5 py-1.5 w-36 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-gray-400"
+            className="bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-36 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
           />
           <div className="hidden md:flex items-center gap-1">
-            <span className="text-gray-400 text-xs mr-1">정렬:</span>
+            <span className="text-slate-400 text-xs mr-1">정렬:</span>
             {MEMBER_SORT_OPTIONS.map(({ key, label }) => (
               <button key={key} onClick={() => setMemberSort(key)}
-                className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors ${memberSort === key ? 'bg-violet-500 text-white' : 'bg-gray-100 text-gray-500 hover:text-gray-700'}`}>
+                className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors font-medium ${memberSort === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}>
                 {label}
               </button>
             ))}
           </div>
-          <button onClick={() => fetchMembers()} className="ml-auto text-gray-400 hover:text-gray-700 text-xs px-2 md:px-3 py-1.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
+          <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-slate-700 text-xs px-2 md:px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
             새로고침
           </button>
         </div>
@@ -902,10 +935,10 @@ export default function AdminDashboardPage() {
         {/* 모바일: 카드형 리스트 */}
         <div className="md:hidden space-y-2">
           {filtered.map((m: any) => (
-            <div key={m.registration_id || m.id} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
+            <div key={m.registration_id || m.id} className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-900 font-bold text-sm">{m.name}</span>
+                  <span className="text-slate-800 font-bold text-sm">{m.name}</span>
                   {m.is_member && <span className="text-xs">🍇</span>}
                   {membersMode === 'event' && m.reg_status && (
                     <span className={`text-[10px] font-bold ${m.reg_status === '출석완료' ? 'text-emerald-500' : 'text-amber-500'}`}>
@@ -913,12 +946,17 @@ export default function AdminDashboardPage() {
                     </span>
                   )}
                 </div>
-                <span className="text-gray-400 text-[10px]">{new Date(m.created_at).toLocaleDateString('ko-KR')}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-400 text-[10px]">{new Date(m.registered_at || m.created_at).toLocaleDateString('ko-KR')}</span>
+                  {membersMode === 'event' && (
+                    <button onClick={() => handleDeleteMember(m)} className="text-slate-300 hover:text-red-500 transition-colors text-xs">✕</button>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs text-slate-500">
                 {m.school && <span>{m.school}</span>}
-                {m.grade && <><span className="text-gray-300">·</span><span>{m.grade}</span></>}
-                {m.gender && <><span className="text-gray-300">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
+                {m.grade && <><span className="text-slate-300">·</span><span>{m.grade}</span></>}
+                {m.gender && <><span className="text-slate-300">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
               </div>
               {m.phone && (
                 <a href={`tel:${m.phone}`} className="text-violet-500 text-xs mt-1 block">{m.phone}</a>
@@ -926,16 +964,16 @@ export default function AdminDashboardPage() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <p className="text-gray-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
+            <p className="text-slate-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
           )}
         </div>
 
         {/* 데스크톱/태블릿: 테이블 */}
-        <div className="hidden md:block bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+        <div className="hidden md:block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
+                <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
                   <th className="px-3 py-3 text-left font-semibold">#</th>
                   <th className="px-3 py-3 text-left font-semibold">이름</th>
                   <th className="px-3 py-3 text-left font-semibold">연락처</th>
@@ -951,24 +989,25 @@ export default function AdminDashboardPage() {
                   {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">유형</th>}
                   {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">팀</th>}
                   <th className="px-3 py-3 text-left font-semibold">신청일</th>
+                  {membersMode === 'event' && <th className="px-3 py-3 text-center font-semibold w-10">삭제</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-slate-100">
                 {filtered.map((m: any, i: number) => (
-                  <tr key={m.registration_id || m.id} className="hover:bg-violet-50/30 transition-colors">
-                    <td className="px-3 py-3 text-gray-400 text-xs">{i + 1}</td>
-                    <td className="px-3 py-3 text-gray-900 font-medium whitespace-nowrap">{m.name}</td>
+                  <tr key={m.registration_id || m.id} className="hover:bg-violet-50/40 transition-colors">
+                    <td className="px-3 py-3 text-slate-400 text-xs">{i + 1}</td>
+                    <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">{m.name}</td>
                     <td className="px-3 py-3 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-violet-500 hover:text-violet-600">{m.phone}</a>
                     </td>
-                    <td className="px-3 py-3 text-gray-600">{m.age}</td>
+                    <td className="px-3 py-3 text-slate-600">{m.age}</td>
                     <td className={`px-3 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
-                    <td className="px-3 py-3 text-gray-600 whitespace-nowrap">{m.school}</td>
-                    <td className="px-3 py-3 text-gray-600 whitespace-nowrap">{m.major}</td>
-                    <td className="px-3 py-3 text-gray-600">{m.grade}</td>
-                    <td className="px-3 py-3 text-gray-500 text-xs whitespace-nowrap">{m.path}</td>
-                    <td className="px-3 py-3 text-gray-500 text-xs whitespace-nowrap">{m.project}</td>
-                    <td className="px-3 py-3">{m.is_member ? <span>🍇</span> : <span className="text-gray-300 text-xs">—</span>}</td>
+                    <td className="px-3 py-3 text-slate-600 whitespace-nowrap">{m.school}</td>
+                    <td className="px-3 py-3 text-slate-600 whitespace-nowrap">{m.major}</td>
+                    <td className="px-3 py-3 text-slate-600">{m.grade}</td>
+                    <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{m.path}</td>
+                    <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{m.project}</td>
+                    <td className="px-3 py-3">{m.is_member ? <span>🍇</span> : <span className="text-slate-300 text-xs">—</span>}</td>
                     {membersMode === 'event' && (
                       <td className="px-3 py-3">
                         {m.reg_status === '출석완료'
@@ -980,23 +1019,28 @@ export default function AdminDashboardPage() {
                       <td className="px-3 py-3">
                         {m.is_crew
                           ? <span className="text-violet-500 text-xs">크루</span>
-                          : <span className="text-gray-400 text-xs">게스트</span>}
+                          : <span className="text-slate-400 text-xs">게스트</span>}
                       </td>
                     )}
                     {membersMode === 'event' && (
-                      <td className="px-3 py-3 text-gray-500 text-xs">{m.team_name || '—'}</td>
+                      <td className="px-3 py-3 text-slate-500 text-xs">{m.team_name || '—'}</td>
                     )}
-                    <td className="px-3 py-3 text-gray-400 text-xs whitespace-nowrap">{new Date(m.created_at).toLocaleDateString('ko-KR')}</td>
+                    <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{new Date(m.registered_at || m.created_at).toLocaleDateString('ko-KR')}</td>
+                    {membersMode === 'event' && (
+                      <td className="px-3 py-3 text-center">
+                        <button onClick={() => handleDeleteMember(m)} className="text-slate-300 hover:text-red-500 transition-colors text-sm">✕</button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {filtered.length === 0 && (
-            <p className="text-gray-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
+            <p className="text-slate-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
           )}
         </div>
-        <p className="text-gray-400 text-xs mt-3 text-right">총 {filtered.length}명 표시 / 전체 {members.length}명</p>
+        <p className="text-slate-400 text-xs mt-3 text-right">총 {filtered.length}명 표시 / 전체 {members.length}명</p>
       </div>
     )
   }
@@ -1011,23 +1055,26 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">로딩 중...</p>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-3 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-slate-500 text-sm">로딩 중...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
+    <div className="h-screen bg-slate-100 flex flex-col overflow-hidden">
+      {/* 헤더 — 짙은 보라색 */}
+      <header className="bg-violet-700 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
-          <h1 className="text-sm md:text-lg font-bold text-gray-900 shrink-0">PROGEN</h1>
+          <h1 className="text-sm md:text-lg font-bold text-white shrink-0">PROGEN</h1>
           {events.length > 0 && (
             <select
               value={selectedEventId}
               onChange={(e) => handleEventChange(e.target.value)}
-              className="bg-gray-50 border border-gray-200 text-gray-700 text-xs md:text-sm rounded-xl px-2 md:px-3 py-1.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 cursor-pointer min-w-0 flex-1 md:flex-none"
+              className="bg-violet-600 border border-violet-500 text-white text-xs md:text-sm rounded-lg px-2 md:px-3 py-1.5 outline-none focus:border-violet-300 cursor-pointer min-w-0 flex-1 md:flex-none"
             >
               {events.map((ev) => (
                 <option key={ev.id} value={ev.id}>
@@ -1038,24 +1085,26 @@ export default function AdminDashboardPage() {
           )}
         </div>
         <div className="flex gap-2 shrink-0">
-          <button onClick={() => fetchAll()} className="text-gray-400 hover:text-gray-700 text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
+          <button onClick={() => fetchAll()} className="text-violet-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-violet-500 hover:border-violet-300 transition-colors">
             새로고침
           </button>
           <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); router.push('/admin') }}
-            className="hidden md:block text-gray-400 hover:text-gray-700 text-sm px-3 py-1.5 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
+            className="hidden md:block text-violet-200 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-violet-500 hover:border-violet-300 transition-colors">
             로그아웃
           </button>
         </div>
       </header>
 
-      {/* 탭바 (모바일+태블릿: 상단 / 데스크톱: 우측 책갈피) */}
-      <div className="lg:hidden flex border-b border-gray-200 bg-white shrink-0">
+      {/* 탭바 (모바일+태블릿: 상단) */}
+      <div className="lg:hidden flex bg-white border-b border-slate-200 shrink-0">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2.5 text-xs font-bold transition-colors ${
-              activeTab === tab.id ? 'text-violet-500 border-b-2 border-violet-500' : 'text-gray-400'
+            className={`flex-1 py-3 text-xs font-bold transition-colors ${
+              activeTab === tab.id
+                ? 'text-violet-600 border-b-2 border-violet-500 bg-violet-50/50'
+                : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             {tab.label}
@@ -1073,7 +1122,7 @@ export default function AdminDashboardPage() {
           {activeTab === 'members' && renderMembers()}
         </div>
 
-        {/* 우측 책갈피 탭 (데스크톱만) */}
+        {/* 우측 책갈피 탭 (데스크톱���) */}
         <div className="hidden lg:flex flex-shrink-0 flex-col justify-center gap-0 absolute right-0 top-1/2 -translate-y-1/2 z-20">
           {tabs.map((tab, i) => (
             <button
@@ -1083,8 +1132,8 @@ export default function AdminDashboardPage() {
               className={`py-5 px-2.5 text-sm font-bold transition-all duration-150 shadow-md
                 ${i === 0 ? 'rounded-tl-xl' : ''} ${i === tabs.length - 1 ? 'rounded-bl-xl' : ''}
                 ${activeTab === tab.id
-                  ? 'bg-violet-500 text-white -translate-x-1 z-10'
-                  : 'bg-white text-gray-400 hover:bg-gray-50 hover:text-gray-600 border border-gray-200 border-r-0'
+                  ? 'bg-violet-600 text-white -translate-x-1 z-10'
+                  : 'bg-white text-slate-400 hover:bg-slate-50 hover:text-slate-600 border border-slate-200 border-r-0'
                 }`}
             >
               {tab.label}

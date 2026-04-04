@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
     return {
       id: person?.id ?? r.id,
       registration_id: r.id,
+      guest_id: r.guest_id ?? null,
       name: person?.name ?? '알 수 없음',
       phone: person?.phone ?? '',
       school: person?.school ?? '',
@@ -67,6 +68,7 @@ export async function GET(request: NextRequest) {
       is_crew: !!r.crew_members,
       reg_status: r.status,
       team_name: r.team_name,
+      registered_at: r.registered_at,
       created_at: person?.created_at ?? r.registered_at,
     }
   })
