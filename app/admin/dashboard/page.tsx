@@ -41,7 +41,8 @@ interface CrewMember {
   id: string; name: string; phone: string; school: string; grade: string
   age: string; major: string; path: string; project: string; gender: string
   motivation: string; role: string; status: string; is_member: boolean
-  noshow_count: number; created_at: string
+  noshow_count: number; created_at: string; is_crew: boolean
+  registration_id?: string; guest_id?: string; registered_at?: string
 }
 
 interface DistItem { name: string; count: number }
