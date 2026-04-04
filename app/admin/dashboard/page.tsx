@@ -1013,7 +1013,7 @@ export default function AdminDashboardPage() {
           ))}
         </div>
 
-        {/* 모드 토글 + 검색 + 정렬 */}
+        {/* 모드 토글 + 정렬(모바일) + 검색(데스크톱) */}
         <div className="flex items-center gap-2 md:gap-3 mb-3 flex-wrap">
           <div className="flex items-center gap-1 bg-slate-200 rounded-xl p-0.5">
             <button onClick={() => { setMembersMode('event'); fetchMembers('event') }}
@@ -1025,21 +1025,20 @@ export default function AdminDashboardPage() {
               누적 크루
             </button>
           </div>
-          <input
-            value={memberSearch}
-            onChange={(e) => setMemberSearch(e.target.value)}
-            placeholder="이름, 학교 검색..."
-            className="bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-36 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
-          />
-          <div className="hidden md:flex items-center gap-1">
-            <span className="text-slate-400 text-xs mr-1">정렬:</span>
+          <div className="flex items-center gap-1">
             {MEMBER_SORT_OPTIONS.map(({ key, label }) => (
               <button key={key} onClick={() => setMemberSort(key)}
-                className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors font-medium ${memberSort === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}>
+                className={`px-2 md:px-2.5 py-1 md:py-1.5 text-[10px] md:text-xs rounded-lg transition-colors font-medium ${memberSort === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}>
                 {label}
               </button>
             ))}
           </div>
+          <input
+            value={memberSearch}
+            onChange={(e) => setMemberSearch(e.target.value)}
+            placeholder="이름, 학교 검색..."
+            className="hidden md:block bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
+          />
           <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-slate-700 text-xs px-2 md:px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
             새로고침
           </button>
@@ -1053,6 +1052,11 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2">
                   <span className="text-slate-800 font-bold text-sm">{m.name}</span>
                   {m.is_member && <span className="text-xs">🍇</span>}
+                  {membersMode === 'event' && (
+                    m.is_crew
+                      ? <span className="text-[10px] font-bold text-violet-500 bg-violet-50 px-1.5 py-0.5 rounded">크루</span>
+                      : <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">게스트</span>
+                  )}
                   {membersMode === 'event' && m.reg_status && (
                     <span className={`text-[10px] font-bold ${m.reg_status === '출석완료' ? 'text-emerald-500' : 'text-amber-500'}`}>
                       {m.reg_status === '출석완료' ? '출석' : '미출석'}
