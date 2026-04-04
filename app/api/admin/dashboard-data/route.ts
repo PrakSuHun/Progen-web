@@ -66,12 +66,13 @@ export async function GET(request: NextRequest) {
     }
 
     const all = (registrations ?? []).map(toAttendee)
-    const preRegistered = all.filter((a) => a.status === '사전신청' || a.status === '출석완료')
+    const preRegistered = all.filter((a) => a.status === '사전신청' || a.status === '출석완료' || a.status === '노쇼확정')
     const checkedIn = all.filter((a) => a.status === '출석완료')
     const unassigned = checkedIn.filter((a) => !a.team_name)
     const notArrived = all.filter((a) => a.status === '사전신청' && !a.team_name)
+    const noshow = all.filter((a) => a.status === '노쇼확정' && !a.team_name)
 
-    // Group assigned people by team (출석완료 + 미출석 모두 포함)
+    // Group assigned people by team (출석완료 + 미출석 + 노쇼확정 모두 포함)
     const assigned: Record<string, typeof all> = {}
     for (const a of all.filter((a) => a.team_name)) {
       const t = a.team_name!
@@ -82,9 +83,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       pre_registered_count: preRegistered.length,
       checked_in_count: checkedIn.length,
+      noshow_count: noshow.length + all.filter((a) => a.status === '노쇼확정' && a.team_name).length,
       unassigned,
       assigned,
       not_arrived: notArrived,
+      noshow,
     })
   } catch (error) {
     console.error('dashboard-data error:', error)

@@ -30,9 +30,11 @@ interface Attendee {
 interface DashboardData {
   pre_registered_count: number
   checked_in_count: number
+  noshow_count: number
   unassigned: Attendee[]
   assigned: Record<string, Attendee[]>
   not_arrived: Attendee[]
+  noshow: Attendee[]
 }
 
 interface EventItem { id: string; title: string; event_date: string }
@@ -136,32 +138,45 @@ function MiniPieChart({ data }: { data: DistItem[] }) {
   )
 }
 
-function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDraggable = false, onDragStart }: {
+function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDraggable = false, onDragStart, onTap, isSelected = false }: {
   person: Attendee
   showPhone?: boolean
   dimmed?: boolean
   draggable?: boolean
   onDragStart?: () => void
+  onTap?: (e?: React.MouseEvent) => void
+  isSelected?: boolean
 }) {
   const isTarget = person.noshow_count >= 2
+  const isNoshow = person.status === '노쇼확정'
   const isNotArrived = person.status === '사전신청'
   return (
     <div
+      data-person
       draggable={isDraggable}
       onDragStart={onDragStart}
-      className={`px-3 py-2 rounded-lg text-sm select-none transition-opacity w-full
-        ${isDraggable ? 'cursor-grab active:cursor-grabbing' : ''}
+      onClick={(e) => { e.stopPropagation(); onTap?.(e) }}
+      className={`px-3 py-2 rounded-lg text-sm select-none transition-all w-full
+        ${isDraggable || onTap ? 'cursor-pointer' : ''}
+        ${isDraggable ? 'active:cursor-grabbing' : ''}
         ${dimmed ? 'opacity-50' : ''}
-        ${isTarget
-          ? 'bg-red-50 border border-red-300'
-          : isNotArrived
-            ? 'bg-amber-50 border border-amber-200'
-            : 'bg-slate-50 border border-slate-200'
+        ${isSelected
+          ? 'bg-violet-100 border-2 border-violet-500 shadow-md'
+          : isNoshow
+            ? 'bg-red-50 border-2 border-red-400'
+            : isTarget
+              ? 'bg-red-50 border border-red-300'
+              : isNotArrived
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-slate-50 border border-slate-200'
         }`}
     >
       <div className="flex items-center gap-1 font-medium text-slate-800">
         <span>{person.name}</span>
         {person.is_member && <span className="w-2 h-2 rounded-full bg-violet-500 inline-block" />}
+        {isNoshow && (
+          <span className="text-red-500 text-xs font-bold">노쇼</span>
+        )}
         {isNotArrived && (
           <span className="text-amber-600 text-xs font-normal">미출석</span>
         )}
@@ -194,18 +209,23 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   )
 }
 
-function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDelete }: {
+function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDelete, onTapAssign, onTapSelectMember, selectedId }: {
   teamName: string
   members: Attendee[]
   onDrop: (t: string) => void
   onDragStartMember: (p: Attendee, from: string) => void
   onRename: (old: string, next: string) => void
   onDelete: (t: string) => void
+  onTapAssign?: () => void
+  onTapSelectMember?: (p: Attendee) => void
+  selectedId?: string
 }) {
   const [editing, setEditing] = useState(false)
   const [inputVal, setInputVal] = useState(teamName)
   const [over, setOver] = useState(false)
   const podoOnly = members.length > 0 && members.every((m) => m.is_member)
+  const checkedInCount = members.filter((m) => m.status === '출석완료').length
+  const hasNoshowIssue = members.length > 0 && checkedInCount <= 2 && checkedInCount < members.length
 
   const confirmRename = () => {
     const t = inputVal.trim()
@@ -216,10 +236,13 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
   return (
     <div
       className={`relative bg-white border-2 rounded-xl p-3 min-h-[120px] transition-colors
-        ${over ? 'border-violet-400 bg-violet-50 shadow-md' : 'border-slate-200 shadow-sm'}`}
+        ${over ? 'border-violet-400 bg-violet-50 shadow-md'
+          : hasNoshowIssue ? 'border-orange-400 bg-orange-50/30 shadow-sm'
+          : 'border-slate-200 shadow-sm'}`}
       onDragOver={(e) => { e.preventDefault(); setOver(true) }}
       onDragLeave={() => setOver(false)}
       onDrop={() => { setOver(false); onDrop(teamName) }}
+      onClick={(e) => { if ((e.target as HTMLElement).closest('button, input')) return; onTapAssign?.() }}
     >
       {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-violet-500" />}
       <button
@@ -244,14 +267,19 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
       <div className="space-y-1.5">
         {members.map((m) => (
           <div key={m.registration_id} draggable onDragStart={() => onDragStartMember(m, teamName)} className="cursor-grab">
-            <PersonCard person={m} />
+            <PersonCard person={m} onTap={() => onTapSelectMember?.(m)} isSelected={selectedId === m.registration_id} />
           </div>
         ))}
         {Array.from({ length: Math.max(0, 4 - members.length) }).map((_, i) => (
           <div key={i} className="h-8 rounded-lg border border-dashed border-slate-200 bg-slate-50/50" />
         ))}
       </div>
-      <div className="mt-2 text-right text-xs text-slate-400">{members.length} / 4</div>
+      <div className="mt-2 flex items-center justify-between text-xs">
+        {hasNoshowIssue ? (
+          <span className="text-orange-500 font-bold">출석 {checkedInCount}명</span>
+        ) : <span />}
+        <span className="text-slate-400">{members.length} / 4</span>
+      </div>
     </div>
   )
 }
@@ -269,6 +297,9 @@ export default function AdminDashboardPage() {
   const [sortBy, setSortBy] = useState<SortKey>('none')
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
   const knownTeamsRef = useRef<Set<string>>(new Set())
+
+  // 터치(iPad) 탭 배정용
+  const [selected, setSelected] = useState<{ person: Attendee; fromTeam: string | null } | null>(null)
 
   // Event selector
   const [events, setEvents] = useState<EventItem[]>([])
@@ -365,6 +396,22 @@ export default function AdminDashboardPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ registration_id, team_name }),
     })
+
+  // 탭(터치) 선택 → 배정
+  const handleTapSelect = (person: Attendee, fromTeam: string | null) => {
+    if (selected?.person.registration_id === person.registration_id) {
+      setSelected(null) // 같은 사람 다시 탭하면 선택 해제
+    } else {
+      setSelected({ person, fromTeam })
+    }
+  }
+
+  const handleTapAssign = (targetTeam: string | null) => {
+    if (!selected) return
+    dragRef.current = selected
+    setSelected(null)
+    handleDrop(targetTeam)
+  }
 
   const handleDrop = (targetTeam: string | null) => {
     if (!dragRef.current || !data) return
@@ -473,6 +520,23 @@ export default function AdminDashboardPage() {
     await fetchAll()
   }
 
+  const handleUpdateStatus = async (registration_id: string, newStatus: string) => {
+    try {
+      const res = await fetch('/api/admin/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registration_id, status: newStatus }),
+      })
+      if (res.ok) {
+        showToast(newStatus === '출석완료' ? '출석 처리됨' : newStatus === '노쇼확정' ? '노쇼 확정됨' : '미출석으로 변경됨', 'success')
+        await fetchAll()
+      } else {
+        const d = await res.json()
+        showToast(d.message || '상태 변경 실패', 'error')
+      }
+    } catch { showToast('오류 발생', 'error') }
+  }
+
   const handleReset = async () => {
     if (!confirm('모든 팀 배정을 초기화하시겠습니까?')) return
     setResetLoading(true)
@@ -496,7 +560,8 @@ export default function AdminDashboardPage() {
   const renderCheckin = () => {
     const pre = data?.pre_registered_count ?? 0
     const arrived = data?.checked_in_count ?? 0
-    const missing = Math.max(0, pre - arrived)
+    const noshowTotal = data?.noshow_count ?? 0
+    const missing = Math.max(0, pre - arrived - noshowTotal)
 
     const assignedAll = Object.values(data?.assigned ?? {}).flat()
     const allCheckedIn = [
@@ -507,16 +572,16 @@ export default function AdminDashboardPage() {
       ...(data?.not_arrived ?? []),
       ...assignedAll.filter((p) => p.status === '사전신청'),
     ]
+    const noshowList = [
+      ...(data?.noshow ?? []),
+      ...assignedAll.filter((p) => p.status === '노쇼확정'),
+    ]
 
     const q = searchQuery.toLowerCase()
-    const filteredCheckedIn = sortAttendees(
-      q ? allCheckedIn.filter((p) => p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)) : allCheckedIn,
-      sortBy
-    )
-    const filteredNotArrived = sortAttendees(
-      q ? notArrived.filter((p) => p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)) : notArrived,
-      sortBy
-    )
+    const filterFn = (p: Attendee) => !q || p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)
+    const filteredCheckedIn = sortAttendees(allCheckedIn.filter(filterFn), sortBy)
+    const filteredNotArrived = sortAttendees(notArrived.filter(filterFn), sortBy)
+    const filteredNoshow = sortAttendees(noshowList.filter(filterFn), sortBy)
 
     const SORT_OPTIONS: { key: SortKey; label: string }[] = [
       { key: 'none', label: '기본' },
@@ -526,18 +591,23 @@ export default function AdminDashboardPage() {
       { key: 'gender', label: '성별' },
     ]
 
+    const StatusBtn = ({ label, color, onClick }: { label: string; color: string; onClick: () => void }) => (
+      <button onClick={onClick} className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-colors ${color}`}>{label}</button>
+    )
+
     return (
       <div className="p-4 md:p-6 overflow-y-auto h-full">
         {/* 숫자 카드 */}
-        <div className="grid grid-cols-3 gap-3 md:gap-4 mb-5">
+        <div className="grid grid-cols-4 gap-2 md:gap-4 mb-5">
           {[
             { label: '오기로 한 인원', value: pre, color: 'text-violet-700', bg: 'bg-violet-50 border-violet-200' },
-            { label: '현재 온 인원', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
-            { label: '미출석', value: missing, color: 'text-red-600', bg: 'bg-red-50 border-red-200' },
+            { label: '출석', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
+            { label: '미출석', value: missing, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200' },
+            { label: '노쇼확정', value: noshowTotal, color: 'text-red-600', bg: 'bg-red-50 border-red-200' },
           ].map(({ label, value, color, bg }) => (
-            <div key={label} className={`${bg} border rounded-2xl p-4 md:p-5 text-center`}>
-              <div className={`text-3xl md:text-4xl font-bold ${color}`}>{value}</div>
-              <div className="text-slate-600 text-xs md:text-sm mt-1 font-medium">{label}</div>
+            <div key={label} className={`${bg} border rounded-2xl p-3 md:p-5 text-center`}>
+              <div className={`text-2xl md:text-4xl font-bold ${color}`}>{value}</div>
+              <div className="text-slate-600 text-[10px] md:text-sm mt-1 font-medium">{label}</div>
             </div>
           ))}
         </div>
@@ -565,37 +635,64 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* 두 열 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        {/* 세 열 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* 출석완료 */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
             <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
             </h3>
-            <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
               {filteredCheckedIn.length === 0 && (
-                <p className="text-slate-400 text-sm text-center py-6">
-                  {q ? '검색 결과 없음' : '아직 출석자가 없습니다'}
-                </p>
+                <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '아직 출석자가 없습니다'}</p>
               )}
               {filteredCheckedIn.map((p) => (
-                <PersonCard key={p.registration_id} person={p} />
+                <div key={p.registration_id} className="flex items-center gap-2">
+                  <div className="flex-1"><PersonCard person={p} /></div>
+                  <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                </div>
               ))}
             </div>
           </div>
+
+          {/* 미출석 */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
             <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-400" />
-              미출석 <span className="text-red-500 font-normal text-sm">{notArrived.length}명</span>
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              미출석 <span className="text-amber-500 font-normal text-sm">{notArrived.length}명</span>
             </h3>
-            <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
               {filteredNotArrived.length === 0 && (
-                <p className="text-slate-400 text-sm text-center py-6">
-                  {q ? '검색 결과 없음' : '모두 출석했습니다'}
-                </p>
+                <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '모두 출석했습니다'}</p>
               )}
               {filteredNotArrived.map((p) => (
-                <PersonCard key={p.registration_id} person={p} showPhone dimmed />
+                <div key={p.registration_id} className="flex items-center gap-1.5">
+                  <div className="flex-1"><PersonCard person={p} showPhone /></div>
+                  <div className="flex flex-col gap-1 shrink-0">
+                    <StatusBtn label="출석" color="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200" onClick={() => handleUpdateStatus(p.registration_id, '출석완료')} />
+                    <StatusBtn label="노쇼" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleUpdateStatus(p.registration_id, '노쇼확정')} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 노쇼확정 */}
+          <div className="bg-white border-2 border-red-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-500" />
+              노쇼확정 <span className="text-red-500 font-normal text-sm">{noshowList.length}명</span>
+            </h3>
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+              {filteredNoshow.length === 0 && (
+                <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '노쇼 확정자 없음'}</p>
+              )}
+              {filteredNoshow.map((p) => (
+                <div key={p.registration_id} className="flex items-center gap-2">
+                  <div className="flex-1"><PersonCard person={p} showPhone /></div>
+                  <StatusBtn label="해제" color="bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                </div>
               ))}
             </div>
           </div>
@@ -624,11 +721,17 @@ export default function AdminDashboardPage() {
           className="w-56 md:w-64 flex-shrink-0 border-r border-slate-200 flex flex-col bg-white"
           onDragOver={(e) => e.preventDefault()}
           onDrop={() => handleDrop(null)}
+          onClick={(e) => { if (!(e.target as HTMLElement).closest('[data-person]')) handleTapAssign(null) }}
         >
           <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
             <span className="text-slate-800 font-semibold text-sm">미배정 출석자</span>
             <span className="text-violet-500 text-xs font-bold">{unassigned.length}명</span>
           </div>
+          {selected && (
+            <div className="px-3 py-2 bg-violet-50 border-b border-violet-200 text-xs text-violet-600 font-medium text-center">
+              &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
+            </div>
+          )}
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {unassigned.length > 0 && (
               <div className="flex items-center gap-1.5 pb-1">
@@ -639,6 +742,8 @@ export default function AdminDashboardPage() {
             {unassigned.map((p) => (
               <PersonCard key={p.registration_id} person={p} draggable
                 onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
+                onTap={() => handleTapSelect(p, null)}
+                isSelected={selected?.person.registration_id === p.registration_id}
               />
             ))}
             {notArrived.length > 0 && (
@@ -650,6 +755,8 @@ export default function AdminDashboardPage() {
                 {notArrived.map((p) => (
                   <PersonCard key={p.registration_id} person={p} draggable
                     onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
+                    onTap={() => handleTapSelect(p, FROM_NOT_ARRIVED)}
+                    isSelected={selected?.person.registration_id === p.registration_id}
                   />
                 ))}
               </>
@@ -685,13 +792,18 @@ export default function AdminDashboardPage() {
                 onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
                 onRename={handleRenameTeam}
                 onDelete={handleDeleteTeam}
+                onTapAssign={() => handleTapAssign(t)}
+                onTapSelectMember={(p) => handleTapSelect(p, t)}
+                selectedId={selected?.person.registration_id}
               />
             ))}
             {teamNames.length < 30 && (
               <div
-                className="bg-white/60 border-2 border-dashed border-slate-300 rounded-xl p-3 min-h-[120px] flex items-center justify-center text-slate-400 text-sm hover:border-violet-300 hover:text-violet-500 transition-colors"
+                className={`bg-white/60 border-2 border-dashed rounded-xl p-3 min-h-[120px] flex items-center justify-center text-sm transition-colors
+                  ${selected ? 'border-violet-400 text-violet-500 bg-violet-50/50' : 'border-slate-300 text-slate-400 hover:border-violet-300 hover:text-violet-500'}`}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDropOnNewTeam}
+                onClick={() => { if (selected) { const allNums2 = [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = allNums2.length > 0 ? Math.max(...allNums2) + 1 : 1; const newName = `${next2}팀`; knownTeamsRef.current.add(newName); handleTapAssign(newName) } }}
               >
                 + {nextNum}팀
               </div>
