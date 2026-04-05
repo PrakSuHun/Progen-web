@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell, Legend, LabelList,
 } from 'recharts'
 import { showToast } from '@/components/Toast'
 
@@ -104,11 +104,13 @@ function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: s
   if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={180}>
-      <BarChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 4 }}>
+      <BarChart data={data} margin={{ top: 16, right: 8, left: -20, bottom: 4 }}>
         <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} />
         <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} />
         <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} />
-        <Bar dataKey="count" fill={color} radius={[4, 4, 0, 0]} />
+        <Bar dataKey="count" fill={color} radius={[4, 4, 0, 0]}>
+          <LabelList dataKey="count" position="top" style={{ fill: '#374151', fontSize: 10, fontWeight: 600 }} />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   )
