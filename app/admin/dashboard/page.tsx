@@ -864,7 +864,7 @@ export default function AdminDashboardPage() {
           <h2 className="text-xl font-bold text-slate-800 mb-5">{crewMode ? '크루 현황' : '행사 참여 현황'}</h2>
           {s2 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {crewMode ? [
+              {(crewMode ? [
                 { label: '전체 크루', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
                 { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-violet-600' },
                 { label: '일반(비포도)', value: `${s2.total_crews}명`, color: 'text-emerald-600' },
@@ -882,7 +882,7 @@ export default function AdminDashboardPage() {
                 { label: '이 행사 계기 크루 가입', value: `${s2.crew_from_event}명`, color: 'text-violet-600' },
                 { label: '이 행사 신규 게스트', value: `${s2.guests_from_event}명`, color: 'text-cyan-600' },
                 { label: '게스트→크루 전환', value: `${s2.crew_conversion_count}명 (${s2.crew_conversion_rate}%)`, color: 'text-amber-600' },
-              ].map(({ label, value, color }) => (
+              ]).map(({ label, value, color }) => (
                 <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
                   <p className="text-slate-500 text-xs md:text-sm">{label}</p>
                   <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
