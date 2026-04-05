@@ -25,6 +25,68 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient()
     const paramEventId = request.nextUrl.searchParams.get('eventId')
+
+    // ── 크루 전체 분석 모드 ──
+    if (paramEventId === 'crew-all') {
+      const { data: crews } = await supabase
+        .from('crew_members')
+        .select('name, phone, school, grade, age, major, path, project, gender, is_member, noshow_count, created_at')
+
+      const all = crews ?? []
+      const podo = all.filter((c: any) => c.is_member)
+      const nonPodo = all.filter((c: any) => !c.is_member)
+
+      const section1 = {
+        all: {
+          school: countBy(all, (a) => a.school),
+          grade: countBy(all, (a) => a.grade),
+          path: countBy(all, (a) => a.path),
+          gender: countBy(all, (a) => a.gender),
+        },
+        saengmyung: {
+          school: countBy(nonPodo, (a) => a.school),
+          grade: countBy(nonPodo, (a) => a.grade),
+          path: countBy(nonPodo, (a) => a.path),
+          gender: countBy(nonPodo, (a) => a.gender),
+        },
+      }
+
+      const maleAll = all.filter((c: any) => c.gender === '남성').length
+      const femaleAll = all.filter((c: any) => c.gender === '여성').length
+      const maleNonPodo = nonPodo.filter((c: any) => c.gender === '남성').length
+      const femaleNonPodo = nonPodo.filter((c: any) => c.gender === '여성').length
+
+      // 관심 프로젝트 분포
+      const projectDist = countBy(all, (a) => a.project)
+
+      const section2 = {
+        total_registrations: all.length,
+        checked_in_count: podo.length,
+        total_crews: nonPodo.length,
+        total_guests: 0,
+        guest_attended: maleAll,
+        guest_attendance_rate: femaleAll,
+        crew_from_event: maleNonPodo,
+        guests_from_event: femaleNonPodo,
+        crew_conversion_count: 0,
+        crew_conversion_rate: 0,
+        // labels for crew mode
+        _crew_mode: true,
+      }
+
+      const section3 = {
+        total_responses: 0,
+        would_return_count: 0,
+        join_interest_count: 0,
+        good_tags: projectDist.map((d: any) => ({ tag: d.name, count: d.count })),
+        bad_tags: [] as any[],
+        responses: [] as any[],
+        _crew_mode: true,
+      }
+
+      return NextResponse.json({ section1, section2, section3 })
+    }
+
     const eventId = paramEventId || await getActiveEventId()
 
     if (!eventId) {

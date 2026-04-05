@@ -364,8 +364,14 @@ export default function AdminDashboardPage() {
     }
   }
 
+  const isCrewMode = selectedEventId === 'crew-all'
+
   const handleEventChange = (newEventId: string) => {
     setSelectedEventId(newEventId)
+    if (newEventId === 'crew-all') {
+      setActiveTab('analysis')
+      setMembersMode('all')
+    }
     fetchAll(newEventId)
     setMembers([])
   }
@@ -817,15 +823,16 @@ export default function AdminDashboardPage() {
   // ── Tab 3: 전체 분석 ──
   const renderAnalysis = () => {
     const s1 = fullStats?.section1
-    const s2 = fullStats?.section2
-    const s3 = fullStats?.section3
+    const s2 = fullStats?.section2 as any
+    const s3 = fullStats?.section3 as any
+    const crewMode = !!(s2?._crew_mode)
 
     return (
       <div className="p-4 md:p-6 overflow-y-auto h-full space-y-10">
-        {/* 섹션 1 */}
+        {/* 섹션 1: 분포 차트 */}
         <section>
-          <h2 className="text-xl font-bold text-slate-800 mb-1">행사 참여자 분석</h2>
-          <p className="text-slate-400 text-sm mb-5">좌: 전체 참여자 / 우: 일반만</p>
+          <h2 className="text-xl font-bold text-slate-800 mb-1">{crewMode ? '크루 분석' : '행사 참여자 분석'}</h2>
+          <p className="text-slate-400 text-sm mb-5">{crewMode ? '좌: 전체 크루 / 우: 비포도(일반)' : '좌: 전체 참여자 / 우: 일반만'}</p>
           {s1 ? (
             <div className="space-y-6">
               {[
@@ -838,11 +845,11 @@ export default function AdminDashboardPage() {
                   <h3 className="text-slate-700 font-medium mb-3">{label}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                      <p className="text-slate-400 text-xs mb-2">전체</p>
+                      <p className="text-slate-400 text-xs mb-2">{crewMode ? '전체 크루' : '전체'}</p>
                       {type === 'pie' ? <MiniPieChart data={all} /> : <MiniBarChart data={all} />}
                     </div>
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                      <p className="text-slate-400 text-xs mb-2">일반만</p>
+                      <p className="text-slate-400 text-xs mb-2">{crewMode ? '비포도(일반)' : '일반만'}</p>
                       {type === 'pie' ? <MiniPieChart data={sm} /> : <MiniBarChart data={sm} color="#34d399" />}
                     </div>
                   </div>
@@ -852,12 +859,20 @@ export default function AdminDashboardPage() {
           ) : <p className="text-slate-400">데이터 없음</p>}
         </section>
 
-        {/* 섹션 2 */}
+        {/* 섹션 2: 숫자 카드 */}
         <section>
-          <h2 className="text-xl font-bold text-slate-800 mb-5">행사 참여 현황</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-5">{crewMode ? '크루 현황' : '행사 참여 현황'}</h2>
           {s2 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {[
+              {crewMode ? [
+                { label: '전체 크루', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
+                { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-violet-600' },
+                { label: '일반(비포도)', value: `${s2.total_crews}명`, color: 'text-emerald-600' },
+                { label: '남성 (전체)', value: `${s2.guest_attended}명`, color: 'text-blue-600' },
+                { label: '여성 (전체)', value: `${s2.guest_attendance_rate}명`, color: 'text-pink-500' },
+                { label: '남성 (비포도)', value: `${s2.crew_from_event}명`, color: 'text-blue-600' },
+                { label: '여성 (비포도)', value: `${s2.guests_from_event}명`, color: 'text-pink-500' },
+              ] : [
                 { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
                 { label: '출석완료', value: `${s2.checked_in_count}명`, color: 'text-emerald-600' },
                 { label: '크루 참여', value: `${s2.total_crews}명`, color: 'text-violet-600' },
@@ -879,38 +894,40 @@ export default function AdminDashboardPage() {
 
         {/* 섹션 3 */}
         <section>
-          <h2 className="text-xl font-bold text-slate-800 mb-5">피드백 분석</h2>
+          <h2 className="text-xl font-bold text-slate-800 mb-5">{crewMode ? '관심 프로젝트 분포' : '피드백 분석'}</h2>
           {s3 ? (
             <>
-              <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
-                {[
-                  { label: '총 응답 수', value: s3.total_responses, color: 'text-slate-800' },
-                  { label: '재참여 희망', value: s3.would_return_count, color: 'text-emerald-600' },
-                  { label: '가입 관심', value: s3.join_interest_count, color: 'text-violet-600' },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
-                    <p className="text-slate-500 text-xs md:text-sm">{label}</p>
-                    <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
-                  </div>
-                ))}
-              </div>
+              {!crewMode && (
+                <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+                  {[
+                    { label: '총 응답 수', value: s3.total_responses, color: 'text-slate-800' },
+                    { label: '재참여 희망', value: s3.would_return_count, color: 'text-emerald-600' },
+                    { label: '가입 관심', value: s3.join_interest_count, color: 'text-violet-600' },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+                      <p className="text-slate-500 text-xs md:text-sm">{label}</p>
+                      <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               {s3.good_tags.length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
-                  <h3 className="text-slate-700 font-medium mb-3">좋았던 점 태그</h3>
-                  <MiniBarChart data={s3.good_tags.map((t) => ({ name: t.tag, count: t.count }))} color="#34d399" />
+                  <h3 className="text-slate-700 font-medium mb-3">{crewMode ? '관심 프로젝트' : '좋았던 점 태그'}</h3>
+                  <MiniBarChart data={s3.good_tags.map((t: TagItem) => ({ name: t.tag, count: t.count }))} color={crewMode ? '#8b5cf6' : '#34d399'} />
                 </div>
               )}
               {s3.bad_tags.length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
                   <h3 className="text-slate-700 font-medium mb-3">아쉬운 점 태그</h3>
-                  <MiniBarChart data={s3.bad_tags.map((t) => ({ name: t.tag, count: t.count }))} color="#f87171" />
+                  <MiniBarChart data={s3.bad_tags.map((t: TagItem) => ({ name: t.tag, count: t.count }))} color="#f87171" />
                 </div>
               )}
-              {s3.responses.length > 0 && (
+              {s3.responses && s3.responses.length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                   <h3 className="text-slate-700 font-medium mb-4">피드백 원문 ({s3.responses.length}개)</h3>
                   <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-                    {s3.responses.map((r, i) => (
+                    {s3.responses.map((r: any, i: number) => (
                       <div key={i} className="bg-slate-50 rounded-xl p-4 space-y-2 border border-slate-200">
                         {r.good_points && (
                           <div>
@@ -930,7 +947,7 @@ export default function AdminDashboardPage() {
                 </div>
               )}
             </>
-          ) : <p className="text-slate-400">피드백 데이터 없음</p>}
+          ) : <p className="text-slate-400">{crewMode ? '데이터 없음' : '피드백 데이터 없음'}</p>}
         </section>
       </div>
     )
@@ -1198,6 +1215,7 @@ export default function AdminDashboardPage() {
                   {ev.title} ({new Date(ev.event_date).toLocaleDateString('ko-KR')})
                 </option>
               ))}
+              <option value="crew-all">PROGEN 1기 크루</option>
             </select>
           )}
         </div>
@@ -1214,7 +1232,7 @@ export default function AdminDashboardPage() {
 
       {/* 탭바 (모바일+태블릿: 상단) */}
       <div className="lg:hidden flex bg-white border-b border-slate-200 shrink-0">
-        {tabs.map((tab) => (
+        {(isCrewMode ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members') : tabs).map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -1241,7 +1259,7 @@ export default function AdminDashboardPage() {
 
         {/* 우측 책갈피 탭 (데스크톱���) */}
         <div className="hidden lg:flex flex-shrink-0 flex-col justify-center gap-0 absolute right-0 top-1/2 -translate-y-1/2 z-20">
-          {tabs.map((tab, i) => (
+          {(isCrewMode ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members') : tabs).map((tab, i) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
