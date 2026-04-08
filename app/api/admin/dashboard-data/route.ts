@@ -29,8 +29,8 @@ export async function GET(request: NextRequest) {
         team_name,
         crew_id,
         guest_id,
-        crew_members ( name, phone, school, grade, age, gender, is_member, noshow_count ),
-        guests ( name, phone, school, grade, age, gender )
+        crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count ),
+        guests ( name, phone, school, grade, age, gender, major )
       `)
       .eq('event_id', eventId)
 
@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
         school: person?.school ?? '',
         grade: person?.grade ?? '',
         age: person?.age ?? '',
+        major: person?.major ?? '',
         gender: person?.gender ?? '',
         is_member: crew?.is_member ?? podoPhones.has(phone) ?? phone.startsWith('PODO-'),
         noshow_count: crew?.noshow_count ?? 0,

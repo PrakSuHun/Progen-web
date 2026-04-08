@@ -19,6 +19,7 @@ interface Attendee {
   school: string
   grade: string
   age: string
+  major: string
   gender: string
   is_member: boolean
   noshow_count: number
@@ -198,6 +199,9 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
         <span className="text-slate-300">·</span>
         <span className={genderColor(person.gender)}>{person.gender}</span>
       </div>
+      {person.major && (
+        <div className="text-xs text-slate-400 mt-0.5">{person.major}</div>
+      )}
       {showPhone && person.phone && (
         <a
           href={`tel:${person.phone}`}
@@ -312,6 +316,7 @@ export default function AdminDashboardPage() {
   const [membersLoading, setMembersLoading] = useState(false)
   const [memberSearch, setMemberSearch] = useState('')
   const [memberSort, setMemberSort] = useState<SortKey>('none')
+  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/events').then(async (res) => {
@@ -643,27 +648,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* 세 열 */}
+        {/* 세 열: 미출석 → 출석 → 노쇼 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* 출석완료 */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
-            </h3>
-            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-              {filteredCheckedIn.length === 0 && (
-                <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '아직 출석자가 없습니다'}</p>
-              )}
-              {filteredCheckedIn.map((p) => (
-                <div key={p.registration_id} className="flex items-center gap-2">
-                  <div className="flex-1"><PersonCard person={p} /></div>
-                  <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* 미출석 */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
             <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
@@ -681,6 +667,25 @@ export default function AdminDashboardPage() {
                     <StatusBtn label="출석" color="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200" onClick={() => handleUpdateStatus(p.registration_id, '출석완료')} />
                     <StatusBtn label="노쇼" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleUpdateStatus(p.registration_id, '노쇼확정')} />
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 출석완료 */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
+            </h3>
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+              {filteredCheckedIn.length === 0 && (
+                <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '아직 출석자가 없습니다'}</p>
+              )}
+              {filteredCheckedIn.map((p) => (
+                <div key={p.registration_id} className="flex items-center gap-2">
+                  <div className="flex-1"><PersonCard person={p} /></div>
+                  <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
                 </div>
               ))}
             </div>
@@ -710,6 +715,8 @@ export default function AdminDashboardPage() {
   }
 
   // ── Tab 2: 팀 배정 ──
+  const [teamPanelOpen, setTeamPanelOpen] = useState(false)
+
   const renderTeam = () => {
     const unassigned = data?.unassigned ?? []
     const assigned = data?.assigned ?? {}
@@ -722,103 +729,145 @@ export default function AdminDashboardPage() {
     const allNums = teamNames.map((n) => parseInt(n)).filter((n) => !isNaN(n))
     const nextNum = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
 
-    return (
-      <div className="flex h-full overflow-hidden">
-        {/* 좌측 패널 */}
-        <div
-          className="w-56 md:w-64 flex-shrink-0 border-r border-slate-200 flex flex-col bg-white"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => handleDrop(null)}
-          onClick={(e) => { if (!(e.target as HTMLElement).closest('[data-person]')) handleTapAssign(null) }}
-        >
-          <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-            <span className="text-slate-800 font-semibold text-sm">미배정 출석자</span>
-            <span className="text-violet-500 text-xs font-bold">{unassigned.length}명</span>
+    // 공통 미배정 패널 내용
+    const UnassignedContent = () => (
+      <>
+        {selected && (
+          <div className="px-3 py-2 bg-violet-50 border-b border-violet-200 text-xs text-violet-600 font-medium text-center">
+            &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
           </div>
-          {selected && (
-            <div className="px-3 py-2 bg-violet-50 border-b border-violet-200 text-xs text-violet-600 font-medium text-center">
-              &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
+        )}
+        <div className="overflow-y-auto p-2 space-y-1.5" style={{ maxHeight: '25vh' }}>
+          {unassigned.length > 0 && (
+            <div className="flex items-center gap-1.5 pb-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-slate-500 text-xs">출석완료 ({unassigned.length}명)</span>
             </div>
           )}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {unassigned.length > 0 && (
-              <div className="flex items-center gap-1.5 pb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                <span className="text-slate-500 text-xs">출석완료 ({unassigned.length}명)</span>
+          {unassigned.map((p) => (
+            <PersonCard key={p.registration_id} person={p} draggable
+              onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
+              onTap={() => handleTapSelect(p, null)}
+              isSelected={selected?.person.registration_id === p.registration_id}
+            />
+          ))}
+          {notArrived.length > 0 && (
+            <>
+              <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+                <span className="text-slate-500 text-xs">미출석 ({notArrived.length}명)</span>
               </div>
-            )}
-            {unassigned.map((p) => (
-              <PersonCard key={p.registration_id} person={p} draggable
-                onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
-                onTap={() => handleTapSelect(p, null)}
-                isSelected={selected?.person.registration_id === p.registration_id}
-              />
-            ))}
-            {notArrived.length > 0 && (
-              <>
-                <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                  <span className="text-slate-500 text-xs">미출석 ({notArrived.length}명)</span>
-                </div>
-                {notArrived.map((p) => (
-                  <PersonCard key={p.registration_id} person={p} draggable
-                    onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
-                    onTap={() => handleTapSelect(p, FROM_NOT_ARRIVED)}
-                    isSelected={selected?.person.registration_id === p.registration_id}
-                  />
-                ))}
-              </>
-            )}
-            {unassigned.length === 0 && notArrived.length === 0 && (
-              <p className="text-slate-400 text-sm text-center pt-8">배정할 인원이 없습니다</p>
-            )}
+              {notArrived.map((p) => (
+                <PersonCard key={p.registration_id} person={p} draggable
+                  onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
+                  onTap={() => handleTapSelect(p, FROM_NOT_ARRIVED)}
+                  isSelected={selected?.person.registration_id === p.registration_id}
+                />
+              ))}
+            </>
+          )}
+          {unassigned.length === 0 && notArrived.length === 0 && (
+            <p className="text-slate-400 text-sm text-center py-4">배정할 인원이 없습니다</p>
+          )}
+        </div>
+        <div className="p-3 border-t border-slate-200 flex gap-2">
+          <button
+            onClick={handleReset}
+            disabled={resetLoading}
+            className="flex-1 py-2 bg-slate-50 hover:bg-red-50 disabled:opacity-50 text-slate-500 hover:text-red-500 text-xs font-semibold rounded-xl transition-colors border border-slate-200 hover:border-red-300"
+          >
+            {resetLoading ? '초기화...' : '초기화'}
+          </button>
+          <button
+            onClick={handleAutoMatch}
+            disabled={autoMatchLoading || unassigned.length === 0}
+            className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+          >
+            {autoMatchLoading ? '매칭...' : '자동 매칭'}
+          </button>
+        </div>
+      </>
+    )
+
+    // 공통 팀 그리드
+    const TeamGrid = () => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {teamNames.map((t) => (
+          <TeamCard key={t} teamName={t} members={assigned[t] || []}
+            onDrop={handleDrop}
+            onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
+            onRename={handleRenameTeam}
+            onDelete={handleDeleteTeam}
+            onTapAssign={() => handleTapAssign(t)}
+            onTapSelectMember={(p) => handleTapSelect(p, t)}
+            selectedId={selected?.person.registration_id}
+          />
+        ))}
+        {teamNames.length < 30 && (
+          <div
+            className={`bg-white/60 border-2 border-dashed rounded-xl p-3 min-h-[120px] flex items-center justify-center text-sm transition-colors
+              ${selected ? 'border-violet-400 text-violet-500 bg-violet-50/50' : 'border-slate-300 text-slate-400 hover:border-violet-300 hover:text-violet-500'}`}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDropOnNewTeam}
+            onClick={() => { if (selected) { const allNums2 = [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = allNums2.length > 0 ? Math.max(...allNums2) + 1 : 1; const newName = `${next2}팀`; knownTeamsRef.current.add(newName); handleTapAssign(newName) } }}
+          >
+            + {nextNum}팀
           </div>
-          <div className="p-3 border-t border-slate-200 space-y-2">
+        )}
+      </div>
+    )
+
+    return (
+      <>
+        {/* 모바일: 위아래 분할 */}
+        <div className="md:hidden flex flex-col h-full overflow-hidden">
+          {/* 상단 미배정 패널 (접기/펴기) */}
+          <div
+            className="border-b border-slate-200 bg-white shrink-0"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => handleDrop(null)}
+            onClick={(e) => { if (!(e.target as HTMLElement).closest('[data-person], button')) handleTapAssign(null) }}
+          >
             <button
-              onClick={handleReset}
-              disabled={resetLoading}
-              className="w-full py-2 bg-slate-50 hover:bg-red-50 disabled:opacity-50 text-slate-500 hover:text-red-500 text-sm font-semibold rounded-xl transition-colors border border-slate-200 hover:border-red-300"
+              onClick={() => setTeamPanelOpen(!teamPanelOpen)}
+              className="w-full px-4 py-2.5 flex items-center justify-between bg-slate-50 border-b border-slate-200"
             >
-              {resetLoading ? '초기화 중...' : '팀 배정 초기화'}
+              <span className="text-slate-800 font-semibold text-sm">미배정 출석자 <span className="text-violet-500 font-bold">{unassigned.length + notArrived.length}명</span></span>
+              <span className="text-slate-400 text-xs">{teamPanelOpen ? '접기 ▲' : '펼치기 ▼'}</span>
             </button>
-            <button
-              onClick={handleAutoMatch}
-              disabled={autoMatchLoading || unassigned.length === 0}
-              className="w-full py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
-            >
-              {autoMatchLoading ? '매칭 중...' : '자동 매칭'}
-            </button>
+            {teamPanelOpen && <UnassignedContent />}
+          </div>
+
+          {/* 하단 팀 그리드 */}
+          <div className="flex-1 overflow-y-auto p-3">
+            <TeamGrid />
           </div>
         </div>
 
-        {/* 팀 그리드 */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            {teamNames.map((t) => (
-              <TeamCard key={t} teamName={t} members={assigned[t] || []}
-                onDrop={handleDrop}
-                onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
-                onRename={handleRenameTeam}
-                onDelete={handleDeleteTeam}
-                onTapAssign={() => handleTapAssign(t)}
-                onTapSelectMember={(p) => handleTapSelect(p, t)}
-                selectedId={selected?.person.registration_id}
-              />
-            ))}
-            {teamNames.length < 30 && (
-              <div
-                className={`bg-white/60 border-2 border-dashed rounded-xl p-3 min-h-[120px] flex items-center justify-center text-sm transition-colors
-                  ${selected ? 'border-violet-400 text-violet-500 bg-violet-50/50' : 'border-slate-300 text-slate-400 hover:border-violet-300 hover:text-violet-500'}`}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDropOnNewTeam}
-                onClick={() => { if (selected) { const allNums2 = [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = allNums2.length > 0 ? Math.max(...allNums2) + 1 : 1; const newName = `${next2}팀`; knownTeamsRef.current.add(newName); handleTapAssign(newName) } }}
-              >
-                + {nextNum}팀
-              </div>
-            )}
+        {/* 데스크톱/태블릿: 좌우 분할 */}
+        <div className="hidden md:flex h-full overflow-hidden">
+          {/* 좌측 패널 */}
+          <div
+            className="w-64 flex-shrink-0 border-r border-slate-200 flex flex-col bg-white"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => handleDrop(null)}
+            onClick={(e) => { if (!(e.target as HTMLElement).closest('[data-person], button')) handleTapAssign(null) }}
+          >
+            <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <span className="text-slate-800 font-semibold text-sm">미배정 출석자</span>
+              <span className="text-violet-500 text-xs font-bold">{unassigned.length}명</span>
+            </div>
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <UnassignedContent />
+            </div>
+          </div>
+
+          {/* 팀 그리드 */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <TeamGrid />
           </div>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -1003,8 +1052,11 @@ export default function AdminDashboardPage() {
 
     // Stats
     const total = members.length
+    const crewCount = members.filter((m: any) => m.is_crew).length
     const guestCount = members.filter((m: any) => !m.is_crew).length
     const memberCount = members.filter((m) => m.is_member).length
+    const schoolCount = new Set(members.map((m) => m.school)).size
+    const firstTimeCount = members.filter((m: any) => m.is_first_time).length
 
     const MEMBER_SORT_OPTIONS: { key: SortKey; label: string }[] = [
       { key: 'none', label: '최신순' },
@@ -1019,12 +1071,17 @@ export default function AdminDashboardPage() {
       <div className="p-3 md:p-6 overflow-y-auto h-full">
         {/* 통계 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4">
-          {[
+          {(membersMode === 'event' ? [
             { label: '총 신청자', value: total, color: 'text-slate-800' },
-            { label: '게스트', value: guestCount, color: 'text-violet-600' },
-            { label: '일반(비포도)', value: total - memberCount, color: 'text-emerald-600' },
+            { label: '게스트/크루', value: `${guestCount}/${crewCount}`, color: 'text-violet-600' },
+            { label: '일반/포도', value: `${total - memberCount}/${memberCount}`, color: 'text-emerald-600' },
             { label: '남/여 (비포도)', value: (() => { const nonPodo = members.filter((m: any) => !m.is_member); const m = nonPodo.filter((x: any) => x.gender === '남성').length; const f = nonPodo.filter((x: any) => x.gender === '여성').length; return `${m}/${f}` })(), color: 'text-blue-600' },
-          ].map(({ label, value, color }) => (
+          ] : [
+            { label: '총 크루', value: total, color: 'text-slate-800' },
+            { label: '학교 수', value: schoolCount, color: 'text-violet-600' },
+            { label: '일반/포도', value: `${total - memberCount}/${memberCount}`, color: 'text-emerald-600' },
+            { label: '남/여 (비포도)', value: (() => { const nonPodo = members.filter((m: any) => !m.is_member); const m = nonPodo.filter((x: any) => x.gender === '남성').length; const f = nonPodo.filter((x: any) => x.gender === '여성').length; return `${m}/${f}` })(), color: 'text-blue-600' },
+          ]).map(({ label, value, color }) => (
             <div key={label} className="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 text-center shadow-sm">
               <div className={`text-xl md:text-2xl font-bold ${color}`}>{value}</div>
               <div className="text-slate-500 text-[10px] md:text-xs mt-0.5">{label}</div>
@@ -1063,42 +1120,70 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        {/* 모바일: 카드형 리스트 */}
+        {/* 모바일: 카드형 리스트 (클릭 시 상세 펼침) */}
         <div className="md:hidden space-y-2">
-          {filtered.map((m: any) => (
-            <div key={m.registration_id || m.id} className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-800 font-bold text-sm">{m.name}</span>
-                  {m.is_member && <span className="text-xs">🍇</span>}
-                  {membersMode === 'event' && (
-                    m.is_crew
-                      ? <span className="text-[10px] font-bold text-violet-500 bg-violet-50 px-1.5 py-0.5 rounded">크루</span>
-                      : <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">게스트</span>
-                  )}
-                  {membersMode === 'event' && m.reg_status && (
-                    <span className={`text-[10px] font-bold ${m.reg_status === '출석완료' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                      {m.reg_status === '출석완료' ? '출석' : '미출석'}
-                    </span>
-                  )}
+          {filtered.map((m: any) => {
+            const mid = m.registration_id || m.id
+            const isExpanded = expandedMemberId === mid
+            return (
+              <div key={mid}
+                className={`bg-white border rounded-2xl shadow-sm transition-all ${isExpanded ? 'border-violet-300' : 'border-slate-200'}`}
+                onClick={() => setExpandedMemberId(isExpanded ? null : mid)}
+              >
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-800 font-bold text-sm w-12 shrink-0">{m.name}</span>
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.is_first_time ? 'bg-emerald-400' : 'bg-transparent'}`} />
+                      {m.is_member && <span className="text-xs shrink-0">🍇</span>}
+                      {membersMode === 'event' && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 w-10 text-center"
+                          style={{ background: m.is_crew ? '#f5f3ff' : '#f1f5f9', color: m.is_crew ? '#8b5cf6' : '#94a3b8' }}>
+                          {m.is_crew ? '크루' : '게스트'}
+                        </span>
+                      )}
+                      {membersMode === 'event' && m.reg_status && (
+                        <span className={`text-[10px] font-bold shrink-0 w-10 text-center ${m.reg_status === '출석완료' ? 'text-emerald-500' : m.reg_status === '노쇼확정' ? 'text-red-500' : 'text-amber-500'}`}>
+                          {m.reg_status === '출석완료' ? '출석' : m.reg_status === '노쇼확정' ? '노쇼' : '미출석'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-400 text-[10px]">{new Date(m.registered_at || m.created_at).toLocaleDateString('ko-KR')}</span>
+                      <span className="text-slate-300 text-[10px]">{isExpanded ? '▲' : '▼'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    {m.school && <span>{m.school}</span>}
+                    {m.grade && <><span className="text-slate-300">·</span><span>{m.grade}</span></>}
+                    {m.gender && <><span className="text-slate-300">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-400 text-[10px]">{new Date(m.registered_at || m.created_at).toLocaleDateString('ko-KR')}</span>
-                  {membersMode === 'event' && (
-                    <button onClick={() => handleDeleteMember(m)} className="text-slate-300 hover:text-red-500 transition-colors text-xs">✕</button>
-                  )}
-                </div>
+
+                {/* 상세 정보 */}
+                {isExpanded && (
+                  <div className="px-3 pb-3 pt-1 border-t border-slate-100 space-y-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                      {m.phone && <div><span className="text-slate-400">연락처</span><br/><a href={`tel:${m.phone}`} className="text-violet-500 font-medium">{m.phone}</a></div>}
+                      {m.age && <div><span className="text-slate-400">나이</span><br/><span className="text-slate-700">{m.age}세</span></div>}
+                      {m.school && <div><span className="text-slate-400">학교</span><br/><span className="text-slate-700">{m.school}</span></div>}
+                      {m.grade && <div><span className="text-slate-400">학년</span><br/><span className="text-slate-700">{m.grade}</span></div>}
+                      {m.major && <div><span className="text-slate-400">전공</span><br/><span className="text-slate-700">{m.major}</span></div>}
+                      {m.path && <div><span className="text-slate-400">경로</span><br/><span className="text-slate-700">{m.path}</span></div>}
+                      {m.project && <div><span className="text-slate-400">관심 프로젝트</span><br/><span className="text-slate-700">{m.project}</span></div>}
+                      {m.motivation && <div className="col-span-2"><span className="text-slate-400">지원 동기</span><br/><span className="text-slate-700">{m.motivation}</span></div>}
+                      {membersMode === 'event' && m.team_name && <div><span className="text-slate-400">팀</span><br/><span className="text-violet-600 font-medium">{m.team_name}</span></div>}
+                    </div>
+                    {membersMode === 'event' && (
+                      <button onClick={() => handleDeleteMember(m)} className="w-full mt-2 py-1.5 text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium">
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                {m.school && <span>{m.school}</span>}
-                {m.grade && <><span className="text-slate-300">·</span><span>{m.grade}</span></>}
-                {m.gender && <><span className="text-slate-300">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
-              </div>
-              {m.phone && (
-                <a href={`tel:${m.phone}`} className="text-violet-500 text-xs mt-1 block">{m.phone}</a>
-              )}
-            </div>
-          ))}
+            )
+          })}
           {filtered.length === 0 && (
             <p className="text-slate-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
           )}
@@ -1132,7 +1217,9 @@ export default function AdminDashboardPage() {
                 {filtered.map((m: any, i: number) => (
                   <tr key={m.registration_id || m.id} className="hover:bg-violet-50/40 transition-colors">
                     <td className="px-3 py-3 text-slate-400 text-xs">{i + 1}</td>
-                    <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">{m.name}</td>
+                    <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1">{m.name}{m.is_first_time && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}</span>
+                    </td>
                     <td className="px-3 py-3 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-violet-500 hover:text-violet-600">{m.phone}</a>
                     </td>
@@ -1176,7 +1263,7 @@ export default function AdminDashboardPage() {
             <p className="text-slate-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
           )}
         </div>
-        <p className="text-slate-400 text-xs mt-3 text-right">총 {filtered.length}명 표시 / 전체 {members.length}명</p>
+        <p className="text-slate-400 text-xs mt-3 text-right">전체 {filtered.length}명{membersMode === 'event' && <> · <span className="text-emerald-500 font-medium">첫 참여 {filtered.filter((m: any) => m.is_first_time).length}명</span></>}</p>
       </div>
     )
   }
