@@ -58,6 +58,7 @@ export const GOOD_TAGS = [
   '네트워킹',
   '유용한 내용',
   '좋은 분위기',
+  '없음',
 ]
 
 // Feedback Tags - Bad
@@ -67,6 +68,7 @@ export const BAD_TAGS = [
   '강사 설명이 부족',
   '시설 부족',
   '기타',
+  '없음',
 ]
 
 // Feedback Score Labels

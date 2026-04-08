@@ -47,6 +47,13 @@ export async function GET(request: NextRequest) {
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 })
 
+  // 포도 감지: crew_members에서 is_member=true인 phone 목록
+  const { data: podoCrews } = await supabase
+    .from('crew_members')
+    .select('phone')
+    .eq('is_member', true)
+  const podoPhones = new Set((podoCrews ?? []).map((c: any) => c.phone))
+
   // 이전 행사 참여 이력 조회: 이 행사 이전에 등록된 적 있는 crew_id / guest_id 수집
   const crewIds = (regs ?? []).filter((r: any) => r.crew_id).map((r: any) => r.crew_id)
   const guestIds = (regs ?? []).filter((r: any) => r.guest_id).map((r: any) => r.guest_id)
@@ -88,7 +95,7 @@ export async function GET(request: NextRequest) {
       project: person?.project ?? '',
       gender: person?.gender ?? '',
       motivation: person?.motivation ?? '',
-      is_member: r.crew_members?.is_member ?? false,
+      is_member: r.crew_members?.is_member ?? podoPhones.has(person?.phone ?? '') ?? false,
       noshow_count: r.crew_members?.noshow_count ?? 0,
       is_crew: !!r.crew_members,
       is_first_time: !hasPrev,

@@ -29,8 +29,6 @@ export async function POST(request: NextRequest) {
       .insert([
         {
           event_id: eventId,
-          crew_id: null,
-          guest_id: null,
           good_tags: Array.isArray(good_tags) ? good_tags : [],
           good_points: good_points.trim(),
           bad_tags: Array.isArray(bad_tags) ? bad_tags : [],

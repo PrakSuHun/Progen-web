@@ -13,14 +13,14 @@ import {
   formatPhone, isValidPhone,
 } from '@/lib/constants'
 
-interface CheckInData { name: string; phone: string; age: string }
+interface CheckInData { name: string; phone: string }
 interface WalkInData {
   name: string; phone: string; age: string; school: string; grade: string
   major: string; path: string; gender: string
 }
 
 export default function CheckInPage() {
-  const [checkInData, setCheckInData] = useState<CheckInData>({ name: '', phone: '', age: '' })
+  const [checkInData, setCheckInData] = useState<CheckInData>({ name: '', phone: '' })
   const [walkInData, setWalkInData] = useState<WalkInData>({
     name: '', phone: '', age: '', school: '', grade: '',
     major: '', path: '', gender: '',
@@ -30,6 +30,7 @@ export default function CheckInPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDuplicate, setShowDuplicate] = useState(false)
   const [checkedInName, setCheckedInName] = useState('')
+  const [checkedInTeam, setCheckedInTeam] = useState<string | null>(null)
   const [checkInErrors, setCheckInErrors] = useState<Partial<CheckInData>>({})
   const [walkInErrors, setWalkInErrors] = useState<Partial<WalkInData>>({})
 
@@ -37,7 +38,6 @@ export default function CheckInPage() {
     const e: Partial<CheckInData> = {}
     if (!checkInData.name.trim()) e.name = '이름을 입력해주세요'
     if (!isValidPhone(checkInData.phone)) e.phone = '올바른 연락처를 입력해주세요'
-    if (!checkInData.age.trim()) e.age = '나이를 입력해주세요'
     setCheckInErrors(e); return Object.keys(e).length === 0
   }
 
@@ -61,11 +61,11 @@ export default function CheckInPage() {
     try {
       const response = await fetch('/api/checkin', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: checkInData.name, phone: formatPhone(checkInData.phone), age: checkInData.age }),
+        body: JSON.stringify({ name: checkInData.name, phone: formatPhone(checkInData.phone) }),
       })
       const data = await response.json()
-      if (response.ok) { setCheckedInName(data.name); setShowSuccess(true); setCheckInData({ name: '', phone: '', age: '' }); setShowWalkIn(false) }
-      else if (response.status === 404) { setWalkInData({ ...walkInData, name: checkInData.name, phone: checkInData.phone, age: checkInData.age }); setShowWalkIn(true) }
+      if (response.ok) { setCheckedInName(data.name); setCheckedInTeam(data.team_name ?? null); setShowSuccess(true); setCheckInData({ name: '', phone: '' }); setShowWalkIn(false) }
+      else if (response.status === 404) { setWalkInData({ ...walkInData, name: checkInData.name, phone: checkInData.phone }); setShowWalkIn(true) }
       else if (response.status === 409) { setCheckedInName(data.name || checkInData.name); setShowDuplicate(true) }
       else showToast('오류가 발생했습니다', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
@@ -83,9 +83,9 @@ export default function CheckInPage() {
       })
       const data = await response.json()
       if (response.ok) {
-        setCheckedInName(data.name || walkInData.name); setShowSuccess(true)
+        setCheckedInName(data.name || walkInData.name); setCheckedInTeam(null); setShowSuccess(true)
         setWalkInData({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '' })
-        setShowWalkIn(false); setCheckInData({ name: '', phone: '', age: '' })
+        setShowWalkIn(false); setCheckInData({ name: '', phone: '' })
       } else if (response.status === 409) { setCheckedInName(data.name || walkInData.name); setShowDuplicate(true) }
       else showToast('오류가 발생했습니다', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
@@ -105,12 +105,11 @@ export default function CheckInPage() {
             Check-in
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">현장 출석체크</h1>
-          <p className="text-[#888] text-sm mb-8">이름, 연락처, 나이를 입력해주세요</p>
+          <p className="text-[#888] text-sm mb-8">이름과 연락처를 입력해주세요</p>
 
           <form onSubmit={handleCheckIn} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5 mb-5">
             <Input label="이름" placeholder="홍길동" value={checkInData.name} onChange={(e) => setCI('name', e.target.value)} error={checkInErrors.name} />
             <Input label="연락처" placeholder="010-1234-5678" value={checkInData.phone} onChange={(e) => setCI('phone', e.target.value)} error={checkInErrors.phone} phoneFormat />
-            <Input label="나이" type="number" placeholder="20" value={checkInData.age} onChange={(e) => setCI('age', e.target.value)} error={checkInErrors.age} />
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? '확인 중...' : '출석체크'}
             </Button>
@@ -141,7 +140,15 @@ export default function CheckInPage() {
       </div>
 
       <Modal isOpen={showSuccess} onClose={() => setShowSuccess(false)} title="출석 완료!">
-        <p className="text-[#333] mb-5"><span className="font-bold text-violet-600">{checkedInName}</span>님 출석이 확인됐습니다!</p>
+        <p className="text-[#333] mb-3"><span className="font-bold text-violet-600">{checkedInName}</span>님 출석이 확인됐습니다!</p>
+        {checkedInTeam ? (
+          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5 text-center">
+            <p className="text-violet-400 text-xs mb-1">배정된 팀</p>
+            <p className="text-violet-700 text-2xl font-black">{checkedInTeam}</p>
+          </div>
+        ) : (
+          <p className="text-[#999] text-sm mb-5">팀 배정은 운영진 안내를 확인해주세요.</p>
+        )}
         <button onClick={() => setShowSuccess(false)} className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
       </Modal>
 

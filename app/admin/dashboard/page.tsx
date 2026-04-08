@@ -499,7 +499,7 @@ export default function AdminDashboardPage() {
       const res = await fetch('/api/admin/auto-match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientMaxTeam, eventId: selectedEventId }),
+        body: JSON.stringify({ clientMaxTeam, eventId: selectedEventId, teamSize }),
       })
       const d = await res.json()
       if (res.ok) { showToast('자동 매칭 완료!', 'success'); await fetchAll() }
@@ -716,6 +716,7 @@ export default function AdminDashboardPage() {
 
   // ── Tab 2: 팀 배정 ──
   const [teamPanelOpen, setTeamPanelOpen] = useState(false)
+  const [teamSize, setTeamSize] = useState(4)
 
   const renderTeam = () => {
     const unassigned = data?.unassigned ?? []
@@ -737,7 +738,7 @@ export default function AdminDashboardPage() {
             &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
           </div>
         )}
-        <div className="overflow-y-auto p-2 space-y-1.5" style={{ maxHeight: '25vh' }}>
+        <div className="overflow-y-auto p-2 space-y-1.5 max-h-[25vh] md:max-h-none">
           {unassigned.length > 0 && (
             <div className="flex items-center gap-1.5 pb-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
@@ -778,13 +779,22 @@ export default function AdminDashboardPage() {
           >
             {resetLoading ? '초기화...' : '초기화'}
           </button>
-          <button
-            onClick={handleAutoMatch}
-            disabled={autoMatchLoading || unassigned.length === 0}
-            className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
-          >
-            {autoMatchLoading ? '매칭...' : '자동 매칭'}
-          </button>
+          <div className="flex-1 flex gap-1">
+            <select
+              value={teamSize}
+              onChange={(e) => setTeamSize(Number(e.target.value))}
+              className="w-12 py-2 text-center text-xs font-bold bg-white border border-slate-200 rounded-xl outline-none focus:border-violet-400 text-slate-800 appearance-none cursor-pointer"
+            >
+              {[2,3,4,5,6,7,8].map((n) => <option key={n} value={n}>{n}명</option>)}
+            </select>
+            <button
+              onClick={handleAutoMatch}
+              disabled={autoMatchLoading || (unassigned.length === 0 && notArrived.length === 0)}
+              className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+            >
+              {autoMatchLoading ? '매칭...' : '자동 매칭'}
+            </button>
+          </div>
         </div>
       </>
     )
@@ -793,7 +803,7 @@ export default function AdminDashboardPage() {
     const TeamGrid = () => (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {teamNames.map((t) => (
-          <TeamCard key={t} teamName={t} members={assigned[t] || []}
+          <TeamCard key={t} teamName={t} members={[...(assigned[t] || [])].sort((a, b) => a.is_member === b.is_member ? a.name.localeCompare(b.name, 'ko') : a.is_member ? -1 : 1)}
             onDrop={handleDrop}
             onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
             onRename={handleRenameTeam}
@@ -1004,6 +1014,24 @@ export default function AdminDashboardPage() {
     )
   }
 
+  const handleTogglePodo = async (m: any) => {
+    const newVal = !m.is_member
+    try {
+      const res = await fetch('/api/admin/toggle-podo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ crew_id: m.id, is_member: newVal }),
+      })
+      if (res.ok) {
+        showToast(`${m.name} → ${newVal ? '포도' : '일반'}`, 'success')
+        setMembers((prev) => prev.map((p: any) => p.id === m.id ? { ...p, is_member: newVal } : p))
+      } else {
+        const d = await res.json()
+        showToast(d.message || '변경 실패', 'error')
+      }
+    } catch { showToast('오류 발생', 'error') }
+  }
+
   const handleDeleteMember = async (m: any) => {
     const label = m.name || '알 수 없음'
     const desc = m.is_crew
@@ -1134,8 +1162,9 @@ export default function AdminDashboardPage() {
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <span className="text-slate-800 font-bold text-sm w-12 shrink-0">{m.name}</span>
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${m.is_first_time ? 'bg-emerald-400' : 'bg-transparent'}`} />
-                      {m.is_member && <span className="text-xs shrink-0">🍇</span>}
+                      <span className="w-4 shrink-0 text-center">
+                        {m.is_member ? <span className="text-xs">🍇</span> : m.is_first_time ? <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" /> : null}
+                      </span>
                       {membersMode === 'event' && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 w-10 text-center"
                           style={{ background: m.is_crew ? '#f5f3ff' : '#f1f5f9', color: m.is_crew ? '#8b5cf6' : '#94a3b8' }}>
@@ -1179,6 +1208,11 @@ export default function AdminDashboardPage() {
                         삭제
                       </button>
                     )}
+                    {membersMode === 'all' && (
+                      <button onClick={() => handleTogglePodo(m)} className={`w-full mt-2 py-1.5 text-xs font-medium rounded-lg border transition-colors ${m.is_member ? 'text-slate-500 bg-slate-50 border-slate-200 hover:bg-slate-100' : 'text-violet-600 bg-violet-50 border-violet-200 hover:bg-violet-100'}`}>
+                        {m.is_member ? '🍇 포도 해제' : '포도로 변경'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -1218,7 +1252,7 @@ export default function AdminDashboardPage() {
                   <tr key={m.registration_id || m.id} className="hover:bg-violet-50/40 transition-colors">
                     <td className="px-3 py-3 text-slate-400 text-xs">{i + 1}</td>
                     <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1">{m.name}{m.is_first_time && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}</span>
+                      <span className="inline-flex items-center gap-1">{m.name}{m.is_first_time && !m.is_member && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}</span>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-violet-500 hover:text-violet-600">{m.phone}</a>
@@ -1230,7 +1264,15 @@ export default function AdminDashboardPage() {
                     <td className="px-3 py-3 text-slate-600">{m.grade}</td>
                     <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{m.path}</td>
                     <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{m.project}</td>
-                    <td className="px-3 py-3">{m.is_member ? <span>🍇</span> : <span className="text-slate-300 text-xs">—</span>}</td>
+                    <td className="px-3 py-3">
+                      {membersMode === 'all' ? (
+                        <button onClick={() => handleTogglePodo(m)} className="hover:opacity-70 transition-opacity" title={m.is_member ? '포도 해제' : '포도로 변경'}>
+                          {m.is_member ? <span>🍇</span> : <span className="text-slate-300 text-xs">—</span>}
+                        </button>
+                      ) : (
+                        m.is_member ? <span>🍇</span> : <span className="text-slate-300 text-xs">—</span>
+                      )}
+                    </td>
                     {membersMode === 'event' && (
                       <td className="px-3 py-3">
                         {m.reg_status === '출석완료'
@@ -1263,7 +1305,7 @@ export default function AdminDashboardPage() {
             <p className="text-slate-400 text-sm text-center py-10">{q ? '검색 결과 없음' : '신청자가 없습니다'}</p>
           )}
         </div>
-        <p className="text-slate-400 text-xs mt-3 text-right">전체 {filtered.length}명{membersMode === 'event' && <> · <span className="text-emerald-500 font-medium">첫 참여 {filtered.filter((m: any) => m.is_first_time).length}명</span></>}</p>
+        <p className="text-slate-400 text-xs mt-3 text-right">전체 {filtered.length}명{membersMode === 'event' && <> · <span className="text-emerald-500 font-medium">첫 참여 {filtered.filter((m: any) => m.is_first_time && !m.is_member).length}명</span></>}</p>
       </div>
     )
   }
