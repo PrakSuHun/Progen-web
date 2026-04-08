@@ -5,7 +5,8 @@ import { Footer } from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 커뮤니티',
-  description: 'PROGEN 크루 커뮤니티',
+  description: 'PROGEN 크루 커뮤니티. 스터디, 프로젝트, 네트워킹.',
+  openGraph: { title: 'PROGEN - 커뮤니티', description: 'PROGEN 크루 커뮤니티. 스터디, 프로젝트, 네트워킹.' },
   robots: { index: false, follow: false },
 }
 

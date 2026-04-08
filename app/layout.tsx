@@ -3,8 +3,15 @@ import './globals.css'
 import { ToastContainer } from '@/components/Toast'
 
 export const metadata: Metadata = {
-  title: 'PROGEN - 1기 크루 모집',
-  description: 'PROGEN 커뮤니티 1기 크루 모집 및 행사 관리 플랫폼',
+  title: 'PROGEN - AI 시대, 도구를 지배하는 대학생 커뮤니티',
+  description: '대전 소재 대학생을 위한 AI·자동화 커뮤니티. 실전 프로젝트, 네트워킹, 세미나까지.',
+  openGraph: {
+    title: 'PROGEN - AI 시대, 도구를 지배하는 대학생 커뮤니티',
+    description: '대전 소재 대학생을 위한 AI·자동화 커뮤니티. 실전 프로젝트, 네트워킹, 세미나까지.',
+    siteName: 'PROGEN',
+    url: 'https://progen.ai.kr',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({

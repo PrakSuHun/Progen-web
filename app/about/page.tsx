@@ -5,7 +5,8 @@ import { Footer } from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 소개',
-  description: 'PROGEN 소개 - 대전 대학생 AI 활용 커뮤니티',
+  description: 'PROGEN은 왜 만들어졌을까? 비전과 철학, 그리고 1기 일정을 소개합니다.',
+  openGraph: { title: 'PROGEN - 소개', description: 'PROGEN은 왜 만들어졌을까? 비전과 철학, 그리고 1기 일정을 소개합니다.' },
 }
 
 const founderTags = [

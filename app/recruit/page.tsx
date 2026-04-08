@@ -5,7 +5,8 @@ import { Footer } from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 운영진 모집',
-  description: 'PROGEN 운영진 모집 안내',
+  description: 'PROGEN 2기 운영진을 모집합니다.',
+  openGraph: { title: 'PROGEN - 운영진 모집', description: 'PROGEN 2기 운영진을 모집합니다.' },
   robots: { index: false, follow: false },
 }
 
