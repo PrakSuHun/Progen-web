@@ -935,13 +935,13 @@ export default function AdminDashboardPage() {
                 { label: '여성 (비포도)', value: `${s2.guests_from_event}명`, color: 'text-pink-500' },
               ] : [
                 { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
-                { label: '출석완료', value: `${s2.checked_in_count}명`, color: 'text-emerald-600' },
-                { label: '크루 참여', value: `${s2.total_crews}명`, color: 'text-violet-600' },
-                { label: '게스트 참여', value: `${s2.total_guests}명`, color: 'text-blue-600' },
-                { label: '게스트 출석', value: `${s2.guest_attended}명`, color: 'text-blue-600' },
-                { label: '게스트 참석률', value: `${s2.guest_attendance_rate}%`, color: 'text-blue-600' },
-                { label: '이 행사 계기 크루 가입', value: `${s2.crew_from_event}명`, color: 'text-violet-600' },
-                { label: '이 행사 신규 게스트', value: `${s2.guests_from_event}명`, color: 'text-cyan-600' },
+                { label: '전체 출석', value: `${s2.checked_in_count}명`, color: 'text-emerald-600' },
+                { label: '크루 신청', value: `${s2.total_crews}명`, color: 'text-violet-600' },
+                { label: '크루 출석', value: `${s2.crew_checked_in}명`, color: 'text-violet-600' },
+                { label: '게스트 신청', value: `${s2.total_guests}명`, color: 'text-blue-600' },
+                { label: '게스트 출석', value: `${s2.guest_attended}명 (${s2.guest_attendance_rate}%)`, color: 'text-blue-600' },
+                { label: '크루 첫 참여', value: `${s2.first_time_crew_checked_in}/${s2.first_time_crew}명`, color: 'text-cyan-600' },
+                { label: '게스트 첫 참여', value: `${s2.first_time_guest_checked_in}/${s2.first_time_guest}명`, color: 'text-cyan-600' },
                 { label: '게스트→크루 전환', value: `${s2.crew_conversion_count}명 (${s2.crew_conversion_rate}%)`, color: 'text-amber-600' },
               ]).map(({ label, value, color }) => (
                 <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">

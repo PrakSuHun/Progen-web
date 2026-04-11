@@ -54,33 +54,31 @@ export async function GET(request: NextRequest) {
     .eq('is_member', true)
   const podoPhones = new Set((podoCrews ?? []).map((c: any) => c.phone))
 
-  // 이전 행사 참여 이력 조회: 이 행사 이전에 등록된 적 있는 crew_id / guest_id 수집
-  const crewIds = (regs ?? []).filter((r: any) => r.crew_id).map((r: any) => r.crew_id)
-  const guestIds = (regs ?? []).filter((r: any) => r.guest_id).map((r: any) => r.guest_id)
-
-  const prevCrewSet = new Set<string>()
-  const prevGuestSet = new Set<string>()
-
-  if (crewIds.length > 0) {
-    const { data: prevCrewRegs } = await supabase
-      .from('event_registrations')
-      .select('crew_id')
-      .in('crew_id', crewIds)
-      .neq('event_id', eventId)
-    for (const r of prevCrewRegs ?? []) prevCrewSet.add(r.crew_id)
+  // 이전 행사 참여 이력 조회: phone 기반 크로스 매칭 (크루→게스트, 게스트→크루 전환도 감지)
+  const prevPhoneSet = new Set<string>()
+  const { data: prevCrewRegs } = await supabase
+    .from('event_registrations')
+    .select('crew_members ( phone )')
+    .neq('event_id', eventId)
+    .eq('status', '출석완료')
+    .not('crew_id', 'is', null)
+  for (const r of prevCrewRegs ?? []) {
+    if ((r as any).crew_members?.phone) prevPhoneSet.add((r as any).crew_members.phone)
   }
-  if (guestIds.length > 0) {
-    const { data: prevGuestRegs } = await supabase
-      .from('event_registrations')
-      .select('guest_id')
-      .in('guest_id', guestIds)
-      .neq('event_id', eventId)
-    for (const r of prevGuestRegs ?? []) prevGuestSet.add(r.guest_id)
+  const { data: prevGuestRegs } = await supabase
+    .from('event_registrations')
+    .select('guests ( phone )')
+    .neq('event_id', eventId)
+    .eq('status', '출석완료')
+    .not('guest_id', 'is', null)
+  for (const r of prevGuestRegs ?? []) {
+    if ((r as any).guests?.phone) prevPhoneSet.add((r as any).guests.phone)
   }
 
   const members = (regs ?? []).map((r: any) => {
     const person = r.crew_members || r.guests
-    const hasPrev = r.crew_id ? prevCrewSet.has(r.crew_id) : r.guest_id ? prevGuestSet.has(r.guest_id) : false
+    const phone = person?.phone ?? ''
+    const hasPrev = phone ? prevPhoneSet.has(phone) : false
     return {
       id: person?.id ?? r.id,
       registration_id: r.id,
