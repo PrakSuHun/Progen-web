@@ -1,9 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
 export default function ReportPage() {
+  return <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-slate-500">로딩 중...</p></div>}><ReportContent /></Suspense>
+}
+
+function ReportContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const reportId = searchParams.get('id')
