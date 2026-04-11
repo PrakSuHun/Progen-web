@@ -401,6 +401,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (activeTab === 'members' && selectedEventId) fetchMembers()
+    if (activeTab === 'analysis' && selectedEventId) fetchReports()
   }, [activeTab, selectedEventId])
 
   const assignTeam = (registration_id: string, team_name: string | null) =>
@@ -881,6 +882,34 @@ export default function AdminDashboardPage() {
     )
   }
 
+  const [chartTarget, setChartTarget] = useState<'all' | 'crew' | 'guest'>('all')
+  const [reports, setReports] = useState<any[]>([])
+  const [selectedReport, setSelectedReport] = useState<any>(null)
+
+  const fetchReports = async (eid?: string) => {
+    const id = eid || selectedEventId
+    if (!id || id === 'crew-all') return
+    const res = await fetch(`/api/admin/ai-report?eventId=${id}`)
+    if (res.ok) {
+      const data = await res.json()
+      setReports(data.reports ?? [])
+    }
+  }
+
+  const handleDeleteReport = async (id: string) => {
+    if (!confirm('이 보고서를 삭제하시겠습니까?')) return
+    const res = await fetch('/api/admin/ai-report', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    if (res.ok) {
+      showToast('보고서 삭제됨', 'success')
+      setReports((prev) => prev.filter((r: any) => r.id !== id))
+      if (selectedReport?.id === id) setSelectedReport(null)
+    } else showToast('삭제 실패', 'error')
+  }
+
   // ── Tab 3: 전체 분석 ──
   const renderAnalysis = () => {
     const s1 = fullStats?.section1
@@ -893,63 +922,258 @@ export default function AdminDashboardPage() {
         {/* 섹션 1: 분포 차트 */}
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-1">{crewMode ? '크루 분석' : '행사 참여자 분석'}</h2>
-          <p className="text-slate-400 text-sm mb-5">{crewMode ? '좌: 전체 크루 / 우: 비포도(일반)' : '좌: 전체 참여자 / 우: 일반만'}</p>
-          {s1 ? (
+          <p className="text-slate-400 text-sm mb-5">{crewMode ? '좌: 전체 크루 / 우: 비포도(일반)' : '포도 제외'}</p>
+          {s1 ? (<>
+            {/* 모바일: 대상 선택 + 차트 1개 */}
+            {!crewMode && (
+              <div className="md:hidden flex items-center gap-1 mb-4">
+                {([['all', '전체'], ['crew', '크루'], ['guest', '게스트']] as const).map(([key, label]) => (
+                  <button key={key} onClick={() => setChartTarget(key)}
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-colors ${chartTarget === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200'}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="space-y-6">
-              {[
-                { label: '학교별 분포', all: s1.all.school, sm: s1.saengmyung.school, type: 'bar' },
-                { label: '학년별 분포', all: s1.all.grade, sm: s1.saengmyung.grade, type: 'bar' },
-                { label: '알게 된 경로', all: s1.all.path, sm: s1.saengmyung.path, type: 'bar' },
-                { label: '성별 분포', all: s1.all.gender, sm: s1.saengmyung.gender, type: 'pie' },
-              ].map(({ label, all, sm, type }) => (
+              {(crewMode ? [
+                { label: '학교별 분포', all: s1.all.school, crew: s1.saengmyung?.school, guest: null, type: 'bar' },
+                { label: '학년별 분포', all: s1.all.grade, crew: s1.saengmyung?.grade, guest: null, type: 'bar' },
+                { label: '알게 된 경로', all: s1.all.path, crew: s1.saengmyung?.path, guest: null, type: 'bar' },
+                { label: '성별 분포', all: s1.all.gender, crew: s1.saengmyung?.gender, guest: null, type: 'pie' },
+              ] : [
+                { label: '학교별 분포', all: s1.all.school, crew: (s1 as any).crew?.school, guest: (s1 as any).guest?.school, type: 'bar' },
+                { label: '학년별 분포', all: s1.all.grade, crew: (s1 as any).crew?.grade, guest: (s1 as any).guest?.grade, type: 'bar' },
+                { label: '알게 된 경로', all: s1.all.path, crew: (s1 as any).crew?.path, guest: (s1 as any).guest?.path, type: 'bar' },
+                { label: '성별 분포', all: s1.all.gender, crew: (s1 as any).crew?.gender, guest: (s1 as any).guest?.gender, type: 'pie' },
+              ]).map(({ label, all, crew, guest, type }: any) => {
+                const mobileData = chartTarget === 'crew' ? crew : chartTarget === 'guest' ? guest : all
+                const mobileColor = chartTarget === 'crew' ? '#8b5cf6' : chartTarget === 'guest' ? '#3b82f6' : '#8b5cf6'
+                return (
                 <div key={label}>
                   <h3 className="text-slate-700 font-medium mb-3">{label}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  {/* 모바일: 선택된 대상 1개만 */}
+                  <div className="md:hidden">
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                      {type === 'pie' ? <MiniPieChart data={mobileData ?? []} /> : <MiniBarChart data={mobileData ?? []} color={mobileColor} />}
+                    </div>
+                  </div>
+
+                  {/* 데스크톱: 전체 펼침 */}
+                  <div className={`hidden md:grid ${crewMode ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                       <p className="text-slate-400 text-xs mb-2">{crewMode ? '전체 크루' : '전체'}</p>
                       {type === 'pie' ? <MiniPieChart data={all} /> : <MiniBarChart data={all} />}
                     </div>
-                    <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                      <p className="text-slate-400 text-xs mb-2">{crewMode ? '비포도(일반)' : '일반만'}</p>
-                      {type === 'pie' ? <MiniPieChart data={sm} /> : <MiniBarChart data={sm} color="#34d399" />}
-                    </div>
+                    {crewMode ? (
+                      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <p className="text-slate-400 text-xs mb-2">비포도(일반)</p>
+                        {type === 'pie' ? <MiniPieChart data={crew} /> : <MiniBarChart data={crew} color="#34d399" />}
+                      </div>
+                    ) : (<>
+                      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <p className="text-violet-400 text-xs mb-2">크루</p>
+                        {type === 'pie' ? <MiniPieChart data={crew ?? []} /> : <MiniBarChart data={crew ?? []} color="#8b5cf6" />}
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <p className="text-blue-400 text-xs mb-2">게스트</p>
+                        {type === 'pie' ? <MiniPieChart data={guest ?? []} /> : <MiniBarChart data={guest ?? []} color="#3b82f6" />}
+                      </div>
+                    </>)}
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
-          ) : <p className="text-slate-400">데이터 없음</p>}
+          </>) : <p className="text-slate-400">데이터 없음</p>}
         </section>
 
         {/* 섹션 2: 숫자 카드 */}
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-5">{crewMode ? '크루 현황' : '행사 참여 현황'}</h2>
           {s2 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {(crewMode ? [
-                { label: '전체 크루', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
-                { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-violet-600' },
-                { label: '일반(비포도)', value: `${s2.total_crews}명`, color: 'text-emerald-600' },
-                { label: '남성 (전체)', value: `${s2.guest_attended}명`, color: 'text-blue-600' },
-                { label: '여성 (전체)', value: `${s2.guest_attendance_rate}명`, color: 'text-pink-500' },
-                { label: '남성 (비포도)', value: `${s2.crew_from_event}명`, color: 'text-blue-600' },
-                { label: '여성 (비포도)', value: `${s2.guests_from_event}명`, color: 'text-pink-500' },
-              ] : [
-                { label: '전체 신청', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
-                { label: '전체 출석', value: `${s2.checked_in_count}명`, color: 'text-emerald-600' },
-                { label: '크루 신청', value: `${s2.total_crews}명`, color: 'text-violet-600' },
-                { label: '크루 출석', value: `${s2.crew_checked_in}명`, color: 'text-violet-600' },
-                { label: '게스트 신청', value: `${s2.total_guests}명`, color: 'text-blue-600' },
-                { label: '게스트 출석', value: `${s2.guest_attended}명 (${s2.guest_attendance_rate}%)`, color: 'text-blue-600' },
-                { label: '크루 첫 참여', value: `${s2.first_time_crew_checked_in}/${s2.first_time_crew}명`, color: 'text-cyan-600' },
-                { label: '게스트 첫 참여', value: `${s2.first_time_guest_checked_in}/${s2.first_time_guest}명`, color: 'text-cyan-600' },
-                { label: '게스트→크루 전환', value: `${s2.crew_conversion_count}명 (${s2.crew_conversion_rate}%)`, color: 'text-amber-600' },
-              ]).map(({ label, value, color }) => (
-                <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
-                  <p className="text-slate-500 text-xs md:text-sm">{label}</p>
-                  <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
+            crewMode ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {[
+                  { label: '전체 크루', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
+                  { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-violet-600' },
+                  { label: '일반(비포도)', value: `${s2.total_crews}명`, color: 'text-emerald-600' },
+                  { label: '남성 (전체)', value: `${s2.guest_attended}명`, color: 'text-blue-600' },
+                  { label: '여성 (전체)', value: `${s2.guest_attendance_rate}명`, color: 'text-pink-500' },
+                  { label: '남성 (비포도)', value: `${s2.crew_from_event}명`, color: 'text-blue-600' },
+                  { label: '여성 (비포도)', value: `${s2.guests_from_event}명`, color: 'text-pink-500' },
+                ].map(({ label, value, color }) => (
+                  <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+                    <p className="text-slate-500 text-xs md:text-sm">{label}</p>
+                    <p className={`text-2xl md:text-3xl font-bold mt-1 ${color}`}>{value}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (() => {
+              const totalPct = s2.total_registrations > 0 ? Math.round((s2.checked_in_count / s2.total_registrations) * 100) : 0
+              const crewPct = s2.total_crews > 0 ? Math.round((s2.crew_checked_in / s2.total_crews) * 100) : 0
+              const firstTotal = s2.first_time_crew + s2.first_time_guest
+              const firstCheckedIn = s2.first_time_crew_checked_in + s2.first_time_guest_checked_in
+              const firstPct = firstTotal > 0 ? Math.round((firstCheckedIn / firstTotal) * 100) : 0
+              return (
+                <div className="space-y-4">
+                  {/* 모바일 */}
+                  <div className="md:hidden space-y-3">
+                    {/* 총 신청/참여 */}
+                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm text-center">
+                      <p className="text-slate-500 text-sm mb-2">전체 현황</p>
+                      <div className="flex justify-center items-baseline gap-3">
+                        <div>
+                          <p className="text-3xl font-black text-slate-800">{s2.total_registrations}명</p>
+                          <p className="text-slate-400 text-xs">신청</p>
+                        </div>
+                        <span className="text-slate-300 text-xl">→</span>
+                        <div>
+                          <p className="text-3xl font-black text-emerald-600">{s2.checked_in_count}명</p>
+                          <p className="text-emerald-400 text-xs">참여 ({totalPct}%)</p>
+                        </div>
+                      </div>
+                      {s2.podo_count > 0 && <p className="text-slate-400 text-[10px] mt-3">포도 포함 {s2.total_registrations + s2.podo_count}명 → {s2.checked_in_count + (s2.podo_checked_in ?? 0)}명 (포도 {s2.podo_count})</p>}
+                    </div>
+
+                    {/* 크루 */}
+                    <div className="bg-white border-2 border-violet-200 rounded-2xl p-5 shadow-sm text-center">
+                      <p className="text-violet-500 text-sm mb-2">크루</p>
+                      <div className="flex justify-center items-baseline gap-3">
+                        <div>
+                          <p className="text-3xl font-black text-violet-600">{s2.total_crews}명</p>
+                          <p className="text-slate-400 text-xs">신청</p>
+                        </div>
+                        <span className="text-slate-300 text-xl">→</span>
+                        <div>
+                          <p className="text-3xl font-black text-violet-600">{s2.crew_checked_in}명</p>
+                          <p className="text-violet-400 text-xs">참여 ({crewPct}%)</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 게스트 */}
+                    <div className="bg-white border-2 border-blue-200 rounded-2xl p-5 shadow-sm text-center">
+                      <p className="text-blue-500 text-sm mb-2">게스트</p>
+                      <div className="flex justify-center items-baseline gap-3">
+                        <div>
+                          <p className="text-3xl font-black text-blue-600">{s2.total_guests}명</p>
+                          <p className="text-slate-400 text-xs">신청</p>
+                        </div>
+                        <span className="text-slate-300 text-xl">→</span>
+                        <div>
+                          <p className="text-3xl font-black text-blue-600">{s2.guest_attended}명</p>
+                          <p className="text-blue-400 text-xs">참여 ({s2.guest_attendance_rate}%)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 데스크톱: 좌우 분할 */}
+                  <div className="hidden md:grid grid-cols-2 gap-3">
+                    <div className="space-y-3">
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm text-center">
+                        <p className="text-slate-500 text-sm">총 신청</p>
+                        <p className="text-3xl md:text-4xl font-black text-slate-800 mt-1">{s2.total_registrations}명</p>
+                        {s2.podo_count > 0 && <p className="text-slate-400 text-xs mt-1">포도 포함 {s2.total_registrations + s2.podo_count}명 (포도 {s2.podo_count})</p>}
+                      </div>
+                      <div className="bg-white border-2 border-violet-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-violet-500 text-xs font-semibold">크루 신청</p>
+                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.total_crews}명</p>
+                      </div>
+                      <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-blue-500 text-xs font-semibold">게스트 신청</p>
+                        <p className="text-2xl font-black text-blue-600 mt-1">{s2.total_guests}명</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm text-center">
+                        <p className="text-slate-500 text-sm">총 참여</p>
+                        <p className="text-3xl md:text-4xl font-black text-emerald-600 mt-1">{s2.checked_in_count}명 <span className="text-lg font-bold">({totalPct}%)</span></p>
+                        {s2.podo_count > 0 && <p className="text-slate-400 text-xs mt-1">포도 포함 {s2.checked_in_count + (s2.podo_checked_in ?? 0)}명 (포도 {s2.podo_checked_in ?? 0})</p>}
+                      </div>
+                      <div className="bg-white border-2 border-violet-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-violet-500 text-xs font-semibold">크루 참여</p>
+                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.crew_checked_in}명 <span className="text-sm font-medium">({crewPct}%)</span></p>
+                      </div>
+                      <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-blue-500 text-xs font-semibold">게스트 참여</p>
+                        <p className="text-2xl font-black text-blue-600 mt-1">{s2.guest_attended}명 <span className="text-sm font-medium">({s2.guest_attendance_rate}%)</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 누적 크루 현황 */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+                    <h3 className="text-slate-700 font-semibold text-sm mb-3">누적 크루 현황 (포도 제외)</h3>
+                    {/* 모바일 */}
+                    <div className="md:hidden grid grid-cols-4 gap-1.5 text-center">
+                      <div className="bg-slate-50 rounded-lg px-1 py-2">
+                        <p className="text-slate-400 text-[8px]">전 행사 누적</p>
+                        <p className="text-base font-black text-slate-700">{s2.prev_accumulated ?? 0}</p>
+                      </div>
+                      <div className="bg-orange-50 rounded-lg px-1 py-2 border border-orange-200">
+                        <p className="text-orange-400 text-[8px]">직접 신청</p>
+                        <p className="text-base font-black text-orange-600">{s2.between_events_crew ?? 0}</p>
+                      </div>
+                      <div className="bg-amber-50 rounded-lg px-1 py-2 border border-amber-200">
+                        <p className="text-amber-400 text-[8px]">크루 전환</p>
+                        <p className="text-base font-black text-amber-600">{s2.crew_conversion_count}</p>
+                      </div>
+                      <div className="bg-emerald-50 rounded-lg px-1 py-2 border border-emerald-200">
+                        <p className="text-emerald-400 text-[8px]">총 누적</p>
+                        <p className="text-base font-black text-emerald-600">{s2.total_accumulated ?? 0}</p>
+                      </div>
+                    </div>
+                    {/* 데스크톱 */}
+                    <div className="hidden md:flex items-center justify-center gap-2 text-center">
+                      <div className="bg-slate-50 rounded-xl px-4 py-3">
+                        <p className="text-slate-400 text-[10px]">전 행사까지 누적</p>
+                        <p className="text-xl font-black text-slate-700">{s2.prev_accumulated ?? 0}명</p>
+                      </div>
+                      <span className="text-slate-300 font-bold text-lg">+</span>
+                      <div className="bg-orange-50 rounded-xl px-4 py-3 border border-orange-200">
+                        <p className="text-orange-400 text-[10px]">기간 직접 신청</p>
+                        <p className="text-xl font-black text-orange-600">{s2.between_events_crew ?? 0}명</p>
+                      </div>
+                      <span className="text-slate-300 font-bold text-lg">+</span>
+                      <div className="bg-amber-50 rounded-xl px-4 py-3 border border-amber-200">
+                        <p className="text-amber-400 text-[10px]">현 행사 크루 전환</p>
+                        <p className="text-xl font-black text-amber-600">{s2.crew_conversion_count}명</p>
+                      </div>
+                      <span className="text-slate-300 font-bold text-lg">=</span>
+                      <div className="bg-emerald-50 rounded-xl px-4 py-3 border border-emerald-200">
+                        <p className="text-emerald-400 text-[10px]">총 누적</p>
+                        <p className="text-xl font-black text-emerald-600">{s2.total_accumulated ?? 0}명</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 첫 참여 */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h3 className="text-slate-700 font-semibold text-sm mb-3">첫 참여 현황</h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center">
+                        <p className="text-slate-400 text-xs">전체</p>
+                        <p className="text-2xl font-black text-cyan-600 mt-1">{firstTotal}명</p>
+                        <p className="text-slate-400 text-xs mt-1">참여 {firstCheckedIn}명 ({firstPct}%)</p>
+                      </div>
+                      <div className="text-center border-l border-slate-100">
+                        <p className="text-slate-400 text-xs">크루</p>
+                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.first_time_crew}명</p>
+                        <p className="text-slate-400 text-xs mt-1">참여 {s2.first_time_crew_checked_in}명</p>
+                      </div>
+                      <div className="text-center border-l border-slate-100">
+                        <p className="text-slate-400 text-xs">게스트</p>
+                        <p className="text-2xl font-black text-blue-600 mt-1">{s2.first_time_guest}명</p>
+                        <p className="text-slate-400 text-xs mt-1">참여 {s2.first_time_guest_checked_in}명</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )
+            })()
           ) : <p className="text-slate-400">데이터 없음</p>}
         </section>
 
@@ -1010,6 +1234,35 @@ export default function AdminDashboardPage() {
             </>
           ) : <p className="text-slate-400">{crewMode ? '데이터 없음' : '피드백 데이터 없음'}</p>}
         </section>
+
+        {/* 보고서 */}
+        {!crewMode && (
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-5">보고서</h2>
+            {reports.length === 0 ? (
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm text-center">
+                <p className="text-slate-400 text-sm">저장된 보고서가 없습니다</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {reports.map((r: any) => (
+                  <div key={r.id} className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-2 cursor-pointer hover:opacity-70" onClick={() => window.open(`/admin/report?id=${r.id}`, '_blank')}>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${r.mode === 'podo' ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-slate-600'}`}>
+                          {r.mode === 'podo' ? '포도' : '일반'}
+                        </span>
+                        <span className="text-slate-800 font-semibold text-sm">{r.title}</span>
+                        <span className="text-slate-400 text-xs ml-1">{new Date(r.created_at).toLocaleDateString('ko-KR')}</span>
+                      </div>
+                      <button onClick={() => handleDeleteReport(r.id)} className="text-slate-300 hover:text-red-500 transition-colors text-xs">✕</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </div>
     )
   }

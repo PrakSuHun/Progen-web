@@ -54,25 +54,42 @@ export async function GET(request: NextRequest) {
     .eq('is_member', true)
   const podoPhones = new Set((podoCrews ?? []).map((c: any) => c.phone))
 
-  // 이전 행사 참여 이력 조회: phone 기반 크로스 매칭 (크루→게스트, 게스트→크루 전환도 감지)
+  // 이 행사 날짜 조회
+  const { data: eventInfoData } = await supabase
+    .from('events')
+    .select('event_date')
+    .eq('id', eventId)
+    .single()
+  const thisEventDate = eventInfoData?.event_date ?? new Date().toISOString()
+
+  // 이 행사보다 이전 행사 ID 목록
+  const { data: prevEventsData } = await supabase
+    .from('events')
+    .select('id')
+    .lt('event_date', thisEventDate)
+  const prevEventIds = (prevEventsData ?? []).map((e: any) => e.id)
+
+  // 이전 행사에 출석완료한 phone 수집
   const prevPhoneSet = new Set<string>()
-  const { data: prevCrewRegs } = await supabase
-    .from('event_registrations')
-    .select('crew_members ( phone )')
-    .neq('event_id', eventId)
-    .eq('status', '출석완료')
-    .not('crew_id', 'is', null)
-  for (const r of prevCrewRegs ?? []) {
-    if ((r as any).crew_members?.phone) prevPhoneSet.add((r as any).crew_members.phone)
-  }
-  const { data: prevGuestRegs } = await supabase
-    .from('event_registrations')
-    .select('guests ( phone )')
-    .neq('event_id', eventId)
-    .eq('status', '출석완료')
-    .not('guest_id', 'is', null)
-  for (const r of prevGuestRegs ?? []) {
-    if ((r as any).guests?.phone) prevPhoneSet.add((r as any).guests.phone)
+  if (prevEventIds.length > 0) {
+    const { data: prevCrewRegs } = await supabase
+      .from('event_registrations')
+      .select('crew_members ( phone )')
+      .in('event_id', prevEventIds)
+      .eq('status', '출석완료')
+      .not('crew_id', 'is', null)
+    for (const r of prevCrewRegs ?? []) {
+      if ((r as any).crew_members?.phone) prevPhoneSet.add((r as any).crew_members.phone)
+    }
+    const { data: prevGuestRegs } = await supabase
+      .from('event_registrations')
+      .select('guests ( phone )')
+      .in('event_id', prevEventIds)
+      .eq('status', '출석완료')
+      .not('guest_id', 'is', null)
+    for (const r of prevGuestRegs ?? []) {
+      if ((r as any).guests?.phone) prevPhoneSet.add((r as any).guests.phone)
+    }
   }
 
   const members = (regs ?? []).map((r: any) => {
