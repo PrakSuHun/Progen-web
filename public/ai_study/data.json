@@ -1,0 +1,5615 @@
+{
+  "title": "AI 가성비 벼락치기 - 4툴 종합",
+  "description": "다글로 / ALT / NotebookLM / 유니브AI 통합 큐레이션",
+  "tool_name": "통합",
+  "steps": [
+    {
+      "step_number": 1,
+      "image_index": 1,
+      "title": "다글로 - 시간표 등록",
+      "description": "달력 아이콘에서 시간표 추가",
+      "action": "이미지로 추가",
+      "tip": "에브리타임 캡처를 그대로 사용",
+      "selected_path": "candidates/다글로-frame-23.00.png",
+      "annotated_path": "images/step-01.png",
+      "frame_path": "images/daglo-시간표.png",
+      "boxes": [
+        {
+          "x_percent": 83.33333333333334,
+          "y_percent": 7.896461336828309,
+          "width_percent": 13.934426229508196,
+          "height_percent": 6.290956749672345
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 2,
+      "image_index": 2,
+      "title": "다글로 - 이미지로 자동 인식",
+      "description": "AI가 시간표 이미지를 인식해 자동 등록",
+      "action": "이미지 업로드",
+      "tip": "수업 1분 전 자동 알림 세팅됨",
+      "selected_path": "candidates/다글로-frame-135.00.png",
+      "annotated_path": "images/step-02.png",
+      "frame_path": "images/daglo-이미지등록.png",
+      "boxes": [
+        {
+          "x_percent": 72.6775956284153,
+          "y_percent": 9.076015727391875,
+          "width_percent": 9.289617486338798,
+          "height_percent": 4.193971166448231
+        },
+        {
+          "x_percent": 3.278688524590164,
+          "y_percent": 71.06815203145477,
+          "width_percent": 93.44262295081968,
+          "height_percent": 6.159895150720838
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 3,
+      "image_index": 3,
+      "title": "다글로 - 스크립트 확인",
+      "description": "녹음 종료 즉시 전체 스크립트 자동 생성",
+      "action": "스크립트 탭",
+      "tip": "문장 클릭으로 해당 음성 재생",
+      "selected_path": "images/daglo-스크립트.png",
+      "annotated_path": "images/step-03.png",
+      "frame_path": "images/daglo-스크립트.png",
+      "boxes": [
+        {
+          "x_percent": 71.58469945355192,
+          "y_percent": 16.41546526867628,
+          "width_percent": 23.770491803278688,
+          "height_percent": 4.980340760157274
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 4,
+      "image_index": 4,
+      "title": "다글로 - 보드챗 질의",
+      "description": "녹음 스크립트 기반 환각 없는 챗봇",
+      "action": "보드챗 질문",
+      "tip": "스크립트만 근거로 답변",
+      "selected_path": "images/daglo-보드챗.png",
+      "annotated_path": "images/step-04.png",
+      "frame_path": "images/daglo-보드챗.png",
+      "boxes": [
+        {
+          "x_percent": 4.644808743169399,
+          "y_percent": 16.677588466579294,
+          "width_percent": 22.131147540983605,
+          "height_percent": 4.456094364351245
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 5,
+      "image_index": 5,
+      "title": "다글로 - 강의노트 템플릿 요약",
+      "description": "표·리스트 형태 강의노트 자동 생성",
+      "action": "템플릿 요약",
+      "tip": "전교 1등 노트 수준의 정리",
+      "selected_path": "images/daglo-템플릿요약.png",
+      "annotated_path": "images/step-05.png",
+      "frame_path": "images/daglo-템플릿요약.png",
+      "boxes": [
+        {
+          "x_percent": 49.18032786885246,
+          "y_percent": 16.28440366972477,
+          "width_percent": 22.6775956284153,
+          "height_percent": 5.242463958060288
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 6,
+      "image_index": 6,
+      "title": "ALT - 3분할 학습 화면",
+      "description": "PDF + 녹음 + 메모 통합 화면",
+      "action": "PDF 업로드",
+      "tip": "Mac/iPad 전용",
+      "selected_path": "candidates/alt-활용법-frame-157.00.png",
+      "annotated_path": "images/step-06.png",
+      "frame_path": "images/alt-3분할.png",
+      "boxes": [],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 7,
+      "image_index": 7,
+      "title": "ALT - 학습 화면 운영",
+      "description": "수업 진행에 맞춰 PDF 넘기며 메모",
+      "action": "실시간 녹음",
+      "tip": "시스템 오디오로 사이버강의 정복",
+      "selected_path": "candidates/alt-활용법-frame-151.00.png",
+      "annotated_path": "images/step-07.png",
+      "frame_path": "images/alt-학습화면.png",
+      "boxes": [],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 8,
+      "image_index": 8,
+      "title": "ALT - AI 요약 & 보드챗",
+      "description": "수업 종료 후 한 페이지 요약",
+      "action": "요약 탭 클릭",
+      "tip": "공대 수식 정리 압도적",
+      "selected_path": "candidates/alt-활용법-frame-71.00.png",
+      "annotated_path": "images/step-08.png",
+      "frame_path": "images/alt-요약.png",
+      "boxes": [
+        {
+          "x_percent": 11.66883963494133,
+          "y_percent": 1.91415313225058,
+          "width_percent": 5.345501955671447,
+          "height_percent": 8.584686774941995
+        }
+      ],
+      "crop": {
+        "x_percent": 69.5327385051501,
+        "y_percent": 4.915993230141562,
+        "width_percent": 29.98464452639012,
+        "height_percent": 29.98464452639012
+      },
+      "mosaics": []
+    },
+    {
+      "step_number": 9,
+      "image_index": 9,
+      "title": "NotebookLM - 소스 추가",
+      "description": "PDF·스크립트 통합 업로드",
+      "action": "소스 추가",
+      "tip": "스크립트는 텍스트 붙여넣기로 OK",
+      "selected_path": "candidates/노트북lm-frame-135.00.png",
+      "annotated_path": "images/step-09.png",
+      "frame_path": "images/nlm-소스추가.png",
+      "boxes": [
+        {
+          "x_percent": 38.87145755364861,
+          "y_percent": 61.01166791826853,
+          "width_percent": 5.56458624730654,
+          "height_percent": 4.734417556798445
+        },
+        {
+          "x_percent": 54.92004687559068,
+          "y_percent": 61.8724711104137,
+          "width_percent": 5.806524779798136,
+          "height_percent": 3.5866799672715435
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 10,
+      "image_index": 10,
+      "title": "NotebookLM - 요약 생성",
+      "description": "통합 요약본 자동 생성",
+      "action": "요약 프롬프트 입력",
+      "tip": "요약본 프롬프트 활용",
+      "selected_path": "candidates/노트북lm-frame-29.00.png",
+      "annotated_path": "images/step-10.png",
+      "frame_path": "images/nlm-요약.png",
+      "boxes": [
+        {
+          "x_percent": 26.29065386408599,
+          "y_percent": 57.28152075230612,
+          "width_percent": 46.93607530336825,
+          "height_percent": 36.29720126878805
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 11,
+      "image_index": 11,
+      "title": "NotebookLM - 오디오 개요",
+      "description": "동영상 개요로 나만의 인강 생성",
+      "action": "스튜디오 → 동영상 개요",
+      "tip": "점심 시간에 미리 생성 걸어두기",
+      "selected_path": "candidates/노트북lm-frame-151.00.png",
+      "annotated_path": "images/step-11.png",
+      "frame_path": "images/nlm-오디오.png",
+      "boxes": [
+        {
+          "x_percent": 56.14678899082569,
+          "y_percent": 11.623164763458401,
+          "width_percent": 4.678899082568807,
+          "height_percent": 7.830342577487764
+        }
+      ],
+      "crop": {
+        "x_percent": 56.37167807054021,
+        "y_percent": 9.076541992176555,
+        "width_percent": 42.58118171851964,
+        "height_percent": 42.58118171851963
+      },
+      "mosaics": []
+    },
+    {
+      "step_number": 12,
+      "image_index": 12,
+      "title": "유니브AI - AI TUTOR",
+      "description": "올가미로 그래프·수식 시각 분석",
+      "action": "올가미 캡쳐",
+      "tip": "텍스트 안되는 부분에 사용",
+      "selected_path": "candidates/유니브ai-frame-283.00.png",
+      "annotated_path": "images/step-12.png",
+      "frame_path": "images/univ-AI슬라이드.png",
+      "boxes": [
+        {
+          "x_percent": 80.88811602968788,
+          "y_percent": 11.228549972539481,
+          "width_percent": 4.516185939842992,
+          "height_percent": 4.0170815633441315
+        },
+        {
+          "x_percent": 93.7915044292393,
+          "y_percent": 90.8528452459678,
+          "width_percent": 2.0161544374299076,
+          "height_percent": 3.443212768580682
+        },
+        {
+          "x_percent": 2.661323857407478,
+          "y_percent": 46.37801365180062,
+          "width_percent": 36.85530311621871,
+          "height_percent": 37.588406057005805
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 13,
+      "image_index": 13,
+      "title": "유니브AI - 오답노트 PDF 추출",
+      "description": "틀린 문제만 PDF로 단권화",
+      "action": "PDF 추출 버튼",
+      "tip": "시험 직전 5분 단권화 노트",
+      "selected_path": "candidates/유니브ai-frame-391.00.png",
+      "annotated_path": "images/step-13.png",
+      "frame_path": "images/univ-PDF추출.png",
+      "boxes": [
+        {
+          "x_percent": 58.952355750450494,
+          "y_percent": 11.372017171230343,
+          "width_percent": 3.8710165198654236,
+          "height_percent": 3.7301471659624075
+        },
+        {
+          "x_percent": 91.5334114593178,
+          "y_percent": 80.23627254284402,
+          "width_percent": 6.451694199775695,
+          "height_percent": 5.021351954180154
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    },
+    {
+      "step_number": 14,
+      "image_index": 14,
+      "title": "유니브AI ✕ NotebookLM 합체",
+      "description": "오답노트 PDF를 NotebookLM 오디오 오버뷰로",
+      "action": "NotebookLM 업로드",
+      "tip": "시험장 가는 길 귀로 학습",
+      "selected_path": "candidates/유니브ai-frame-433.00.png",
+      "annotated_path": "images/step-14.png",
+      "frame_path": "images/univ-노트북LM연동.png",
+      "boxes": [
+        {
+          "x_percent": 41.12955052357011,
+          "y_percent": 29.44888420627893,
+          "width_percent": 9.032371879685984,
+          "height_percent": 13.055515080868425
+        },
+        {
+          "x_percent": 32.339117176375716,
+          "y_percent": 51.829767202053375,
+          "width_percent": 35.24237956627478,
+          "height_percent": 19.65500622064807
+        }
+      ],
+      "crop": null,
+      "mosaics": []
+    }
+  ],
+  "all_candidates": [
+    {
+      "index": 1,
+      "path": "candidates/alt-활용법-frame-1.00.png",
+      "timestamp": 0
+    },
+    {
+      "index": 2,
+      "path": "candidates/alt-활용법-frame-101.00.png",
+      "timestamp": 1
+    },
+    {
+      "index": 3,
+      "path": "candidates/alt-활용법-frame-103.00.png",
+      "timestamp": 2
+    },
+    {
+      "index": 4,
+      "path": "candidates/alt-활용법-frame-105.00.png",
+      "timestamp": 3
+    },
+    {
+      "index": 5,
+      "path": "candidates/alt-활용법-frame-107.00.png",
+      "timestamp": 4
+    },
+    {
+      "index": 6,
+      "path": "candidates/alt-활용법-frame-109.00.png",
+      "timestamp": 5
+    },
+    {
+      "index": 7,
+      "path": "candidates/alt-활용법-frame-11.00.png",
+      "timestamp": 6
+    },
+    {
+      "index": 8,
+      "path": "candidates/alt-활용법-frame-111.00.png",
+      "timestamp": 7
+    },
+    {
+      "index": 9,
+      "path": "candidates/alt-활용법-frame-113.00.png",
+      "timestamp": 8
+    },
+    {
+      "index": 10,
+      "path": "candidates/alt-활용법-frame-115.00.png",
+      "timestamp": 9
+    },
+    {
+      "index": 11,
+      "path": "candidates/alt-활용법-frame-117.00.png",
+      "timestamp": 10
+    },
+    {
+      "index": 12,
+      "path": "candidates/alt-활용법-frame-119.00.png",
+      "timestamp": 11
+    },
+    {
+      "index": 13,
+      "path": "candidates/alt-활용법-frame-121.00.png",
+      "timestamp": 12
+    },
+    {
+      "index": 14,
+      "path": "candidates/alt-활용법-frame-123.00.png",
+      "timestamp": 13
+    },
+    {
+      "index": 15,
+      "path": "candidates/alt-활용법-frame-125.00.png",
+      "timestamp": 14
+    },
+    {
+      "index": 16,
+      "path": "candidates/alt-활용법-frame-127.00.png",
+      "timestamp": 15
+    },
+    {
+      "index": 17,
+      "path": "candidates/alt-활용법-frame-129.00.png",
+      "timestamp": 16
+    },
+    {
+      "index": 18,
+      "path": "candidates/alt-활용법-frame-13.00.png",
+      "timestamp": 17
+    },
+    {
+      "index": 19,
+      "path": "candidates/alt-활용법-frame-131.00.png",
+      "timestamp": 18
+    },
+    {
+      "index": 20,
+      "path": "candidates/alt-활용법-frame-133.00.png",
+      "timestamp": 19
+    },
+    {
+      "index": 21,
+      "path": "candidates/alt-활용법-frame-135.00.png",
+      "timestamp": 20
+    },
+    {
+      "index": 22,
+      "path": "candidates/alt-활용법-frame-137.00.png",
+      "timestamp": 21
+    },
+    {
+      "index": 23,
+      "path": "candidates/alt-활용법-frame-139.00.png",
+      "timestamp": 22
+    },
+    {
+      "index": 24,
+      "path": "candidates/alt-활용법-frame-141.00.png",
+      "timestamp": 23
+    },
+    {
+      "index": 25,
+      "path": "candidates/alt-활용법-frame-143.00.png",
+      "timestamp": 24
+    },
+    {
+      "index": 26,
+      "path": "candidates/alt-활용법-frame-145.00.png",
+      "timestamp": 25
+    },
+    {
+      "index": 27,
+      "path": "candidates/alt-활용법-frame-147.00.png",
+      "timestamp": 26
+    },
+    {
+      "index": 28,
+      "path": "candidates/alt-활용법-frame-149.00.png",
+      "timestamp": 27
+    },
+    {
+      "index": 29,
+      "path": "candidates/alt-활용법-frame-15.00.png",
+      "timestamp": 28
+    },
+    {
+      "index": 30,
+      "path": "candidates/alt-활용법-frame-151.00.png",
+      "timestamp": 29
+    },
+    {
+      "index": 31,
+      "path": "candidates/alt-활용법-frame-153.00.png",
+      "timestamp": 30
+    },
+    {
+      "index": 32,
+      "path": "candidates/alt-활용법-frame-155.00.png",
+      "timestamp": 31
+    },
+    {
+      "index": 33,
+      "path": "candidates/alt-활용법-frame-157.00.png",
+      "timestamp": 32
+    },
+    {
+      "index": 34,
+      "path": "candidates/alt-활용법-frame-159.00.png",
+      "timestamp": 33
+    },
+    {
+      "index": 35,
+      "path": "candidates/alt-활용법-frame-161.00.png",
+      "timestamp": 34
+    },
+    {
+      "index": 36,
+      "path": "candidates/alt-활용법-frame-163.00.png",
+      "timestamp": 35
+    },
+    {
+      "index": 37,
+      "path": "candidates/alt-활용법-frame-165.00.png",
+      "timestamp": 36
+    },
+    {
+      "index": 38,
+      "path": "candidates/alt-활용법-frame-167.00.png",
+      "timestamp": 37
+    },
+    {
+      "index": 39,
+      "path": "candidates/alt-활용법-frame-169.00.png",
+      "timestamp": 38
+    },
+    {
+      "index": 40,
+      "path": "candidates/alt-활용법-frame-17.00.png",
+      "timestamp": 39
+    },
+    {
+      "index": 41,
+      "path": "candidates/alt-활용법-frame-171.00.png",
+      "timestamp": 40
+    },
+    {
+      "index": 42,
+      "path": "candidates/alt-활용법-frame-173.00.png",
+      "timestamp": 41
+    },
+    {
+      "index": 43,
+      "path": "candidates/alt-활용법-frame-175.00.png",
+      "timestamp": 42
+    },
+    {
+      "index": 44,
+      "path": "candidates/alt-활용법-frame-177.00.png",
+      "timestamp": 43
+    },
+    {
+      "index": 45,
+      "path": "candidates/alt-활용법-frame-179.00.png",
+      "timestamp": 44
+    },
+    {
+      "index": 46,
+      "path": "candidates/alt-활용법-frame-181.00.png",
+      "timestamp": 45
+    },
+    {
+      "index": 47,
+      "path": "candidates/alt-활용법-frame-183.00.png",
+      "timestamp": 46
+    },
+    {
+      "index": 48,
+      "path": "candidates/alt-활용법-frame-185.00.png",
+      "timestamp": 47
+    },
+    {
+      "index": 49,
+      "path": "candidates/alt-활용법-frame-187.00.png",
+      "timestamp": 48
+    },
+    {
+      "index": 50,
+      "path": "candidates/alt-활용법-frame-189.00.png",
+      "timestamp": 49
+    },
+    {
+      "index": 51,
+      "path": "candidates/alt-활용법-frame-19.00.png",
+      "timestamp": 50
+    },
+    {
+      "index": 52,
+      "path": "candidates/alt-활용법-frame-191.00.png",
+      "timestamp": 51
+    },
+    {
+      "index": 53,
+      "path": "candidates/alt-활용법-frame-193.00.png",
+      "timestamp": 52
+    },
+    {
+      "index": 54,
+      "path": "candidates/alt-활용법-frame-195.00.png",
+      "timestamp": 53
+    },
+    {
+      "index": 55,
+      "path": "candidates/alt-활용법-frame-197.00.png",
+      "timestamp": 54
+    },
+    {
+      "index": 56,
+      "path": "candidates/alt-활용법-frame-199.00.png",
+      "timestamp": 55
+    },
+    {
+      "index": 57,
+      "path": "candidates/alt-활용법-frame-201.00.png",
+      "timestamp": 56
+    },
+    {
+      "index": 58,
+      "path": "candidates/alt-활용법-frame-203.00.png",
+      "timestamp": 57
+    },
+    {
+      "index": 59,
+      "path": "candidates/alt-활용법-frame-205.00.png",
+      "timestamp": 58
+    },
+    {
+      "index": 60,
+      "path": "candidates/alt-활용법-frame-207.00.png",
+      "timestamp": 59
+    },
+    {
+      "index": 61,
+      "path": "candidates/alt-활용법-frame-209.00.png",
+      "timestamp": 60
+    },
+    {
+      "index": 62,
+      "path": "candidates/alt-활용법-frame-21.00.png",
+      "timestamp": 61
+    },
+    {
+      "index": 63,
+      "path": "candidates/alt-활용법-frame-23.00.png",
+      "timestamp": 62
+    },
+    {
+      "index": 64,
+      "path": "candidates/alt-활용법-frame-25.00.png",
+      "timestamp": 63
+    },
+    {
+      "index": 65,
+      "path": "candidates/alt-활용법-frame-27.00.png",
+      "timestamp": 64
+    },
+    {
+      "index": 66,
+      "path": "candidates/alt-활용법-frame-29.00.png",
+      "timestamp": 65
+    },
+    {
+      "index": 67,
+      "path": "candidates/alt-활용법-frame-3.00.png",
+      "timestamp": 66
+    },
+    {
+      "index": 68,
+      "path": "candidates/alt-활용법-frame-31.00.png",
+      "timestamp": 67
+    },
+    {
+      "index": 69,
+      "path": "candidates/alt-활용법-frame-33.00.png",
+      "timestamp": 68
+    },
+    {
+      "index": 70,
+      "path": "candidates/alt-활용법-frame-35.00.png",
+      "timestamp": 69
+    },
+    {
+      "index": 71,
+      "path": "candidates/alt-활용법-frame-37.00.png",
+      "timestamp": 70
+    },
+    {
+      "index": 72,
+      "path": "candidates/alt-활용법-frame-39.00.png",
+      "timestamp": 71
+    },
+    {
+      "index": 73,
+      "path": "candidates/alt-활용법-frame-41.00.png",
+      "timestamp": 72
+    },
+    {
+      "index": 74,
+      "path": "candidates/alt-활용법-frame-43.00.png",
+      "timestamp": 73
+    },
+    {
+      "index": 75,
+      "path": "candidates/alt-활용법-frame-45.00.png",
+      "timestamp": 74
+    },
+    {
+      "index": 76,
+      "path": "candidates/alt-활용법-frame-47.00.png",
+      "timestamp": 75
+    },
+    {
+      "index": 77,
+      "path": "candidates/alt-활용법-frame-49.00.png",
+      "timestamp": 76
+    },
+    {
+      "index": 78,
+      "path": "candidates/alt-활용법-frame-5.00.png",
+      "timestamp": 77
+    },
+    {
+      "index": 79,
+      "path": "candidates/alt-활용법-frame-51.00.png",
+      "timestamp": 78
+    },
+    {
+      "index": 80,
+      "path": "candidates/alt-활용법-frame-53.00.png",
+      "timestamp": 79
+    },
+    {
+      "index": 81,
+      "path": "candidates/alt-활용법-frame-55.00.png",
+      "timestamp": 80
+    },
+    {
+      "index": 82,
+      "path": "candidates/alt-활용법-frame-57.00.png",
+      "timestamp": 81
+    },
+    {
+      "index": 83,
+      "path": "candidates/alt-활용법-frame-59.00.png",
+      "timestamp": 82
+    },
+    {
+      "index": 84,
+      "path": "candidates/alt-활용법-frame-61.00.png",
+      "timestamp": 83
+    },
+    {
+      "index": 85,
+      "path": "candidates/alt-활용법-frame-63.00.png",
+      "timestamp": 84
+    },
+    {
+      "index": 86,
+      "path": "candidates/alt-활용법-frame-65.00.png",
+      "timestamp": 85
+    },
+    {
+      "index": 87,
+      "path": "candidates/alt-활용법-frame-67.00.png",
+      "timestamp": 86
+    },
+    {
+      "index": 88,
+      "path": "candidates/alt-활용법-frame-69.00.png",
+      "timestamp": 87
+    },
+    {
+      "index": 89,
+      "path": "candidates/alt-활용법-frame-7.00.png",
+      "timestamp": 88
+    },
+    {
+      "index": 90,
+      "path": "candidates/alt-활용법-frame-71.00.png",
+      "timestamp": 89
+    },
+    {
+      "index": 91,
+      "path": "candidates/alt-활용법-frame-73.00.png",
+      "timestamp": 90
+    },
+    {
+      "index": 92,
+      "path": "candidates/alt-활용법-frame-75.00.png",
+      "timestamp": 91
+    },
+    {
+      "index": 93,
+      "path": "candidates/alt-활용법-frame-77.00.png",
+      "timestamp": 92
+    },
+    {
+      "index": 94,
+      "path": "candidates/alt-활용법-frame-79.00.png",
+      "timestamp": 93
+    },
+    {
+      "index": 95,
+      "path": "candidates/alt-활용법-frame-81.00.png",
+      "timestamp": 94
+    },
+    {
+      "index": 96,
+      "path": "candidates/alt-활용법-frame-83.00.png",
+      "timestamp": 95
+    },
+    {
+      "index": 97,
+      "path": "candidates/alt-활용법-frame-85.00.png",
+      "timestamp": 96
+    },
+    {
+      "index": 98,
+      "path": "candidates/alt-활용법-frame-87.00.png",
+      "timestamp": 97
+    },
+    {
+      "index": 99,
+      "path": "candidates/alt-활용법-frame-89.00.png",
+      "timestamp": 98
+    },
+    {
+      "index": 100,
+      "path": "candidates/alt-활용법-frame-9.00.png",
+      "timestamp": 99
+    },
+    {
+      "index": 101,
+      "path": "candidates/alt-활용법-frame-91.00.png",
+      "timestamp": 100
+    },
+    {
+      "index": 102,
+      "path": "candidates/alt-활용법-frame-93.00.png",
+      "timestamp": 101
+    },
+    {
+      "index": 103,
+      "path": "candidates/alt-활용법-frame-95.00.png",
+      "timestamp": 102
+    },
+    {
+      "index": 104,
+      "path": "candidates/alt-활용법-frame-97.00.png",
+      "timestamp": 103
+    },
+    {
+      "index": 105,
+      "path": "candidates/alt-활용법-frame-99.00.png",
+      "timestamp": 104
+    },
+    {
+      "index": 106,
+      "path": "candidates/노트북lm-frame-1.00.png",
+      "timestamp": 105
+    },
+    {
+      "index": 107,
+      "path": "candidates/노트북lm-frame-101.00.png",
+      "timestamp": 106
+    },
+    {
+      "index": 108,
+      "path": "candidates/노트북lm-frame-103.00.png",
+      "timestamp": 107
+    },
+    {
+      "index": 109,
+      "path": "candidates/노트북lm-frame-105.00.png",
+      "timestamp": 108
+    },
+    {
+      "index": 110,
+      "path": "candidates/노트북lm-frame-107.00.png",
+      "timestamp": 109
+    },
+    {
+      "index": 111,
+      "path": "candidates/노트북lm-frame-109.00.png",
+      "timestamp": 110
+    },
+    {
+      "index": 112,
+      "path": "candidates/노트북lm-frame-11.00.png",
+      "timestamp": 111
+    },
+    {
+      "index": 113,
+      "path": "candidates/노트북lm-frame-111.00.png",
+      "timestamp": 112
+    },
+    {
+      "index": 114,
+      "path": "candidates/노트북lm-frame-113.00.png",
+      "timestamp": 113
+    },
+    {
+      "index": 115,
+      "path": "candidates/노트북lm-frame-115.00.png",
+      "timestamp": 114
+    },
+    {
+      "index": 116,
+      "path": "candidates/노트북lm-frame-117.00.png",
+      "timestamp": 115
+    },
+    {
+      "index": 117,
+      "path": "candidates/노트북lm-frame-119.00.png",
+      "timestamp": 116
+    },
+    {
+      "index": 118,
+      "path": "candidates/노트북lm-frame-121.00.png",
+      "timestamp": 117
+    },
+    {
+      "index": 119,
+      "path": "candidates/노트북lm-frame-123.00.png",
+      "timestamp": 118
+    },
+    {
+      "index": 120,
+      "path": "candidates/노트북lm-frame-125.00.png",
+      "timestamp": 119
+    },
+    {
+      "index": 121,
+      "path": "candidates/노트북lm-frame-127.00.png",
+      "timestamp": 120
+    },
+    {
+      "index": 122,
+      "path": "candidates/노트북lm-frame-129.00.png",
+      "timestamp": 121
+    },
+    {
+      "index": 123,
+      "path": "candidates/노트북lm-frame-13.00.png",
+      "timestamp": 122
+    },
+    {
+      "index": 124,
+      "path": "candidates/노트북lm-frame-131.00.png",
+      "timestamp": 123
+    },
+    {
+      "index": 125,
+      "path": "candidates/노트북lm-frame-133.00.png",
+      "timestamp": 124
+    },
+    {
+      "index": 126,
+      "path": "candidates/노트북lm-frame-135.00.png",
+      "timestamp": 125
+    },
+    {
+      "index": 127,
+      "path": "candidates/노트북lm-frame-137.00.png",
+      "timestamp": 126
+    },
+    {
+      "index": 128,
+      "path": "candidates/노트북lm-frame-139.00.png",
+      "timestamp": 127
+    },
+    {
+      "index": 129,
+      "path": "candidates/노트북lm-frame-141.00.png",
+      "timestamp": 128
+    },
+    {
+      "index": 130,
+      "path": "candidates/노트북lm-frame-143.00.png",
+      "timestamp": 129
+    },
+    {
+      "index": 131,
+      "path": "candidates/노트북lm-frame-145.00.png",
+      "timestamp": 130
+    },
+    {
+      "index": 132,
+      "path": "candidates/노트북lm-frame-147.00.png",
+      "timestamp": 131
+    },
+    {
+      "index": 133,
+      "path": "candidates/노트북lm-frame-149.00.png",
+      "timestamp": 132
+    },
+    {
+      "index": 134,
+      "path": "candidates/노트북lm-frame-15.00.png",
+      "timestamp": 133
+    },
+    {
+      "index": 135,
+      "path": "candidates/노트북lm-frame-151.00.png",
+      "timestamp": 134
+    },
+    {
+      "index": 136,
+      "path": "candidates/노트북lm-frame-153.00.png",
+      "timestamp": 135
+    },
+    {
+      "index": 137,
+      "path": "candidates/노트북lm-frame-155.00.png",
+      "timestamp": 136
+    },
+    {
+      "index": 138,
+      "path": "candidates/노트북lm-frame-157.00.png",
+      "timestamp": 137
+    },
+    {
+      "index": 139,
+      "path": "candidates/노트북lm-frame-159.00.png",
+      "timestamp": 138
+    },
+    {
+      "index": 140,
+      "path": "candidates/노트북lm-frame-161.00.png",
+      "timestamp": 139
+    },
+    {
+      "index": 141,
+      "path": "candidates/노트북lm-frame-163.00.png",
+      "timestamp": 140
+    },
+    {
+      "index": 142,
+      "path": "candidates/노트북lm-frame-165.00.png",
+      "timestamp": 141
+    },
+    {
+      "index": 143,
+      "path": "candidates/노트북lm-frame-167.00.png",
+      "timestamp": 142
+    },
+    {
+      "index": 144,
+      "path": "candidates/노트북lm-frame-169.00.png",
+      "timestamp": 143
+    },
+    {
+      "index": 145,
+      "path": "candidates/노트북lm-frame-17.00.png",
+      "timestamp": 144
+    },
+    {
+      "index": 146,
+      "path": "candidates/노트북lm-frame-171.00.png",
+      "timestamp": 145
+    },
+    {
+      "index": 147,
+      "path": "candidates/노트북lm-frame-173.00.png",
+      "timestamp": 146
+    },
+    {
+      "index": 148,
+      "path": "candidates/노트북lm-frame-175.00.png",
+      "timestamp": 147
+    },
+    {
+      "index": 149,
+      "path": "candidates/노트북lm-frame-177.00.png",
+      "timestamp": 148
+    },
+    {
+      "index": 150,
+      "path": "candidates/노트북lm-frame-179.00.png",
+      "timestamp": 149
+    },
+    {
+      "index": 151,
+      "path": "candidates/노트북lm-frame-181.00.png",
+      "timestamp": 150
+    },
+    {
+      "index": 152,
+      "path": "candidates/노트북lm-frame-183.00.png",
+      "timestamp": 151
+    },
+    {
+      "index": 153,
+      "path": "candidates/노트북lm-frame-185.00.png",
+      "timestamp": 152
+    },
+    {
+      "index": 154,
+      "path": "candidates/노트북lm-frame-187.00.png",
+      "timestamp": 153
+    },
+    {
+      "index": 155,
+      "path": "candidates/노트북lm-frame-189.00.png",
+      "timestamp": 154
+    },
+    {
+      "index": 156,
+      "path": "candidates/노트북lm-frame-19.00.png",
+      "timestamp": 155
+    },
+    {
+      "index": 157,
+      "path": "candidates/노트북lm-frame-191.00.png",
+      "timestamp": 156
+    },
+    {
+      "index": 158,
+      "path": "candidates/노트북lm-frame-193.00.png",
+      "timestamp": 157
+    },
+    {
+      "index": 159,
+      "path": "candidates/노트북lm-frame-195.00.png",
+      "timestamp": 158
+    },
+    {
+      "index": 160,
+      "path": "candidates/노트북lm-frame-197.00.png",
+      "timestamp": 159
+    },
+    {
+      "index": 161,
+      "path": "candidates/노트북lm-frame-199.00.png",
+      "timestamp": 160
+    },
+    {
+      "index": 162,
+      "path": "candidates/노트북lm-frame-201.00.png",
+      "timestamp": 161
+    },
+    {
+      "index": 163,
+      "path": "candidates/노트북lm-frame-203.00.png",
+      "timestamp": 162
+    },
+    {
+      "index": 164,
+      "path": "candidates/노트북lm-frame-205.00.png",
+      "timestamp": 163
+    },
+    {
+      "index": 165,
+      "path": "candidates/노트북lm-frame-207.00.png",
+      "timestamp": 164
+    },
+    {
+      "index": 166,
+      "path": "candidates/노트북lm-frame-209.00.png",
+      "timestamp": 165
+    },
+    {
+      "index": 167,
+      "path": "candidates/노트북lm-frame-21.00.png",
+      "timestamp": 166
+    },
+    {
+      "index": 168,
+      "path": "candidates/노트북lm-frame-211.00.png",
+      "timestamp": 167
+    },
+    {
+      "index": 169,
+      "path": "candidates/노트북lm-frame-23.00.png",
+      "timestamp": 168
+    },
+    {
+      "index": 170,
+      "path": "candidates/노트북lm-frame-25.00.png",
+      "timestamp": 169
+    },
+    {
+      "index": 171,
+      "path": "candidates/노트북lm-frame-27.00.png",
+      "timestamp": 170
+    },
+    {
+      "index": 172,
+      "path": "candidates/노트북lm-frame-29.00.png",
+      "timestamp": 171
+    },
+    {
+      "index": 173,
+      "path": "candidates/노트북lm-frame-3.00.png",
+      "timestamp": 172
+    },
+    {
+      "index": 174,
+      "path": "candidates/노트북lm-frame-31.00.png",
+      "timestamp": 173
+    },
+    {
+      "index": 175,
+      "path": "candidates/노트북lm-frame-33.00.png",
+      "timestamp": 174
+    },
+    {
+      "index": 176,
+      "path": "candidates/노트북lm-frame-35.00.png",
+      "timestamp": 175
+    },
+    {
+      "index": 177,
+      "path": "candidates/노트북lm-frame-37.00.png",
+      "timestamp": 176
+    },
+    {
+      "index": 178,
+      "path": "candidates/노트북lm-frame-39.00.png",
+      "timestamp": 177
+    },
+    {
+      "index": 179,
+      "path": "candidates/노트북lm-frame-41.00.png",
+      "timestamp": 178
+    },
+    {
+      "index": 180,
+      "path": "candidates/노트북lm-frame-43.00.png",
+      "timestamp": 179
+    },
+    {
+      "index": 181,
+      "path": "candidates/노트북lm-frame-45.00.png",
+      "timestamp": 180
+    },
+    {
+      "index": 182,
+      "path": "candidates/노트북lm-frame-47.00.png",
+      "timestamp": 181
+    },
+    {
+      "index": 183,
+      "path": "candidates/노트북lm-frame-49.00.png",
+      "timestamp": 182
+    },
+    {
+      "index": 184,
+      "path": "candidates/노트북lm-frame-5.00.png",
+      "timestamp": 183
+    },
+    {
+      "index": 185,
+      "path": "candidates/노트북lm-frame-51.00.png",
+      "timestamp": 184
+    },
+    {
+      "index": 186,
+      "path": "candidates/노트북lm-frame-53.00.png",
+      "timestamp": 185
+    },
+    {
+      "index": 187,
+      "path": "candidates/노트북lm-frame-55.00.png",
+      "timestamp": 186
+    },
+    {
+      "index": 188,
+      "path": "candidates/노트북lm-frame-57.00.png",
+      "timestamp": 187
+    },
+    {
+      "index": 189,
+      "path": "candidates/노트북lm-frame-59.00.png",
+      "timestamp": 188
+    },
+    {
+      "index": 190,
+      "path": "candidates/노트북lm-frame-61.00.png",
+      "timestamp": 189
+    },
+    {
+      "index": 191,
+      "path": "candidates/노트북lm-frame-63.00.png",
+      "timestamp": 190
+    },
+    {
+      "index": 192,
+      "path": "candidates/노트북lm-frame-65.00.png",
+      "timestamp": 191
+    },
+    {
+      "index": 193,
+      "path": "candidates/노트북lm-frame-67.00.png",
+      "timestamp": 192
+    },
+    {
+      "index": 194,
+      "path": "candidates/노트북lm-frame-69.00.png",
+      "timestamp": 193
+    },
+    {
+      "index": 195,
+      "path": "candidates/노트북lm-frame-7.00.png",
+      "timestamp": 194
+    },
+    {
+      "index": 196,
+      "path": "candidates/노트북lm-frame-71.00.png",
+      "timestamp": 195
+    },
+    {
+      "index": 197,
+      "path": "candidates/노트북lm-frame-73.00.png",
+      "timestamp": 196
+    },
+    {
+      "index": 198,
+      "path": "candidates/노트북lm-frame-75.00.png",
+      "timestamp": 197
+    },
+    {
+      "index": 199,
+      "path": "candidates/노트북lm-frame-77.00.png",
+      "timestamp": 198
+    },
+    {
+      "index": 200,
+      "path": "candidates/노트북lm-frame-79.00.png",
+      "timestamp": 199
+    },
+    {
+      "index": 201,
+      "path": "candidates/노트북lm-frame-81.00.png",
+      "timestamp": 200
+    },
+    {
+      "index": 202,
+      "path": "candidates/노트북lm-frame-83.00.png",
+      "timestamp": 201
+    },
+    {
+      "index": 203,
+      "path": "candidates/노트북lm-frame-85.00.png",
+      "timestamp": 202
+    },
+    {
+      "index": 204,
+      "path": "candidates/노트북lm-frame-87.00.png",
+      "timestamp": 203
+    },
+    {
+      "index": 205,
+      "path": "candidates/노트북lm-frame-89.00.png",
+      "timestamp": 204
+    },
+    {
+      "index": 206,
+      "path": "candidates/노트북lm-frame-9.00.png",
+      "timestamp": 205
+    },
+    {
+      "index": 207,
+      "path": "candidates/노트북lm-frame-91.00.png",
+      "timestamp": 206
+    },
+    {
+      "index": 208,
+      "path": "candidates/노트북lm-frame-93.00.png",
+      "timestamp": 207
+    },
+    {
+      "index": 209,
+      "path": "candidates/노트북lm-frame-95.00.png",
+      "timestamp": 208
+    },
+    {
+      "index": 210,
+      "path": "candidates/노트북lm-frame-97.00.png",
+      "timestamp": 209
+    },
+    {
+      "index": 211,
+      "path": "candidates/노트북lm-frame-99.00.png",
+      "timestamp": 210
+    },
+    {
+      "index": 212,
+      "path": "candidates/다글로-frame-1.00.png",
+      "timestamp": 211
+    },
+    {
+      "index": 213,
+      "path": "candidates/다글로-frame-101.00.png",
+      "timestamp": 212
+    },
+    {
+      "index": 214,
+      "path": "candidates/다글로-frame-103.00.png",
+      "timestamp": 213
+    },
+    {
+      "index": 215,
+      "path": "candidates/다글로-frame-105.00.png",
+      "timestamp": 214
+    },
+    {
+      "index": 216,
+      "path": "candidates/다글로-frame-107.00.png",
+      "timestamp": 215
+    },
+    {
+      "index": 217,
+      "path": "candidates/다글로-frame-109.00.png",
+      "timestamp": 216
+    },
+    {
+      "index": 218,
+      "path": "candidates/다글로-frame-11.00.png",
+      "timestamp": 217
+    },
+    {
+      "index": 219,
+      "path": "candidates/다글로-frame-111.00.png",
+      "timestamp": 218
+    },
+    {
+      "index": 220,
+      "path": "candidates/다글로-frame-113.00.png",
+      "timestamp": 219
+    },
+    {
+      "index": 221,
+      "path": "candidates/다글로-frame-115.00.png",
+      "timestamp": 220
+    },
+    {
+      "index": 222,
+      "path": "candidates/다글로-frame-117.00.png",
+      "timestamp": 221
+    },
+    {
+      "index": 223,
+      "path": "candidates/다글로-frame-119.00.png",
+      "timestamp": 222
+    },
+    {
+      "index": 224,
+      "path": "candidates/다글로-frame-121.00.png",
+      "timestamp": 223
+    },
+    {
+      "index": 225,
+      "path": "candidates/다글로-frame-123.00.png",
+      "timestamp": 224
+    },
+    {
+      "index": 226,
+      "path": "candidates/다글로-frame-125.00.png",
+      "timestamp": 225
+    },
+    {
+      "index": 227,
+      "path": "candidates/다글로-frame-127.00.png",
+      "timestamp": 226
+    },
+    {
+      "index": 228,
+      "path": "candidates/다글로-frame-129.00.png",
+      "timestamp": 227
+    },
+    {
+      "index": 229,
+      "path": "candidates/다글로-frame-13.00.png",
+      "timestamp": 228
+    },
+    {
+      "index": 230,
+      "path": "candidates/다글로-frame-131.00.png",
+      "timestamp": 229
+    },
+    {
+      "index": 231,
+      "path": "candidates/다글로-frame-133.00.png",
+      "timestamp": 230
+    },
+    {
+      "index": 232,
+      "path": "candidates/다글로-frame-135.00.png",
+      "timestamp": 231
+    },
+    {
+      "index": 233,
+      "path": "candidates/다글로-frame-137.00.png",
+      "timestamp": 232
+    },
+    {
+      "index": 234,
+      "path": "candidates/다글로-frame-139.00.png",
+      "timestamp": 233
+    },
+    {
+      "index": 235,
+      "path": "candidates/다글로-frame-141.00.png",
+      "timestamp": 234
+    },
+    {
+      "index": 236,
+      "path": "candidates/다글로-frame-143.00.png",
+      "timestamp": 235
+    },
+    {
+      "index": 237,
+      "path": "candidates/다글로-frame-145.00.png",
+      "timestamp": 236
+    },
+    {
+      "index": 238,
+      "path": "candidates/다글로-frame-147.00.png",
+      "timestamp": 237
+    },
+    {
+      "index": 239,
+      "path": "candidates/다글로-frame-149.00.png",
+      "timestamp": 238
+    },
+    {
+      "index": 240,
+      "path": "candidates/다글로-frame-15.00.png",
+      "timestamp": 239
+    },
+    {
+      "index": 241,
+      "path": "candidates/다글로-frame-151.00.png",
+      "timestamp": 240
+    },
+    {
+      "index": 242,
+      "path": "candidates/다글로-frame-153.00.png",
+      "timestamp": 241
+    },
+    {
+      "index": 243,
+      "path": "candidates/다글로-frame-155.00.png",
+      "timestamp": 242
+    },
+    {
+      "index": 244,
+      "path": "candidates/다글로-frame-157.00.png",
+      "timestamp": 243
+    },
+    {
+      "index": 245,
+      "path": "candidates/다글로-frame-159.00.png",
+      "timestamp": 244
+    },
+    {
+      "index": 246,
+      "path": "candidates/다글로-frame-161.00.png",
+      "timestamp": 245
+    },
+    {
+      "index": 247,
+      "path": "candidates/다글로-frame-163.00.png",
+      "timestamp": 246
+    },
+    {
+      "index": 248,
+      "path": "candidates/다글로-frame-165.00.png",
+      "timestamp": 247
+    },
+    {
+      "index": 249,
+      "path": "candidates/다글로-frame-167.00.png",
+      "timestamp": 248
+    },
+    {
+      "index": 250,
+      "path": "candidates/다글로-frame-169.00.png",
+      "timestamp": 249
+    },
+    {
+      "index": 251,
+      "path": "candidates/다글로-frame-17.00.png",
+      "timestamp": 250
+    },
+    {
+      "index": 252,
+      "path": "candidates/다글로-frame-171.00.png",
+      "timestamp": 251
+    },
+    {
+      "index": 253,
+      "path": "candidates/다글로-frame-173.00.png",
+      "timestamp": 252
+    },
+    {
+      "index": 254,
+      "path": "candidates/다글로-frame-175.00.png",
+      "timestamp": 253
+    },
+    {
+      "index": 255,
+      "path": "candidates/다글로-frame-177.00.png",
+      "timestamp": 254
+    },
+    {
+      "index": 256,
+      "path": "candidates/다글로-frame-179.00.png",
+      "timestamp": 255
+    },
+    {
+      "index": 257,
+      "path": "candidates/다글로-frame-181.00.png",
+      "timestamp": 256
+    },
+    {
+      "index": 258,
+      "path": "candidates/다글로-frame-183.00.png",
+      "timestamp": 257
+    },
+    {
+      "index": 259,
+      "path": "candidates/다글로-frame-185.00.png",
+      "timestamp": 258
+    },
+    {
+      "index": 260,
+      "path": "candidates/다글로-frame-187.00.png",
+      "timestamp": 259
+    },
+    {
+      "index": 261,
+      "path": "candidates/다글로-frame-189.00.png",
+      "timestamp": 260
+    },
+    {
+      "index": 262,
+      "path": "candidates/다글로-frame-19.00.png",
+      "timestamp": 261
+    },
+    {
+      "index": 263,
+      "path": "candidates/다글로-frame-191.00.png",
+      "timestamp": 262
+    },
+    {
+      "index": 264,
+      "path": "candidates/다글로-frame-193.00.png",
+      "timestamp": 263
+    },
+    {
+      "index": 265,
+      "path": "candidates/다글로-frame-195.00.png",
+      "timestamp": 264
+    },
+    {
+      "index": 266,
+      "path": "candidates/다글로-frame-197.00.png",
+      "timestamp": 265
+    },
+    {
+      "index": 267,
+      "path": "candidates/다글로-frame-199.00.png",
+      "timestamp": 266
+    },
+    {
+      "index": 268,
+      "path": "candidates/다글로-frame-201.00.png",
+      "timestamp": 267
+    },
+    {
+      "index": 269,
+      "path": "candidates/다글로-frame-203.00.png",
+      "timestamp": 268
+    },
+    {
+      "index": 270,
+      "path": "candidates/다글로-frame-205.00.png",
+      "timestamp": 269
+    },
+    {
+      "index": 271,
+      "path": "candidates/다글로-frame-207.00.png",
+      "timestamp": 270
+    },
+    {
+      "index": 272,
+      "path": "candidates/다글로-frame-209.00.png",
+      "timestamp": 271
+    },
+    {
+      "index": 273,
+      "path": "candidates/다글로-frame-21.00.png",
+      "timestamp": 272
+    },
+    {
+      "index": 274,
+      "path": "candidates/다글로-frame-211.00.png",
+      "timestamp": 273
+    },
+    {
+      "index": 275,
+      "path": "candidates/다글로-frame-213.00.png",
+      "timestamp": 274
+    },
+    {
+      "index": 276,
+      "path": "candidates/다글로-frame-215.00.png",
+      "timestamp": 275
+    },
+    {
+      "index": 277,
+      "path": "candidates/다글로-frame-217.00.png",
+      "timestamp": 276
+    },
+    {
+      "index": 278,
+      "path": "candidates/다글로-frame-219.00.png",
+      "timestamp": 277
+    },
+    {
+      "index": 279,
+      "path": "candidates/다글로-frame-221.00.png",
+      "timestamp": 278
+    },
+    {
+      "index": 280,
+      "path": "candidates/다글로-frame-223.00.png",
+      "timestamp": 279
+    },
+    {
+      "index": 281,
+      "path": "candidates/다글로-frame-225.00.png",
+      "timestamp": 280
+    },
+    {
+      "index": 282,
+      "path": "candidates/다글로-frame-227.00.png",
+      "timestamp": 281
+    },
+    {
+      "index": 283,
+      "path": "candidates/다글로-frame-229.00.png",
+      "timestamp": 282
+    },
+    {
+      "index": 284,
+      "path": "candidates/다글로-frame-23.00.png",
+      "timestamp": 283
+    },
+    {
+      "index": 285,
+      "path": "candidates/다글로-frame-231.00.png",
+      "timestamp": 284
+    },
+    {
+      "index": 286,
+      "path": "candidates/다글로-frame-233.00.png",
+      "timestamp": 285
+    },
+    {
+      "index": 287,
+      "path": "candidates/다글로-frame-235.00.png",
+      "timestamp": 286
+    },
+    {
+      "index": 288,
+      "path": "candidates/다글로-frame-237.00.png",
+      "timestamp": 287
+    },
+    {
+      "index": 289,
+      "path": "candidates/다글로-frame-239.00.png",
+      "timestamp": 288
+    },
+    {
+      "index": 290,
+      "path": "candidates/다글로-frame-241.00.png",
+      "timestamp": 289
+    },
+    {
+      "index": 291,
+      "path": "candidates/다글로-frame-243.00.png",
+      "timestamp": 290
+    },
+    {
+      "index": 292,
+      "path": "candidates/다글로-frame-245.00.png",
+      "timestamp": 291
+    },
+    {
+      "index": 293,
+      "path": "candidates/다글로-frame-247.00.png",
+      "timestamp": 292
+    },
+    {
+      "index": 294,
+      "path": "candidates/다글로-frame-249.00.png",
+      "timestamp": 293
+    },
+    {
+      "index": 295,
+      "path": "candidates/다글로-frame-25.00.png",
+      "timestamp": 294
+    },
+    {
+      "index": 296,
+      "path": "candidates/다글로-frame-251.00.png",
+      "timestamp": 295
+    },
+    {
+      "index": 297,
+      "path": "candidates/다글로-frame-253.00.png",
+      "timestamp": 296
+    },
+    {
+      "index": 298,
+      "path": "candidates/다글로-frame-255.00.png",
+      "timestamp": 297
+    },
+    {
+      "index": 299,
+      "path": "candidates/다글로-frame-257.00.png",
+      "timestamp": 298
+    },
+    {
+      "index": 300,
+      "path": "candidates/다글로-frame-259.00.png",
+      "timestamp": 299
+    },
+    {
+      "index": 301,
+      "path": "candidates/다글로-frame-261.00.png",
+      "timestamp": 300
+    },
+    {
+      "index": 302,
+      "path": "candidates/다글로-frame-263.00.png",
+      "timestamp": 301
+    },
+    {
+      "index": 303,
+      "path": "candidates/다글로-frame-265.00.png",
+      "timestamp": 302
+    },
+    {
+      "index": 304,
+      "path": "candidates/다글로-frame-267.00.png",
+      "timestamp": 303
+    },
+    {
+      "index": 305,
+      "path": "candidates/다글로-frame-269.00.png",
+      "timestamp": 304
+    },
+    {
+      "index": 306,
+      "path": "candidates/다글로-frame-27.00.png",
+      "timestamp": 305
+    },
+    {
+      "index": 307,
+      "path": "candidates/다글로-frame-271.00.png",
+      "timestamp": 306
+    },
+    {
+      "index": 308,
+      "path": "candidates/다글로-frame-273.00.png",
+      "timestamp": 307
+    },
+    {
+      "index": 309,
+      "path": "candidates/다글로-frame-275.00.png",
+      "timestamp": 308
+    },
+    {
+      "index": 310,
+      "path": "candidates/다글로-frame-277.00.png",
+      "timestamp": 309
+    },
+    {
+      "index": 311,
+      "path": "candidates/다글로-frame-279.00.png",
+      "timestamp": 310
+    },
+    {
+      "index": 312,
+      "path": "candidates/다글로-frame-281.00.png",
+      "timestamp": 311
+    },
+    {
+      "index": 313,
+      "path": "candidates/다글로-frame-283.00.png",
+      "timestamp": 312
+    },
+    {
+      "index": 314,
+      "path": "candidates/다글로-frame-285.00.png",
+      "timestamp": 313
+    },
+    {
+      "index": 315,
+      "path": "candidates/다글로-frame-287.00.png",
+      "timestamp": 314
+    },
+    {
+      "index": 316,
+      "path": "candidates/다글로-frame-289.00.png",
+      "timestamp": 315
+    },
+    {
+      "index": 317,
+      "path": "candidates/다글로-frame-29.00.png",
+      "timestamp": 316
+    },
+    {
+      "index": 318,
+      "path": "candidates/다글로-frame-291.00.png",
+      "timestamp": 317
+    },
+    {
+      "index": 319,
+      "path": "candidates/다글로-frame-293.00.png",
+      "timestamp": 318
+    },
+    {
+      "index": 320,
+      "path": "candidates/다글로-frame-295.00.png",
+      "timestamp": 319
+    },
+    {
+      "index": 321,
+      "path": "candidates/다글로-frame-297.00.png",
+      "timestamp": 320
+    },
+    {
+      "index": 322,
+      "path": "candidates/다글로-frame-299.00.png",
+      "timestamp": 321
+    },
+    {
+      "index": 323,
+      "path": "candidates/다글로-frame-3.00.png",
+      "timestamp": 322
+    },
+    {
+      "index": 324,
+      "path": "candidates/다글로-frame-301.00.png",
+      "timestamp": 323
+    },
+    {
+      "index": 325,
+      "path": "candidates/다글로-frame-303.00.png",
+      "timestamp": 324
+    },
+    {
+      "index": 326,
+      "path": "candidates/다글로-frame-305.00.png",
+      "timestamp": 325
+    },
+    {
+      "index": 327,
+      "path": "candidates/다글로-frame-307.00.png",
+      "timestamp": 326
+    },
+    {
+      "index": 328,
+      "path": "candidates/다글로-frame-309.00.png",
+      "timestamp": 327
+    },
+    {
+      "index": 329,
+      "path": "candidates/다글로-frame-31.00.png",
+      "timestamp": 328
+    },
+    {
+      "index": 330,
+      "path": "candidates/다글로-frame-311.00.png",
+      "timestamp": 329
+    },
+    {
+      "index": 331,
+      "path": "candidates/다글로-frame-313.00.png",
+      "timestamp": 330
+    },
+    {
+      "index": 332,
+      "path": "candidates/다글로-frame-315.00.png",
+      "timestamp": 331
+    },
+    {
+      "index": 333,
+      "path": "candidates/다글로-frame-317.00.png",
+      "timestamp": 332
+    },
+    {
+      "index": 334,
+      "path": "candidates/다글로-frame-319.00.png",
+      "timestamp": 333
+    },
+    {
+      "index": 335,
+      "path": "candidates/다글로-frame-321.00.png",
+      "timestamp": 334
+    },
+    {
+      "index": 336,
+      "path": "candidates/다글로-frame-323.00.png",
+      "timestamp": 335
+    },
+    {
+      "index": 337,
+      "path": "candidates/다글로-frame-325.00.png",
+      "timestamp": 336
+    },
+    {
+      "index": 338,
+      "path": "candidates/다글로-frame-327.00.png",
+      "timestamp": 337
+    },
+    {
+      "index": 339,
+      "path": "candidates/다글로-frame-329.00.png",
+      "timestamp": 338
+    },
+    {
+      "index": 340,
+      "path": "candidates/다글로-frame-33.00.png",
+      "timestamp": 339
+    },
+    {
+      "index": 341,
+      "path": "candidates/다글로-frame-331.00.png",
+      "timestamp": 340
+    },
+    {
+      "index": 342,
+      "path": "candidates/다글로-frame-333.00.png",
+      "timestamp": 341
+    },
+    {
+      "index": 343,
+      "path": "candidates/다글로-frame-335.00.png",
+      "timestamp": 342
+    },
+    {
+      "index": 344,
+      "path": "candidates/다글로-frame-337.00.png",
+      "timestamp": 343
+    },
+    {
+      "index": 345,
+      "path": "candidates/다글로-frame-339.00.png",
+      "timestamp": 344
+    },
+    {
+      "index": 346,
+      "path": "candidates/다글로-frame-341.00.png",
+      "timestamp": 345
+    },
+    {
+      "index": 347,
+      "path": "candidates/다글로-frame-343.00.png",
+      "timestamp": 346
+    },
+    {
+      "index": 348,
+      "path": "candidates/다글로-frame-345.00.png",
+      "timestamp": 347
+    },
+    {
+      "index": 349,
+      "path": "candidates/다글로-frame-347.00.png",
+      "timestamp": 348
+    },
+    {
+      "index": 350,
+      "path": "candidates/다글로-frame-349.00.png",
+      "timestamp": 349
+    },
+    {
+      "index": 351,
+      "path": "candidates/다글로-frame-35.00.png",
+      "timestamp": 350
+    },
+    {
+      "index": 352,
+      "path": "candidates/다글로-frame-351.00.png",
+      "timestamp": 351
+    },
+    {
+      "index": 353,
+      "path": "candidates/다글로-frame-353.00.png",
+      "timestamp": 352
+    },
+    {
+      "index": 354,
+      "path": "candidates/다글로-frame-355.00.png",
+      "timestamp": 353
+    },
+    {
+      "index": 355,
+      "path": "candidates/다글로-frame-357.00.png",
+      "timestamp": 354
+    },
+    {
+      "index": 356,
+      "path": "candidates/다글로-frame-359.00.png",
+      "timestamp": 355
+    },
+    {
+      "index": 357,
+      "path": "candidates/다글로-frame-361.00.png",
+      "timestamp": 356
+    },
+    {
+      "index": 358,
+      "path": "candidates/다글로-frame-363.00.png",
+      "timestamp": 357
+    },
+    {
+      "index": 359,
+      "path": "candidates/다글로-frame-365.00.png",
+      "timestamp": 358
+    },
+    {
+      "index": 360,
+      "path": "candidates/다글로-frame-367.00.png",
+      "timestamp": 359
+    },
+    {
+      "index": 361,
+      "path": "candidates/다글로-frame-369.00.png",
+      "timestamp": 360
+    },
+    {
+      "index": 362,
+      "path": "candidates/다글로-frame-37.00.png",
+      "timestamp": 361
+    },
+    {
+      "index": 363,
+      "path": "candidates/다글로-frame-371.00.png",
+      "timestamp": 362
+    },
+    {
+      "index": 364,
+      "path": "candidates/다글로-frame-373.00.png",
+      "timestamp": 363
+    },
+    {
+      "index": 365,
+      "path": "candidates/다글로-frame-375.00.png",
+      "timestamp": 364
+    },
+    {
+      "index": 366,
+      "path": "candidates/다글로-frame-377.00.png",
+      "timestamp": 365
+    },
+    {
+      "index": 367,
+      "path": "candidates/다글로-frame-379.00.png",
+      "timestamp": 366
+    },
+    {
+      "index": 368,
+      "path": "candidates/다글로-frame-381.00.png",
+      "timestamp": 367
+    },
+    {
+      "index": 369,
+      "path": "candidates/다글로-frame-383.00.png",
+      "timestamp": 368
+    },
+    {
+      "index": 370,
+      "path": "candidates/다글로-frame-385.00.png",
+      "timestamp": 369
+    },
+    {
+      "index": 371,
+      "path": "candidates/다글로-frame-387.00.png",
+      "timestamp": 370
+    },
+    {
+      "index": 372,
+      "path": "candidates/다글로-frame-389.00.png",
+      "timestamp": 371
+    },
+    {
+      "index": 373,
+      "path": "candidates/다글로-frame-39.00.png",
+      "timestamp": 372
+    },
+    {
+      "index": 374,
+      "path": "candidates/다글로-frame-391.00.png",
+      "timestamp": 373
+    },
+    {
+      "index": 375,
+      "path": "candidates/다글로-frame-393.00.png",
+      "timestamp": 374
+    },
+    {
+      "index": 376,
+      "path": "candidates/다글로-frame-395.00.png",
+      "timestamp": 375
+    },
+    {
+      "index": 377,
+      "path": "candidates/다글로-frame-397.00.png",
+      "timestamp": 376
+    },
+    {
+      "index": 378,
+      "path": "candidates/다글로-frame-399.00.png",
+      "timestamp": 377
+    },
+    {
+      "index": 379,
+      "path": "candidates/다글로-frame-401.00.png",
+      "timestamp": 378
+    },
+    {
+      "index": 380,
+      "path": "candidates/다글로-frame-403.00.png",
+      "timestamp": 379
+    },
+    {
+      "index": 381,
+      "path": "candidates/다글로-frame-405.00.png",
+      "timestamp": 380
+    },
+    {
+      "index": 382,
+      "path": "candidates/다글로-frame-407.00.png",
+      "timestamp": 381
+    },
+    {
+      "index": 383,
+      "path": "candidates/다글로-frame-409.00.png",
+      "timestamp": 382
+    },
+    {
+      "index": 384,
+      "path": "candidates/다글로-frame-41.00.png",
+      "timestamp": 383
+    },
+    {
+      "index": 385,
+      "path": "candidates/다글로-frame-411.00.png",
+      "timestamp": 384
+    },
+    {
+      "index": 386,
+      "path": "candidates/다글로-frame-413.00.png",
+      "timestamp": 385
+    },
+    {
+      "index": 387,
+      "path": "candidates/다글로-frame-415.00.png",
+      "timestamp": 386
+    },
+    {
+      "index": 388,
+      "path": "candidates/다글로-frame-417.00.png",
+      "timestamp": 387
+    },
+    {
+      "index": 389,
+      "path": "candidates/다글로-frame-419.00.png",
+      "timestamp": 388
+    },
+    {
+      "index": 390,
+      "path": "candidates/다글로-frame-421.00.png",
+      "timestamp": 389
+    },
+    {
+      "index": 391,
+      "path": "candidates/다글로-frame-423.00.png",
+      "timestamp": 390
+    },
+    {
+      "index": 392,
+      "path": "candidates/다글로-frame-425.00.png",
+      "timestamp": 391
+    },
+    {
+      "index": 393,
+      "path": "candidates/다글로-frame-427.00.png",
+      "timestamp": 392
+    },
+    {
+      "index": 394,
+      "path": "candidates/다글로-frame-429.00.png",
+      "timestamp": 393
+    },
+    {
+      "index": 395,
+      "path": "candidates/다글로-frame-43.00.png",
+      "timestamp": 394
+    },
+    {
+      "index": 396,
+      "path": "candidates/다글로-frame-431.00.png",
+      "timestamp": 395
+    },
+    {
+      "index": 397,
+      "path": "candidates/다글로-frame-433.00.png",
+      "timestamp": 396
+    },
+    {
+      "index": 398,
+      "path": "candidates/다글로-frame-435.00.png",
+      "timestamp": 397
+    },
+    {
+      "index": 399,
+      "path": "candidates/다글로-frame-437.00.png",
+      "timestamp": 398
+    },
+    {
+      "index": 400,
+      "path": "candidates/다글로-frame-439.00.png",
+      "timestamp": 399
+    },
+    {
+      "index": 401,
+      "path": "candidates/다글로-frame-441.00.png",
+      "timestamp": 400
+    },
+    {
+      "index": 402,
+      "path": "candidates/다글로-frame-443.00.png",
+      "timestamp": 401
+    },
+    {
+      "index": 403,
+      "path": "candidates/다글로-frame-445.00.png",
+      "timestamp": 402
+    },
+    {
+      "index": 404,
+      "path": "candidates/다글로-frame-447.00.png",
+      "timestamp": 403
+    },
+    {
+      "index": 405,
+      "path": "candidates/다글로-frame-449.00.png",
+      "timestamp": 404
+    },
+    {
+      "index": 406,
+      "path": "candidates/다글로-frame-45.00.png",
+      "timestamp": 405
+    },
+    {
+      "index": 407,
+      "path": "candidates/다글로-frame-451.00.png",
+      "timestamp": 406
+    },
+    {
+      "index": 408,
+      "path": "candidates/다글로-frame-453.00.png",
+      "timestamp": 407
+    },
+    {
+      "index": 409,
+      "path": "candidates/다글로-frame-455.00.png",
+      "timestamp": 408
+    },
+    {
+      "index": 410,
+      "path": "candidates/다글로-frame-457.00.png",
+      "timestamp": 409
+    },
+    {
+      "index": 411,
+      "path": "candidates/다글로-frame-459.00.png",
+      "timestamp": 410
+    },
+    {
+      "index": 412,
+      "path": "candidates/다글로-frame-461.00.png",
+      "timestamp": 411
+    },
+    {
+      "index": 413,
+      "path": "candidates/다글로-frame-463.00.png",
+      "timestamp": 412
+    },
+    {
+      "index": 414,
+      "path": "candidates/다글로-frame-465.00.png",
+      "timestamp": 413
+    },
+    {
+      "index": 415,
+      "path": "candidates/다글로-frame-467.00.png",
+      "timestamp": 414
+    },
+    {
+      "index": 416,
+      "path": "candidates/다글로-frame-469.00.png",
+      "timestamp": 415
+    },
+    {
+      "index": 417,
+      "path": "candidates/다글로-frame-47.00.png",
+      "timestamp": 416
+    },
+    {
+      "index": 418,
+      "path": "candidates/다글로-frame-471.00.png",
+      "timestamp": 417
+    },
+    {
+      "index": 419,
+      "path": "candidates/다글로-frame-473.00.png",
+      "timestamp": 418
+    },
+    {
+      "index": 420,
+      "path": "candidates/다글로-frame-475.00.png",
+      "timestamp": 419
+    },
+    {
+      "index": 421,
+      "path": "candidates/다글로-frame-477.00.png",
+      "timestamp": 420
+    },
+    {
+      "index": 422,
+      "path": "candidates/다글로-frame-479.00.png",
+      "timestamp": 421
+    },
+    {
+      "index": 423,
+      "path": "candidates/다글로-frame-481.00.png",
+      "timestamp": 422
+    },
+    {
+      "index": 424,
+      "path": "candidates/다글로-frame-483.00.png",
+      "timestamp": 423
+    },
+    {
+      "index": 425,
+      "path": "candidates/다글로-frame-485.00.png",
+      "timestamp": 424
+    },
+    {
+      "index": 426,
+      "path": "candidates/다글로-frame-487.00.png",
+      "timestamp": 425
+    },
+    {
+      "index": 427,
+      "path": "candidates/다글로-frame-489.00.png",
+      "timestamp": 426
+    },
+    {
+      "index": 428,
+      "path": "candidates/다글로-frame-49.00.png",
+      "timestamp": 427
+    },
+    {
+      "index": 429,
+      "path": "candidates/다글로-frame-491.00.png",
+      "timestamp": 428
+    },
+    {
+      "index": 430,
+      "path": "candidates/다글로-frame-493.00.png",
+      "timestamp": 429
+    },
+    {
+      "index": 431,
+      "path": "candidates/다글로-frame-495.00.png",
+      "timestamp": 430
+    },
+    {
+      "index": 432,
+      "path": "candidates/다글로-frame-497.00.png",
+      "timestamp": 431
+    },
+    {
+      "index": 433,
+      "path": "candidates/다글로-frame-499.00.png",
+      "timestamp": 432
+    },
+    {
+      "index": 434,
+      "path": "candidates/다글로-frame-5.00.png",
+      "timestamp": 433
+    },
+    {
+      "index": 435,
+      "path": "candidates/다글로-frame-501.00.png",
+      "timestamp": 434
+    },
+    {
+      "index": 436,
+      "path": "candidates/다글로-frame-503.00.png",
+      "timestamp": 435
+    },
+    {
+      "index": 437,
+      "path": "candidates/다글로-frame-505.00.png",
+      "timestamp": 436
+    },
+    {
+      "index": 438,
+      "path": "candidates/다글로-frame-507.00.png",
+      "timestamp": 437
+    },
+    {
+      "index": 439,
+      "path": "candidates/다글로-frame-509.00.png",
+      "timestamp": 438
+    },
+    {
+      "index": 440,
+      "path": "candidates/다글로-frame-51.00.png",
+      "timestamp": 439
+    },
+    {
+      "index": 441,
+      "path": "candidates/다글로-frame-511.00.png",
+      "timestamp": 440
+    },
+    {
+      "index": 442,
+      "path": "candidates/다글로-frame-513.00.png",
+      "timestamp": 441
+    },
+    {
+      "index": 443,
+      "path": "candidates/다글로-frame-515.00.png",
+      "timestamp": 442
+    },
+    {
+      "index": 444,
+      "path": "candidates/다글로-frame-517.00.png",
+      "timestamp": 443
+    },
+    {
+      "index": 445,
+      "path": "candidates/다글로-frame-519.00.png",
+      "timestamp": 444
+    },
+    {
+      "index": 446,
+      "path": "candidates/다글로-frame-521.00.png",
+      "timestamp": 445
+    },
+    {
+      "index": 447,
+      "path": "candidates/다글로-frame-523.00.png",
+      "timestamp": 446
+    },
+    {
+      "index": 448,
+      "path": "candidates/다글로-frame-525.00.png",
+      "timestamp": 447
+    },
+    {
+      "index": 449,
+      "path": "candidates/다글로-frame-527.00.png",
+      "timestamp": 448
+    },
+    {
+      "index": 450,
+      "path": "candidates/다글로-frame-529.00.png",
+      "timestamp": 449
+    },
+    {
+      "index": 451,
+      "path": "candidates/다글로-frame-53.00.png",
+      "timestamp": 450
+    },
+    {
+      "index": 452,
+      "path": "candidates/다글로-frame-531.00.png",
+      "timestamp": 451
+    },
+    {
+      "index": 453,
+      "path": "candidates/다글로-frame-533.00.png",
+      "timestamp": 452
+    },
+    {
+      "index": 454,
+      "path": "candidates/다글로-frame-535.00.png",
+      "timestamp": 453
+    },
+    {
+      "index": 455,
+      "path": "candidates/다글로-frame-537.00.png",
+      "timestamp": 454
+    },
+    {
+      "index": 456,
+      "path": "candidates/다글로-frame-539.00.png",
+      "timestamp": 455
+    },
+    {
+      "index": 457,
+      "path": "candidates/다글로-frame-541.00.png",
+      "timestamp": 456
+    },
+    {
+      "index": 458,
+      "path": "candidates/다글로-frame-543.00.png",
+      "timestamp": 457
+    },
+    {
+      "index": 459,
+      "path": "candidates/다글로-frame-545.00.png",
+      "timestamp": 458
+    },
+    {
+      "index": 460,
+      "path": "candidates/다글로-frame-547.00.png",
+      "timestamp": 459
+    },
+    {
+      "index": 461,
+      "path": "candidates/다글로-frame-549.00.png",
+      "timestamp": 460
+    },
+    {
+      "index": 462,
+      "path": "candidates/다글로-frame-55.00.png",
+      "timestamp": 461
+    },
+    {
+      "index": 463,
+      "path": "candidates/다글로-frame-551.00.png",
+      "timestamp": 462
+    },
+    {
+      "index": 464,
+      "path": "candidates/다글로-frame-553.00.png",
+      "timestamp": 463
+    },
+    {
+      "index": 465,
+      "path": "candidates/다글로-frame-555.00.png",
+      "timestamp": 464
+    },
+    {
+      "index": 466,
+      "path": "candidates/다글로-frame-557.00.png",
+      "timestamp": 465
+    },
+    {
+      "index": 467,
+      "path": "candidates/다글로-frame-559.00.png",
+      "timestamp": 466
+    },
+    {
+      "index": 468,
+      "path": "candidates/다글로-frame-561.00.png",
+      "timestamp": 467
+    },
+    {
+      "index": 469,
+      "path": "candidates/다글로-frame-563.00.png",
+      "timestamp": 468
+    },
+    {
+      "index": 470,
+      "path": "candidates/다글로-frame-565.00.png",
+      "timestamp": 469
+    },
+    {
+      "index": 471,
+      "path": "candidates/다글로-frame-567.00.png",
+      "timestamp": 470
+    },
+    {
+      "index": 472,
+      "path": "candidates/다글로-frame-569.00.png",
+      "timestamp": 471
+    },
+    {
+      "index": 473,
+      "path": "candidates/다글로-frame-57.00.png",
+      "timestamp": 472
+    },
+    {
+      "index": 474,
+      "path": "candidates/다글로-frame-571.00.png",
+      "timestamp": 473
+    },
+    {
+      "index": 475,
+      "path": "candidates/다글로-frame-573.00.png",
+      "timestamp": 474
+    },
+    {
+      "index": 476,
+      "path": "candidates/다글로-frame-575.00.png",
+      "timestamp": 475
+    },
+    {
+      "index": 477,
+      "path": "candidates/다글로-frame-577.00.png",
+      "timestamp": 476
+    },
+    {
+      "index": 478,
+      "path": "candidates/다글로-frame-579.00.png",
+      "timestamp": 477
+    },
+    {
+      "index": 479,
+      "path": "candidates/다글로-frame-581.00.png",
+      "timestamp": 478
+    },
+    {
+      "index": 480,
+      "path": "candidates/다글로-frame-583.00.png",
+      "timestamp": 479
+    },
+    {
+      "index": 481,
+      "path": "candidates/다글로-frame-585.00.png",
+      "timestamp": 480
+    },
+    {
+      "index": 482,
+      "path": "candidates/다글로-frame-587.00.png",
+      "timestamp": 481
+    },
+    {
+      "index": 483,
+      "path": "candidates/다글로-frame-589.00.png",
+      "timestamp": 482
+    },
+    {
+      "index": 484,
+      "path": "candidates/다글로-frame-59.00.png",
+      "timestamp": 483
+    },
+    {
+      "index": 485,
+      "path": "candidates/다글로-frame-591.00.png",
+      "timestamp": 484
+    },
+    {
+      "index": 486,
+      "path": "candidates/다글로-frame-593.00.png",
+      "timestamp": 485
+    },
+    {
+      "index": 487,
+      "path": "candidates/다글로-frame-595.00.png",
+      "timestamp": 486
+    },
+    {
+      "index": 488,
+      "path": "candidates/다글로-frame-597.00.png",
+      "timestamp": 487
+    },
+    {
+      "index": 489,
+      "path": "candidates/다글로-frame-599.00.png",
+      "timestamp": 488
+    },
+    {
+      "index": 490,
+      "path": "candidates/다글로-frame-601.00.png",
+      "timestamp": 489
+    },
+    {
+      "index": 491,
+      "path": "candidates/다글로-frame-603.00.png",
+      "timestamp": 490
+    },
+    {
+      "index": 492,
+      "path": "candidates/다글로-frame-605.00.png",
+      "timestamp": 491
+    },
+    {
+      "index": 493,
+      "path": "candidates/다글로-frame-607.00.png",
+      "timestamp": 492
+    },
+    {
+      "index": 494,
+      "path": "candidates/다글로-frame-609.00.png",
+      "timestamp": 493
+    },
+    {
+      "index": 495,
+      "path": "candidates/다글로-frame-61.00.png",
+      "timestamp": 494
+    },
+    {
+      "index": 496,
+      "path": "candidates/다글로-frame-611.00.png",
+      "timestamp": 495
+    },
+    {
+      "index": 497,
+      "path": "candidates/다글로-frame-613.00.png",
+      "timestamp": 496
+    },
+    {
+      "index": 498,
+      "path": "candidates/다글로-frame-615.00.png",
+      "timestamp": 497
+    },
+    {
+      "index": 499,
+      "path": "candidates/다글로-frame-617.00.png",
+      "timestamp": 498
+    },
+    {
+      "index": 500,
+      "path": "candidates/다글로-frame-619.00.png",
+      "timestamp": 499
+    },
+    {
+      "index": 501,
+      "path": "candidates/다글로-frame-621.00.png",
+      "timestamp": 500
+    },
+    {
+      "index": 502,
+      "path": "candidates/다글로-frame-623.00.png",
+      "timestamp": 501
+    },
+    {
+      "index": 503,
+      "path": "candidates/다글로-frame-625.00.png",
+      "timestamp": 502
+    },
+    {
+      "index": 504,
+      "path": "candidates/다글로-frame-627.00.png",
+      "timestamp": 503
+    },
+    {
+      "index": 505,
+      "path": "candidates/다글로-frame-629.00.png",
+      "timestamp": 504
+    },
+    {
+      "index": 506,
+      "path": "candidates/다글로-frame-63.00.png",
+      "timestamp": 505
+    },
+    {
+      "index": 507,
+      "path": "candidates/다글로-frame-631.00.png",
+      "timestamp": 506
+    },
+    {
+      "index": 508,
+      "path": "candidates/다글로-frame-633.00.png",
+      "timestamp": 507
+    },
+    {
+      "index": 509,
+      "path": "candidates/다글로-frame-635.00.png",
+      "timestamp": 508
+    },
+    {
+      "index": 510,
+      "path": "candidates/다글로-frame-637.00.png",
+      "timestamp": 509
+    },
+    {
+      "index": 511,
+      "path": "candidates/다글로-frame-639.00.png",
+      "timestamp": 510
+    },
+    {
+      "index": 512,
+      "path": "candidates/다글로-frame-641.00.png",
+      "timestamp": 511
+    },
+    {
+      "index": 513,
+      "path": "candidates/다글로-frame-643.00.png",
+      "timestamp": 512
+    },
+    {
+      "index": 514,
+      "path": "candidates/다글로-frame-645.00.png",
+      "timestamp": 513
+    },
+    {
+      "index": 515,
+      "path": "candidates/다글로-frame-647.00.png",
+      "timestamp": 514
+    },
+    {
+      "index": 516,
+      "path": "candidates/다글로-frame-649.00.png",
+      "timestamp": 515
+    },
+    {
+      "index": 517,
+      "path": "candidates/다글로-frame-65.00.png",
+      "timestamp": 516
+    },
+    {
+      "index": 518,
+      "path": "candidates/다글로-frame-651.00.png",
+      "timestamp": 517
+    },
+    {
+      "index": 519,
+      "path": "candidates/다글로-frame-653.00.png",
+      "timestamp": 518
+    },
+    {
+      "index": 520,
+      "path": "candidates/다글로-frame-655.00.png",
+      "timestamp": 519
+    },
+    {
+      "index": 521,
+      "path": "candidates/다글로-frame-657.00.png",
+      "timestamp": 520
+    },
+    {
+      "index": 522,
+      "path": "candidates/다글로-frame-659.00.png",
+      "timestamp": 521
+    },
+    {
+      "index": 523,
+      "path": "candidates/다글로-frame-661.00.png",
+      "timestamp": 522
+    },
+    {
+      "index": 524,
+      "path": "candidates/다글로-frame-663.00.png",
+      "timestamp": 523
+    },
+    {
+      "index": 525,
+      "path": "candidates/다글로-frame-665.00.png",
+      "timestamp": 524
+    },
+    {
+      "index": 526,
+      "path": "candidates/다글로-frame-667.00.png",
+      "timestamp": 525
+    },
+    {
+      "index": 527,
+      "path": "candidates/다글로-frame-669.00.png",
+      "timestamp": 526
+    },
+    {
+      "index": 528,
+      "path": "candidates/다글로-frame-67.00.png",
+      "timestamp": 527
+    },
+    {
+      "index": 529,
+      "path": "candidates/다글로-frame-671.00.png",
+      "timestamp": 528
+    },
+    {
+      "index": 530,
+      "path": "candidates/다글로-frame-673.00.png",
+      "timestamp": 529
+    },
+    {
+      "index": 531,
+      "path": "candidates/다글로-frame-675.00.png",
+      "timestamp": 530
+    },
+    {
+      "index": 532,
+      "path": "candidates/다글로-frame-677.00.png",
+      "timestamp": 531
+    },
+    {
+      "index": 533,
+      "path": "candidates/다글로-frame-679.00.png",
+      "timestamp": 532
+    },
+    {
+      "index": 534,
+      "path": "candidates/다글로-frame-681.00.png",
+      "timestamp": 533
+    },
+    {
+      "index": 535,
+      "path": "candidates/다글로-frame-683.00.png",
+      "timestamp": 534
+    },
+    {
+      "index": 536,
+      "path": "candidates/다글로-frame-685.00.png",
+      "timestamp": 535
+    },
+    {
+      "index": 537,
+      "path": "candidates/다글로-frame-687.00.png",
+      "timestamp": 536
+    },
+    {
+      "index": 538,
+      "path": "candidates/다글로-frame-689.00.png",
+      "timestamp": 537
+    },
+    {
+      "index": 539,
+      "path": "candidates/다글로-frame-69.00.png",
+      "timestamp": 538
+    },
+    {
+      "index": 540,
+      "path": "candidates/다글로-frame-691.00.png",
+      "timestamp": 539
+    },
+    {
+      "index": 541,
+      "path": "candidates/다글로-frame-693.00.png",
+      "timestamp": 540
+    },
+    {
+      "index": 542,
+      "path": "candidates/다글로-frame-695.00.png",
+      "timestamp": 541
+    },
+    {
+      "index": 543,
+      "path": "candidates/다글로-frame-697.00.png",
+      "timestamp": 542
+    },
+    {
+      "index": 544,
+      "path": "candidates/다글로-frame-699.00.png",
+      "timestamp": 543
+    },
+    {
+      "index": 545,
+      "path": "candidates/다글로-frame-7.00.png",
+      "timestamp": 544
+    },
+    {
+      "index": 546,
+      "path": "candidates/다글로-frame-701.00.png",
+      "timestamp": 545
+    },
+    {
+      "index": 547,
+      "path": "candidates/다글로-frame-703.00.png",
+      "timestamp": 546
+    },
+    {
+      "index": 548,
+      "path": "candidates/다글로-frame-705.00.png",
+      "timestamp": 547
+    },
+    {
+      "index": 549,
+      "path": "candidates/다글로-frame-707.00.png",
+      "timestamp": 548
+    },
+    {
+      "index": 550,
+      "path": "candidates/다글로-frame-709.00.png",
+      "timestamp": 549
+    },
+    {
+      "index": 551,
+      "path": "candidates/다글로-frame-71.00.png",
+      "timestamp": 550
+    },
+    {
+      "index": 552,
+      "path": "candidates/다글로-frame-711.00.png",
+      "timestamp": 551
+    },
+    {
+      "index": 553,
+      "path": "candidates/다글로-frame-713.00.png",
+      "timestamp": 552
+    },
+    {
+      "index": 554,
+      "path": "candidates/다글로-frame-715.00.png",
+      "timestamp": 553
+    },
+    {
+      "index": 555,
+      "path": "candidates/다글로-frame-717.00.png",
+      "timestamp": 554
+    },
+    {
+      "index": 556,
+      "path": "candidates/다글로-frame-719.00.png",
+      "timestamp": 555
+    },
+    {
+      "index": 557,
+      "path": "candidates/다글로-frame-721.00.png",
+      "timestamp": 556
+    },
+    {
+      "index": 558,
+      "path": "candidates/다글로-frame-73.00.png",
+      "timestamp": 557
+    },
+    {
+      "index": 559,
+      "path": "candidates/다글로-frame-75.00.png",
+      "timestamp": 558
+    },
+    {
+      "index": 560,
+      "path": "candidates/다글로-frame-77.00.png",
+      "timestamp": 559
+    },
+    {
+      "index": 561,
+      "path": "candidates/다글로-frame-79.00.png",
+      "timestamp": 560
+    },
+    {
+      "index": 562,
+      "path": "candidates/다글로-frame-81.00.png",
+      "timestamp": 561
+    },
+    {
+      "index": 563,
+      "path": "candidates/다글로-frame-83.00.png",
+      "timestamp": 562
+    },
+    {
+      "index": 564,
+      "path": "candidates/다글로-frame-85.00.png",
+      "timestamp": 563
+    },
+    {
+      "index": 565,
+      "path": "candidates/다글로-frame-87.00.png",
+      "timestamp": 564
+    },
+    {
+      "index": 566,
+      "path": "candidates/다글로-frame-89.00.png",
+      "timestamp": 565
+    },
+    {
+      "index": 567,
+      "path": "candidates/다글로-frame-9.00.png",
+      "timestamp": 566
+    },
+    {
+      "index": 568,
+      "path": "candidates/다글로-frame-91.00.png",
+      "timestamp": 567
+    },
+    {
+      "index": 569,
+      "path": "candidates/다글로-frame-93.00.png",
+      "timestamp": 568
+    },
+    {
+      "index": 570,
+      "path": "candidates/다글로-frame-95.00.png",
+      "timestamp": 569
+    },
+    {
+      "index": 571,
+      "path": "candidates/다글로-frame-97.00.png",
+      "timestamp": 570
+    },
+    {
+      "index": 572,
+      "path": "candidates/다글로-frame-99.00.png",
+      "timestamp": 571
+    },
+    {
+      "index": 573,
+      "path": "candidates/유니브ai-frame-1.00.png",
+      "timestamp": 572
+    },
+    {
+      "index": 574,
+      "path": "candidates/유니브ai-frame-101.00.png",
+      "timestamp": 573
+    },
+    {
+      "index": 575,
+      "path": "candidates/유니브ai-frame-103.00.png",
+      "timestamp": 574
+    },
+    {
+      "index": 576,
+      "path": "candidates/유니브ai-frame-105.00.png",
+      "timestamp": 575
+    },
+    {
+      "index": 577,
+      "path": "candidates/유니브ai-frame-107.00.png",
+      "timestamp": 576
+    },
+    {
+      "index": 578,
+      "path": "candidates/유니브ai-frame-109.00.png",
+      "timestamp": 577
+    },
+    {
+      "index": 579,
+      "path": "candidates/유니브ai-frame-11.00.png",
+      "timestamp": 578
+    },
+    {
+      "index": 580,
+      "path": "candidates/유니브ai-frame-111.00.png",
+      "timestamp": 579
+    },
+    {
+      "index": 581,
+      "path": "candidates/유니브ai-frame-113.00.png",
+      "timestamp": 580
+    },
+    {
+      "index": 582,
+      "path": "candidates/유니브ai-frame-115.00.png",
+      "timestamp": 581
+    },
+    {
+      "index": 583,
+      "path": "candidates/유니브ai-frame-117.00.png",
+      "timestamp": 582
+    },
+    {
+      "index": 584,
+      "path": "candidates/유니브ai-frame-119.00.png",
+      "timestamp": 583
+    },
+    {
+      "index": 585,
+      "path": "candidates/유니브ai-frame-121.00.png",
+      "timestamp": 584
+    },
+    {
+      "index": 586,
+      "path": "candidates/유니브ai-frame-123.00.png",
+      "timestamp": 585
+    },
+    {
+      "index": 587,
+      "path": "candidates/유니브ai-frame-125.00.png",
+      "timestamp": 586
+    },
+    {
+      "index": 588,
+      "path": "candidates/유니브ai-frame-127.00.png",
+      "timestamp": 587
+    },
+    {
+      "index": 589,
+      "path": "candidates/유니브ai-frame-129.00.png",
+      "timestamp": 588
+    },
+    {
+      "index": 590,
+      "path": "candidates/유니브ai-frame-13.00.png",
+      "timestamp": 589
+    },
+    {
+      "index": 591,
+      "path": "candidates/유니브ai-frame-131.00.png",
+      "timestamp": 590
+    },
+    {
+      "index": 592,
+      "path": "candidates/유니브ai-frame-133.00.png",
+      "timestamp": 591
+    },
+    {
+      "index": 593,
+      "path": "candidates/유니브ai-frame-135.00.png",
+      "timestamp": 592
+    },
+    {
+      "index": 594,
+      "path": "candidates/유니브ai-frame-137.00.png",
+      "timestamp": 593
+    },
+    {
+      "index": 595,
+      "path": "candidates/유니브ai-frame-139.00.png",
+      "timestamp": 594
+    },
+    {
+      "index": 596,
+      "path": "candidates/유니브ai-frame-141.00.png",
+      "timestamp": 595
+    },
+    {
+      "index": 597,
+      "path": "candidates/유니브ai-frame-143.00.png",
+      "timestamp": 596
+    },
+    {
+      "index": 598,
+      "path": "candidates/유니브ai-frame-145.00.png",
+      "timestamp": 597
+    },
+    {
+      "index": 599,
+      "path": "candidates/유니브ai-frame-147.00.png",
+      "timestamp": 598
+    },
+    {
+      "index": 600,
+      "path": "candidates/유니브ai-frame-149.00.png",
+      "timestamp": 599
+    },
+    {
+      "index": 601,
+      "path": "candidates/유니브ai-frame-15.00.png",
+      "timestamp": 600
+    },
+    {
+      "index": 602,
+      "path": "candidates/유니브ai-frame-151.00.png",
+      "timestamp": 601
+    },
+    {
+      "index": 603,
+      "path": "candidates/유니브ai-frame-153.00.png",
+      "timestamp": 602
+    },
+    {
+      "index": 604,
+      "path": "candidates/유니브ai-frame-155.00.png",
+      "timestamp": 603
+    },
+    {
+      "index": 605,
+      "path": "candidates/유니브ai-frame-157.00.png",
+      "timestamp": 604
+    },
+    {
+      "index": 606,
+      "path": "candidates/유니브ai-frame-159.00.png",
+      "timestamp": 605
+    },
+    {
+      "index": 607,
+      "path": "candidates/유니브ai-frame-161.00.png",
+      "timestamp": 606
+    },
+    {
+      "index": 608,
+      "path": "candidates/유니브ai-frame-163.00.png",
+      "timestamp": 607
+    },
+    {
+      "index": 609,
+      "path": "candidates/유니브ai-frame-165.00.png",
+      "timestamp": 608
+    },
+    {
+      "index": 610,
+      "path": "candidates/유니브ai-frame-167.00.png",
+      "timestamp": 609
+    },
+    {
+      "index": 611,
+      "path": "candidates/유니브ai-frame-169.00.png",
+      "timestamp": 610
+    },
+    {
+      "index": 612,
+      "path": "candidates/유니브ai-frame-17.00.png",
+      "timestamp": 611
+    },
+    {
+      "index": 613,
+      "path": "candidates/유니브ai-frame-171.00.png",
+      "timestamp": 612
+    },
+    {
+      "index": 614,
+      "path": "candidates/유니브ai-frame-173.00.png",
+      "timestamp": 613
+    },
+    {
+      "index": 615,
+      "path": "candidates/유니브ai-frame-175.00.png",
+      "timestamp": 614
+    },
+    {
+      "index": 616,
+      "path": "candidates/유니브ai-frame-177.00.png",
+      "timestamp": 615
+    },
+    {
+      "index": 617,
+      "path": "candidates/유니브ai-frame-179.00.png",
+      "timestamp": 616
+    },
+    {
+      "index": 618,
+      "path": "candidates/유니브ai-frame-181.00.png",
+      "timestamp": 617
+    },
+    {
+      "index": 619,
+      "path": "candidates/유니브ai-frame-183.00.png",
+      "timestamp": 618
+    },
+    {
+      "index": 620,
+      "path": "candidates/유니브ai-frame-185.00.png",
+      "timestamp": 619
+    },
+    {
+      "index": 621,
+      "path": "candidates/유니브ai-frame-187.00.png",
+      "timestamp": 620
+    },
+    {
+      "index": 622,
+      "path": "candidates/유니브ai-frame-189.00.png",
+      "timestamp": 621
+    },
+    {
+      "index": 623,
+      "path": "candidates/유니브ai-frame-19.00.png",
+      "timestamp": 622
+    },
+    {
+      "index": 624,
+      "path": "candidates/유니브ai-frame-191.00.png",
+      "timestamp": 623
+    },
+    {
+      "index": 625,
+      "path": "candidates/유니브ai-frame-193.00.png",
+      "timestamp": 624
+    },
+    {
+      "index": 626,
+      "path": "candidates/유니브ai-frame-195.00.png",
+      "timestamp": 625
+    },
+    {
+      "index": 627,
+      "path": "candidates/유니브ai-frame-197.00.png",
+      "timestamp": 626
+    },
+    {
+      "index": 628,
+      "path": "candidates/유니브ai-frame-199.00.png",
+      "timestamp": 627
+    },
+    {
+      "index": 629,
+      "path": "candidates/유니브ai-frame-201.00.png",
+      "timestamp": 628
+    },
+    {
+      "index": 630,
+      "path": "candidates/유니브ai-frame-203.00.png",
+      "timestamp": 629
+    },
+    {
+      "index": 631,
+      "path": "candidates/유니브ai-frame-205.00.png",
+      "timestamp": 630
+    },
+    {
+      "index": 632,
+      "path": "candidates/유니브ai-frame-207.00.png",
+      "timestamp": 631
+    },
+    {
+      "index": 633,
+      "path": "candidates/유니브ai-frame-209.00.png",
+      "timestamp": 632
+    },
+    {
+      "index": 634,
+      "path": "candidates/유니브ai-frame-21.00.png",
+      "timestamp": 633
+    },
+    {
+      "index": 635,
+      "path": "candidates/유니브ai-frame-211.00.png",
+      "timestamp": 634
+    },
+    {
+      "index": 636,
+      "path": "candidates/유니브ai-frame-213.00.png",
+      "timestamp": 635
+    },
+    {
+      "index": 637,
+      "path": "candidates/유니브ai-frame-215.00.png",
+      "timestamp": 636
+    },
+    {
+      "index": 638,
+      "path": "candidates/유니브ai-frame-217.00.png",
+      "timestamp": 637
+    },
+    {
+      "index": 639,
+      "path": "candidates/유니브ai-frame-219.00.png",
+      "timestamp": 638
+    },
+    {
+      "index": 640,
+      "path": "candidates/유니브ai-frame-221.00.png",
+      "timestamp": 639
+    },
+    {
+      "index": 641,
+      "path": "candidates/유니브ai-frame-223.00.png",
+      "timestamp": 640
+    },
+    {
+      "index": 642,
+      "path": "candidates/유니브ai-frame-225.00.png",
+      "timestamp": 641
+    },
+    {
+      "index": 643,
+      "path": "candidates/유니브ai-frame-227.00.png",
+      "timestamp": 642
+    },
+    {
+      "index": 644,
+      "path": "candidates/유니브ai-frame-229.00.png",
+      "timestamp": 643
+    },
+    {
+      "index": 645,
+      "path": "candidates/유니브ai-frame-23.00.png",
+      "timestamp": 644
+    },
+    {
+      "index": 646,
+      "path": "candidates/유니브ai-frame-231.00.png",
+      "timestamp": 645
+    },
+    {
+      "index": 647,
+      "path": "candidates/유니브ai-frame-233.00.png",
+      "timestamp": 646
+    },
+    {
+      "index": 648,
+      "path": "candidates/유니브ai-frame-235.00.png",
+      "timestamp": 647
+    },
+    {
+      "index": 649,
+      "path": "candidates/유니브ai-frame-237.00.png",
+      "timestamp": 648
+    },
+    {
+      "index": 650,
+      "path": "candidates/유니브ai-frame-239.00.png",
+      "timestamp": 649
+    },
+    {
+      "index": 651,
+      "path": "candidates/유니브ai-frame-241.00.png",
+      "timestamp": 650
+    },
+    {
+      "index": 652,
+      "path": "candidates/유니브ai-frame-243.00.png",
+      "timestamp": 651
+    },
+    {
+      "index": 653,
+      "path": "candidates/유니브ai-frame-245.00.png",
+      "timestamp": 652
+    },
+    {
+      "index": 654,
+      "path": "candidates/유니브ai-frame-247.00.png",
+      "timestamp": 653
+    },
+    {
+      "index": 655,
+      "path": "candidates/유니브ai-frame-249.00.png",
+      "timestamp": 654
+    },
+    {
+      "index": 656,
+      "path": "candidates/유니브ai-frame-25.00.png",
+      "timestamp": 655
+    },
+    {
+      "index": 657,
+      "path": "candidates/유니브ai-frame-251.00.png",
+      "timestamp": 656
+    },
+    {
+      "index": 658,
+      "path": "candidates/유니브ai-frame-253.00.png",
+      "timestamp": 657
+    },
+    {
+      "index": 659,
+      "path": "candidates/유니브ai-frame-255.00.png",
+      "timestamp": 658
+    },
+    {
+      "index": 660,
+      "path": "candidates/유니브ai-frame-257.00.png",
+      "timestamp": 659
+    },
+    {
+      "index": 661,
+      "path": "candidates/유니브ai-frame-259.00.png",
+      "timestamp": 660
+    },
+    {
+      "index": 662,
+      "path": "candidates/유니브ai-frame-261.00.png",
+      "timestamp": 661
+    },
+    {
+      "index": 663,
+      "path": "candidates/유니브ai-frame-263.00.png",
+      "timestamp": 662
+    },
+    {
+      "index": 664,
+      "path": "candidates/유니브ai-frame-265.00.png",
+      "timestamp": 663
+    },
+    {
+      "index": 665,
+      "path": "candidates/유니브ai-frame-267.00.png",
+      "timestamp": 664
+    },
+    {
+      "index": 666,
+      "path": "candidates/유니브ai-frame-269.00.png",
+      "timestamp": 665
+    },
+    {
+      "index": 667,
+      "path": "candidates/유니브ai-frame-27.00.png",
+      "timestamp": 666
+    },
+    {
+      "index": 668,
+      "path": "candidates/유니브ai-frame-271.00.png",
+      "timestamp": 667
+    },
+    {
+      "index": 669,
+      "path": "candidates/유니브ai-frame-273.00.png",
+      "timestamp": 668
+    },
+    {
+      "index": 670,
+      "path": "candidates/유니브ai-frame-275.00.png",
+      "timestamp": 669
+    },
+    {
+      "index": 671,
+      "path": "candidates/유니브ai-frame-277.00.png",
+      "timestamp": 670
+    },
+    {
+      "index": 672,
+      "path": "candidates/유니브ai-frame-279.00.png",
+      "timestamp": 671
+    },
+    {
+      "index": 673,
+      "path": "candidates/유니브ai-frame-281.00.png",
+      "timestamp": 672
+    },
+    {
+      "index": 674,
+      "path": "candidates/유니브ai-frame-283.00.png",
+      "timestamp": 673
+    },
+    {
+      "index": 675,
+      "path": "candidates/유니브ai-frame-285.00.png",
+      "timestamp": 674
+    },
+    {
+      "index": 676,
+      "path": "candidates/유니브ai-frame-287.00.png",
+      "timestamp": 675
+    },
+    {
+      "index": 677,
+      "path": "candidates/유니브ai-frame-289.00.png",
+      "timestamp": 676
+    },
+    {
+      "index": 678,
+      "path": "candidates/유니브ai-frame-29.00.png",
+      "timestamp": 677
+    },
+    {
+      "index": 679,
+      "path": "candidates/유니브ai-frame-291.00.png",
+      "timestamp": 678
+    },
+    {
+      "index": 680,
+      "path": "candidates/유니브ai-frame-293.00.png",
+      "timestamp": 679
+    },
+    {
+      "index": 681,
+      "path": "candidates/유니브ai-frame-295.00.png",
+      "timestamp": 680
+    },
+    {
+      "index": 682,
+      "path": "candidates/유니브ai-frame-297.00.png",
+      "timestamp": 681
+    },
+    {
+      "index": 683,
+      "path": "candidates/유니브ai-frame-299.00.png",
+      "timestamp": 682
+    },
+    {
+      "index": 684,
+      "path": "candidates/유니브ai-frame-3.00.png",
+      "timestamp": 683
+    },
+    {
+      "index": 685,
+      "path": "candidates/유니브ai-frame-301.00.png",
+      "timestamp": 684
+    },
+    {
+      "index": 686,
+      "path": "candidates/유니브ai-frame-303.00.png",
+      "timestamp": 685
+    },
+    {
+      "index": 687,
+      "path": "candidates/유니브ai-frame-305.00.png",
+      "timestamp": 686
+    },
+    {
+      "index": 688,
+      "path": "candidates/유니브ai-frame-307.00.png",
+      "timestamp": 687
+    },
+    {
+      "index": 689,
+      "path": "candidates/유니브ai-frame-309.00.png",
+      "timestamp": 688
+    },
+    {
+      "index": 690,
+      "path": "candidates/유니브ai-frame-31.00.png",
+      "timestamp": 689
+    },
+    {
+      "index": 691,
+      "path": "candidates/유니브ai-frame-311.00.png",
+      "timestamp": 690
+    },
+    {
+      "index": 692,
+      "path": "candidates/유니브ai-frame-313.00.png",
+      "timestamp": 691
+    },
+    {
+      "index": 693,
+      "path": "candidates/유니브ai-frame-315.00.png",
+      "timestamp": 692
+    },
+    {
+      "index": 694,
+      "path": "candidates/유니브ai-frame-317.00.png",
+      "timestamp": 693
+    },
+    {
+      "index": 695,
+      "path": "candidates/유니브ai-frame-319.00.png",
+      "timestamp": 694
+    },
+    {
+      "index": 696,
+      "path": "candidates/유니브ai-frame-321.00.png",
+      "timestamp": 695
+    },
+    {
+      "index": 697,
+      "path": "candidates/유니브ai-frame-323.00.png",
+      "timestamp": 696
+    },
+    {
+      "index": 698,
+      "path": "candidates/유니브ai-frame-325.00.png",
+      "timestamp": 697
+    },
+    {
+      "index": 699,
+      "path": "candidates/유니브ai-frame-327.00.png",
+      "timestamp": 698
+    },
+    {
+      "index": 700,
+      "path": "candidates/유니브ai-frame-329.00.png",
+      "timestamp": 699
+    },
+    {
+      "index": 701,
+      "path": "candidates/유니브ai-frame-33.00.png",
+      "timestamp": 700
+    },
+    {
+      "index": 702,
+      "path": "candidates/유니브ai-frame-331.00.png",
+      "timestamp": 701
+    },
+    {
+      "index": 703,
+      "path": "candidates/유니브ai-frame-333.00.png",
+      "timestamp": 702
+    },
+    {
+      "index": 704,
+      "path": "candidates/유니브ai-frame-335.00.png",
+      "timestamp": 703
+    },
+    {
+      "index": 705,
+      "path": "candidates/유니브ai-frame-337.00.png",
+      "timestamp": 704
+    },
+    {
+      "index": 706,
+      "path": "candidates/유니브ai-frame-339.00.png",
+      "timestamp": 705
+    },
+    {
+      "index": 707,
+      "path": "candidates/유니브ai-frame-341.00.png",
+      "timestamp": 706
+    },
+    {
+      "index": 708,
+      "path": "candidates/유니브ai-frame-343.00.png",
+      "timestamp": 707
+    },
+    {
+      "index": 709,
+      "path": "candidates/유니브ai-frame-345.00.png",
+      "timestamp": 708
+    },
+    {
+      "index": 710,
+      "path": "candidates/유니브ai-frame-347.00.png",
+      "timestamp": 709
+    },
+    {
+      "index": 711,
+      "path": "candidates/유니브ai-frame-349.00.png",
+      "timestamp": 710
+    },
+    {
+      "index": 712,
+      "path": "candidates/유니브ai-frame-35.00.png",
+      "timestamp": 711
+    },
+    {
+      "index": 713,
+      "path": "candidates/유니브ai-frame-351.00.png",
+      "timestamp": 712
+    },
+    {
+      "index": 714,
+      "path": "candidates/유니브ai-frame-353.00.png",
+      "timestamp": 713
+    },
+    {
+      "index": 715,
+      "path": "candidates/유니브ai-frame-355.00.png",
+      "timestamp": 714
+    },
+    {
+      "index": 716,
+      "path": "candidates/유니브ai-frame-357.00.png",
+      "timestamp": 715
+    },
+    {
+      "index": 717,
+      "path": "candidates/유니브ai-frame-359.00.png",
+      "timestamp": 716
+    },
+    {
+      "index": 718,
+      "path": "candidates/유니브ai-frame-361.00.png",
+      "timestamp": 717
+    },
+    {
+      "index": 719,
+      "path": "candidates/유니브ai-frame-363.00.png",
+      "timestamp": 718
+    },
+    {
+      "index": 720,
+      "path": "candidates/유니브ai-frame-365.00.png",
+      "timestamp": 719
+    },
+    {
+      "index": 721,
+      "path": "candidates/유니브ai-frame-367.00.png",
+      "timestamp": 720
+    },
+    {
+      "index": 722,
+      "path": "candidates/유니브ai-frame-369.00.png",
+      "timestamp": 721
+    },
+    {
+      "index": 723,
+      "path": "candidates/유니브ai-frame-37.00.png",
+      "timestamp": 722
+    },
+    {
+      "index": 724,
+      "path": "candidates/유니브ai-frame-371.00.png",
+      "timestamp": 723
+    },
+    {
+      "index": 725,
+      "path": "candidates/유니브ai-frame-373.00.png",
+      "timestamp": 724
+    },
+    {
+      "index": 726,
+      "path": "candidates/유니브ai-frame-375.00.png",
+      "timestamp": 725
+    },
+    {
+      "index": 727,
+      "path": "candidates/유니브ai-frame-377.00.png",
+      "timestamp": 726
+    },
+    {
+      "index": 728,
+      "path": "candidates/유니브ai-frame-379.00.png",
+      "timestamp": 727
+    },
+    {
+      "index": 729,
+      "path": "candidates/유니브ai-frame-381.00.png",
+      "timestamp": 728
+    },
+    {
+      "index": 730,
+      "path": "candidates/유니브ai-frame-383.00.png",
+      "timestamp": 729
+    },
+    {
+      "index": 731,
+      "path": "candidates/유니브ai-frame-385.00.png",
+      "timestamp": 730
+    },
+    {
+      "index": 732,
+      "path": "candidates/유니브ai-frame-387.00.png",
+      "timestamp": 731
+    },
+    {
+      "index": 733,
+      "path": "candidates/유니브ai-frame-389.00.png",
+      "timestamp": 732
+    },
+    {
+      "index": 734,
+      "path": "candidates/유니브ai-frame-39.00.png",
+      "timestamp": 733
+    },
+    {
+      "index": 735,
+      "path": "candidates/유니브ai-frame-391.00.png",
+      "timestamp": 734
+    },
+    {
+      "index": 736,
+      "path": "candidates/유니브ai-frame-393.00.png",
+      "timestamp": 735
+    },
+    {
+      "index": 737,
+      "path": "candidates/유니브ai-frame-395.00.png",
+      "timestamp": 736
+    },
+    {
+      "index": 738,
+      "path": "candidates/유니브ai-frame-397.00.png",
+      "timestamp": 737
+    },
+    {
+      "index": 739,
+      "path": "candidates/유니브ai-frame-399.00.png",
+      "timestamp": 738
+    },
+    {
+      "index": 740,
+      "path": "candidates/유니브ai-frame-401.00.png",
+      "timestamp": 739
+    },
+    {
+      "index": 741,
+      "path": "candidates/유니브ai-frame-403.00.png",
+      "timestamp": 740
+    },
+    {
+      "index": 742,
+      "path": "candidates/유니브ai-frame-405.00.png",
+      "timestamp": 741
+    },
+    {
+      "index": 743,
+      "path": "candidates/유니브ai-frame-407.00.png",
+      "timestamp": 742
+    },
+    {
+      "index": 744,
+      "path": "candidates/유니브ai-frame-409.00.png",
+      "timestamp": 743
+    },
+    {
+      "index": 745,
+      "path": "candidates/유니브ai-frame-41.00.png",
+      "timestamp": 744
+    },
+    {
+      "index": 746,
+      "path": "candidates/유니브ai-frame-411.00.png",
+      "timestamp": 745
+    },
+    {
+      "index": 747,
+      "path": "candidates/유니브ai-frame-413.00.png",
+      "timestamp": 746
+    },
+    {
+      "index": 748,
+      "path": "candidates/유니브ai-frame-415.00.png",
+      "timestamp": 747
+    },
+    {
+      "index": 749,
+      "path": "candidates/유니브ai-frame-417.00.png",
+      "timestamp": 748
+    },
+    {
+      "index": 750,
+      "path": "candidates/유니브ai-frame-419.00.png",
+      "timestamp": 749
+    },
+    {
+      "index": 751,
+      "path": "candidates/유니브ai-frame-421.00.png",
+      "timestamp": 750
+    },
+    {
+      "index": 752,
+      "path": "candidates/유니브ai-frame-423.00.png",
+      "timestamp": 751
+    },
+    {
+      "index": 753,
+      "path": "candidates/유니브ai-frame-425.00.png",
+      "timestamp": 752
+    },
+    {
+      "index": 754,
+      "path": "candidates/유니브ai-frame-427.00.png",
+      "timestamp": 753
+    },
+    {
+      "index": 755,
+      "path": "candidates/유니브ai-frame-429.00.png",
+      "timestamp": 754
+    },
+    {
+      "index": 756,
+      "path": "candidates/유니브ai-frame-43.00.png",
+      "timestamp": 755
+    },
+    {
+      "index": 757,
+      "path": "candidates/유니브ai-frame-431.00.png",
+      "timestamp": 756
+    },
+    {
+      "index": 758,
+      "path": "candidates/유니브ai-frame-433.00.png",
+      "timestamp": 757
+    },
+    {
+      "index": 759,
+      "path": "candidates/유니브ai-frame-435.00.png",
+      "timestamp": 758
+    },
+    {
+      "index": 760,
+      "path": "candidates/유니브ai-frame-437.00.png",
+      "timestamp": 759
+    },
+    {
+      "index": 761,
+      "path": "candidates/유니브ai-frame-439.00.png",
+      "timestamp": 760
+    },
+    {
+      "index": 762,
+      "path": "candidates/유니브ai-frame-441.00.png",
+      "timestamp": 761
+    },
+    {
+      "index": 763,
+      "path": "candidates/유니브ai-frame-443.00.png",
+      "timestamp": 762
+    },
+    {
+      "index": 764,
+      "path": "candidates/유니브ai-frame-445.00.png",
+      "timestamp": 763
+    },
+    {
+      "index": 765,
+      "path": "candidates/유니브ai-frame-447.00.png",
+      "timestamp": 764
+    },
+    {
+      "index": 766,
+      "path": "candidates/유니브ai-frame-449.00.png",
+      "timestamp": 765
+    },
+    {
+      "index": 767,
+      "path": "candidates/유니브ai-frame-45.00.png",
+      "timestamp": 766
+    },
+    {
+      "index": 768,
+      "path": "candidates/유니브ai-frame-451.00.png",
+      "timestamp": 767
+    },
+    {
+      "index": 769,
+      "path": "candidates/유니브ai-frame-453.00.png",
+      "timestamp": 768
+    },
+    {
+      "index": 770,
+      "path": "candidates/유니브ai-frame-455.00.png",
+      "timestamp": 769
+    },
+    {
+      "index": 771,
+      "path": "candidates/유니브ai-frame-457.00.png",
+      "timestamp": 770
+    },
+    {
+      "index": 772,
+      "path": "candidates/유니브ai-frame-459.00.png",
+      "timestamp": 771
+    },
+    {
+      "index": 773,
+      "path": "candidates/유니브ai-frame-461.00.png",
+      "timestamp": 772
+    },
+    {
+      "index": 774,
+      "path": "candidates/유니브ai-frame-463.00.png",
+      "timestamp": 773
+    },
+    {
+      "index": 775,
+      "path": "candidates/유니브ai-frame-465.00.png",
+      "timestamp": 774
+    },
+    {
+      "index": 776,
+      "path": "candidates/유니브ai-frame-467.00.png",
+      "timestamp": 775
+    },
+    {
+      "index": 777,
+      "path": "candidates/유니브ai-frame-469.00.png",
+      "timestamp": 776
+    },
+    {
+      "index": 778,
+      "path": "candidates/유니브ai-frame-47.00.png",
+      "timestamp": 777
+    },
+    {
+      "index": 779,
+      "path": "candidates/유니브ai-frame-471.00.png",
+      "timestamp": 778
+    },
+    {
+      "index": 780,
+      "path": "candidates/유니브ai-frame-473.00.png",
+      "timestamp": 779
+    },
+    {
+      "index": 781,
+      "path": "candidates/유니브ai-frame-475.00.png",
+      "timestamp": 780
+    },
+    {
+      "index": 782,
+      "path": "candidates/유니브ai-frame-477.00.png",
+      "timestamp": 781
+    },
+    {
+      "index": 783,
+      "path": "candidates/유니브ai-frame-479.00.png",
+      "timestamp": 782
+    },
+    {
+      "index": 784,
+      "path": "candidates/유니브ai-frame-481.00.png",
+      "timestamp": 783
+    },
+    {
+      "index": 785,
+      "path": "candidates/유니브ai-frame-483.00.png",
+      "timestamp": 784
+    },
+    {
+      "index": 786,
+      "path": "candidates/유니브ai-frame-485.00.png",
+      "timestamp": 785
+    },
+    {
+      "index": 787,
+      "path": "candidates/유니브ai-frame-487.00.png",
+      "timestamp": 786
+    },
+    {
+      "index": 788,
+      "path": "candidates/유니브ai-frame-489.00.png",
+      "timestamp": 787
+    },
+    {
+      "index": 789,
+      "path": "candidates/유니브ai-frame-49.00.png",
+      "timestamp": 788
+    },
+    {
+      "index": 790,
+      "path": "candidates/유니브ai-frame-491.00.png",
+      "timestamp": 789
+    },
+    {
+      "index": 791,
+      "path": "candidates/유니브ai-frame-493.00.png",
+      "timestamp": 790
+    },
+    {
+      "index": 792,
+      "path": "candidates/유니브ai-frame-495.00.png",
+      "timestamp": 791
+    },
+    {
+      "index": 793,
+      "path": "candidates/유니브ai-frame-497.00.png",
+      "timestamp": 792
+    },
+    {
+      "index": 794,
+      "path": "candidates/유니브ai-frame-499.00.png",
+      "timestamp": 793
+    },
+    {
+      "index": 795,
+      "path": "candidates/유니브ai-frame-5.00.png",
+      "timestamp": 794
+    },
+    {
+      "index": 796,
+      "path": "candidates/유니브ai-frame-501.00.png",
+      "timestamp": 795
+    },
+    {
+      "index": 797,
+      "path": "candidates/유니브ai-frame-503.00.png",
+      "timestamp": 796
+    },
+    {
+      "index": 798,
+      "path": "candidates/유니브ai-frame-505.00.png",
+      "timestamp": 797
+    },
+    {
+      "index": 799,
+      "path": "candidates/유니브ai-frame-507.00.png",
+      "timestamp": 798
+    },
+    {
+      "index": 800,
+      "path": "candidates/유니브ai-frame-509.00.png",
+      "timestamp": 799
+    },
+    {
+      "index": 801,
+      "path": "candidates/유니브ai-frame-51.00.png",
+      "timestamp": 800
+    },
+    {
+      "index": 802,
+      "path": "candidates/유니브ai-frame-511.00.png",
+      "timestamp": 801
+    },
+    {
+      "index": 803,
+      "path": "candidates/유니브ai-frame-513.00.png",
+      "timestamp": 802
+    },
+    {
+      "index": 804,
+      "path": "candidates/유니브ai-frame-515.00.png",
+      "timestamp": 803
+    },
+    {
+      "index": 805,
+      "path": "candidates/유니브ai-frame-517.00.png",
+      "timestamp": 804
+    },
+    {
+      "index": 806,
+      "path": "candidates/유니브ai-frame-519.00.png",
+      "timestamp": 805
+    },
+    {
+      "index": 807,
+      "path": "candidates/유니브ai-frame-521.00.png",
+      "timestamp": 806
+    },
+    {
+      "index": 808,
+      "path": "candidates/유니브ai-frame-523.00.png",
+      "timestamp": 807
+    },
+    {
+      "index": 809,
+      "path": "candidates/유니브ai-frame-525.00.png",
+      "timestamp": 808
+    },
+    {
+      "index": 810,
+      "path": "candidates/유니브ai-frame-527.00.png",
+      "timestamp": 809
+    },
+    {
+      "index": 811,
+      "path": "candidates/유니브ai-frame-529.00.png",
+      "timestamp": 810
+    },
+    {
+      "index": 812,
+      "path": "candidates/유니브ai-frame-53.00.png",
+      "timestamp": 811
+    },
+    {
+      "index": 813,
+      "path": "candidates/유니브ai-frame-531.00.png",
+      "timestamp": 812
+    },
+    {
+      "index": 814,
+      "path": "candidates/유니브ai-frame-533.00.png",
+      "timestamp": 813
+    },
+    {
+      "index": 815,
+      "path": "candidates/유니브ai-frame-535.00.png",
+      "timestamp": 814
+    },
+    {
+      "index": 816,
+      "path": "candidates/유니브ai-frame-537.00.png",
+      "timestamp": 815
+    },
+    {
+      "index": 817,
+      "path": "candidates/유니브ai-frame-539.00.png",
+      "timestamp": 816
+    },
+    {
+      "index": 818,
+      "path": "candidates/유니브ai-frame-541.00.png",
+      "timestamp": 817
+    },
+    {
+      "index": 819,
+      "path": "candidates/유니브ai-frame-543.00.png",
+      "timestamp": 818
+    },
+    {
+      "index": 820,
+      "path": "candidates/유니브ai-frame-545.00.png",
+      "timestamp": 819
+    },
+    {
+      "index": 821,
+      "path": "candidates/유니브ai-frame-547.00.png",
+      "timestamp": 820
+    },
+    {
+      "index": 822,
+      "path": "candidates/유니브ai-frame-549.00.png",
+      "timestamp": 821
+    },
+    {
+      "index": 823,
+      "path": "candidates/유니브ai-frame-55.00.png",
+      "timestamp": 822
+    },
+    {
+      "index": 824,
+      "path": "candidates/유니브ai-frame-551.00.png",
+      "timestamp": 823
+    },
+    {
+      "index": 825,
+      "path": "candidates/유니브ai-frame-553.00.png",
+      "timestamp": 824
+    },
+    {
+      "index": 826,
+      "path": "candidates/유니브ai-frame-555.00.png",
+      "timestamp": 825
+    },
+    {
+      "index": 827,
+      "path": "candidates/유니브ai-frame-557.00.png",
+      "timestamp": 826
+    },
+    {
+      "index": 828,
+      "path": "candidates/유니브ai-frame-559.00.png",
+      "timestamp": 827
+    },
+    {
+      "index": 829,
+      "path": "candidates/유니브ai-frame-561.00.png",
+      "timestamp": 828
+    },
+    {
+      "index": 830,
+      "path": "candidates/유니브ai-frame-563.00.png",
+      "timestamp": 829
+    },
+    {
+      "index": 831,
+      "path": "candidates/유니브ai-frame-565.00.png",
+      "timestamp": 830
+    },
+    {
+      "index": 832,
+      "path": "candidates/유니브ai-frame-567.00.png",
+      "timestamp": 831
+    },
+    {
+      "index": 833,
+      "path": "candidates/유니브ai-frame-569.00.png",
+      "timestamp": 832
+    },
+    {
+      "index": 834,
+      "path": "candidates/유니브ai-frame-57.00.png",
+      "timestamp": 833
+    },
+    {
+      "index": 835,
+      "path": "candidates/유니브ai-frame-571.00.png",
+      "timestamp": 834
+    },
+    {
+      "index": 836,
+      "path": "candidates/유니브ai-frame-573.00.png",
+      "timestamp": 835
+    },
+    {
+      "index": 837,
+      "path": "candidates/유니브ai-frame-575.00.png",
+      "timestamp": 836
+    },
+    {
+      "index": 838,
+      "path": "candidates/유니브ai-frame-577.00.png",
+      "timestamp": 837
+    },
+    {
+      "index": 839,
+      "path": "candidates/유니브ai-frame-579.00.png",
+      "timestamp": 838
+    },
+    {
+      "index": 840,
+      "path": "candidates/유니브ai-frame-581.00.png",
+      "timestamp": 839
+    },
+    {
+      "index": 841,
+      "path": "candidates/유니브ai-frame-583.00.png",
+      "timestamp": 840
+    },
+    {
+      "index": 842,
+      "path": "candidates/유니브ai-frame-585.00.png",
+      "timestamp": 841
+    },
+    {
+      "index": 843,
+      "path": "candidates/유니브ai-frame-587.00.png",
+      "timestamp": 842
+    },
+    {
+      "index": 844,
+      "path": "candidates/유니브ai-frame-589.00.png",
+      "timestamp": 843
+    },
+    {
+      "index": 845,
+      "path": "candidates/유니브ai-frame-59.00.png",
+      "timestamp": 844
+    },
+    {
+      "index": 846,
+      "path": "candidates/유니브ai-frame-591.00.png",
+      "timestamp": 845
+    },
+    {
+      "index": 847,
+      "path": "candidates/유니브ai-frame-593.00.png",
+      "timestamp": 846
+    },
+    {
+      "index": 848,
+      "path": "candidates/유니브ai-frame-595.00.png",
+      "timestamp": 847
+    },
+    {
+      "index": 849,
+      "path": "candidates/유니브ai-frame-597.00.png",
+      "timestamp": 848
+    },
+    {
+      "index": 850,
+      "path": "candidates/유니브ai-frame-599.00.png",
+      "timestamp": 849
+    },
+    {
+      "index": 851,
+      "path": "candidates/유니브ai-frame-601.00.png",
+      "timestamp": 850
+    },
+    {
+      "index": 852,
+      "path": "candidates/유니브ai-frame-603.00.png",
+      "timestamp": 851
+    },
+    {
+      "index": 853,
+      "path": "candidates/유니브ai-frame-605.00.png",
+      "timestamp": 852
+    },
+    {
+      "index": 854,
+      "path": "candidates/유니브ai-frame-607.00.png",
+      "timestamp": 853
+    },
+    {
+      "index": 855,
+      "path": "candidates/유니브ai-frame-609.00.png",
+      "timestamp": 854
+    },
+    {
+      "index": 856,
+      "path": "candidates/유니브ai-frame-61.00.png",
+      "timestamp": 855
+    },
+    {
+      "index": 857,
+      "path": "candidates/유니브ai-frame-611.00.png",
+      "timestamp": 856
+    },
+    {
+      "index": 858,
+      "path": "candidates/유니브ai-frame-613.00.png",
+      "timestamp": 857
+    },
+    {
+      "index": 859,
+      "path": "candidates/유니브ai-frame-615.00.png",
+      "timestamp": 858
+    },
+    {
+      "index": 860,
+      "path": "candidates/유니브ai-frame-617.00.png",
+      "timestamp": 859
+    },
+    {
+      "index": 861,
+      "path": "candidates/유니브ai-frame-619.00.png",
+      "timestamp": 860
+    },
+    {
+      "index": 862,
+      "path": "candidates/유니브ai-frame-621.00.png",
+      "timestamp": 861
+    },
+    {
+      "index": 863,
+      "path": "candidates/유니브ai-frame-623.00.png",
+      "timestamp": 862
+    },
+    {
+      "index": 864,
+      "path": "candidates/유니브ai-frame-625.00.png",
+      "timestamp": 863
+    },
+    {
+      "index": 865,
+      "path": "candidates/유니브ai-frame-627.00.png",
+      "timestamp": 864
+    },
+    {
+      "index": 866,
+      "path": "candidates/유니브ai-frame-629.00.png",
+      "timestamp": 865
+    },
+    {
+      "index": 867,
+      "path": "candidates/유니브ai-frame-63.00.png",
+      "timestamp": 866
+    },
+    {
+      "index": 868,
+      "path": "candidates/유니브ai-frame-631.00.png",
+      "timestamp": 867
+    },
+    {
+      "index": 869,
+      "path": "candidates/유니브ai-frame-633.00.png",
+      "timestamp": 868
+    },
+    {
+      "index": 870,
+      "path": "candidates/유니브ai-frame-635.00.png",
+      "timestamp": 869
+    },
+    {
+      "index": 871,
+      "path": "candidates/유니브ai-frame-637.00.png",
+      "timestamp": 870
+    },
+    {
+      "index": 872,
+      "path": "candidates/유니브ai-frame-639.00.png",
+      "timestamp": 871
+    },
+    {
+      "index": 873,
+      "path": "candidates/유니브ai-frame-641.00.png",
+      "timestamp": 872
+    },
+    {
+      "index": 874,
+      "path": "candidates/유니브ai-frame-643.00.png",
+      "timestamp": 873
+    },
+    {
+      "index": 875,
+      "path": "candidates/유니브ai-frame-645.00.png",
+      "timestamp": 874
+    },
+    {
+      "index": 876,
+      "path": "candidates/유니브ai-frame-647.00.png",
+      "timestamp": 875
+    },
+    {
+      "index": 877,
+      "path": "candidates/유니브ai-frame-649.00.png",
+      "timestamp": 876
+    },
+    {
+      "index": 878,
+      "path": "candidates/유니브ai-frame-65.00.png",
+      "timestamp": 877
+    },
+    {
+      "index": 879,
+      "path": "candidates/유니브ai-frame-651.00.png",
+      "timestamp": 878
+    },
+    {
+      "index": 880,
+      "path": "candidates/유니브ai-frame-653.00.png",
+      "timestamp": 879
+    },
+    {
+      "index": 881,
+      "path": "candidates/유니브ai-frame-655.00.png",
+      "timestamp": 880
+    },
+    {
+      "index": 882,
+      "path": "candidates/유니브ai-frame-657.00.png",
+      "timestamp": 881
+    },
+    {
+      "index": 883,
+      "path": "candidates/유니브ai-frame-659.00.png",
+      "timestamp": 882
+    },
+    {
+      "index": 884,
+      "path": "candidates/유니브ai-frame-661.00.png",
+      "timestamp": 883
+    },
+    {
+      "index": 885,
+      "path": "candidates/유니브ai-frame-663.00.png",
+      "timestamp": 884
+    },
+    {
+      "index": 886,
+      "path": "candidates/유니브ai-frame-665.00.png",
+      "timestamp": 885
+    },
+    {
+      "index": 887,
+      "path": "candidates/유니브ai-frame-667.00.png",
+      "timestamp": 886
+    },
+    {
+      "index": 888,
+      "path": "candidates/유니브ai-frame-669.00.png",
+      "timestamp": 887
+    },
+    {
+      "index": 889,
+      "path": "candidates/유니브ai-frame-67.00.png",
+      "timestamp": 888
+    },
+    {
+      "index": 890,
+      "path": "candidates/유니브ai-frame-671.00.png",
+      "timestamp": 889
+    },
+    {
+      "index": 891,
+      "path": "candidates/유니브ai-frame-673.00.png",
+      "timestamp": 890
+    },
+    {
+      "index": 892,
+      "path": "candidates/유니브ai-frame-675.00.png",
+      "timestamp": 891
+    },
+    {
+      "index": 893,
+      "path": "candidates/유니브ai-frame-677.00.png",
+      "timestamp": 892
+    },
+    {
+      "index": 894,
+      "path": "candidates/유니브ai-frame-679.00.png",
+      "timestamp": 893
+    },
+    {
+      "index": 895,
+      "path": "candidates/유니브ai-frame-681.00.png",
+      "timestamp": 894
+    },
+    {
+      "index": 896,
+      "path": "candidates/유니브ai-frame-683.00.png",
+      "timestamp": 895
+    },
+    {
+      "index": 897,
+      "path": "candidates/유니브ai-frame-685.00.png",
+      "timestamp": 896
+    },
+    {
+      "index": 898,
+      "path": "candidates/유니브ai-frame-687.00.png",
+      "timestamp": 897
+    },
+    {
+      "index": 899,
+      "path": "candidates/유니브ai-frame-689.00.png",
+      "timestamp": 898
+    },
+    {
+      "index": 900,
+      "path": "candidates/유니브ai-frame-69.00.png",
+      "timestamp": 899
+    },
+    {
+      "index": 901,
+      "path": "candidates/유니브ai-frame-691.00.png",
+      "timestamp": 900
+    },
+    {
+      "index": 902,
+      "path": "candidates/유니브ai-frame-693.00.png",
+      "timestamp": 901
+    },
+    {
+      "index": 903,
+      "path": "candidates/유니브ai-frame-695.00.png",
+      "timestamp": 902
+    },
+    {
+      "index": 904,
+      "path": "candidates/유니브ai-frame-697.00.png",
+      "timestamp": 903
+    },
+    {
+      "index": 905,
+      "path": "candidates/유니브ai-frame-699.00.png",
+      "timestamp": 904
+    },
+    {
+      "index": 906,
+      "path": "candidates/유니브ai-frame-7.00.png",
+      "timestamp": 905
+    },
+    {
+      "index": 907,
+      "path": "candidates/유니브ai-frame-701.00.png",
+      "timestamp": 906
+    },
+    {
+      "index": 908,
+      "path": "candidates/유니브ai-frame-703.00.png",
+      "timestamp": 907
+    },
+    {
+      "index": 909,
+      "path": "candidates/유니브ai-frame-705.00.png",
+      "timestamp": 908
+    },
+    {
+      "index": 910,
+      "path": "candidates/유니브ai-frame-707.00.png",
+      "timestamp": 909
+    },
+    {
+      "index": 911,
+      "path": "candidates/유니브ai-frame-709.00.png",
+      "timestamp": 910
+    },
+    {
+      "index": 912,
+      "path": "candidates/유니브ai-frame-71.00.png",
+      "timestamp": 911
+    },
+    {
+      "index": 913,
+      "path": "candidates/유니브ai-frame-711.00.png",
+      "timestamp": 912
+    },
+    {
+      "index": 914,
+      "path": "candidates/유니브ai-frame-713.00.png",
+      "timestamp": 913
+    },
+    {
+      "index": 915,
+      "path": "candidates/유니브ai-frame-715.00.png",
+      "timestamp": 914
+    },
+    {
+      "index": 916,
+      "path": "candidates/유니브ai-frame-717.00.png",
+      "timestamp": 915
+    },
+    {
+      "index": 917,
+      "path": "candidates/유니브ai-frame-719.00.png",
+      "timestamp": 916
+    },
+    {
+      "index": 918,
+      "path": "candidates/유니브ai-frame-721.00.png",
+      "timestamp": 917
+    },
+    {
+      "index": 919,
+      "path": "candidates/유니브ai-frame-723.00.png",
+      "timestamp": 918
+    },
+    {
+      "index": 920,
+      "path": "candidates/유니브ai-frame-725.00.png",
+      "timestamp": 919
+    },
+    {
+      "index": 921,
+      "path": "candidates/유니브ai-frame-727.00.png",
+      "timestamp": 920
+    },
+    {
+      "index": 922,
+      "path": "candidates/유니브ai-frame-729.00.png",
+      "timestamp": 921
+    },
+    {
+      "index": 923,
+      "path": "candidates/유니브ai-frame-73.00.png",
+      "timestamp": 922
+    },
+    {
+      "index": 924,
+      "path": "candidates/유니브ai-frame-731.00.png",
+      "timestamp": 923
+    },
+    {
+      "index": 925,
+      "path": "candidates/유니브ai-frame-733.00.png",
+      "timestamp": 924
+    },
+    {
+      "index": 926,
+      "path": "candidates/유니브ai-frame-735.00.png",
+      "timestamp": 925
+    },
+    {
+      "index": 927,
+      "path": "candidates/유니브ai-frame-737.00.png",
+      "timestamp": 926
+    },
+    {
+      "index": 928,
+      "path": "candidates/유니브ai-frame-739.00.png",
+      "timestamp": 927
+    },
+    {
+      "index": 929,
+      "path": "candidates/유니브ai-frame-741.00.png",
+      "timestamp": 928
+    },
+    {
+      "index": 930,
+      "path": "candidates/유니브ai-frame-743.00.png",
+      "timestamp": 929
+    },
+    {
+      "index": 931,
+      "path": "candidates/유니브ai-frame-745.00.png",
+      "timestamp": 930
+    },
+    {
+      "index": 932,
+      "path": "candidates/유니브ai-frame-747.00.png",
+      "timestamp": 931
+    },
+    {
+      "index": 933,
+      "path": "candidates/유니브ai-frame-749.00.png",
+      "timestamp": 932
+    },
+    {
+      "index": 934,
+      "path": "candidates/유니브ai-frame-75.00.png",
+      "timestamp": 933
+    },
+    {
+      "index": 935,
+      "path": "candidates/유니브ai-frame-751.00.png",
+      "timestamp": 934
+    },
+    {
+      "index": 936,
+      "path": "candidates/유니브ai-frame-753.00.png",
+      "timestamp": 935
+    },
+    {
+      "index": 937,
+      "path": "candidates/유니브ai-frame-755.00.png",
+      "timestamp": 936
+    },
+    {
+      "index": 938,
+      "path": "candidates/유니브ai-frame-757.00.png",
+      "timestamp": 937
+    },
+    {
+      "index": 939,
+      "path": "candidates/유니브ai-frame-759.00.png",
+      "timestamp": 938
+    },
+    {
+      "index": 940,
+      "path": "candidates/유니브ai-frame-761.00.png",
+      "timestamp": 939
+    },
+    {
+      "index": 941,
+      "path": "candidates/유니브ai-frame-763.00.png",
+      "timestamp": 940
+    },
+    {
+      "index": 942,
+      "path": "candidates/유니브ai-frame-765.00.png",
+      "timestamp": 941
+    },
+    {
+      "index": 943,
+      "path": "candidates/유니브ai-frame-767.00.png",
+      "timestamp": 942
+    },
+    {
+      "index": 944,
+      "path": "candidates/유니브ai-frame-769.00.png",
+      "timestamp": 943
+    },
+    {
+      "index": 945,
+      "path": "candidates/유니브ai-frame-77.00.png",
+      "timestamp": 944
+    },
+    {
+      "index": 946,
+      "path": "candidates/유니브ai-frame-771.00.png",
+      "timestamp": 945
+    },
+    {
+      "index": 947,
+      "path": "candidates/유니브ai-frame-773.00.png",
+      "timestamp": 946
+    },
+    {
+      "index": 948,
+      "path": "candidates/유니브ai-frame-775.00.png",
+      "timestamp": 947
+    },
+    {
+      "index": 949,
+      "path": "candidates/유니브ai-frame-777.00.png",
+      "timestamp": 948
+    },
+    {
+      "index": 950,
+      "path": "candidates/유니브ai-frame-779.00.png",
+      "timestamp": 949
+    },
+    {
+      "index": 951,
+      "path": "candidates/유니브ai-frame-781.00.png",
+      "timestamp": 950
+    },
+    {
+      "index": 952,
+      "path": "candidates/유니브ai-frame-783.00.png",
+      "timestamp": 951
+    },
+    {
+      "index": 953,
+      "path": "candidates/유니브ai-frame-785.00.png",
+      "timestamp": 952
+    },
+    {
+      "index": 954,
+      "path": "candidates/유니브ai-frame-787.00.png",
+      "timestamp": 953
+    },
+    {
+      "index": 955,
+      "path": "candidates/유니브ai-frame-789.00.png",
+      "timestamp": 954
+    },
+    {
+      "index": 956,
+      "path": "candidates/유니브ai-frame-79.00.png",
+      "timestamp": 955
+    },
+    {
+      "index": 957,
+      "path": "candidates/유니브ai-frame-791.00.png",
+      "timestamp": 956
+    },
+    {
+      "index": 958,
+      "path": "candidates/유니브ai-frame-793.00.png",
+      "timestamp": 957
+    },
+    {
+      "index": 959,
+      "path": "candidates/유니브ai-frame-795.00.png",
+      "timestamp": 958
+    },
+    {
+      "index": 960,
+      "path": "candidates/유니브ai-frame-797.00.png",
+      "timestamp": 959
+    },
+    {
+      "index": 961,
+      "path": "candidates/유니브ai-frame-799.00.png",
+      "timestamp": 960
+    },
+    {
+      "index": 962,
+      "path": "candidates/유니브ai-frame-801.00.png",
+      "timestamp": 961
+    },
+    {
+      "index": 963,
+      "path": "candidates/유니브ai-frame-803.00.png",
+      "timestamp": 962
+    },
+    {
+      "index": 964,
+      "path": "candidates/유니브ai-frame-805.00.png",
+      "timestamp": 963
+    },
+    {
+      "index": 965,
+      "path": "candidates/유니브ai-frame-807.00.png",
+      "timestamp": 964
+    },
+    {
+      "index": 966,
+      "path": "candidates/유니브ai-frame-809.00.png",
+      "timestamp": 965
+    },
+    {
+      "index": 967,
+      "path": "candidates/유니브ai-frame-81.00.png",
+      "timestamp": 966
+    },
+    {
+      "index": 968,
+      "path": "candidates/유니브ai-frame-811.00.png",
+      "timestamp": 967
+    },
+    {
+      "index": 969,
+      "path": "candidates/유니브ai-frame-813.00.png",
+      "timestamp": 968
+    },
+    {
+      "index": 970,
+      "path": "candidates/유니브ai-frame-815.00.png",
+      "timestamp": 969
+    },
+    {
+      "index": 971,
+      "path": "candidates/유니브ai-frame-817.00.png",
+      "timestamp": 970
+    },
+    {
+      "index": 972,
+      "path": "candidates/유니브ai-frame-819.00.png",
+      "timestamp": 971
+    },
+    {
+      "index": 973,
+      "path": "candidates/유니브ai-frame-821.00.png",
+      "timestamp": 972
+    },
+    {
+      "index": 974,
+      "path": "candidates/유니브ai-frame-823.00.png",
+      "timestamp": 973
+    },
+    {
+      "index": 975,
+      "path": "candidates/유니브ai-frame-825.00.png",
+      "timestamp": 974
+    },
+    {
+      "index": 976,
+      "path": "candidates/유니브ai-frame-827.00.png",
+      "timestamp": 975
+    },
+    {
+      "index": 977,
+      "path": "candidates/유니브ai-frame-829.00.png",
+      "timestamp": 976
+    },
+    {
+      "index": 978,
+      "path": "candidates/유니브ai-frame-83.00.png",
+      "timestamp": 977
+    },
+    {
+      "index": 979,
+      "path": "candidates/유니브ai-frame-831.00.png",
+      "timestamp": 978
+    },
+    {
+      "index": 980,
+      "path": "candidates/유니브ai-frame-833.00.png",
+      "timestamp": 979
+    },
+    {
+      "index": 981,
+      "path": "candidates/유니브ai-frame-835.00.png",
+      "timestamp": 980
+    },
+    {
+      "index": 982,
+      "path": "candidates/유니브ai-frame-837.00.png",
+      "timestamp": 981
+    },
+    {
+      "index": 983,
+      "path": "candidates/유니브ai-frame-839.00.png",
+      "timestamp": 982
+    },
+    {
+      "index": 984,
+      "path": "candidates/유니브ai-frame-841.00.png",
+      "timestamp": 983
+    },
+    {
+      "index": 985,
+      "path": "candidates/유니브ai-frame-843.00.png",
+      "timestamp": 984
+    },
+    {
+      "index": 986,
+      "path": "candidates/유니브ai-frame-845.00.png",
+      "timestamp": 985
+    },
+    {
+      "index": 987,
+      "path": "candidates/유니브ai-frame-847.00.png",
+      "timestamp": 986
+    },
+    {
+      "index": 988,
+      "path": "candidates/유니브ai-frame-849.00.png",
+      "timestamp": 987
+    },
+    {
+      "index": 989,
+      "path": "candidates/유니브ai-frame-85.00.png",
+      "timestamp": 988
+    },
+    {
+      "index": 990,
+      "path": "candidates/유니브ai-frame-851.00.png",
+      "timestamp": 989
+    },
+    {
+      "index": 991,
+      "path": "candidates/유니브ai-frame-853.00.png",
+      "timestamp": 990
+    },
+    {
+      "index": 992,
+      "path": "candidates/유니브ai-frame-855.00.png",
+      "timestamp": 991
+    },
+    {
+      "index": 993,
+      "path": "candidates/유니브ai-frame-857.00.png",
+      "timestamp": 992
+    },
+    {
+      "index": 994,
+      "path": "candidates/유니브ai-frame-859.00.png",
+      "timestamp": 993
+    },
+    {
+      "index": 995,
+      "path": "candidates/유니브ai-frame-861.00.png",
+      "timestamp": 994
+    },
+    {
+      "index": 996,
+      "path": "candidates/유니브ai-frame-863.00.png",
+      "timestamp": 995
+    },
+    {
+      "index": 997,
+      "path": "candidates/유니브ai-frame-865.00.png",
+      "timestamp": 996
+    },
+    {
+      "index": 998,
+      "path": "candidates/유니브ai-frame-867.00.png",
+      "timestamp": 997
+    },
+    {
+      "index": 999,
+      "path": "candidates/유니브ai-frame-869.00.png",
+      "timestamp": 998
+    },
+    {
+      "index": 1000,
+      "path": "candidates/유니브ai-frame-87.00.png",
+      "timestamp": 999
+    },
+    {
+      "index": 1001,
+      "path": "candidates/유니브ai-frame-871.00.png",
+      "timestamp": 1000
+    },
+    {
+      "index": 1002,
+      "path": "candidates/유니브ai-frame-873.00.png",
+      "timestamp": 1001
+    },
+    {
+      "index": 1003,
+      "path": "candidates/유니브ai-frame-875.00.png",
+      "timestamp": 1002
+    },
+    {
+      "index": 1004,
+      "path": "candidates/유니브ai-frame-877.00.png",
+      "timestamp": 1003
+    },
+    {
+      "index": 1005,
+      "path": "candidates/유니브ai-frame-879.00.png",
+      "timestamp": 1004
+    },
+    {
+      "index": 1006,
+      "path": "candidates/유니브ai-frame-881.00.png",
+      "timestamp": 1005
+    },
+    {
+      "index": 1007,
+      "path": "candidates/유니브ai-frame-883.00.png",
+      "timestamp": 1006
+    },
+    {
+      "index": 1008,
+      "path": "candidates/유니브ai-frame-885.00.png",
+      "timestamp": 1007
+    },
+    {
+      "index": 1009,
+      "path": "candidates/유니브ai-frame-887.00.png",
+      "timestamp": 1008
+    },
+    {
+      "index": 1010,
+      "path": "candidates/유니브ai-frame-889.00.png",
+      "timestamp": 1009
+    },
+    {
+      "index": 1011,
+      "path": "candidates/유니브ai-frame-89.00.png",
+      "timestamp": 1010
+    },
+    {
+      "index": 1012,
+      "path": "candidates/유니브ai-frame-891.00.png",
+      "timestamp": 1011
+    },
+    {
+      "index": 1013,
+      "path": "candidates/유니브ai-frame-893.00.png",
+      "timestamp": 1012
+    },
+    {
+      "index": 1014,
+      "path": "candidates/유니브ai-frame-895.00.png",
+      "timestamp": 1013
+    },
+    {
+      "index": 1015,
+      "path": "candidates/유니브ai-frame-897.00.png",
+      "timestamp": 1014
+    },
+    {
+      "index": 1016,
+      "path": "candidates/유니브ai-frame-899.00.png",
+      "timestamp": 1015
+    },
+    {
+      "index": 1017,
+      "path": "candidates/유니브ai-frame-9.00.png",
+      "timestamp": 1016
+    },
+    {
+      "index": 1018,
+      "path": "candidates/유니브ai-frame-901.00.png",
+      "timestamp": 1017
+    },
+    {
+      "index": 1019,
+      "path": "candidates/유니브ai-frame-903.00.png",
+      "timestamp": 1018
+    },
+    {
+      "index": 1020,
+      "path": "candidates/유니브ai-frame-905.00.png",
+      "timestamp": 1019
+    },
+    {
+      "index": 1021,
+      "path": "candidates/유니브ai-frame-907.00.png",
+      "timestamp": 1020
+    },
+    {
+      "index": 1022,
+      "path": "candidates/유니브ai-frame-909.00.png",
+      "timestamp": 1021
+    },
+    {
+      "index": 1023,
+      "path": "candidates/유니브ai-frame-91.00.png",
+      "timestamp": 1022
+    },
+    {
+      "index": 1024,
+      "path": "candidates/유니브ai-frame-911.00.png",
+      "timestamp": 1023
+    },
+    {
+      "index": 1025,
+      "path": "candidates/유니브ai-frame-913.00.png",
+      "timestamp": 1024
+    },
+    {
+      "index": 1026,
+      "path": "candidates/유니브ai-frame-915.00.png",
+      "timestamp": 1025
+    },
+    {
+      "index": 1027,
+      "path": "candidates/유니브ai-frame-917.00.png",
+      "timestamp": 1026
+    },
+    {
+      "index": 1028,
+      "path": "candidates/유니브ai-frame-919.00.png",
+      "timestamp": 1027
+    },
+    {
+      "index": 1029,
+      "path": "candidates/유니브ai-frame-921.00.png",
+      "timestamp": 1028
+    },
+    {
+      "index": 1030,
+      "path": "candidates/유니브ai-frame-923.00.png",
+      "timestamp": 1029
+    },
+    {
+      "index": 1031,
+      "path": "candidates/유니브ai-frame-925.00.png",
+      "timestamp": 1030
+    },
+    {
+      "index": 1032,
+      "path": "candidates/유니브ai-frame-927.00.png",
+      "timestamp": 1031
+    },
+    {
+      "index": 1033,
+      "path": "candidates/유니브ai-frame-929.00.png",
+      "timestamp": 1032
+    },
+    {
+      "index": 1034,
+      "path": "candidates/유니브ai-frame-93.00.png",
+      "timestamp": 1033
+    },
+    {
+      "index": 1035,
+      "path": "candidates/유니브ai-frame-931.00.png",
+      "timestamp": 1034
+    },
+    {
+      "index": 1036,
+      "path": "candidates/유니브ai-frame-933.00.png",
+      "timestamp": 1035
+    },
+    {
+      "index": 1037,
+      "path": "candidates/유니브ai-frame-935.00.png",
+      "timestamp": 1036
+    },
+    {
+      "index": 1038,
+      "path": "candidates/유니브ai-frame-937.00.png",
+      "timestamp": 1037
+    },
+    {
+      "index": 1039,
+      "path": "candidates/유니브ai-frame-939.00.png",
+      "timestamp": 1038
+    },
+    {
+      "index": 1040,
+      "path": "candidates/유니브ai-frame-941.00.png",
+      "timestamp": 1039
+    },
+    {
+      "index": 1041,
+      "path": "candidates/유니브ai-frame-943.00.png",
+      "timestamp": 1040
+    },
+    {
+      "index": 1042,
+      "path": "candidates/유니브ai-frame-945.00.png",
+      "timestamp": 1041
+    },
+    {
+      "index": 1043,
+      "path": "candidates/유니브ai-frame-947.00.png",
+      "timestamp": 1042
+    },
+    {
+      "index": 1044,
+      "path": "candidates/유니브ai-frame-949.00.png",
+      "timestamp": 1043
+    },
+    {
+      "index": 1045,
+      "path": "candidates/유니브ai-frame-95.00.png",
+      "timestamp": 1044
+    },
+    {
+      "index": 1046,
+      "path": "candidates/유니브ai-frame-951.00.png",
+      "timestamp": 1045
+    },
+    {
+      "index": 1047,
+      "path": "candidates/유니브ai-frame-953.00.png",
+      "timestamp": 1046
+    },
+    {
+      "index": 1048,
+      "path": "candidates/유니브ai-frame-955.00.png",
+      "timestamp": 1047
+    },
+    {
+      "index": 1049,
+      "path": "candidates/유니브ai-frame-957.00.png",
+      "timestamp": 1048
+    },
+    {
+      "index": 1050,
+      "path": "candidates/유니브ai-frame-959.00.png",
+      "timestamp": 1049
+    },
+    {
+      "index": 1051,
+      "path": "candidates/유니브ai-frame-961.00.png",
+      "timestamp": 1050
+    },
+    {
+      "index": 1052,
+      "path": "candidates/유니브ai-frame-963.00.png",
+      "timestamp": 1051
+    },
+    {
+      "index": 1053,
+      "path": "candidates/유니브ai-frame-965.00.png",
+      "timestamp": 1052
+    },
+    {
+      "index": 1054,
+      "path": "candidates/유니브ai-frame-967.00.png",
+      "timestamp": 1053
+    },
+    {
+      "index": 1055,
+      "path": "candidates/유니브ai-frame-97.00.png",
+      "timestamp": 1054
+    },
+    {
+      "index": 1056,
+      "path": "candidates/유니브ai-frame-99.00.png",
+      "timestamp": 1055
+    }
+  ]
+}
