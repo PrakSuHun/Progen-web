@@ -165,12 +165,24 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 
 ### 5-1. 홈 `/` ([app/page.tsx](app/page.tsx))
 **구성 섹션** (현재 4개):
-1. `HeroSection` — 대형 타이틀 + 보라 펄스 배지 + 우상단 violet blur + CTA 2개 (지원하기 / 커리큘럼 보기)
-2. `CurriculumSection` — 4개월 커리큘럼 카드 (월 박스 + 헤드라인 + 설명 + 보라 highlight)
+1. `HeroSection` — 풀스크린 히어로 (좌: 메인 카피·CTA, 우: 떠다니는 행사 미리보기 카드 4장 lg+에서만)
+2. `CurriculumSection` — 5개월 커리큘럼 카드 (3·4월 종료, 5월 모집중, 6·7월 예정)
 3. `ReviewsSection` — 참가자 후기 3개 (5성 + 인용문 + 아바타)
 4. `CtaBanner` — 크루 혜택 4개 카드 + 진입장벽 해소 2개 박스 + 보라색 CTA 섹션
 
-> **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `violet-500`.
+**HeroSection 세부 (2026-04-26 업데이트)**:
+- 배경: 마우스 추적 spotlight (`--mx`/`--my` CSS 변수, useEffect로 mousemove 갱신) + 흰→연보라 그라데이션
+- dot grid 패턴 오버레이 (.bg-dot-grid, opacity-50)
+- mesh blob 3개 (violet/fuchsia/sky), 각각 다른 키프레임/딜레이로 비동기 부유
+- 상단 그라데이션 라인
+- 배지: 펄스 + ping 애니메이션 (이중 ring 효과)
+- 타이틀 "도구를 지배하는" 부분에 violet→fuchsia 그라데이션 + gradientShift 애니메이션
+- CTA primary: violet→fuchsia 그라데이션, hover 시 색 반전 + lift
+- 우측 FloatCard 4장 — 3월/4월/5월/6월 행사 미리보기, 각각 회전·딜레이 다른 float 애니메이션 (모바일 hidden, lg+ 표시)
+- 5월 카드는 highlight 옵션 (violet ring + 펄스 점)
+- 하단 "Scroll" 인디케이터 + 페이드 라인
+
+> **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `violet-500`. 히어로만 그라데이션 + spotlight.
 > **미사용 컴포넌트**: `AboutSection`, `NumbersSection`, `ActivitiesSection`, `StarField` (파일 존재, import 안 됨).
 
 ---
