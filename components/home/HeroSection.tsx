@@ -1,170 +1,143 @@
-'use client'
-
-import { useEffect, useRef } from 'react'
+import { SpotlightBackground } from '@/components/SpotlightBackground'
 
 export function HeroSection() {
-  const sectionRef = useRef<HTMLElement | null>(null)
-
-  // 마우스 위치 따라가는 spotlight
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      el.style.setProperty('--mx', `${x}%`)
-      el.style.setProperty('--my', `${y}%`)
-    }
-    el.addEventListener('mousemove', onMove)
-    return () => el.removeEventListener('mousemove', onMove)
-  }, [])
-
   return (
-    <section
-      ref={sectionRef}
-      className="min-h-[100svh] flex flex-col justify-center px-5 lg:px-8 pt-14 relative overflow-hidden"
-      style={{
-        background:
-          'radial-gradient(circle at var(--mx, 70%) var(--my, 30%), rgba(56, 189, 248, 0.20), transparent 45%), linear-gradient(180deg, #f5fbff 0%, #ffffff 55%, #f0f9ff 100%)',
-      }}
-    >
-      {/* 격자 패턴 */}
-      <div className="absolute inset-0 bg-dot-grid opacity-50 pointer-events-none" />
+    <SpotlightBackground variant="hero" className="min-h-[100svh] overflow-hidden">
+      <section className="min-h-[100svh] flex flex-col justify-center px-5 lg:px-8 pt-14 relative">
+        {/* mesh blobs */}
+        <div className="absolute -top-20 -right-20 w-[480px] h-[480px] bg-sky-300/30 rounded-full blur-[160px] pointer-events-none anim-blob" />
+        <div
+          className="absolute bottom-0 left-[-120px] w-[380px] h-[380px] bg-blue-300/25 rounded-full blur-[150px] pointer-events-none anim-blob-2"
+          style={{ animationDelay: '-6s' }}
+        />
+        <div
+          className="absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-sky-200/25 rounded-full blur-[140px] pointer-events-none anim-blob"
+          style={{ animationDelay: '-9s' }}
+        />
 
-      {/* mesh blobs */}
-      <div className="absolute -top-20 -right-20 w-[480px] h-[480px] bg-sky-300/30 rounded-full blur-[160px] pointer-events-none anim-blob" />
-      <div
-        className="absolute bottom-0 left-[-120px] w-[380px] h-[380px] bg-blue-300/25 rounded-full blur-[150px] pointer-events-none anim-blob-2"
-        style={{ animationDelay: '-6s' }}
-      />
-      <div
-        className="absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-sky-200/25 rounded-full blur-[140px] pointer-events-none anim-blob"
-        style={{ animationDelay: '-9s' }}
-      />
+        {/* 그라데이션 라인 (상단) */}
+        <div className="absolute top-14 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-300/60 to-transparent pointer-events-none" />
 
-      {/* 그라데이션 라인 (상단) */}
-      <div className="absolute top-14 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-300/60 to-transparent pointer-events-none" />
+        <div className="max-w-7xl mx-auto w-full relative z-10 grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
+          {/* 좌: 메인 타이틀 */}
+          <div>
+            <div
+              className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full bg-white border border-sky-200 text-sky-600 text-xs font-bold shadow-sm shadow-sky-100 anim-fade-in-up backdrop-blur-sm"
+              style={{ animationDelay: '40ms' }}
+            >
+              <span className="relative flex w-1.5 h-1.5">
+                <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
+                <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
+              </span>
+              1기 크루 모집 중 · 5월 클래스 사전 신청 OPEN
+            </div>
 
-      <div className="max-w-7xl mx-auto w-full relative z-10 grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
-        {/* 좌: 메인 타이틀 */}
-        <div>
-          <div
-            className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full bg-white border border-sky-200 text-sky-600 text-xs font-bold shadow-sm shadow-sky-100 anim-fade-in-up backdrop-blur-sm"
-            style={{ animationDelay: '40ms' }}
-          >
-            <span className="relative flex w-1.5 h-1.5">
-              <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
-              <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
-            </span>
-            1기 크루 모집 중 · 5월 클래스 사전 신청 OPEN
+            <h1
+              className="font-black tracking-tight mb-5 leading-[1.05] anim-fade-in-up"
+              style={{ fontSize: 'clamp(2rem, 8vw, 6rem)', animationDelay: '120ms' }}
+            >
+              <span className="text-black">AI 시대,</span>
+              <br />
+              <span className="bg-gradient-to-r from-sky-600 via-blue-500 to-sky-500 bg-clip-text text-transparent anim-gradient-shift">
+                도구를 지배하는
+              </span>
+              <br />
+              <span className="text-black">대학생의 커뮤니티.</span>
+            </h1>
+
+            <p
+              className="text-[#555] text-sm md:text-lg leading-relaxed mb-7 max-w-md anim-fade-in-up"
+              style={{ animationDelay: '240ms' }}
+            >
+              매달 1회, 핵심만 압축한 AI 클래스.
+              <br />
+              모든 클래스 필참 X, 원하는 달만 참여해도 OK.
+            </p>
+
+            <div
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5 anim-fade-in-up"
+              style={{ animationDelay: '340ms' }}
+            >
+              <a
+                href="/apply"
+                className="group relative px-6 py-3.5 bg-gradient-to-r from-sky-500 to-blue-500 text-white font-bold rounded-full text-sm md:text-base text-center hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-sky-500/30 transition-all duration-200 shadow-lg shadow-sky-500/20 overflow-hidden"
+              >
+                <span className="relative z-10">1기 크루 지원하기 →</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </a>
+              <a
+                href="#curriculum"
+                className="px-6 py-3.5 bg-white/80 backdrop-blur-sm border border-[#e0e0e0] text-[#555] font-medium rounded-full text-sm md:text-base text-center hover:border-sky-300 hover:text-sky-500 hover:-translate-y-0.5 transition-all duration-200"
+              >
+                커리큘럼 보기 ↓
+              </a>
+            </div>
+
+            <p
+              className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
+              style={{ animationDelay: '420ms' }}
+            >
+              4월 ~ 7월 · 월 1회 · 참가비 무료
+            </p>
           </div>
 
-          <h1
-            className="font-black tracking-tight mb-5 leading-[1.05] anim-fade-in-up"
-            style={{ fontSize: 'clamp(2rem, 8vw, 6rem)', animationDelay: '120ms' }}
-          >
-            <span className="text-black">AI 시대,</span>
-            <br />
-            <span className="bg-gradient-to-r from-sky-600 via-blue-500 to-sky-500 bg-clip-text text-transparent anim-gradient-shift">
-              도구를 지배하는
-            </span>
-            <br />
-            <span className="text-black">대학생의 커뮤니티.</span>
-          </h1>
-
-          <p
-            className="text-[#555] text-sm md:text-lg leading-relaxed mb-7 max-w-md anim-fade-in-up"
-            style={{ animationDelay: '240ms' }}
-          >
-            매달 1회, 핵심만 압축한 AI 클래스.
-            <br />
-            모든 클래스 필참 X, 원하는 달만 참여해도 OK.
-          </p>
-
-          <div
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-5 anim-fade-in-up"
-            style={{ animationDelay: '340ms' }}
-          >
-            <a
-              href="/apply"
-              className="group relative px-6 py-3.5 bg-gradient-to-r from-sky-500 to-blue-500 text-white font-bold rounded-full text-sm md:text-base text-center hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-sky-500/30 transition-all duration-200 shadow-lg shadow-sky-500/20 overflow-hidden"
-            >
-              <span className="relative z-10">1기 크루 지원하기 →</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </a>
-            <a
-              href="#curriculum"
-              className="px-6 py-3.5 bg-white/80 backdrop-blur-sm border border-[#e0e0e0] text-[#555] font-medium rounded-full text-sm md:text-base text-center hover:border-sky-300 hover:text-sky-500 hover:-translate-y-0.5 transition-all duration-200"
-            >
-              커리큘럼 보기 ↓
-            </a>
+          {/* 우: 떠다니는 미리보기 카드들 (모바일에선 숨김) */}
+          <div className="hidden lg:block relative h-[440px]">
+            <FloatCard
+              top="0%"
+              left="10%"
+              delay="0s"
+              color="from-sky-500 to-blue-500"
+              label="3월 종료"
+              title="AI툴 클래스"
+              sub="80명 참가"
+              tags={['논문 파악', 'PPT 제작']}
+              tilt="-3deg"
+            />
+            <FloatCard
+              top="22%"
+              left="45%"
+              delay="-1.5s"
+              color="from-sky-500 to-sky-400"
+              label="4월 종료"
+              title="시험공부용 AI"
+              sub="40명 참가"
+              tags={['수업 녹음', '벼락치기 요약']}
+              tilt="2deg"
+            />
+            <FloatCard
+              top="55%"
+              left="5%"
+              delay="-3s"
+              color="from-sky-500 to-cyan-400"
+              label="5월 모집중"
+              title="일상 자동화"
+              sub="사전 신청 OPEN"
+              tags={['자동 알림', '노코드']}
+              tilt="3deg"
+              highlight
+            />
+            <FloatCard
+              top="70%"
+              left="50%"
+              delay="-2s"
+              color="from-cyan-400 to-sky-400"
+              label="6월 예정"
+              title="AI 숏폼·음악"
+              sub="온라인 수익화"
+              tags={['숏폼', '음악 AI']}
+              tilt="-2deg"
+            />
           </div>
-
-          <p
-            className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
-            style={{ animationDelay: '420ms' }}
-          >
-            4월 ~ 7월 · 월 1회 · 참가비 무료
-          </p>
         </div>
 
-        {/* 우: 떠다니는 미리보기 카드들 (모바일에선 숨김) */}
-        <div className="hidden lg:block relative h-[440px]">
-          <FloatCard
-            top="0%"
-            left="10%"
-            delay="0s"
-            color="from-sky-500 to-blue-500"
-            label="3월 종료"
-            title="AI툴 클래스"
-            sub="80명 참가"
-            tags={['논문 파악', 'PPT 제작']}
-            tilt="-3deg"
-          />
-          <FloatCard
-            top="22%"
-            left="45%"
-            delay="-1.5s"
-            color="from-sky-500 to-sky-400"
-            label="4월 종료"
-            title="시험공부용 AI"
-            sub="40명 참가"
-            tags={['수업 녹음', '벼락치기 요약']}
-            tilt="2deg"
-          />
-          <FloatCard
-            top="55%"
-            left="5%"
-            delay="-3s"
-            color="from-sky-500 to-cyan-400"
-            label="5월 모집중"
-            title="일상 자동화"
-            sub="사전 신청 OPEN"
-            tags={['자동 알림', '노코드']}
-            tilt="3deg"
-            highlight
-          />
-          <FloatCard
-            top="70%"
-            left="50%"
-            delay="-2s"
-            color="from-cyan-400 to-sky-400"
-            label="6월 예정"
-            title="AI 숏폼·음악"
-            sub="온라인 수익화"
-            tags={['숏폼', '음악 AI']}
-            tilt="-2deg"
-          />
+        {/* 스크롤 인디케이터 */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-[#aaa] text-[10px] tracking-[0.2em] uppercase anim-float">
+          <span>Scroll</span>
+          <div className="w-px h-5 bg-gradient-to-b from-sky-400 to-transparent" />
         </div>
-      </div>
-
-      {/* 스크롤 인디케이터 */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-[#aaa] text-[10px] tracking-[0.2em] uppercase anim-float">
-        <span>Scroll</span>
-        <div className="w-px h-5 bg-gradient-to-b from-sky-400 to-transparent" />
-      </div>
-    </section>
+      </section>
+    </SpotlightBackground>
   )
 }
 

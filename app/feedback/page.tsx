@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { TagSelector } from '@/components/feedback/TagSelector'
 import { showToast } from '@/components/Toast'
 import { GOOD_TAGS, BAD_TAGS } from '@/lib/constants'
+import { SpotlightBackground } from '@/components/SpotlightBackground'
 
 interface FeedbackData {
   good_tags: string[]; good_points: string
@@ -52,7 +53,8 @@ export default function FeedbackPage() {
   )
 
   return (
-    <main className="min-h-screen bg-[#fafafa]">
+    <main className="min-h-screen">
+      <SpotlightBackground variant="page">
       <Navbar />
       <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
@@ -156,6 +158,7 @@ export default function FeedbackPage() {
         </div>
       </div>
       <Footer />
+      </SpotlightBackground>
     </main>
   )
 }

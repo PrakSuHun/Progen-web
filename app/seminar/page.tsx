@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Reveal } from '@/components/Reveal'
+import { SpotlightBackground } from '@/components/SpotlightBackground'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 세미나',
@@ -51,7 +52,8 @@ const seminars = [
 
 export default function SeminarPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
+      <SpotlightBackground variant="page">
       <Navbar />
       <div className="pt-20 md:pt-24">
 
@@ -117,6 +119,7 @@ export default function SeminarPage() {
 
       </div>
       <Footer />
+      </SpotlightBackground>
     </main>
   )
 }

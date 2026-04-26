@@ -458,8 +458,9 @@ AI 보고서 영역:
 - `components/home/AboutSection.tsx`, `NumbersSection.tsx`, `ActivitiesSection.tsx`
 - `components/StarField.tsx` (별 파티클 캔버스, 어디에서도 import 안 됨)
 
-### 공통 (2026-04-25 추가)
+### 공통 (2026-04-25~26 추가)
 - **[Reveal](components/Reveal.tsx)** — IntersectionObserver 기반 스크롤 등장 wrapper. props: `delay?`, `className?`, `as?` ('div'|'section'|'article'|'li'). server component 안에서도 사용 가능 (`'use client'` 자체 선언).
+- **[SpotlightBackground](components/SpotlightBackground.tsx)** — 마우스 추적 spotlight + dot grid + mesh blob 배경 wrapper. props: `variant?` ('hero'|'page'), `className?`. variant='hero'는 풀스크린 강한 그라데이션, variant='page'는 옅은 톤 + 좌우 mesh blob 2개. 홈/소개/세미나/아카이브/커뮤니티/운영진/지원/사전신청/출석/피드백 모든 페이지에 적용. server component 안에서도 사용 가능.
 
 ### UI 기본
 - **[Button](components/ui/Button.tsx)**: primary/secondary, sm/md/lg.

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/Modal'
 import { showToast } from '@/components/Toast'
+import { SpotlightBackground } from '@/components/SpotlightBackground'
 import {
   SCHOOLS, GRADES, PATHS, GENDERS,
   formatPhone, isValidPhone,
@@ -84,7 +85,8 @@ export default function EventRegPage() {
   const setGuest = (key: keyof GuestFormData, val: string) => setGuestForm({ ...guestForm, [key]: val })
 
   return (
-    <main className="min-h-screen bg-[#fafafa]">
+    <main className="min-h-screen">
+      <SpotlightBackground variant="page">
       <Navbar />
       <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
@@ -155,6 +157,7 @@ export default function EventRegPage() {
       </Modal>
 
       <Footer />
+      </SpotlightBackground>
     </main>
   )
 }

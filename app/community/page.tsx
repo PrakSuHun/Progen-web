@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { SpotlightBackground } from '@/components/SpotlightBackground'
 
 export const metadata: Metadata = {
   title: 'PROGEN - 커뮤니티',
@@ -43,7 +44,8 @@ const benefits = [
 
 export default function CommunityPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
+      <SpotlightBackground variant="page">
       <Navbar />
 
       <div className="pt-20 md:pt-24">
@@ -121,6 +123,7 @@ export default function CommunityPage() {
       </div>
 
       <Footer />
+      </SpotlightBackground>
     </main>
   )
 }
