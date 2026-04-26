@@ -39,8 +39,8 @@ export function FeedbackRadar({
         <Radar
           name="만족도"
           dataKey="score"
-          stroke="#8b5cf6"
-          fill="#8b5cf6"
+          stroke="#0ea5e9"
+          fill="#0ea5e9"
           fillOpacity={0.3}
         />
         <Tooltip

@@ -89,7 +89,7 @@ export default function EventRegPage() {
       <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
 
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Event Registration
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">행사 사전 신청</h1>
@@ -99,14 +99,14 @@ export default function EventRegPage() {
           <Modal isOpen={mode === null} onClose={() => {}} title="신청 유형 선택">
             <p className="text-[#555] mb-6">신청 유형을 선택해주세요</p>
             <div className="flex gap-3">
-              <button onClick={() => setMode('crew')} className="flex-1 py-3 bg-violet-500 hover:bg-violet-600 text-white font-bold rounded-full transition-colors">크루</button>
+              <button onClick={() => setMode('crew')} className="flex-1 py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-full transition-colors">크루</button>
               <button onClick={() => setMode('guest')} className="flex-1 py-3 bg-[#f0f0f0] hover:bg-[#e5e5e5] text-[#333] font-bold rounded-full border border-[#e0e0e0] transition-colors">비회원</button>
             </div>
           </Modal>
 
           {mode !== null && (
             <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
-              <button type="button" onClick={() => { setMode(null); resetForms() }} className="text-[#999] hover:text-violet-500 text-sm transition-colors">
+              <button type="button" onClick={() => { setMode(null); resetForms() }} className="text-[#999] hover:text-sky-500 text-sm transition-colors">
                 ← 유형 변경
               </button>
 
@@ -143,14 +143,14 @@ export default function EventRegPage() {
         <p className="text-[#333] mb-1">사전 신청이 완료되었습니다!</p>
         <p className="text-[#888] text-sm mb-5">행사 당일 현장에서 이름과 연락처로 출석체크를 진행해주세요.</p>
         <button onClick={() => { setShowSuccess(false); setMode(null); resetForms() }}
-          className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
+          className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
       </Modal>
 
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 신청하셨어요">
         <p className="text-[#333] mb-1">이미 이번 행사에 신청하셨어요.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있으시면 아래 버튼으로 문의해주세요.</p>
         <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
-          className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">문의하기</a>
+          className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">문의하기</a>
         <button onClick={() => setShowDuplicate(false)} className="block w-full text-center text-[#999] hover:text-black text-sm transition-colors">닫기</button>
       </Modal>
 

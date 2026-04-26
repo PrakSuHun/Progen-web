@@ -44,7 +44,7 @@ export function SchoolChart({ data }: SchoolChartProps) {
           labelStyle={{ color: '#f1f5f9' }}
         />
         <Legend wrapperStyle={{ color: '#94a3b8', paddingTop: 16 }} />
-        <Bar dataKey="신청" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="신청" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
         <Bar dataKey="출석" fill="#10b981" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>

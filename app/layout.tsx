@@ -31,7 +31,8 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icon.svg" />
-        <meta name="theme-color" content="#7c3aed" />
+        <meta name="theme-color" content="#0ea5e9" />
+        <meta name="naver-site-verification" content="ed9397ff3f935f9050fbffb502805f167ca8857f" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="PROGEN" />

@@ -27,7 +27,7 @@ const seminars = [
     desc: '수업 녹음본 하나로 시험 끝. 녹음에서 핵심 키워드 자동 분석 → 예상 시험 문제 자동 생성 → 벼락치기용 요약본까지 한 번에 만들어 드렸습니다.',
   },
   {
-    status: '모집 중', statusColor: 'bg-violet-50 text-violet-600 border border-violet-200',
+    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
     month: '05', title: '시간을 돌려받는 — 일상 자동화 시스템',
     date: '2026. 5월 (예정)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['자동 알림', '녹음 → 요약', '노코드'],
@@ -58,7 +58,7 @@ export default function SeminarPage() {
         <section className="px-5 lg:px-8 py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
             <div
-              className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase anim-fade-in-up"
+              className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase anim-fade-in-up"
             >
               Seminar
             </div>
@@ -66,7 +66,7 @@ export default function SeminarPage() {
               className="text-4xl md:text-5xl font-black text-black leading-tight mb-4 anim-fade-in-up"
               style={{ animationDelay: '80ms' }}
             >
-              PROGEN 1기 <span className="text-violet-500">세미나 일정</span>
+              PROGEN 1기 <span className="text-sky-500">세미나 일정</span>
             </h1>
             <p
               className="text-[#555] text-base md:text-lg max-w-lg anim-fade-in-up"
@@ -81,10 +81,10 @@ export default function SeminarPage() {
           <div className="max-w-7xl mx-auto space-y-4">
             {seminars.map((s, i) => (
               <Reveal key={s.title} delay={i * 70}>
-                <div className={`bg-[#fafafa] border border-[#eee] rounded-2xl p-5 md:p-7 card-lift hover:border-violet-200 ${s.status === '종료' ? 'opacity-75' : ''}`}>
+                <div className={`bg-[#fafafa] border border-[#eee] rounded-2xl p-5 md:p-7 card-lift hover:border-sky-200 ${s.status === '종료' ? 'opacity-75' : ''}`}>
                   <div className="flex gap-4 md:gap-6">
                     <div className="shrink-0">
-                      <div className={`w-14 h-14 rounded-xl text-white flex flex-col items-center justify-center ${s.status === '종료' ? 'bg-[#bbb]' : 'bg-violet-500'}`}>
+                      <div className={`w-14 h-14 rounded-xl text-white flex flex-col items-center justify-center ${s.status === '종료' ? 'bg-[#bbb]' : 'bg-sky-500'}`}>
                         <span className="text-[8px] font-bold tracking-widest uppercase leading-none">MONTH</span>
                         <span className="text-xl font-black leading-none mt-0.5">{s.month}</span>
                       </div>
@@ -103,7 +103,7 @@ export default function SeminarPage() {
                       </div>
                       {s.status === '모집 중' && (
                         <Link href="/event-reg"
-                          className="inline-block px-6 py-2.5 bg-violet-500 hover:bg-violet-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/30 text-white text-sm font-bold rounded-full transition-all duration-200">
+                          className="inline-block px-6 py-2.5 bg-sky-500 hover:bg-sky-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30 text-white text-sm font-bold rounded-full transition-all duration-200">
                           사전 신청 →
                         </Link>
                       )}

@@ -37,7 +37,7 @@ export function DateChart({ data }: DateChartProps) {
           labelStyle={{ color: '#f1f5f9' }}
         />
         <Legend wrapperStyle={{ color: '#94a3b8', paddingTop: 16 }} />
-        <Line type="monotone" dataKey="신청" stroke="#8b5cf6" strokeWidth={2} dot={{ fill: '#8b5cf6' }} />
+        <Line type="monotone" dataKey="신청" stroke="#0ea5e9" strokeWidth={2} dot={{ fill: '#0ea5e9' }} />
         <Line type="monotone" dataKey="출석" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981' }} />
       </LineChart>
     </ResponsiveContainer>

@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-04-25 (애니메이션 추가 + 세미나/아카이브 정보 정정)
+> **마지막 최신화**: 2026-04-26 (보라→하늘파랑 컬러 전면 교체, 네이버 사이트 인증)
 
 ---
 
@@ -27,7 +27,7 @@
 | 분류 | 기술 |
 |------|------|
 | Frontend | React 19, Next.js 15 (App Router), TypeScript |
-| 스타일 | Tailwind CSS (라이트 테마: 흰 배경 + violet-500 포인트) |
+| 스타일 | Tailwind CSS (라이트 테마: 흰 배경 + sky-500 포인트) |
 | 폰트 | Pretendard (CDN) |
 | Backend | Next.js API Routes (서버리스) |
 | 데이터베이스 | Supabase (PostgreSQL + RLS) |
@@ -182,7 +182,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 - 5월 카드는 highlight 옵션 (violet ring + 펄스 점)
 - 하단 "Scroll" 인디케이터 + 페이드 라인
 
-> **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `violet-500`. 히어로만 그라데이션 + spotlight.
+> **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `sky-500`. 히어로만 그라데이션 + spotlight.
 > **미사용 컴포넌트**: `AboutSection`, `NumbersSection`, `ActivitiesSection`, `StarField` (파일 존재, import 안 됨).
 
 ---
@@ -484,16 +484,18 @@ AI 보고서 영역:
 
 **테마**: 라이트.
 
-**컬러**:
+**컬러** (2026-04-26: 보라 → 하늘파랑 계열로 전면 교체):
 - 페이지 배경: 흰색
 - 섹션 교차: `#fafafa` ↔ 흰색
 - 카드 배경: 흰색
 - 보더: `#eee`, `#e0e0e0`
 - 본문: 검정
 - 보조: `#555`, `#666`, `#888`, `#aaa`
-- 포인트: `violet-500` (#7c3aed), hover `violet-600`
-- 보라 배경: `violet-50` (배지/배너), `violet-500` (CTA 섹션)
+- **포인트: `sky-500` (#0ea5e9), hover `sky-600` (#0284c7)**
+- 그라데이션 보조: `blue-500` (CTA 그라데이션), `cyan-400` (FloatCard 5월/6월 카드)
+- 옅은 배경: `sky-50` (배지/배너), `sky-100` (아바타 등), `sky-500` (CTA 섹션)
 - 에러: `red-400`~`red-500`
+- theme-color (PWA/manifest.json): `#0ea5e9`
 
 **레이아웃**:
 - 최대 너비: `max-w-7xl` (메인 페이지들), 폼 페이지는 더 좁게

@@ -80,7 +80,7 @@ interface FullStats {
 }
 
 // ───────────── Helpers ─────────────
-const PIE_COLORS = ['#8b5cf6', '#34d399', '#f472b6', '#60a5fa', '#fbbf24']
+const PIE_COLORS = ['#0ea5e9', '#34d399', '#f472b6', '#60a5fa', '#fbbf24']
 const FROM_NOT_ARRIVED = '__NOT_ARRIVED__'
 
 function genderColor(gender: string) {
@@ -101,7 +101,7 @@ function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
 }
 
 // ───────────── Sub-components ─────────────
-function MiniBarChart({ data, color = '#8b5cf6' }: { data: DistItem[]; color?: string }) {
+function MiniBarChart({ data, color = '#0ea5e9' }: { data: DistItem[]; color?: string }) {
   if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={180}>
@@ -164,7 +164,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
         ${isDraggable ? 'active:cursor-grabbing' : ''}
         ${dimmed ? 'opacity-50' : ''}
         ${isSelected
-          ? 'bg-violet-100 border-2 border-violet-500 shadow-md'
+          ? 'bg-sky-100 border-2 border-sky-500 shadow-md'
           : isNoshow
             ? 'bg-red-50 border-2 border-red-400'
             : isTarget
@@ -176,7 +176,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
     >
       <div className="flex items-center gap-1 font-medium text-slate-800">
         <span>{person.name}</span>
-        {person.is_member && <span className="w-2 h-2 rounded-full bg-violet-500 inline-block" />}
+        {person.is_member && <span className="w-2 h-2 rounded-full bg-sky-500 inline-block" />}
         {isNoshow && (
           <span className="text-red-500 text-xs font-bold">노쇼</span>
         )}
@@ -184,7 +184,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
           <span className="text-amber-600 text-xs font-normal">미출석</span>
         )}
         {person.team_name && (
-          <span className="ml-auto text-violet-500 text-xs font-normal">{person.team_name}</span>
+          <span className="ml-auto text-sky-500 text-xs font-normal">{person.team_name}</span>
         )}
         {isTarget && !person.team_name && (
           <span className="ml-auto text-red-500 text-xs font-normal">박탈대상</span>
@@ -205,7 +205,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
       {showPhone && person.phone && (
         <a
           href={`tel:${person.phone}`}
-          className="text-xs text-violet-500 hover:text-violet-600 mt-0.5 block"
+          className="text-xs text-sky-500 hover:text-sky-600 mt-0.5 block"
           onClick={(e) => e.stopPropagation()}
         >
           {person.phone}
@@ -242,7 +242,7 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
   return (
     <div
       className={`relative bg-white border-2 rounded-xl p-3 min-h-[120px] transition-colors
-        ${over ? 'border-violet-400 bg-violet-50 shadow-md'
+        ${over ? 'border-sky-400 bg-sky-50 shadow-md'
           : hasNoshowIssue ? 'border-orange-400 bg-orange-50/30 shadow-sm'
           : 'border-slate-200 shadow-sm'}`}
       onDragOver={(e) => { e.preventDefault(); setOver(true) }}
@@ -250,7 +250,7 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
       onDrop={() => { setOver(false); onDrop(teamName) }}
       onClick={(e) => { if ((e.target as HTMLElement).closest('button, input')) return; onTapAssign?.() }}
     >
-      {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-violet-500" />}
+      {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-sky-500" />}
       <button
         onClick={() => onDelete(teamName)}
         className="absolute top-1.5 right-2 text-slate-300 hover:text-red-400 transition-colors text-xs leading-none"
@@ -262,10 +262,10 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
             onChange={(e) => setInputVal(e.target.value)}
             onBlur={confirmRename}
             onKeyDown={(e) => e.key === 'Enter' && confirmRename()}
-            className="bg-slate-50 text-slate-800 text-sm font-semibold px-2 py-0.5 rounded w-full outline-none border border-violet-400"
+            className="bg-slate-50 text-slate-800 text-sm font-semibold px-2 py-0.5 rounded w-full outline-none border border-sky-400"
           />
         ) : (
-          <button onClick={() => setEditing(true)} className="text-slate-800 text-sm font-semibold hover:text-violet-500 transition-colors">
+          <button onClick={() => setEditing(true)} className="text-slate-800 text-sm font-semibold hover:text-sky-500 transition-colors">
             {teamName}
           </button>
         )}
@@ -614,7 +614,7 @@ export default function AdminDashboardPage() {
         {/* 숫자 카드 */}
         <div className="grid grid-cols-4 gap-2 md:gap-4 mb-5">
           {[
-            { label: '오기로 한 인원', value: pre, color: 'text-violet-700', bg: 'bg-violet-50 border-violet-200' },
+            { label: '오기로 한 인원', value: pre, color: 'text-sky-700', bg: 'bg-sky-50 border-sky-200' },
             { label: '출석', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
             { label: '미출석', value: missing, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200' },
             { label: '노쇼확정', value: noshowTotal, color: 'text-red-600', bg: 'bg-red-50 border-red-200' },
@@ -632,7 +632,7 @@ export default function AdminDashboardPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="이름 또는 학교 검색..."
-            className="bg-white border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2 w-48 md:w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
+            className="bg-white border border-slate-200 text-slate-800 text-sm rounded-xl px-3 py-2 w-48 md:w-52 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
           />
           <div className="flex items-center gap-1">
             <span className="text-slate-400 text-xs mr-1">정렬:</span>
@@ -641,7 +641,7 @@ export default function AdminDashboardPage() {
                 key={key}
                 onClick={() => setSortBy(key)}
                 className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors font-medium
-                  ${sortBy === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 border border-slate-200'}`}
+                  ${sortBy === key ? 'bg-sky-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 border border-slate-200'}`}
               >
                 {label}
               </button>
@@ -735,7 +735,7 @@ export default function AdminDashboardPage() {
     const UnassignedContent = () => (
       <>
         {selected && (
-          <div className="px-3 py-2 bg-violet-50 border-b border-violet-200 text-xs text-violet-600 font-medium text-center">
+          <div className="px-3 py-2 bg-sky-50 border-b border-sky-200 text-xs text-sky-600 font-medium text-center">
             &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
           </div>
         )}
@@ -784,14 +784,14 @@ export default function AdminDashboardPage() {
             <select
               value={teamSize}
               onChange={(e) => setTeamSize(Number(e.target.value))}
-              className="w-12 py-2 text-center text-xs font-bold bg-white border border-slate-200 rounded-xl outline-none focus:border-violet-400 text-slate-800 appearance-none cursor-pointer"
+              className="w-12 py-2 text-center text-xs font-bold bg-white border border-slate-200 rounded-xl outline-none focus:border-sky-400 text-slate-800 appearance-none cursor-pointer"
             >
               {[2,3,4,5,6,7,8].map((n) => <option key={n} value={n}>{n}명</option>)}
             </select>
             <button
               onClick={handleAutoMatch}
               disabled={autoMatchLoading || (unassigned.length === 0 && notArrived.length === 0)}
-              className="flex-1 py-2 bg-violet-500 hover:bg-violet-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+              className="flex-1 py-2 bg-sky-500 hover:bg-sky-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
             >
               {autoMatchLoading ? '매칭...' : '자동 매칭'}
             </button>
@@ -817,7 +817,7 @@ export default function AdminDashboardPage() {
         {teamNames.length < 30 && (
           <div
             className={`bg-white/60 border-2 border-dashed rounded-xl p-3 min-h-[120px] flex items-center justify-center text-sm transition-colors
-              ${selected ? 'border-violet-400 text-violet-500 bg-violet-50/50' : 'border-slate-300 text-slate-400 hover:border-violet-300 hover:text-violet-500'}`}
+              ${selected ? 'border-sky-400 text-sky-500 bg-sky-50/50' : 'border-slate-300 text-slate-400 hover:border-sky-300 hover:text-sky-500'}`}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDropOnNewTeam}
             onClick={() => { if (selected) { const allNums2 = [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = allNums2.length > 0 ? Math.max(...allNums2) + 1 : 1; const newName = `${next2}팀`; knownTeamsRef.current.add(newName); handleTapAssign(newName) } }}
@@ -843,7 +843,7 @@ export default function AdminDashboardPage() {
               onClick={() => setTeamPanelOpen(!teamPanelOpen)}
               className="w-full px-4 py-2.5 flex items-center justify-between bg-slate-50 border-b border-slate-200"
             >
-              <span className="text-slate-800 font-semibold text-sm">미배정 출석자 <span className="text-violet-500 font-bold">{unassigned.length + notArrived.length}명</span></span>
+              <span className="text-slate-800 font-semibold text-sm">미배정 출석자 <span className="text-sky-500 font-bold">{unassigned.length + notArrived.length}명</span></span>
               <span className="text-slate-400 text-xs">{teamPanelOpen ? '접기 ▲' : '펼치기 ▼'}</span>
             </button>
             {teamPanelOpen && <UnassignedContent />}
@@ -866,7 +866,7 @@ export default function AdminDashboardPage() {
           >
             <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <span className="text-slate-800 font-semibold text-sm">미배정 출석자</span>
-              <span className="text-violet-500 text-xs font-bold">{unassigned.length}명</span>
+              <span className="text-sky-500 text-xs font-bold">{unassigned.length}명</span>
             </div>
             <div className="flex-1 flex flex-col overflow-hidden">
               <UnassignedContent />
@@ -929,7 +929,7 @@ export default function AdminDashboardPage() {
               <div className="md:hidden flex items-center gap-1 mb-4">
                 {([['all', '전체'], ['crew', '크루'], ['guest', '게스트']] as const).map(([key, label]) => (
                   <button key={key} onClick={() => setChartTarget(key)}
-                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-colors ${chartTarget === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200'}`}>
+                    className={`flex-1 py-2 text-xs font-bold rounded-xl transition-colors ${chartTarget === key ? 'bg-sky-500 text-white shadow-sm' : 'bg-white text-slate-500 border border-slate-200'}`}>
                     {label}
                   </button>
                 ))}
@@ -948,7 +948,7 @@ export default function AdminDashboardPage() {
                 { label: '성별 분포', all: s1.all.gender, crew: (s1 as any).crew?.gender, guest: (s1 as any).guest?.gender, type: 'pie' },
               ]).map(({ label, all, crew, guest, type }: any) => {
                 const mobileData = chartTarget === 'crew' ? crew : chartTarget === 'guest' ? guest : all
-                const mobileColor = chartTarget === 'crew' ? '#8b5cf6' : chartTarget === 'guest' ? '#3b82f6' : '#8b5cf6'
+                const mobileColor = chartTarget === 'crew' ? '#0ea5e9' : chartTarget === 'guest' ? '#3b82f6' : '#0ea5e9'
                 return (
                 <div key={label}>
                   <h3 className="text-slate-700 font-medium mb-3">{label}</h3>
@@ -973,8 +973,8 @@ export default function AdminDashboardPage() {
                       </div>
                     ) : (<>
                       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                        <p className="text-violet-400 text-xs mb-2">크루</p>
-                        {type === 'pie' ? <MiniPieChart data={crew ?? []} /> : <MiniBarChart data={crew ?? []} color="#8b5cf6" />}
+                        <p className="text-sky-400 text-xs mb-2">크루</p>
+                        {type === 'pie' ? <MiniPieChart data={crew ?? []} /> : <MiniBarChart data={crew ?? []} color="#0ea5e9" />}
                       </div>
                       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                         <p className="text-blue-400 text-xs mb-2">게스트</p>
@@ -997,7 +997,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
                 {[
                   { label: '전체 크루', value: `${s2.total_registrations}명`, color: 'text-slate-800' },
-                  { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-violet-600' },
+                  { label: '포도(정회원)', value: `${s2.checked_in_count}명`, color: 'text-sky-600' },
                   { label: '일반(비포도)', value: `${s2.total_crews}명`, color: 'text-emerald-600' },
                   { label: '남성 (전체)', value: `${s2.guest_attended}명`, color: 'text-blue-600' },
                   { label: '여성 (전체)', value: `${s2.guest_attendance_rate}명`, color: 'text-pink-500' },
@@ -1038,17 +1038,17 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* 크루 */}
-                    <div className="bg-white border-2 border-violet-200 rounded-2xl p-5 shadow-sm text-center">
-                      <p className="text-violet-500 text-sm mb-2">크루</p>
+                    <div className="bg-white border-2 border-sky-200 rounded-2xl p-5 shadow-sm text-center">
+                      <p className="text-sky-500 text-sm mb-2">크루</p>
                       <div className="flex justify-center items-baseline gap-3">
                         <div>
-                          <p className="text-3xl font-black text-violet-600">{s2.total_crews}명</p>
+                          <p className="text-3xl font-black text-sky-600">{s2.total_crews}명</p>
                           <p className="text-slate-400 text-xs">신청</p>
                         </div>
                         <span className="text-slate-300 text-xl">→</span>
                         <div>
-                          <p className="text-3xl font-black text-violet-600">{s2.crew_checked_in}명</p>
-                          <p className="text-violet-400 text-xs">참여 ({crewPct}%)</p>
+                          <p className="text-3xl font-black text-sky-600">{s2.crew_checked_in}명</p>
+                          <p className="text-sky-400 text-xs">참여 ({crewPct}%)</p>
                         </div>
                       </div>
                     </div>
@@ -1078,9 +1078,9 @@ export default function AdminDashboardPage() {
                         <p className="text-3xl md:text-4xl font-black text-slate-800 mt-1">{s2.total_registrations}명</p>
                         {s2.podo_count > 0 && <p className="text-slate-400 text-xs mt-1">포도 포함 {s2.total_registrations + s2.podo_count}명 (포도 {s2.podo_count})</p>}
                       </div>
-                      <div className="bg-white border-2 border-violet-200 rounded-2xl p-4 shadow-sm text-center">
-                        <p className="text-violet-500 text-xs font-semibold">크루 신청</p>
-                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.total_crews}명</p>
+                      <div className="bg-white border-2 border-sky-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-sky-500 text-xs font-semibold">크루 신청</p>
+                        <p className="text-2xl font-black text-sky-600 mt-1">{s2.total_crews}명</p>
                       </div>
                       <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 shadow-sm text-center">
                         <p className="text-blue-500 text-xs font-semibold">게스트 신청</p>
@@ -1093,9 +1093,9 @@ export default function AdminDashboardPage() {
                         <p className="text-3xl md:text-4xl font-black text-emerald-600 mt-1">{s2.checked_in_count}명 <span className="text-lg font-bold">({totalPct}%)</span></p>
                         {s2.podo_count > 0 && <p className="text-slate-400 text-xs mt-1">포도 포함 {s2.checked_in_count + (s2.podo_checked_in ?? 0)}명 (포도 {s2.podo_checked_in ?? 0})</p>}
                       </div>
-                      <div className="bg-white border-2 border-violet-200 rounded-2xl p-4 shadow-sm text-center">
-                        <p className="text-violet-500 text-xs font-semibold">크루 참여</p>
-                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.crew_checked_in}명 <span className="text-sm font-medium">({crewPct}%)</span></p>
+                      <div className="bg-white border-2 border-sky-200 rounded-2xl p-4 shadow-sm text-center">
+                        <p className="text-sky-500 text-xs font-semibold">크루 참여</p>
+                        <p className="text-2xl font-black text-sky-600 mt-1">{s2.crew_checked_in}명 <span className="text-sm font-medium">({crewPct}%)</span></p>
                       </div>
                       <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 shadow-sm text-center">
                         <p className="text-blue-500 text-xs font-semibold">게스트 참여</p>
@@ -1161,7 +1161,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="text-center border-l border-slate-100">
                         <p className="text-slate-400 text-xs">크루</p>
-                        <p className="text-2xl font-black text-violet-600 mt-1">{s2.first_time_crew}명</p>
+                        <p className="text-2xl font-black text-sky-600 mt-1">{s2.first_time_crew}명</p>
                         <p className="text-slate-400 text-xs mt-1">참여 {s2.first_time_crew_checked_in}명</p>
                       </div>
                       <div className="text-center border-l border-slate-100">
@@ -1187,7 +1187,7 @@ export default function AdminDashboardPage() {
                   {[
                     { label: '총 응답 수', value: s3.total_responses, color: 'text-slate-800' },
                     { label: '재참여 희망', value: s3.would_return_count, color: 'text-emerald-600' },
-                    { label: '가입 관심', value: s3.join_interest_count, color: 'text-violet-600' },
+                    { label: '가입 관심', value: s3.join_interest_count, color: 'text-sky-600' },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
                       <p className="text-slate-500 text-xs md:text-sm">{label}</p>
@@ -1199,7 +1199,7 @@ export default function AdminDashboardPage() {
               {s3.good_tags.length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
                   <h3 className="text-slate-700 font-medium mb-3">{crewMode ? '관심 프로젝트' : '좋았던 점 태그'}</h3>
-                  <MiniBarChart data={s3.good_tags.map((t: TagItem) => ({ name: t.tag, count: t.count }))} color={crewMode ? '#8b5cf6' : '#34d399'} />
+                  <MiniBarChart data={s3.good_tags.map((t: TagItem) => ({ name: t.tag, count: t.count }))} color={crewMode ? '#0ea5e9' : '#34d399'} />
                 </div>
               )}
               {s3.bad_tags.length > 0 && (
@@ -1249,7 +1249,7 @@ export default function AdminDashboardPage() {
                   <div key={r.id} className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                     <div className="flex items-center justify-between p-4">
                       <div className="flex items-center gap-2 cursor-pointer hover:opacity-70" onClick={() => window.open(`/admin/report?id=${r.id}`, '_blank')}>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${r.mode === 'podo' ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-slate-600'}`}>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${r.mode === 'podo' ? 'bg-sky-100 text-sky-600' : 'bg-slate-100 text-slate-600'}`}>
                           {r.mode === 'podo' ? '포도' : '일반'}
                         </span>
                         <span className="text-slate-800 font-semibold text-sm">{r.title}</span>
@@ -1354,12 +1354,12 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4">
           {(membersMode === 'event' ? [
             { label: '총 신청자', value: total, color: 'text-slate-800' },
-            { label: '게스트/크루', value: `${guestCount}/${crewCount}`, color: 'text-violet-600' },
+            { label: '게스트/크루', value: `${guestCount}/${crewCount}`, color: 'text-sky-600' },
             { label: '일반/포도', value: `${total - memberCount}/${memberCount}`, color: 'text-emerald-600' },
             { label: '남/여 (비포도)', value: (() => { const nonPodo = members.filter((m: any) => !m.is_member); const m = nonPodo.filter((x: any) => x.gender === '남성').length; const f = nonPodo.filter((x: any) => x.gender === '여성').length; return `${m}/${f}` })(), color: 'text-blue-600' },
           ] : [
             { label: '총 크루', value: total, color: 'text-slate-800' },
-            { label: '학교 수', value: schoolCount, color: 'text-violet-600' },
+            { label: '학교 수', value: schoolCount, color: 'text-sky-600' },
             { label: '일반/포도', value: `${total - memberCount}/${memberCount}`, color: 'text-emerald-600' },
             { label: '남/여 (비포도)', value: (() => { const nonPodo = members.filter((m: any) => !m.is_member); const m = nonPodo.filter((x: any) => x.gender === '남성').length; const f = nonPodo.filter((x: any) => x.gender === '여성').length; return `${m}/${f}` })(), color: 'text-blue-600' },
           ]).map(({ label, value, color }) => (
@@ -1374,18 +1374,18 @@ export default function AdminDashboardPage() {
         <div className="flex items-center gap-2 md:gap-3 mb-3 flex-wrap">
           <div className="flex items-center gap-1 bg-slate-200 rounded-xl p-0.5">
             <button onClick={() => { setMembersMode('event'); fetchMembers('event') }}
-              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'event' ? 'bg-violet-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
+              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'event' ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
               행사 신청자
             </button>
             <button onClick={() => { setMembersMode('all'); fetchMembers('all') }}
-              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'all' ? 'bg-violet-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
+              className={`px-2 md:px-3 py-1.5 text-[10px] md:text-xs rounded-lg font-medium transition-colors ${membersMode === 'all' ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}>
               누적 크루
             </button>
           </div>
           <div className="flex items-center gap-1">
             {MEMBER_SORT_OPTIONS.map(({ key, label }) => (
               <button key={key} onClick={() => setMemberSort(key)}
-                className={`px-2 md:px-2.5 py-1 md:py-1.5 text-[10px] md:text-xs rounded-lg transition-colors font-medium ${memberSort === key ? 'bg-violet-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}>
+                className={`px-2 md:px-2.5 py-1 md:py-1.5 text-[10px] md:text-xs rounded-lg transition-colors font-medium ${memberSort === key ? 'bg-sky-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}>
                 {label}
               </button>
             ))}
@@ -1394,7 +1394,7 @@ export default function AdminDashboardPage() {
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
             placeholder="이름, 학교 검색..."
-            className="hidden md:block bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-52 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 placeholder:text-slate-400 shadow-sm"
+            className="hidden md:block bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-52 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
           />
           <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-slate-700 text-xs px-2 md:px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
             새로고침
@@ -1408,7 +1408,7 @@ export default function AdminDashboardPage() {
             const isExpanded = expandedMemberId === mid
             return (
               <div key={mid}
-                className={`bg-white border rounded-2xl shadow-sm transition-all ${isExpanded ? 'border-violet-300' : 'border-slate-200'}`}
+                className={`bg-white border rounded-2xl shadow-sm transition-all ${isExpanded ? 'border-sky-300' : 'border-slate-200'}`}
                 onClick={() => setExpandedMemberId(isExpanded ? null : mid)}
               >
                 <div className="p-3">
@@ -1420,7 +1420,7 @@ export default function AdminDashboardPage() {
                       </span>
                       {membersMode === 'event' && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 w-10 text-center"
-                          style={{ background: m.is_crew ? '#f5f3ff' : '#f1f5f9', color: m.is_crew ? '#8b5cf6' : '#94a3b8' }}>
+                          style={{ background: m.is_crew ? '#f0f9ff' : '#f1f5f9', color: m.is_crew ? '#0ea5e9' : '#94a3b8' }}>
                           {m.is_crew ? '크루' : '게스트'}
                         </span>
                       )}
@@ -1446,7 +1446,7 @@ export default function AdminDashboardPage() {
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-1 border-t border-slate-100 space-y-2" onClick={(e) => e.stopPropagation()}>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
-                      {m.phone && <div><span className="text-slate-400">연락처</span><br/><a href={`tel:${m.phone}`} className="text-violet-500 font-medium">{m.phone}</a></div>}
+                      {m.phone && <div><span className="text-slate-400">연락처</span><br/><a href={`tel:${m.phone}`} className="text-sky-500 font-medium">{m.phone}</a></div>}
                       {m.age && <div><span className="text-slate-400">나이</span><br/><span className="text-slate-700">{m.age}세</span></div>}
                       {m.school && <div><span className="text-slate-400">학교</span><br/><span className="text-slate-700">{m.school}</span></div>}
                       {m.grade && <div><span className="text-slate-400">학년</span><br/><span className="text-slate-700">{m.grade}</span></div>}
@@ -1454,7 +1454,7 @@ export default function AdminDashboardPage() {
                       {m.path && <div><span className="text-slate-400">경로</span><br/><span className="text-slate-700">{m.path}</span></div>}
                       {m.project && <div><span className="text-slate-400">관심 프로젝트</span><br/><span className="text-slate-700">{m.project}</span></div>}
                       {m.motivation && <div className="col-span-2"><span className="text-slate-400">지원 동기</span><br/><span className="text-slate-700">{m.motivation}</span></div>}
-                      {membersMode === 'event' && m.team_name && <div><span className="text-slate-400">팀</span><br/><span className="text-violet-600 font-medium">{m.team_name}</span></div>}
+                      {membersMode === 'event' && m.team_name && <div><span className="text-slate-400">팀</span><br/><span className="text-sky-600 font-medium">{m.team_name}</span></div>}
                     </div>
                     {membersMode === 'event' && (
                       <button onClick={() => handleDeleteMember(m)} className="w-full mt-2 py-1.5 text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium">
@@ -1462,7 +1462,7 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
                     {membersMode === 'all' && (
-                      <button onClick={() => handleTogglePodo(m)} className={`w-full mt-2 py-1.5 text-xs font-medium rounded-lg border transition-colors ${m.is_member ? 'text-slate-500 bg-slate-50 border-slate-200 hover:bg-slate-100' : 'text-violet-600 bg-violet-50 border-violet-200 hover:bg-violet-100'}`}>
+                      <button onClick={() => handleTogglePodo(m)} className={`w-full mt-2 py-1.5 text-xs font-medium rounded-lg border transition-colors ${m.is_member ? 'text-slate-500 bg-slate-50 border-slate-200 hover:bg-slate-100' : 'text-sky-600 bg-sky-50 border-sky-200 hover:bg-sky-100'}`}>
                         {m.is_member ? '🍇 포도 해제' : '포도로 변경'}
                       </button>
                     )}
@@ -1502,13 +1502,13 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((m: any, i: number) => (
-                  <tr key={m.registration_id || m.id} className="hover:bg-violet-50/40 transition-colors">
+                  <tr key={m.registration_id || m.id} className="hover:bg-sky-50/40 transition-colors">
                     <td className="px-3 py-3 text-slate-400 text-xs">{i + 1}</td>
                     <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">
                       <span className="inline-flex items-center gap-1">{m.name}{m.is_first_time && !m.is_member && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}</span>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
-                      <a href={`tel:${m.phone}`} className="text-violet-500 hover:text-violet-600">{m.phone}</a>
+                      <a href={`tel:${m.phone}`} className="text-sky-500 hover:text-sky-600">{m.phone}</a>
                     </td>
                     <td className="px-3 py-3 text-slate-600">{m.age}</td>
                     <td className={`px-3 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
@@ -1536,7 +1536,7 @@ export default function AdminDashboardPage() {
                     {membersMode === 'event' && (
                       <td className="px-3 py-3">
                         {m.is_crew
-                          ? <span className="text-violet-500 text-xs">크루</span>
+                          ? <span className="text-sky-500 text-xs">크루</span>
                           : <span className="text-slate-400 text-xs">게스트</span>}
                       </td>
                     )}
@@ -1575,7 +1575,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-3 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-8 h-8 border-3 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <p className="text-slate-500 text-sm">로딩 중...</p>
         </div>
       </div>
@@ -1585,14 +1585,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="h-screen bg-slate-100 flex flex-col overflow-hidden">
       {/* 헤더 — 짙은 보라색 */}
-      <header className="bg-violet-700 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
+      <header className="bg-sky-700 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
           <h1 className="text-sm md:text-lg font-bold text-white shrink-0">PROGEN</h1>
           {events.length > 0 && (
             <select
               value={selectedEventId}
               onChange={(e) => handleEventChange(e.target.value)}
-              className="bg-violet-600 border border-violet-500 text-white text-xs md:text-sm rounded-lg px-2 md:px-3 py-1.5 outline-none focus:border-violet-300 cursor-pointer min-w-0 flex-1 md:flex-none"
+              className="bg-sky-600 border border-sky-500 text-white text-xs md:text-sm rounded-lg px-2 md:px-3 py-1.5 outline-none focus:border-sky-300 cursor-pointer min-w-0 flex-1 md:flex-none"
             >
               {events.map((ev) => (
                 <option key={ev.id} value={ev.id}>
@@ -1604,11 +1604,11 @@ export default function AdminDashboardPage() {
           )}
         </div>
         <div className="flex gap-2 shrink-0">
-          <button onClick={() => fetchAll()} className="text-violet-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-violet-500 hover:border-violet-300 transition-colors">
+          <button onClick={() => fetchAll()} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
             새로고침
           </button>
           <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); router.push('/admin') }}
-            className="hidden md:block text-violet-200 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-violet-500 hover:border-violet-300 transition-colors">
+            className="hidden md:block text-sky-200 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
             로그아웃
           </button>
         </div>
@@ -1622,7 +1622,7 @@ export default function AdminDashboardPage() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 py-3 text-xs font-bold transition-colors ${
               activeTab === tab.id
-                ? 'text-violet-600 border-b-2 border-violet-500 bg-violet-50/50'
+                ? 'text-sky-600 border-b-2 border-sky-500 bg-sky-50/50'
                 : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -1651,7 +1651,7 @@ export default function AdminDashboardPage() {
               className={`py-5 px-2.5 text-sm font-bold transition-all duration-150 shadow-md
                 ${i === 0 ? 'rounded-tl-xl' : ''} ${i === tabs.length - 1 ? 'rounded-bl-xl' : ''}
                 ${activeTab === tab.id
-                  ? 'bg-violet-600 text-white -translate-x-1 z-10'
+                  ? 'bg-sky-600 text-white -translate-x-1 z-10'
                   : 'bg-white text-slate-400 hover:bg-slate-50 hover:text-slate-600 border border-slate-200 border-r-0'
                 }`}
             >

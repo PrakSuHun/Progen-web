@@ -46,12 +46,12 @@ export function CurriculumSection() {
       <div className="max-w-7xl mx-auto">
 
         <Reveal>
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Curriculum
           </div>
 
           <h2 className="text-2xl md:text-4xl font-black text-black leading-snug mb-2">
-            PROGEN 1기<br className="md:hidden" /> <span className="text-violet-500">상반기 커리큘럼</span>
+            PROGEN 1기<br className="md:hidden" /> <span className="text-sky-500">상반기 커리큘럼</span>
           </h2>
           <p className="text-[#888] text-xs md:text-sm mb-8">
             모든 클래스는 한 달 내내가 아닌, <span className="text-black font-bold">월 1회만</span> 핵심 압축 진행됩니다.
@@ -61,10 +61,10 @@ export function CurriculumSection() {
         <div className="space-y-3">
           {months.map((m, i) => (
             <Reveal key={m.month} delay={i * 80}>
-              <div className={`bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-violet-200 ${m.ended ? 'opacity-75' : ''}`}>
+              <div className={`bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-sky-200 ${m.ended ? 'opacity-75' : ''}`}>
                 <div className="flex gap-4 md:gap-5">
                   <div className="shrink-0">
-                    <div className={`w-14 h-14 md:w-20 md:h-20 rounded-xl text-white flex flex-col items-center justify-center ${m.ended ? 'bg-[#bbb]' : 'bg-violet-500'}`}>
+                    <div className={`w-14 h-14 md:w-20 md:h-20 rounded-xl text-white flex flex-col items-center justify-center ${m.ended ? 'bg-[#bbb]' : 'bg-sky-500'}`}>
                       <span className="text-[8px] md:text-[9px] font-bold tracking-widest uppercase leading-none">MONTH</span>
                       <span className="text-xl md:text-3xl font-black leading-none mt-0.5">{m.month}</span>
                     </div>
@@ -72,11 +72,11 @@ export function CurriculumSection() {
 
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug">
-                      {m.headline} <span className={m.ended ? 'text-[#888]' : 'text-violet-500'}>{m.title}</span>
+                      {m.headline} <span className={m.ended ? 'text-[#888]' : 'text-sky-500'}>{m.title}</span>
                     </h3>
                     <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5">{m.desc}</p>
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-violet-50 border-violet-100'}`}>
-                      <span className={`text-xs md:text-sm leading-snug ${m.ended ? 'text-[#888]' : 'text-violet-500'}`}>{m.highlight}</span>
+                    <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-sky-50 border-sky-100'}`}>
+                      <span className={`text-xs md:text-sm leading-snug ${m.ended ? 'text-[#888]' : 'text-sky-500'}`}>{m.highlight}</span>
                     </div>
                   </div>
                 </div>

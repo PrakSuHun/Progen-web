@@ -16,7 +16,7 @@ export function Button({
   const baseClasses = 'font-bold rounded-full transition-all duration-200 disabled:opacity-50'
 
   const variantClasses = {
-    primary: 'bg-violet-500 hover:bg-violet-600 text-white shadow-lg shadow-violet-500/20',
+    primary: 'bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/20',
     secondary: 'bg-[#f0f0f0] hover:bg-[#e5e5e5] text-[#333] border border-[#e0e0e0]',
   }
 

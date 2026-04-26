@@ -70,7 +70,7 @@ export default function ApplyPage() {
       <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
 
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Apply
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">1기 크루 지원</h1>
@@ -92,7 +92,7 @@ export default function ApplyPage() {
                 placeholder="PROGEN에 지원하는 이유를 알려주세요"
                 value={formData.motivation}
                 onChange={(e) => set('motivation', e.target.value)}
-                className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] placeholder-[#aaa] focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition h-32 text-base ${errors.motivation ? 'border-red-400' : 'border-[#e0e0e0]'}`}
+                className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] placeholder-[#aaa] focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 transition h-32 text-base ${errors.motivation ? 'border-red-400' : 'border-[#e0e0e0]'}`}
               />
               {errors.motivation && <p className="text-red-500 text-xs mt-1.5">{errors.motivation}</p>}
             </div>
@@ -122,7 +122,7 @@ export default function ApplyPage() {
         <p className="text-[#333] mb-1">동일한 연락처로 이미 지원 내역이 있어요.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있거나 정보를 수정하고 싶으시면 아래 버튼으로 문의해주세요.</p>
         <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
-          className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">
+          className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">
           문의하기
         </a>
         <button onClick={() => setShowDuplicate(false)}

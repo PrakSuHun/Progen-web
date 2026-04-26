@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       data: [
-        { label: '크루 신청', value: applicants || 0, color: 'bg-purple-500' },
+        { label: '크루 신청', value: applicants || 0, color: 'bg-sky-500' },
         { label: '행사 사전 신청', value: registered || 0, color: 'bg-indigo-500' },
         { label: '실제 출석', value: attended || 0, color: 'bg-emerald-500' },
       ],

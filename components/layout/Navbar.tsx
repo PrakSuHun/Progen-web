@@ -29,20 +29,20 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <Link href="/" className="text-black font-black text-lg tracking-tight relative z-[60]">
-              PRO<span className="text-violet-500">GEN</span>
+              PRO<span className="text-sky-500">GEN</span>
             </Link>
 
             <div className="hidden md:flex items-center gap-7">
-              <Link href="/about" className="text-[#666] hover:text-violet-500 transition-colors text-sm">소개</Link>
-              <Link href="/seminar" className="text-[#666] hover:text-violet-500 transition-colors text-sm">세미나</Link>
-              <Link href="/archive" className="text-[#666] hover:text-violet-500 transition-colors text-sm">아카이브</Link>
-              <Link href="/community" className="text-[#666] hover:text-violet-500 transition-colors text-sm">커뮤니티</Link>
-              <Link href="/recruit" className="text-[#666] hover:text-violet-500 transition-colors text-sm">운영진 모집</Link>
+              <Link href="/about" className="text-[#666] hover:text-sky-500 transition-colors text-sm">소개</Link>
+              <Link href="/seminar" className="text-[#666] hover:text-sky-500 transition-colors text-sm">세미나</Link>
+              <Link href="/archive" className="text-[#666] hover:text-sky-500 transition-colors text-sm">아카이브</Link>
+              <Link href="/community" className="text-[#666] hover:text-sky-500 transition-colors text-sm">커뮤니티</Link>
+              <Link href="/recruit" className="text-[#666] hover:text-sky-500 transition-colors text-sm">운영진 모집</Link>
             </div>
 
             <Link
               href="/apply"
-              className="hidden md:inline-block px-5 py-2 bg-violet-500 text-white font-bold text-sm rounded-full hover:bg-violet-600 transition-all duration-200"
+              className="hidden md:inline-block px-5 py-2 bg-sky-500 text-white font-bold text-sm rounded-full hover:bg-sky-600 transition-all duration-200"
             >
               지원하기
             </Link>
@@ -70,7 +70,7 @@ export function Navbar() {
             <div className="pt-4 border-t border-[#eee]">
               <Link
                 href="/apply"
-                className="block text-center py-3.5 bg-violet-500 text-white font-bold text-base rounded-full"
+                className="block text-center py-3.5 bg-sky-500 text-white font-bold text-base rounded-full"
                 onClick={() => setIsOpen(false)}
               >
                 지원하기

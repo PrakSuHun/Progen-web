@@ -14,9 +14,9 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
             key={i}
             className={`flex-1 h-2 mx-1 rounded-full transition-colors ${
               i < currentStep
-                ? 'bg-purple-600'
+                ? 'bg-sky-600'
                 : i === currentStep
-                ? 'bg-purple-500'
+                ? 'bg-sky-500'
                 : 'bg-slate-700'
             }`}
           />

@@ -51,11 +51,11 @@ export default function CommunityPage() {
         {/* Hero */}
         <section className="px-5 lg:px-8 py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
               Community
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-black leading-tight mb-4">
-              함께 성장하는 <span className="text-violet-500">크루 커뮤니티</span>
+              함께 성장하는 <span className="text-sky-500">크루 커뮤니티</span>
             </h1>
             <p className="text-[#555] text-base md:text-lg max-w-lg">
               혼자 공부하지 마세요. 같은 목표를 가진 동료들과 함께하면 성장 속도가 달라집니다.
@@ -68,8 +68,8 @@ export default function CommunityPage() {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {channels.map((ch) => (
-                <div key={ch.title} className="p-5 md:p-7 bg-[#fafafa] border border-[#eee] rounded-2xl hover:border-violet-200 transition-colors">
-                  <div className="inline-flex items-center mb-4 px-2.5 py-0.5 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[10px] font-bold tracking-wider uppercase">
+                <div key={ch.title} className="p-5 md:p-7 bg-[#fafafa] border border-[#eee] rounded-2xl hover:border-sky-200 transition-colors">
+                  <div className="inline-flex items-center mb-4 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[10px] font-bold tracking-wider uppercase">
                     {ch.tag}
                   </div>
                   <h2 className="text-black font-bold text-lg mb-2">{ch.title}</h2>
@@ -83,16 +83,16 @@ export default function CommunityPage() {
         {/* Crew benefits */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
               크루 혜택
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-black mb-8">
-              크루가 되면 <span className="text-violet-500">이런 혜택</span>이 있어요
+              크루가 되면 <span className="text-sky-500">이런 혜택</span>이 있어요
             </h2>
             <div className="space-y-3">
               {benefits.map((b, i) => (
                 <div key={b} className="flex items-center gap-4 p-4 bg-[#fafafa] border border-[#eee] rounded-xl">
-                  <span className="w-7 h-7 rounded-lg bg-violet-500 text-white font-black text-xs flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-lg bg-sky-500 text-white font-black text-xs flex items-center justify-center shrink-0">
                     {i + 1}
                   </span>
                   <p className="text-[#333] text-sm font-medium">{b}</p>
@@ -105,12 +105,12 @@ export default function CommunityPage() {
         {/* CTA */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-violet-500 text-white rounded-2xl p-6 md:p-10 text-center">
+            <div className="bg-sky-500 text-white rounded-2xl p-6 md:p-10 text-center">
               <h2 className="text-2xl md:text-3xl font-black mb-3">아직 크루가 아닌가요?</h2>
               <p className="text-white/70 text-sm mb-6">지금 지원하면 커뮤니티 전체에 접근할 수 있어요.</p>
               <Link
                 href="/apply"
-                className="inline-block px-8 py-3.5 bg-white text-violet-600 font-bold rounded-full text-base hover:bg-violet-50 transition-colors"
+                className="inline-block px-8 py-3.5 bg-white text-sky-600 font-bold rounded-full text-base hover:bg-sky-50 transition-colors"
               >
                 크루 지원하기 →
               </Link>

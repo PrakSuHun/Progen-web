@@ -41,7 +41,7 @@ const stats = [
 
 export function NumbersSection() {
   return (
-    <section className="bg-violet-500 text-white">
+    <section className="bg-sky-500 text-white">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {stats.map((s, i) => (

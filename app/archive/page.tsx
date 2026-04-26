@@ -55,7 +55,7 @@ export default function ArchivePage() {
         <section className="px-5 lg:px-8 py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
             <div
-              className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase anim-fade-in-up"
+              className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase anim-fade-in-up"
             >
               Archive
             </div>
@@ -63,7 +63,7 @@ export default function ArchivePage() {
               className="text-4xl md:text-5xl font-black text-black leading-tight mb-4 anim-fade-in-up"
               style={{ animationDelay: '80ms' }}
             >
-              PROGEN의 <span className="text-violet-500">발자취</span>
+              PROGEN의 <span className="text-sky-500">발자취</span>
             </h1>
             <p
               className="text-[#555] text-base md:text-lg max-w-lg anim-fade-in-up"
@@ -100,7 +100,7 @@ export default function ArchivePage() {
                   <div className="p-5 md:p-8">
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                       {e.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-0.5 bg-violet-50 border border-violet-100 text-violet-500 text-xs font-bold rounded-full">
+                        <span key={tag} className="px-2.5 py-0.5 bg-sky-50 border border-sky-100 text-sky-500 text-xs font-bold rounded-full">
                           {tag}
                         </span>
                       ))}
@@ -128,8 +128,8 @@ export default function ArchivePage() {
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
             <Reveal>
-              <div className="bg-violet-50 border border-violet-100 rounded-2xl p-6 md:p-10 text-center">
-                <p className="text-violet-600 font-bold text-base mb-2">더 많은 이야기가 쌓이고 있어요</p>
+              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-6 md:p-10 text-center">
+                <p className="text-sky-600 font-bold text-base mb-2">더 많은 이야기가 쌓이고 있어요</p>
                 <p className="text-[#888] text-sm">매달 새로운 행사가 진행됩니다. 다음 기록의 주인공이 되어보세요.</p>
               </div>
             </Reveal>

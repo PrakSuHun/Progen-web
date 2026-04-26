@@ -101,7 +101,7 @@ export default function CheckInPage() {
       <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
 
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Check-in
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">현장 출석체크</h1>
@@ -116,10 +116,10 @@ export default function CheckInPage() {
           </form>
 
           {showWalkIn && (
-            <form onSubmit={handleWalkIn} className="bg-white border border-violet-200 rounded-2xl p-5 md:p-8 space-y-5">
+            <form onSubmit={handleWalkIn} className="bg-white border border-sky-200 rounded-2xl p-5 md:p-8 space-y-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-black text-black">현장 등록</h2>
-                <button type="button" onClick={() => setShowWalkIn(false)} className="text-[#999] hover:text-violet-500 text-sm transition-colors">← 취소</button>
+                <button type="button" onClick={() => setShowWalkIn(false)} className="text-[#999] hover:text-sky-500 text-sm transition-colors">← 취소</button>
               </div>
               <p className="text-[#888] text-sm">사전 신청 내역이 없어요. 아래 정보를 입력하면 바로 출석 처리됩니다.</p>
 
@@ -140,16 +140,16 @@ export default function CheckInPage() {
       </div>
 
       <Modal isOpen={showSuccess} onClose={() => setShowSuccess(false)} title="출석 완료!">
-        <p className="text-[#333] mb-3"><span className="font-bold text-violet-600">{checkedInName}</span>님 출석이 확인됐습니다!</p>
+        <p className="text-[#333] mb-3"><span className="font-bold text-sky-600">{checkedInName}</span>님 출석이 확인됐습니다!</p>
         {checkedInTeam ? (
-          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5 text-center">
-            <p className="text-violet-400 text-xs mb-1">배정된 팀</p>
-            <p className="text-violet-700 text-2xl font-black">{checkedInTeam}</p>
+          <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-5 text-center">
+            <p className="text-sky-400 text-xs mb-1">배정된 팀</p>
+            <p className="text-sky-700 text-2xl font-black">{checkedInTeam}</p>
           </div>
         ) : (
           <p className="text-[#999] text-sm mb-5">팀 배정은 운영진 안내를 확인해주세요.</p>
         )}
-        <button onClick={() => setShowSuccess(false)} className="block w-full text-center bg-violet-500 hover:bg-violet-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
+        <button onClick={() => setShowSuccess(false)} className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
       </Modal>
 
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 출석하셨어요">

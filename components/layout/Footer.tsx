@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 md:mb-16">
           <div className="col-span-2">
             <div className="text-xl font-black text-black mb-3">
-              PRO<span className="text-violet-500">GEN</span>
+              PRO<span className="text-sky-500">GEN</span>
             </div>
             <p className="text-[#888] text-sm leading-relaxed max-w-xs">
               AI 시대, 도구를 지배하는 대학생들의 커뮤니티.
@@ -30,11 +30,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-violet-500 text-[11px] tracking-widest uppercase font-bold mb-4">Navigate</h4>
+            <h4 className="text-sky-500 text-[11px] tracking-widest uppercase font-bold mb-4">Navigate</h4>
             <ul className="space-y-2.5">
               {navLinks.map(([href, label]) => (
                 <li key={href}>
-                  <a href={href} className="text-[#666] hover:text-violet-500 transition-colors text-sm">
+                  <a href={href} className="text-[#666] hover:text-sky-500 transition-colors text-sm">
                     {label}
                   </a>
                 </li>
@@ -43,11 +43,11 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-violet-500 text-[11px] tracking-widest uppercase font-bold mb-4">Contact</h4>
+            <h4 className="text-sky-500 text-[11px] tracking-widest uppercase font-bold mb-4">Contact</h4>
             <ul className="space-y-2.5">
               {contactLinks.map(([href, label]) => (
                 <li key={href}>
-                  <a href={href} className="text-[#666] hover:text-violet-500 transition-colors text-sm">
+                  <a href={href} className="text-[#666] hover:text-sky-500 transition-colors text-sm">
                     {label}
                   </a>
                 </li>

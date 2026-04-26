@@ -34,8 +34,8 @@ export function TagSelector({ label, tags, selectedTags, onChange, maxSelect }: 
             onClick={() => handleToggle(tag)}
             className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${
               selectedTags.includes(tag)
-                ? 'bg-violet-500 text-white shadow-sm'
-                : 'bg-[#f0f0f0] text-[#555] hover:bg-violet-50 hover:text-violet-500 border border-[#e0e0e0]'
+                ? 'bg-sky-500 text-white shadow-sm'
+                : 'bg-[#f0f0f0] text-[#555] hover:bg-sky-50 hover:text-sky-500 border border-[#e0e0e0]'
             }`}
           >
             {tag}

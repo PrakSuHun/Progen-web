@@ -14,7 +14,7 @@ export function StatCard({
   variant = 'primary',
 }: StatCardProps) {
   const variantClasses = {
-    primary: 'bg-purple-900 border-purple-700',
+    primary: 'bg-sky-900 border-sky-700',
     secondary: 'bg-blue-900 border-blue-700',
     success: 'bg-green-900 border-green-700',
     danger: 'bg-red-900 border-red-700',

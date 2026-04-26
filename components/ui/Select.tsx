@@ -26,7 +26,7 @@ export function Select({
       )}
       <select
         {...props}
-        className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition appearance-none cursor-pointer text-base ${
+        className={`w-full px-4 py-3 bg-white border rounded-xl text-[#111] focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 transition appearance-none cursor-pointer text-base ${
           error ? 'border-red-400' : 'border-[#e0e0e0]'
         } ${className}`}
         style={{

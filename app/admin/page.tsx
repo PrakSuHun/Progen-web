@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
       <div className="flex-1 flex items-center justify-center px-5 pt-14">
         <div className="bg-white border border-[#eee] rounded-2xl p-6 md:p-8 w-full max-w-sm">
           <div className="text-center mb-6">
-            <div className="w-12 h-12 rounded-xl bg-violet-500 text-white font-black text-lg flex items-center justify-center mx-auto mb-4">A</div>
+            <div className="w-12 h-12 rounded-xl bg-sky-500 text-white font-black text-lg flex items-center justify-center mx-auto mb-4">A</div>
             <h1 className="text-2xl font-black text-black">관리자 로그인</h1>
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">

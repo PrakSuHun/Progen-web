@@ -48,12 +48,12 @@ export default function RecruitPage() {
         {/* Hero */}
         <section className="px-5 lg:px-8 py-16 md:py-24">
           <div className="max-w-7xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
               Recruit
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-black leading-tight mb-4">
               PROGEN을 함께 만들<br className="hidden md:block" />
-              <span className="text-violet-500">운영진</span>을 찾습니다
+              <span className="text-sky-500">운영진</span>을 찾습니다
             </h1>
             <p className="text-[#555] text-base md:text-lg max-w-lg">
               단순한 봉사가 아닌, 진짜 조직을 운영하는 경험. 2기 운영진 모집 안내입니다.
@@ -65,9 +65,9 @@ export default function RecruitPage() {
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto space-y-4">
             {roles.map((role) => (
-              <div key={role.title} className="bg-[#fafafa] border border-[#eee] rounded-2xl p-5 md:p-8 hover:border-violet-200 transition-colors">
+              <div key={role.title} className="bg-[#fafafa] border border-[#eee] rounded-2xl p-5 md:p-8 hover:border-sky-200 transition-colors">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="px-2.5 py-0.5 bg-violet-50 border border-violet-100 text-violet-500 text-[10px] font-bold tracking-wider uppercase rounded-full">
+                  <span className="px-2.5 py-0.5 bg-sky-50 border border-sky-100 text-sky-500 text-[10px] font-bold tracking-wider uppercase rounded-full">
                     {role.tag}
                   </span>
                 </div>
@@ -75,11 +75,11 @@ export default function RecruitPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-violet-500 text-xs font-bold uppercase tracking-wider mb-3">주요 업무</p>
+                    <p className="text-sky-500 text-xs font-bold uppercase tracking-wider mb-3">주요 업무</p>
                     <div className="space-y-2">
                       {role.duties.map((d) => (
                         <div key={d} className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 mt-1.5 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 mt-1.5 shrink-0" />
                           <p className="text-[#444] text-sm">{d}</p>
                         </div>
                       ))}
@@ -105,16 +105,16 @@ export default function RecruitPage() {
         {/* Perks */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
               Perks
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-black mb-8">
-              운영진이 되면 <span className="text-violet-500">이런 경험</span>을 쌓아요
+              운영진이 되면 <span className="text-sky-500">이런 경험</span>을 쌓아요
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {perks.map((p, i) => (
                 <div key={p} className="flex items-center gap-4 p-4 md:p-5 bg-[#fafafa] border border-[#eee] rounded-xl">
-                  <span className="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 font-black text-xs flex items-center justify-center shrink-0">
+                  <span className="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 font-black text-xs flex items-center justify-center shrink-0">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <p className="text-[#333] text-sm font-medium">{p}</p>
@@ -127,7 +127,7 @@ export default function RecruitPage() {
         {/* CTA */}
         <section className="px-5 lg:px-8 pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-violet-500 text-white rounded-2xl p-6 md:p-10 text-center">
+            <div className="bg-sky-500 text-white rounded-2xl p-6 md:p-10 text-center">
               <h2 className="text-2xl md:text-3xl font-black mb-3">함께 만들어가요</h2>
               <p className="text-white/70 text-sm mb-2">
                 운영진 지원은 1기 행사 이후 별도 공지를 통해 진행됩니다.
@@ -137,7 +137,7 @@ export default function RecruitPage() {
               </p>
               <Link
                 href="/apply"
-                className="inline-block px-8 py-3.5 bg-white text-violet-600 font-bold rounded-full text-base hover:bg-violet-50 transition-colors"
+                className="inline-block px-8 py-3.5 bg-white text-sky-600 font-bold rounded-full text-base hover:bg-sky-50 transition-colors"
               >
                 1기 크루 지원하기 →
               </Link>
