@@ -22,7 +22,7 @@ const seminars = [
   {
     status: '종료', statusColor: 'bg-[#eee] text-[#888]',
     month: '04', title: '중간고사 집중 대비 — 시험공부용 AI',
-    date: '2026. 4. 11 (금)', speaker: 'PROGEN 테크팀', capacity: 100,
+    date: '2026. 4. 11 (금)', speaker: 'PROGEN 테크팀', capacity: 40,
     tags: ['수업 녹음', '시험 키워드 분석', '시험 문제 제작', '벼락치기 요약본'],
     desc: '수업 녹음본 하나로 시험 끝. 녹음에서 핵심 키워드 자동 분석 → 예상 시험 문제 자동 생성 → 벼락치기용 요약본까지 한 번에 만들어 드렸습니다.',
   },
