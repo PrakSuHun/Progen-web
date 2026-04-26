@@ -1,3 +1,5 @@
+import { Reveal } from '@/components/Reveal'
+
 const months = [
   {
     month: '04',
@@ -34,39 +36,43 @@ export function CurriculumSection() {
     <section id="curriculum" className="py-14 md:py-24 px-5 lg:px-8 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
 
-        <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
-          Curriculum
-        </div>
+        <Reveal>
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
+            Curriculum
+          </div>
 
-        <h2 className="text-2xl md:text-4xl font-black text-black leading-snug mb-2">
-          PROGEN 1기<br className="md:hidden" /> <span className="text-violet-500">상반기 커리큘럼</span>
-        </h2>
-        <p className="text-[#888] text-xs md:text-sm mb-8">
-          모든 클래스는 한 달 내내가 아닌, <span className="text-black font-bold">월 1회만</span> 핵심 압축 진행됩니다.
-        </p>
+          <h2 className="text-2xl md:text-4xl font-black text-black leading-snug mb-2">
+            PROGEN 1기<br className="md:hidden" /> <span className="text-violet-500">상반기 커리큘럼</span>
+          </h2>
+          <p className="text-[#888] text-xs md:text-sm mb-8">
+            모든 클래스는 한 달 내내가 아닌, <span className="text-black font-bold">월 1회만</span> 핵심 압축 진행됩니다.
+          </p>
+        </Reveal>
 
         <div className="space-y-3">
-          {months.map((m) => (
-            <div key={m.month} className="bg-white border border-[#eee] rounded-2xl p-4 md:p-7 hover:border-violet-200 transition-colors">
-              <div className="flex gap-4 md:gap-5">
-                <div className="shrink-0">
-                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl bg-violet-500 text-white flex flex-col items-center justify-center">
-                    <span className="text-[8px] md:text-[9px] font-bold tracking-widest uppercase leading-none">MONTH</span>
-                    <span className="text-xl md:text-3xl font-black leading-none mt-0.5">{m.month}</span>
+          {months.map((m, i) => (
+            <Reveal key={m.month} delay={i * 80}>
+              <div className="bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-violet-200">
+                <div className="flex gap-4 md:gap-5">
+                  <div className="shrink-0">
+                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl bg-violet-500 text-white flex flex-col items-center justify-center">
+                      <span className="text-[8px] md:text-[9px] font-bold tracking-widest uppercase leading-none">MONTH</span>
+                      <span className="text-xl md:text-3xl font-black leading-none mt-0.5">{m.month}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug">
-                    {m.headline} <span className="text-violet-500">{m.title}</span>
-                  </h3>
-                  <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5">{m.desc}</p>
-                  <div className="inline-flex items-center px-3 py-1.5 bg-violet-50 border border-violet-100 rounded-lg">
-                    <span className="text-violet-500 text-xs md:text-sm leading-snug">{m.highlight}</span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug">
+                      {m.headline} <span className="text-violet-500">{m.title}</span>
+                    </h3>
+                    <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5">{m.desc}</p>
+                    <div className="inline-flex items-center px-3 py-1.5 bg-violet-50 border border-violet-100 rounded-lg">
+                      <span className="text-violet-500 text-xs md:text-sm leading-snug">{m.highlight}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
 

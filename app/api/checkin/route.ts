@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         message: '현장 등록 + 출석 완료',
         name,
+        team_name: null,
         data,
       })
     } else {

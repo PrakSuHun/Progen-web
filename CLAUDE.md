@@ -1,8 +1,11 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
-> **규칙**: 모든 코드 수정 전에 반드시 이 문서를 먼저 업데이트하고, 이 문서를 기반으로 작업한다.
+> **규칙**: 모든 코드 수정 후에는 반드시 이 문서를 업데이트하고, 다음 작업은 이 문서를 기준으로 시작한다.
+> 사용자가 직접 코드를 수정한 경우에도 변경 내용을 알려주면 즉시 이 문서에 반영한다.
 
-> **보고서 작성 시**: `docs/report-general-guide.md` (일반), `docs/report-podo-guide.md` (포도) 파일을 먼저 읽고 가이드에 따라 작성한다.
+> **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
+
+> **마지막 최신화**: 2026-04-25 (애니메이션 추가 + 세미나/아카이브 정보 정정)
 
 ---
 
@@ -14,7 +17,8 @@
 - **프로젝트 이름**: PROGEN
 - **배포 URL**: https://progen.ai.kr
 - **대상**: 대전 소재 대학생 (충남대, 한남대, 배재대, KAIST 등 13개 학교)
-- **1기 일정**: 3월 크루 모집 → 4월 오리엔테이션 → 5~8월 프로젝트 → 9월 최종 발표
+- **1기 일정**: 4월 ~ 7월, 월 1회, 핵심 압축 클래스
+- **참가비**: 무료
 
 ---
 
@@ -23,13 +27,14 @@
 | 분류 | 기술 |
 |------|------|
 | Frontend | React 19, Next.js 15 (App Router), TypeScript |
-| 스타일 | Tailwind CSS (다크 테마: slate-900 배경, purple 포인트) |
+| 스타일 | Tailwind CSS (라이트 테마: 흰 배경 + violet-500 포인트) |
+| 폰트 | Pretendard (CDN) |
 | Backend | Next.js API Routes (서버리스) |
 | 데이터베이스 | Supabase (PostgreSQL + RLS) |
 | 배포 | Vercel |
 | 차트 | Recharts |
 | 아이콘 | react-icons |
-| 문서 | next-mdx-remote (MDX) |
+| 문서 | next-mdx-remote (의존성만 존재, 현재 미사용) |
 
 ---
 
@@ -42,21 +47,18 @@ SUPABASE_SERVICE_ROLE_KEY=        # Supabase 서비스 롤 키 (서버 전용)
 ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 ```
 
-> **중요**: 활성 행사는 `lib/get-active-event.ts`의 `getActiveEventId()`가 자동으로 결정한다.
-> 오늘 날짜 이후의 가장 가까운 행사를 자동 선택하며, 행사 당일 포함 (자정 기준으로 다음날 전환).
-> `NEXT_PUBLIC_EVENT_ID` 환경 변수는 더 이상 사용하지 않는다.
+> **활성 행사 결정**: `lib/get-active-event.ts`의 `getActiveEventId()`가 자동 처리.
+> 오늘 자정 이후 가장 가까운 행사를 자동 선택. 모든 행사가 지났으면 가장 최근 행사 반환.
 
-### 1기 행사 일정
-| 날짜 | 주제 |
-|------|------|
-| 2026-03-28 | AI툴 클래스 |
-| 2026-04-11 | AI로 가성비 벼락치기 |
-| 2026-05-02 | AI로 만드는 자동화 |
-| 2026-06-?? | AI로 영상·음악 콘텐츠 제작 |
-| 2026-07-?? | AI로 나만의 캐릭터 굿즈 만들기 |
-| 2026-08-?? | 백화점 플리마켓 및 1기 종료 |
+### 1기 커리큘럼 (홈페이지에 노출되는 4개월)
+| 월 | 주제 | 헤드라인 |
+|----|------|----------|
+| 04 | 시험공부용 AI | 중간고사 집중 대비 |
+| 05 | 일상 자동화 시스템 | 시간을 돌려받는 |
+| 06 | AI 숏폼과 음악 제작 | 온라인 수익화 |
+| 07 | AI 캐릭터 굿즈 제작 | 기획부터 판매까지 (신세계·롯데백화점 플리마켓 입점 협의) |
 
-> 6~8월 날짜가 확정되면 Supabase `events` 테이블에 추가하면 자동 반영된다.
+> 세미나 페이지에는 03월(종료된 AI툴 클래스)도 함께 표시됨.
 
 ---
 
@@ -87,29 +89,33 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | motivation | TEXT | 지원 동기 |
 | role | TEXT | 'participant' 또는 'staff' |
 | status | TEXT | '지원완료' (기본값) |
-| is_member | BOOLEAN | true=포도, false/null=일반 (내부 전용, 화면표기는 '일반') |
+| is_member | BOOLEAN | true=포도, false/null=일반 (내부 전용) |
 | noshow_count | INT | 누적 노쇼 횟수 (기본값 0) |
+| source_event_id | UUID (nullable) | 게스트→크루 전환 시 최초 유입 행사 |
 | created_at | TIMESTAMPTZ | 지원일 |
 
-> **용어 (내부 전용)**: 포도(is_member=true) — 화면에 이름 옆 🍇 표시. 일반(is_member=false/null) — 별도 표기 없음. 노쇼 2회 이상 시 박탈 대상.
+> **포도 감지**: `is_member=true` 또는 phone이 `PODO-`로 시작하는 경우.
+> **노쇼 박탈 기준**: noshow_count ≥ 2.
+> **표기**: 포도는 화면에 이름 옆 🍇 또는 보라색 점 표시.
 
 ### 4-3. guests (게스트)
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
 | id | UUID (PK) | 자동 생성 |
 | name | TEXT | 이름 |
-| phone | TEXT (UNIQUE) | 연락처 (고유 식별자) |
+| phone | TEXT (UNIQUE) | 연락처 |
 | age | TEXT | 나이 |
 | school | TEXT | 학교 |
 | grade | TEXT | 학년 |
 | major | TEXT | 전공 |
 | path | TEXT | 알게 된 경로 |
-| project | TEXT | 관심 프로젝트 |
+| project | TEXT | 관심 프로젝트 (현재 폼 미수집) |
 | gender | TEXT | 성별 |
-| motivation | TEXT | 참여 동기 |
+| motivation | TEXT | 참여 동기 (현재 폼 미수집) |
+| source_event_id | UUID (nullable) | 최초 유입 행사 |
 | created_at | TIMESTAMPTZ | 등록일 |
 
-> **중요**: crew_members와 동일한 필드 구조. 유입 경로 분석 및 크루 전환율 추적 목적.
+> **유입 추적**: 게스트가 크루로 전환되면 동일 phone으로 crew_members 생성하면서 기존 행사 신청·피드백을 새 crew_id로 마이그레이션 (`/api/apply` 내부 로직).
 
 ### 4-4. event_registrations (행사 신청/출석)
 | 컬럼 | 타입 | 설명 |
@@ -118,14 +124,14 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | event_id | UUID (FK → events) | 어느 행사인지 |
 | crew_id | UUID (FK → crew_members) | 크루면 연결 |
 | guest_id | UUID (FK → guests) | 게스트면 연결 |
-| status | TEXT | '사전신청' 또는 '출석완료' |
+| status | TEXT | '사전신청' / '출석완료' / '노쇼확정' |
 | team_name | TEXT | 팀 배정명 (예: '1팀', null=미배정) |
 | checked_in_at | TIMESTAMPTZ | 출석 시각 |
 | created_at | TIMESTAMPTZ | 신청일 |
 
 > crew_id와 guest_id 중 하나만 값이 있다.
 
-### 4-5. feedbacks (피드백)
+### 4-5. feedbacks (피드백, 익명)
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
 | id | UUID (PK) | 자동 생성 |
@@ -138,361 +144,384 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | join_interest | BOOLEAN | PROGEN 가입 관심 |
 | created_at | TIMESTAMPTZ | 제출일 |
 
-> **익명 제출**: crew_id, guest_id, score 컬럼 모두 제거. 개인정보 미수집.
+> **익명 제출**: crew_id, guest_id, score 없음.
+
+### 4-6. reports (AI 보고서)
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID (PK) | 자동 생성 |
+| event_id | UUID (FK → events) | 대상 행사 |
+| title | TEXT | 보고서 제목 |
+| mode | TEXT | 'general' (기본) / 'podo' |
+| content | TEXT | HTML 본문 |
+| created_at | TIMESTAMPTZ | 생성일 |
+
+> 외부 AI(Claude 등)가 생성한 결과를 저장. `/admin/report?id=xxx`로 단일 페이지 뷰 + 인쇄.
 
 ---
 
 ## 5. 페이지 구조 및 로직
 
-### 5-1. 홈 `/`
-**목적**: 방문자에게 PROGEN을 소개하고 지원을 유도한다.
+### 5-1. 홈 `/` ([app/page.tsx](app/page.tsx))
+**구성 섹션** (현재 4개):
+1. `HeroSection` — 대형 타이틀 + 보라 펄스 배지 + 우상단 violet blur + CTA 2개 (지원하기 / 커리큘럼 보기)
+2. `CurriculumSection` — 4개월 커리큘럼 카드 (월 박스 + 헤드라인 + 설명 + 보라 highlight)
+3. `ReviewsSection` — 참가자 후기 3개 (5성 + 인용문 + 아바타)
+4. `CtaBanner` — 크루 혜택 4개 카드 + 진입장벽 해소 2개 박스 + 보라색 CTA 섹션
 
-**구성 섹션** (순서대로):
-1. `HeroSection` - 메인 타이틀, 지원하기 CTA 버튼
-2. `NumbersSection` - 숫자로 보는 PROGEN (통계)
-3. `AboutSection` - PROGEN 소개
-4. `CurriculumSection` - 커리큘럼 소개
-5. `ActivitiesSection` - 활동 소개
-6. `CtaBanner` - 하단 지원 유도 배너
-
-**특이사항**: 전체 배경에 `StarField` (별 파티클 애니메이션) 고정 표시
+> **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `violet-500`.
+> **미사용 컴포넌트**: `AboutSection`, `NumbersSection`, `ActivitiesSection`, `StarField` (파일 존재, import 안 됨).
 
 ---
 
-### 5-2. 소개 `/about`
-**목적**: PROGEN의 비전, 특징, 1기 일정을 설명한다.
-
-**내용**:
-- 비전: 실전 프로젝트 기반 개발자 생태계
-- 특징: 실전 프로젝트, 전문가 멘토링, 네트워킹, 커뮤니티
-- 1기 일정: 3월(모집) → 4월(OT) → 5~8월(프로젝트) → 9월(발표)
+### 5-2. 소개 `/about` ([app/about/page.tsx](app/about/page.tsx))
+- 히어로 ("왜 PROGEN을 만들었는가")
+- 철학 3개 가치 카드: "실행 > 이론", "도구 활용 = 생존력", "함께 > 혼자"
+- 창립자 박수훈 소개 (아바타 + 6개 태그 + 인용문 + 통계 4개: 1.5억 매출, 1.2억 지원금 등)
+- CTA → /apply
 
 ---
 
-### 5-3. 크루 지원 `/apply`
-**목적**: 1기 크루 온라인 지원서를 받는다.
+### 5-3. 크루 지원 `/apply` ([app/apply/page.tsx](app/apply/page.tsx))
+**입력 필드 (10개)**: 이름, 성별, 연락처(자동 포맷), 나이, 학교, 학년, 전공, 경로, 관심프로젝트, 지원동기.
 
-**입력 필드**:
-| 필드 | 입력 방식 | 검증 |
-|------|-----------|------|
-| 이름 | 텍스트 | 필수 |
-| 연락처 | 전화번호 (자동 포맷) | 10~11자리 숫자 |
-| 학교 | 드롭다운 (13개 학교) | 필수 |
-| 학년 | 드롭다운 (1~4학년, 휴학, 졸업유예) | 필수 |
-| 나이 | 숫자 | 필수 |
-| 전공 | 텍스트 | 필수 |
-| 알게 된 경로 | 드롭다운 (6가지) | 필수 |
-| 관심 프로젝트 | 드롭다운 (6가지) | 필수 |
-| 성별 | 드롭다운 (남/여/선택안함) | 필수 |
-| 지원 동기 | 텍스트에리어 | 필수 |
-
-**처리 흐름**:
-1. 폼 제출 → 클라이언트 검증
-2. `POST /api/apply` 호출
-3. 서버: 연락처(phone)로 중복 확인 → 이미 있으면 409
-4. 새 레코드를 `crew_members`에 삽입 (role='participant', status='지원완료')
-5. 성공 → 완료 모달 표시 (별도 선발 없음, 지원 즉시 크루 확정 → 카카오톡 팀 채팅방 입장 안내 버튼: https://invite.kakao.com/tc/Y2VGimsEqA) → 닫으면 홈으로 이동
-6. 중복(409) → Toast 대신 중앙 모달 표시 (문의하기 버튼: https://open.kakao.com/o/sQqCopki)
+**처리**:
+1. `POST /api/apply` 호출
+2. phone으로 crew_members 중복 확인 → 있으면 409
+3. 신규 삽입 (role='participant', status='지원완료')
+4. **게스트→크루 전환**: 같은 phone의 guests가 있으면 그 게스트의 `event_registrations`/`feedbacks`를 새 crew_id로 마이그레이션
+5. 성공 → 완료 모달 (카카오톡 팀 채팅방: https://invite.kakao.com/tc/Y2VGimsEqA) → 닫으면 홈으로
+6. 중복(409) → 중앙 모달 (문의: https://open.kakao.com/o/sQqCopki)
 
 ---
 
-### 5-4. 행사 사전 신청 `/event-reg`
-**목적**: 크루 또는 게스트가 행사에 사전 신청한다.
+### 5-4. 행사 사전 신청 `/event-reg` ([app/event-reg/page.tsx](app/event-reg/page.tsx))
+1. 진입 시 신청 유형 선택 모달 (크루 / 비회원)
+2. **크루 폼**: 이름 + 연락처 + 나이 (3개)
+3. **비회원 폼**: 이름, 성별, 연락처, 나이, 학교, 학년, 전공, 경로 (8개)
+4. 하단 "← 유형 변경" 링크
 
-**흐름**:
-1. 페이지 진입 시 신청 유형 선택 모달 표시 (크루 / 게스트)
-2. **크루 선택**: 이름 + 연락처 + 나이만 입력 (이미 지원서에 나머지 정보 있음)
-3. **게스트 선택**: 지원서와 동일한 10개 필드 전부 입력 (이름, 연락처, 학교, 학년, 나이, 전공, 알게된경로, 관심프로젝트, 성별, 참여동기)
-
-**처리 흐름**:
-- **크루**: `crew_members`에서 이름+연락처로 조회 → 없으면 404 ("먼저 지원해주세요")
-- **게스트**: `guests`에 upsert (연락처 기준, 전체 필드 저장) → 자동 등록
-- 공통: `event_registrations`에 `status='사전신청'`으로 삽입
-- 이미 신청한 경우 409 → 중앙 Modal 표시 (문의하기 버튼: https://open.kakao.com/o/sQqCopki)
-- 중복 체크: DB 제약 의존 대신 insert 전 명시적으로 조회하여 확인
-- 성공 → 완료 팝업 Modal 표시 후 닫으면 폼 초기화
-
-**게스트 데이터 목적**: 유입 경로 분석, 크루 전환율 추적, 홍보 채널 효과 측정
+**처리**:
+- 크루: crew_members에서 이름+연락처 조회 → 없으면 404
+- 게스트: guests에 phone 기준 upsert (신규면 source_event_id 설정)
+- 공통: event_registrations에 status='사전신청' 삽입
+- 중복 → 409, 중앙 Modal (문의: https://open.kakao.com/o/sQqCopki)
 
 ---
 
-### 5-5. 현장 출석체크 `/checkin`
-**목적**: 행사 당일 현장에서 출석을 처리한다.
-
-**두 가지 경로**:
-
-**경로 A: 사전 신청자 출석**
-1. 이름 + 연락처 + 나이 입력
+### 5-5. 현장 출석체크 `/checkin` ([app/checkin/page.tsx](app/checkin/page.tsx))
+**경로 A — 사전 신청자 출석**:
+1. 이름 + 연락처 입력
 2. `POST /api/checkin` (walkin: false)
-3. 서버: `crew_members` 또는 `guests`에서 연락처로 조회
-4. `event_registrations`에서 해당 행사 신청 내역 찾기
-5. status를 '출석완료'로 업데이트, `checked_in_at` 기록
+3. crew_members 또는 guests에서 phone 조회 → 활성 행사의 event_registrations status='출석완료' + checked_in_at
+4. 응답에 `team_name` 포함 → "OOO님 출석 완료, X팀입니다" Modal
 
-**경로 B: 현장 등록 (walk-in)**
-- 사전 신청자 조회 실패(404) 시 자동으로 현장 등록 폼 표시
-- 지원서와 동일한 10개 필드 (이름, 연락처, 학교, 학년, 나이, 전공, 경로, 관심프로젝트, 성별, 참여동기)
-- `POST /api/checkin` (walkin: true)
-- 서버: crew 조회 실패 시 `guests`에 upsert (전체 필드) → `event_registrations`에 status='출석완료'로 즉시 삽입
+**경로 B — Walk-in**:
+- 사전 신청 404 시 자동으로 walk-in 폼 표시 (8개 필드)
+- `POST /api/checkin` (walkin: true) → guests upsert + event_registrations status='출석완료' 즉시 삽입
 
-**팝업 처리**:
-- 성공 → 중앙 Modal ("OOO님 출석 완료!")
-- 중복 출석 (409) → 중앙 Modal ("이미 출석하셨어요")
-- 404 → walk-in 폼 표시 (Toast 없음)
-
-> **중요**: 크루도 사전 신청 없이 당일 현장 walk-in 출석 가능 (출석 인정)
-> **QR 코드 방식**: `/checkin` URL을 외부 QR 생성 도구로 인쇄하여 현장 비치
+> **QR**: `/checkin` URL을 외부 QR 도구로 인쇄해 현장 비치.
 
 ---
 
-### 5-6. 행사 피드백 `/feedback`
-**목적**: 행사 종료 후 참가자의 의견을 익명으로 수집한다. 개인정보 불필요.
+### 5-6. 행사 피드백 `/feedback` ([app/feedback/page.tsx](app/feedback/page.tsx))
+**5단계** (Step 0~4):
+| 단계 | 내용 | 필수 |
+|------|------|------|
+| 0 | 시작 화면 | - |
+| 1 | 좋았던 점 (태그 + 텍스트) | 텍스트 필수 |
+| 2 | 아쉬운 점 (태그 + 텍스트) | 텍스트 필수 |
+| 3 | 재참여 의향 + 가입 관심 (체크박스) | 선택 |
+| 4 | 완료 화면 (`join_interest=true`이면 /apply 버튼) | - |
 
-**4단계 스텝 형식**:
-| 단계 | 내용 | 필수 여부 |
-|------|------|-----------|
-| 0 | 시작 화면 (설문 시작하기 버튼) | - |
-| 1 | 좋았던 점 (태그 선택 + 텍스트 필수) | 텍스트 필수 |
-| 2 | 아쉬운 점 (태그 선택 + 텍스트 필수) | 텍스트 필수 |
-| 3 | 재참여 의향 + 가입 관심 (체크박스) + 제출 | 선택 |
-| 4 | 완료 화면 | - |
+**처리**: `POST /api/feedback` → 활성 행사의 feedbacks에 익명 삽입.
 
-**처리 흐름**:
-1. 최종 단계에서 `POST /api/feedback` 호출
-2. 서버: 개인정보 조회 없이 바로 `feedbacks` 테이블에 익명 삽입
-3. crew_id, guest_id, score 컬럼은 모두 null
-4. `join_interest=true`이면 완료 화면에서 지원하기 버튼 표시
-
-> **QR 코드 방식**: `/feedback` URL을 외부 QR 생성 도구로 인쇄하여 행사 종료 시 배포
-
-**좋았던 점 태그**: 좋은 강사진, 실습 경험, 네트워킹, 유용한 내용, 좋은 분위기
-**아쉬운 점 태그**: 시간이 부족했음, 내용이 어려웠음, 강사 설명이 부족, 시설 부족, 기타
+> **QR**: `/feedback` URL을 인쇄해 행사 종료 시 배포.
 
 ---
 
-### 5-7. 세미나 `/seminar`
-**목적**: 예정된 세미나 일정을 보여주고 사전 신청으로 연결한다.
-
-**현재 상태**: 정적 데이터 (코드 내 하드코딩)
-- 세미나 정보: 제목, 날짜, 발표자, 시간, 정원, 태그, 상태
-- 사전 신청 버튼 → `/event-reg`로 이동
-- 강의노트 버튼 → `/docs`로 이동
-
----
-
-### 5-8. 아카이브 `/archive`
-**목적**: 지난 행사 기록을 보여준다.
-
-**현재 상태**: 정적 데이터 (코드 내 하드코딩)
-- 행사 제목, 날짜, 장소, 참여자 수, 설명, 태그
+### 5-7. 세미나 `/seminar` ([app/seminar/page.tsx](app/seminar/page.tsx))
+정적 데이터 (페이지 내 상수 `seminars` 5개):
+- 03(종료) AI툴 클래스 — 정원 80명
+- 04(종료) 시험공부용 AI — 정원 100명
+- 05(모집 중) 일상 자동화 시스템
+- 06/07 (예정)
+카드별: 월 박스 + 상태 배지 + 제목 + 설명 + 메타 + 태그 + 조건부 사전신청 버튼 (모집중일 때만 → /event-reg).
+종료 카드는 opacity-75 + 회색 월 박스로 시각적 구분.
+robots: noindex.
 
 ---
 
-### 5-9. 커뮤니티 `/community`
-**목적**: 크루 커뮤니티 채널을 안내한다.
+### 5-8. 아카이브 `/archive` ([app/archive/page.tsx](app/archive/page.tsx))
+정적 데이터 (`events: ArchiveEvent[]`, 현재 2건):
+- **2026-04-11 시험공부용 AI 클래스** (참가자 100명+, 충남대) — 다룬 툴: 다글로/NotebookLM/ALT/유니브AI. 사진 없음.
+- **2026-03-28 AI툴 클래스** (참가자 80명+, 충남대) — 다룬 툴: 사이스페이스/NotebookLM/Figma/Perplexity. 사진 2장 (`/archive/0328-1.JPG`, `/archive/0328-2.JPG`).
 
-**현재 상태**: UI만 구현됨, 실제 커뮤니티 기능 미구현 (링크 `#`)
-- 자유게시판, 스터디 모집, 프로젝트 공유, 아이디어 피드백 채널 안내
-- 크루가 아닌 경우 지원 유도 배너 표시
+각 카드: 사진 그리드(있을 때만, hover scale-105) + 태그 + 제목 + 메타(날짜·장소·참여자) + 설명 + highlights 박스들.
+하단: 보라색 안내 박스("더 많은 이야기가 쌓이고 있어요").
+robots: noindex.
 
----
-
-### 5-10. 운영진 모집 `/recruit`
-**목적**: 2기 운영진 모집 정보를 제공한다.
-
-**현재 상태**: 정적 페이지
-- 3개 포지션: 기획 운영진, 테크 운영진, 마케팅 운영진
-- 각 포지션별 주요 업무 + 지원 자격 표시
-- "1기 행사 이후 별도 공지" 안내 → `/apply` 연결
+> 사진 있는 행사만 photo grid 렌더, 없으면 정보 카드만 표시 (4월 행사 등).
 
 ---
 
-### 5-11. 강의노트 `/docs`
-**목적**: 세미나 강의 자료를 MDX 형식으로 제공한다.
-
-**현재 상태**: `content/docs/` 폴더에 MDX 파일 보관
-- 현재 파일: `01-intro-ai-automation.mdx`
+### 5-9. 커뮤니티 `/community` ([app/community/page.tsx](app/community/page.tsx))
+UI만, 실제 기능 없음. 4개 채널 카드 + 5개 크루 혜택 + 보라 CTA 배너 → /apply.
+robots: noindex.
 
 ---
 
-### 5-12. 관리자 로그인 `/admin`
-**목적**: 관리자 인증 페이지.
-
-**흐름**:
-1. 비밀번호 입력 → `POST /api/admin/login`
-2. 서버: `ADMIN_PASSWORD` 환경 변수와 비교
-3. 일치 시 `admin_session=authenticated` httpOnly 쿠키 설정 (24시간)
-4. `/admin/dashboard`로 리다이렉트
+### 5-10. 운영진 모집 `/recruit` ([app/recruit/page.tsx](app/recruit/page.tsx))
+정적 안내. 3개 포지션(기획/테크/마케팅, 좌:업무·우:자격) + 4개 혜택 + CTA → /apply.
+robots: noindex.
 
 ---
 
-### 5-13. 관리자 대시보드 `/admin/dashboard`
-**목적**: 행사 당일 운영 전용. 출석 현황 + 팀 매칭.
+### 5-11. 정적 페이지 (public/)
+별도 라우트 없이 정적 HTML로 서빙.
 
-**인증**: `middleware.ts`가 모든 `/admin/**` 및 `/api/admin/**` 경로를 쿠키로 보호
+| 경로 | 용도 |
+|------|------|
+| `/ai_study/` | AI 스터디 가이드 (data.json + 1058개 candidates 폴더 + 30개 이미지) |
+| `/planner-guide/` | 플래너 가이드 (단일 5MB HTML) |
+| `/guide329/` | 3월 29일 행사 가이드 (HTML + slides26 18개 슬라이드) |
 
-**상단 현황바** (3개 숫자 카드):
-- 오기로 한 인원: 해당 행사 사전신청자 수
-- 현재 온 인원: status='출석완료' 수
-- 미출석: 오기로 한 인원 - 현재 온 인원
+> 모두 `app/` 라우트가 아닌 `public/` 정적 자산. Next.js 라우터 미경유.
 
-**팀 매칭 보드**:
-- 좌측 패널: 출석완료 + 미배정 인원 카드 목록 (포도=🍇, 노쇼후보=흐린색, noshow_count≥2=강조)
-- 우측 패널: 최대 30팀 슬롯 (4자리), 드래그앤드롭으로 팀 간 이동
-- 팀명 직접 수정 가능 (기본값: '1팀', '2팀'...)
-- 팀에 포도가 혼자이거나 포도끼리만 있으면 우상단 보라색 점(•) 표시
-- 자동 매칭 버튼: 포도 기준(같은 학교+동성+나이 어린 일반 우선), 이미 배정된 인원은 이동 안 함
-- 팀 배정 즉시 DB 저장 (`event_registrations.team_name`)
+---
 
-**하단**: "전체 분석 보기 →" 버튼 → `/admin/dashboard/full`
+### 5-12. 관리자 로그인 `/admin` ([app/admin/page.tsx](app/admin/page.tsx))
+비밀번호 입력 → `POST /api/admin/login` → 일치 시 `admin_session=authenticated` httpOnly 쿠키 (30일) → `/admin/dashboard`로 이동.
 
-**API**: `/api/admin/dashboard-data` (GET), `/api/admin/assign-team` (POST), `/api/admin/auto-match` (POST)
+---
 
-### 5-14. 전체 분석 `/admin/dashboard/full`
-**목적**: 행사 데이터 분석 및 운영 현황 파악.
+### 5-13. 관리자 대시보드 `/admin/dashboard` ([app/admin/dashboard/page.tsx](app/admin/dashboard/page.tsx))
+**통합 운영 화면**. 행사 선택자 + 4개 탭.
 
-**섹션 1** — 오늘 행사 분석 (좌: 전체 / 우: 일반만):
-- 학교별 분포 (바 차트)
-- 학년별 분포 (바 차트)
-- 알게 된 경로 (바 차트)
-- 성별 분포 (파이 차트)
+**상단 컨트롤**:
+- 행사 선택 드롭다운 (`/api/admin/events`, activeEventId 기본값)
+- 로그아웃 버튼
 
-**섹션 2** — 게스트 & 크루 전환 분석:
-- 총 게스트 신청 수, 게스트 참석률, 크루 전환율, 누적 크루(일반) 인원
+**4개 탭**:
 
-**섹션 3** — 피드백 분석:
-- 좋았던 점/아쉬운 점 태그 바 차트
-- 피드백 텍스트 카드 목록 (good_points/bad_points 스크롤 열람)
+#### A. 체크인 탭
+- 4개 StatCard: 오기로 한 인원 / 출석 / 미출석 / 노쇼확정
+- 3열 그리드 (미출석 / 출석완료 / 노쇼확정) — 각 컬럼에 필터·정렬·상태 변경 (`/api/admin/update-status`)
 
-**API**: `/api/admin/full-stats` (GET)
+#### B. 팀 배정 탭
+- 좌: 미배정 인원 카드 (포도=🍇/보라점, 노쇼후보 흐림, noshow_count≥2 강조)
+- 우: 팀 카드 그리드 (4자리 슬롯), 드래그앤드롭 + iPad 터치 선택 모드
+- 팀명 직접 수정 가능
+- 자동 매칭 (`/api/admin/auto-match`, teamSize 2~8) — 포도 기준 동성/나이/학교 매칭
+- 팀 컴팩트화 (`/api/admin/compact-teams`) — 팀 번호 1, 2, 3... 재정렬
+- 팀 초기화 (`/api/admin/reset-teams`) — ConfirmModal
+
+#### C. 분석 탭
+3개 섹션 (`/api/admin/full-stats?eventId=xxx`):
+- **섹션 1** — 분포: 학교/학년/경로/성별 차트 (전체 / 일반만 토글)
+- **섹션 2** — 행사별 현황 숫자: 신청, 출석, 크루 출석률, 게스트 출석률, 신규/재방문, 게스트→크루 전환, 누적 크루
+- **섹션 3** — 피드백: 좋았던/아쉬운 점 태그 바 차트 + 텍스트 카드 목록
+
+AI 보고서 영역:
+- 보고서 목록 (`GET /api/admin/ai-report?eventId=xxx`)
+- 인쇄 페이지로 이동 (`/admin/report?id=xxx`)
+- 삭제 (`DELETE /api/admin/ai-report`)
+
+#### D. 멤버 탭
+- 모드 토글: 행사 신청자 / 누적 크루 전체 (mode=all)
+- 통계 카드 (성별 분포 등 — 일반만 기준)
+- 검색 + 정렬, 모바일/데스크톱 분기
+- 카드 확장: 전체 정보 + 포도 토글 (`/api/admin/toggle-podo`) + 삭제 (`/api/admin/delete-member`) + 첫 방문 표시
+
+---
+
+### 5-14. 전체 분석 `/admin/dashboard/full` ([app/admin/dashboard/full/page.tsx](app/admin/dashboard/full/page.tsx))
+**현재**: `useRouter.replace('/admin/dashboard')`로 즉시 리다이렉트만 함. 분석은 dashboard 분석 탭에 통합됨. 빈 라우트 정리 가능.
+
+---
+
+### 5-15. AI 보고서 뷰어 `/admin/report` ([app/admin/report/page.tsx](app/admin/report/page.tsx))
+- 쿼리 `?id=xxx`로 보고서 조회 (`GET /api/admin/ai-report?id=xxx`)
+- `dangerouslySetInnerHTML`로 HTML content 렌더링
+- 상단 바 (인쇄 / 돌아가기) — `print:hidden`
+- A4 인쇄 스타일 (마진 20mm 15mm, Pretendard, 라인하이트 1.8)
+- 보라색 헤딩 border, page-break-inside avoid
+
+> 미들웨어 보호 대상이지만 `id`만 알면 접근 가능 (외부 공유용 링크로도 활용).
 
 ---
 
 ## 6. API 라우트 목록
 
-### 공개 API (인증 불필요)
+### 공개 API
 | 메서드 | 경로 | 기능 |
 |--------|------|------|
-| POST | `/api/apply` | 크루 지원서 제출 |
-| POST | `/api/event-reg` | 행사 사전 신청 |
-| POST | `/api/checkin` | 현장 출석체크 |
-| POST | `/api/feedback` | 피드백 제출 |
+| POST | `/api/apply` | 크루 지원 (게스트→크루 마이그레이션 포함) |
+| POST | `/api/event-reg` | 행사 사전 신청 (mode: crew/guest) |
+| POST | `/api/checkin` | 현장 출석 (walkin true/false) |
+| POST | `/api/feedback` | 익명 피드백 |
 | POST | `/api/admin/login` | 관리자 로그인 |
 | POST | `/api/admin/logout` | 관리자 로그아웃 |
 
-### 관리자 API (쿠키 인증 필요)
+### 관리자 API (admin_session 쿠키)
 | 메서드 | 경로 | 기능 |
 |--------|------|------|
-| GET | `/api/admin/stats` | 핵심 지표 조회 |
-| GET | `/api/admin/funnel` | 퍼널 데이터 |
-| GET | `/api/admin/by-school` | 학교별 분석 |
-| GET | `/api/admin/by-grade` | 학년별 분석 |
-| GET | `/api/admin/by-path` | 경로별 분석 |
-| GET | `/api/admin/by-date` | 날짜별 분석 |
+| GET | `/api/admin/stats` | 핵심 지표 (총 신청/출석/피드백) |
+| GET | `/api/admin/funnel` | 퍼널 (신청→사전신청→출석) |
+| GET | `/api/admin/by-school` | 학교별 신청/출석 |
+| GET | `/api/admin/by-grade` | 학년별 신청/출석 |
+| GET | `/api/admin/by-path` | 경로별 분포 |
+| GET | `/api/admin/by-date` | 날짜별 추이 |
 | GET | `/api/admin/feedback` | 피드백 통계 |
-| GET | `/api/admin/members` | 신청자 명단 |
-| GET | `/api/admin/export` | CSV 내보내기 |
+| GET | `/api/admin/members` | 신청자 명단 (간단) |
+| GET | `/api/admin/members-list` | 신청자 명단 (상세, mode=all 옵션) |
+| GET | `/api/admin/export` | CSV 내보내기 (UTF-8 BOM) |
+| GET | `/api/admin/dashboard-data` | 대시보드 통합 데이터 |
+| GET | `/api/admin/full-stats` | 분석 탭 3개 섹션 |
+| GET / POST | `/api/admin/events` | 행사 목록 / 행사 생성 |
+| POST | `/api/admin/assign-team` | 단일 팀 배정 |
+| POST | `/api/admin/auto-match` | 자동 팀 매칭 |
+| POST | `/api/admin/compact-teams` | 팀 번호 재정렬 |
+| POST | `/api/admin/reset-teams` | 팀 배정 초기화 |
+| POST | `/api/admin/delete-member` | 멤버/등록 삭제 |
+| POST | `/api/admin/toggle-podo` | 포도 상태 토글 |
+| POST | `/api/admin/update-status` | 출석 상태 변경 |
+| GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
 
 ---
 
 ## 7. 인증 구조
 
-**방식**: 비밀번호 기반 쿠키 인증
-- 쿠키 이름: `admin_session`
-- 쿠키 값: `authenticated`
-- 속성: httpOnly, secure(프로덕션), sameSite=lax, 24시간 유효
-
-**보호 범위**: `middleware.ts`가 처리
-- `/admin/로그인 페이지`, `/api/admin/login`, `/api/admin/logout` → 통과
-- `/admin/**`, `/api/admin/**` → 쿠키 검증 → 없으면 `/admin`으로 리다이렉트
+- 쿠키 이름: `admin_session`, 값: `authenticated`
+- 속성: httpOnly, secure(프로덕션), sameSite=lax, **30일 유효**
+- 보호 범위 ([middleware.ts](middleware.ts)):
+  - 통과: `/admin` 로그인 페이지, `/api/admin/login`, `/api/admin/logout`
+  - 검증: `/admin/**`, `/api/admin/**` → 쿠키 없으면 `/admin`으로 리다이렉트
 
 ---
 
-## 8. Supabase 클라이언트
+## 8. Supabase 클라이언트 / 라이브러리
 
-**두 가지 클라이언트**:
-- `lib/supabase-admin.ts`: 서비스 롤 키 사용, API 라우트에서만 사용 (RLS 우회)
-- `lib/supabase-browser.ts`: anon 키 사용, 클라이언트 컴포넌트에서 사용
+- **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회.
+- **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키, 클라이언트 컴포넌트 전용.
+- **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직.
+- **[lib/getLatestEventId.ts](lib/getLatestEventId.ts)**: created_at 기준 최신 행사 ID.
 
-**RLS 정책**: 모든 테이블 RLS 활성화
-- events: 누구나 읽기, service role만 삽입
-- crew_members, guests: 누구나 읽기/삽입
-- event_registrations: 누구나 읽기/삽입/수정
-- feedbacks: 누구나 읽기/삽입
+**RLS**: 모든 테이블 활성화.
 
 ---
 
-## 9. 공통 유틸 (lib/constants.ts)
+## 9. 공통 유틸 ([lib/constants.ts](lib/constants.ts))
 
-**선택지 목록**:
-- `SCHOOLS`: 대전 소재 13개 대학교
+**선택지**:
+- `SCHOOLS`: 13개 대학교
 - `GRADES`: 1~4학년, 휴학, 졸업유예
-- `PATHS`: 알게 된 경로 6가지
-- `PROJECTS`: 관심 프로젝트 6가지
-- `GENDERS`: 남성, 여성, 선택 안함
-- `GOOD_TAGS`: 피드백 좋았던 점 5가지
-- `BAD_TAGS`: 피드백 아쉬운 점 5가지
+- `PATHS`: 6가지
+- `PROJECTS`: 6가지
+- `GENDERS`: '남성', '여성' (2가지, '선택 안함' 옵션 없음)
+- `GOOD_TAGS`: 6개
+- `BAD_TAGS`: 6개
+- `SCORE_LABELS`: 5단계 (현재 미사용 — 익명 피드백 전환 후 점수 폐기)
 
-**유틸 함수**:
-- `isValidPhone(phone)`: 숫자만 추출 후 10~11자리 여부 확인
-- `formatPhone(phone)`: 숫자만 추출 후 `XXX-XXXX-XXXX` 형식으로 변환
+**함수**:
+- `isValidPhone(phone)`: 숫자만 추출 후 10~11자리 확인
+- `formatPhone(phone)`: `XXX-XXXX-XXXX` 형식
 
 ---
 
-## 10. 공통 컴포넌트
+## 10. 컴포넌트
 
 ### 레이아웃
-- `Navbar`: 상단 네비게이션 (홈/소개/세미나/아카이브/커뮤니티/운영진모집/지원하기), 모바일 햄버거 메뉴 포함
-- `Footer`: 하단 푸터
+- **[Navbar](components/layout/Navbar.tsx)** — 고정 상단, 스크롤 20px 이상 시 `bg-white/95` + backdrop blur. 모바일 햄버거 fullscreen 메뉴. 메뉴: 소개/세미나/아카이브/커뮤니티/운영진모집 + 지원하기 버튼.
+- **[Footer](components/layout/Footer.tsx)** — 4열 그리드 (로고/설명, NAVIGATE, CONTACT). 흰 배경.
 
-### UI 기본 컴포넌트
-- `Button`: primary/secondary 변형, sm/md/lg 사이즈
-- `Input`: 라벨, 에러 메시지, phoneFormat 옵션 (입력 중 자동 하이픈 포맷)
-- `Select`: 드롭다운 선택
+### 홈 (사용 중)
+- **[HeroSection](components/home/HeroSection.tsx)**, **[CurriculumSection](components/home/CurriculumSection.tsx)**, **[ReviewsSection](components/home/ReviewsSection.tsx)**, **[CtaBanner](components/home/CtaBanner.tsx)**
+
+### 홈 (미사용 — 파일만 존재)
+- `components/home/AboutSection.tsx`, `NumbersSection.tsx`, `ActivitiesSection.tsx`
+- `components/StarField.tsx` (별 파티클 캔버스, 어디에서도 import 안 됨)
+
+### 공통 (2026-04-25 추가)
+- **[Reveal](components/Reveal.tsx)** — IntersectionObserver 기반 스크롤 등장 wrapper. props: `delay?`, `className?`, `as?` ('div'|'section'|'article'|'li'). server component 안에서도 사용 가능 (`'use client'` 자체 선언).
+
+### UI 기본
+- **[Button](components/ui/Button.tsx)**: primary/secondary, sm/md/lg.
+- **[Input](components/ui/Input.tsx)**: 라벨/에러/`phoneFormat` 옵션.
+- **[Select](components/ui/Select.tsx)**: 드롭다운.
 
 ### 피드백 전용
-- `StarRating`: 별점 1~5 선택 UI
-- `StepIndicator`: 현재 단계 표시 바
-- `TagSelector`: 태그 다중 선택 UI
+- `StarRating` (현재 미사용)
+- `StepIndicator` — 진행 단계 바
+- `TagSelector` — 태그 다중 선택
 
 ### 대시보드 전용
-- `StatCard`: 숫자 지표 카드 (primary/success/secondary/danger 컬러)
-- `FunnelChart`, `SchoolChart`, `GradeChart`, `PathChart`, `DateChart`: Recharts 기반 차트
-- `FeedbackRadar`: 만족도 레이더 차트
-- `FeedbackTagChart`: 피드백 태그 바 차트
-- `MembersTable`: 신청자 명단 테이블
+- `StatCard`, `SchoolChart`, `GradeChart`, `PathChart`, `DateChart`, `FunnelChart`, `FeedbackRadar`, `FeedbackTagChart`, `MembersTable`
 
 ### 기타
-- `Modal`: 오버레이 모달
-- `Toast` / `ToastContainer`: success/error/info 토스트 알림 (전역 `showToast()` 함수)
-- `StarField`: 별 파티클 배경 애니메이션
+- `Modal` / `ConfirmModal`
+- `Toast` / `ToastContainer` (전역 `showToast(message, type, duration)`)
 
 ---
 
-## 11. 디자인 시스템
+## 11. 디자인 시스템 (현재 상태)
 
-**컬러 팔레트**:
-- 배경: `slate-900`
-- 카드/섹션 배경: `slate-800`
-- 보조 배경: `slate-700`
-- 포인트 컬러: `purple-500`, `purple-600`
-- 텍스트: `white`, `slate-300`, `slate-400`
-- 에러: `red-400`
+**테마**: 라이트.
+
+**컬러**:
+- 페이지 배경: 흰색
+- 섹션 교차: `#fafafa` ↔ 흰색
+- 카드 배경: 흰색
+- 보더: `#eee`, `#e0e0e0`
+- 본문: 검정
+- 보조: `#555`, `#666`, `#888`, `#aaa`
+- 포인트: `violet-500` (#7c3aed), hover `violet-600`
+- 보라 배경: `violet-50` (배지/배너), `violet-500` (CTA 섹션)
+- 에러: `red-400`~`red-500`
 
 **레이아웃**:
-- 최대 너비: `max-w-6xl` (일반 페이지), `max-w-7xl` (대시보드), `max-w-2xl` (폼 페이지)
-- 패딩: `px-4 sm:px-6 lg:px-8`
+- 최대 너비: `max-w-7xl` (메인 페이지들), 폼 페이지는 더 좁게
+- 패딩: `px-5 lg:px-8` (모바일 우선)
+- 라운드: `rounded-2xl` 카드, `rounded-full` 버튼/배지
+
+**모션** (2026-04-25 추가):
+- `globals.css`에 키프레임 정의: `fadeInUp`, `fadeIn`, `blobDrift`, `shimmer`
+- 유틸 클래스: `.anim-fade-in-up`, `.anim-fade-in`, `.anim-blob`, `.card-lift`, `.reveal` / `.reveal.is-visible`
+- **[components/Reveal.tsx](components/Reveal.tsx)**: IntersectionObserver 기반 스크롤 등장 컴포넌트. server component 안에서도 사용 가능 (자체 `'use client'`).
+- 적용 위치:
+  - HeroSection: 배지/타이틀/CTA에 stagger fadeInUp + violet blur 두 개에 blobDrift
+  - CurriculumSection / ReviewsSection / CtaBanner: 헤더와 카드들에 Reveal (스크롤 진입 시)
+  - 세미나/아카이브 페이지: 헤더에 anim-fade-in-up, 카드들에 Reveal (delay stagger)
+  - 모든 카드에 `card-lift` (translateY -3px + soft violet shadow)
+  - 주요 CTA 버튼에 `hover:-translate-y-0.5 + hover:shadow`
+  - 아카이브 사진: hover 시 `scale-105`
+- **`prefers-reduced-motion: reduce`** 환경에선 모든 애니메이션 비활성
 
 ---
 
-## 12. 현재 미완성 / 추후 작업
+## 12. 알려진 미완성 / 사용자 인지 사항
 
-| 기능 | 상태 | 비고 |
+| 항목 | 상태 | 비고 |
 |------|------|------|
-| 커뮤니티 게시판 | UI만, 기능 없음 | 링크가 `#`로 처리됨 |
-| 세미나 동적 관리 | 하드코딩 | DB 연동 필요 |
-| 아카이브 동적 관리 | 하드코딩 | DB 연동 필요 |
-| 운영진 지원 | 정적 안내만 | 별도 지원 폼 필요 |
-| 크루 상태 관리 | '지원완료' 고정 | 합격/불합격 처리 필요 |
-| 이메일 알림 | 없음 | 선발 결과 안내 필요 |
-| 출석 확인서 | 수동 발급 | 관리자가 연말 행사 때 직접 지급 (자동화 불필요) |
-| `/admin/dashboard/full` | 존재하나 미확인 | 별도 전체 대시보드 |
+| 홈 애니메이션/풍부함 부족 | 2026-04-25 보완 | fadeInUp + Reveal 스크롤 + blob drift + card-lift 적용 |
+| 세미나 페이지 사진 | 없음 | 데이터 구조에 photo 필드 없음 |
+| 4월 행사 사진 (아카이브) | 없음 | photos 빈 배열로 두면 사진 없이 정보 카드만 렌더됨 — 사진 추가 시 `/public/archive/`에 업로드 후 events 배열에 경로 추가 |
+| 커뮤니티 게시판 | UI만 | 링크 `#` 처리 |
+| 세미나 동적 관리 | 하드코딩 | DB 연동 미정 |
+| 아카이브 동적 관리 | 하드코딩 | DB 연동 미정 |
+| 운영진 지원 폼 | 없음 | 정적 안내만 |
+| 크루 합격/불합격 | 없음 | status='지원완료' 고정, 즉시 확정 |
+| 이메일 알림 | 없음 | |
+| `/admin/dashboard/full` | 리다이렉트만 | 빈 라우트 정리 가능 |
+| StarField 컴포넌트 | 파일 존재, 미사용 | |
+| AboutSection/NumbersSection/ActivitiesSection | 파일 존재, 미사용 | |
+
+---
+
+## 13. 작업 흐름 규칙
+
+1. **수정 전**: 이 문서를 먼저 읽고 현재 상태를 파악한다.
+2. **수정 후**: 변경 내용을 즉시 이 문서에 반영한다 (페이지 구성, API, DB 컬럼, 컴포넌트, 알려진 이슈 등).
+3. **사용자 직접 수정 시**: 사용자가 변경을 알려주거나 코드를 보여주면 같은 방식으로 즉시 반영한다.
+4. **마지막 최신화 일자 갱신**: 최상단 줄을 업데이트한다.
+5. **추측 금지**: 코드에서 확인된 사실만 적는다. 의도/계획은 12번 항목에만 둔다.
