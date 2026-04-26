@@ -2,11 +2,20 @@ import { Reveal } from '@/components/Reveal'
 
 const months = [
   {
+    month: '03',
+    title: 'AI툴 클래스',
+    headline: '대학생 실전 활용',
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
+    highlight: '종료 · 80명 참가, 13개 대학교',
+    ended: true,
+  },
+  {
     month: '04',
     title: '시험공부용 AI',
     headline: '중간고사 집중 대비',
     desc: 'AI로 시험 범위를 요약·정리하고 예상 문제를 추출합니다. 시험 공부 시간을 절반으로 단축시켜 드립니다.',
-    highlight: '당장 중간고사 학점이 달라지는 경험을 하실 겁니다!',
+    highlight: '종료 · 40명 참가, 중간고사 즉시 적용',
+    ended: true,
   },
   {
     month: '05',
@@ -52,10 +61,10 @@ export function CurriculumSection() {
         <div className="space-y-3">
           {months.map((m, i) => (
             <Reveal key={m.month} delay={i * 80}>
-              <div className="bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-violet-200">
+              <div className={`bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-violet-200 ${m.ended ? 'opacity-75' : ''}`}>
                 <div className="flex gap-4 md:gap-5">
                   <div className="shrink-0">
-                    <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl bg-violet-500 text-white flex flex-col items-center justify-center">
+                    <div className={`w-14 h-14 md:w-20 md:h-20 rounded-xl text-white flex flex-col items-center justify-center ${m.ended ? 'bg-[#bbb]' : 'bg-violet-500'}`}>
                       <span className="text-[8px] md:text-[9px] font-bold tracking-widest uppercase leading-none">MONTH</span>
                       <span className="text-xl md:text-3xl font-black leading-none mt-0.5">{m.month}</span>
                     </div>
@@ -63,11 +72,11 @@ export function CurriculumSection() {
 
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug">
-                      {m.headline} <span className="text-violet-500">{m.title}</span>
+                      {m.headline} <span className={m.ended ? 'text-[#888]' : 'text-violet-500'}>{m.title}</span>
                     </h3>
                     <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5">{m.desc}</p>
-                    <div className="inline-flex items-center px-3 py-1.5 bg-violet-50 border border-violet-100 rounded-lg">
-                      <span className="text-violet-500 text-xs md:text-sm leading-snug">{m.highlight}</span>
+                    <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-violet-50 border-violet-100'}`}>
+                      <span className={`text-xs md:text-sm leading-snug ${m.ended ? 'text-[#888]' : 'text-violet-500'}`}>{m.highlight}</span>
                     </div>
                   </div>
                 </div>
