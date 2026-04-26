@@ -14,17 +14,17 @@ export const metadata: Metadata = {
 const seminars = [
   {
     status: '종료', statusColor: 'bg-[#eee] text-[#888]',
-    month: '03', title: 'AI툴 클래스 — 생성형 AI 개론',
+    month: '03', title: 'AI툴 클래스 — 대학생 실전 활용',
     date: '2026. 3. 28 (금)', speaker: '대표 박수훈', capacity: 80,
-    tags: ['ChatGPT', 'Gamma', '프롬프트 엔지니어링'],
-    desc: '생성형 AI 개념과 핵심 툴 3-4개를 직접 체험하며 AI 장벽을 허무는 첫 번째 세션.',
+    tags: ['자료 서치', '논문 파악', 'PPT 제작', '보고서 제작'],
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치부터 논문 파악, PPT 제작, 보고서 제작까지 직접 실습으로 익혀 갑니다.',
   },
   {
     status: '종료', statusColor: 'bg-[#eee] text-[#888]',
     month: '04', title: '중간고사 집중 대비 — 시험공부용 AI',
     date: '2026. 4. 11 (금)', speaker: 'PROGEN 테크팀', capacity: 100,
-    tags: ['시험 요약', '예상문제 추출', '학점 부스터'],
-    desc: 'AI로 시험 범위를 요약·정리하고 예상 문제를 추출. 시험 공부 시간을 절반으로 줄여드렸습니다.',
+    tags: ['수업 녹음', '시험 키워드 분석', '시험 문제 제작', '벼락치기 요약본'],
+    desc: '수업 녹음본 하나로 시험 끝. 녹음에서 핵심 키워드 자동 분석 → 예상 시험 문제 자동 생성 → 벼락치기용 요약본까지 한 번에 만들어 드렸습니다.',
   },
   {
     status: '모집 중', statusColor: 'bg-violet-50 text-violet-600 border border-violet-200',
