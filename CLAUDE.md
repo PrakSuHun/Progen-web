@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-04-26 (보라→하늘파랑 컬러 전면 교체, 네이버 사이트 인증)
+> **마지막 최신화**: 2026-04-26 (Supabase RLS 잠금: 6개 테이블 모두 default-deny, anon 정책 전부 제거)
 
 ---
 
@@ -419,11 +419,19 @@ AI 보고서 영역:
 ## 8. Supabase 클라이언트 / 라이브러리
 
 - **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회.
-- **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키, 클라이언트 컴포넌트 전용.
+- **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키. **현재 import 0건** (클라이언트는 모두 fetch로 우리 API 라우트 경유). 향후 클라이언트가 DB 직접 접근하려 하면 RLS 정책부터 추가 후 사용.
 - **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직.
 - **[lib/getLatestEventId.ts](lib/getLatestEventId.ts)**: created_at 기준 최신 행사 ID.
 
-**RLS**: 모든 테이블 활성화.
+**RLS** (2026-04-26 잠금 적용):
+- 6개 테이블 (`crew_members`, `events`, `event_registrations`, `guests`, `feedbacks`, `reports`) 모두 RLS 활성화 + **정책 0개 = anon default-deny**.
+- `anon` / `public` 역할로 직접 Supabase REST에 붙으면 **모든 read/insert/update/delete 차단**.
+- `service_role` 키는 RLS를 우회하므로 우리 Next.js API(`createAdminClient()`)는 정상 작동.
+- 결과적으로 "외부 anon key 직접 접근 = 0건" / "어드민 페이지 통한 접근 = 정상".
+
+> **외부에서 anon key로 직접 DB 붙는 통합(Zapier/Make/외부 분석 등)이 생기면, 그때 필요한 만큼만 좁은 정책을 추가해야 함.** 현재는 그런 통합 없음.
+
+> **`lib/supabase-browser.ts`(anon key)는 정의만 있고 import 0건.** 클라이언트 컴포넌트는 항상 우리 API 라우트를 fetch 경유로 사용.
 
 ---
 

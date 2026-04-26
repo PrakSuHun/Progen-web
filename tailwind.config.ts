@@ -6,13 +6,7 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {
-      colors: {
-        'progen-purple': '#7c3aed',
-        'progen-dark': '#0f172a',
-        'progen-gray': '#1e293b',
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
