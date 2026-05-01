@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { LogoMark } from '@/components/Logo'
+import { Logo } from '@/components/Logo'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -29,9 +29,8 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="flex justify-between items-center h-14">
-            <Link href="/" className="flex items-center gap-2 text-black font-black text-lg tracking-tight relative z-[60]">
-              <LogoMark className="w-7 h-7" />
-              <span>PRO<span className="text-sky-500">GEN</span></span>
+            <Link href="/" aria-label="PROGEN 홈" className="relative z-[60] flex items-center">
+              <Logo markSize={28} wordmarkHeight={18} gap={8} />
             </Link>
 
             <div className="hidden md:flex items-center gap-7">
