@@ -33,7 +33,7 @@ export function HeroSection() {
             </div>
 
             <h1
-              className="font-black tracking-tight mb-5 leading-[1.05] anim-fade-in-up break-keep"
+              className="font-black tracking-tight mb-5 leading-[1.2] anim-fade-in-up break-keep"
               style={{ fontSize: 'clamp(1.75rem, 5.6vw, 5rem)', animationDelay: '120ms' }}
             >
               <span className="text-black">AI 시대,</span>
