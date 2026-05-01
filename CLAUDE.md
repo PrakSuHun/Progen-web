@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-01 (행사 사전 신청 페이지 분리·보증금 5,000원 + 출석 흐름 안전성 + 활성 행사 fallback 7일 제한)
+> **마지막 최신화**: 2026-05-02 (PROGEN 신규 로고 시스템 도입: 마크 SVG + 워드마크 / favicon·navbar·footer 일괄 적용)
 
 ---
 
@@ -495,6 +495,7 @@ AI 보고서 영역:
 - `components/StarField.tsx` (별 파티클 캔버스, 어디에서도 import 안 됨)
 
 ### 공통 (2026-04-25~26 추가)
+- **[Logo](components/Logo.tsx)** (2026-05-02) — `LogoMark`(SVG only), `Logo`(마크 + PROGEN 워드마크). 기본 배경 `#0f1b2d` / 마크 색 `#1ab6f5`. props로 색상·라운드 커스터마이즈 가능. Navbar·Footer에서 import.
 - **[Reveal](components/Reveal.tsx)** — IntersectionObserver 기반 스크롤 등장 wrapper. props: `delay?`, `className?`, `as?` ('div'|'section'|'article'|'li'). server component 안에서도 사용 가능 (`'use client'` 자체 선언).
 - **[SpotlightBackground](components/SpotlightBackground.tsx)** — 마우스 추적 spotlight + dot grid + mesh blob 배경 wrapper. props: `variant?` ('hero'|'page'), `className?`. variant='hero'는 풀스크린 강한 그라데이션, variant='page'는 옅은 톤 + 좌우 mesh blob 2개. 홈/소개/세미나/아카이브/커뮤니티/운영진/지원/사전신청/출석/피드백 모든 페이지에 적용. server component 안에서도 사용 가능.
 
@@ -532,7 +533,8 @@ AI 보고서 영역:
 - 그라데이션 보조: `blue-500` (CTA 그라데이션), `cyan-400` (FloatCard 5월/6월 카드)
 - 옅은 배경: `sky-50` (배지/배너), `sky-100` (아바타 등), `sky-500` (CTA 섹션)
 - 에러: `red-400`~`red-500`
-- theme-color (PWA/manifest.json): `#0ea5e9`
+- theme-color (PWA/manifest.json): `#0f1b2d` (로고 마크 배경과 통일, 2026-05-02)
+- 로고 마크: 배경 `#0f1b2d` + 마크 `#1ab6f5` (P 모노그램, viewBox 200×200, rounded 36)
 
 **레이아웃**:
 - 최대 너비: `max-w-7xl` (메인 페이지들), 폼 페이지는 더 좁게

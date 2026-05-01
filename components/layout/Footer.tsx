@@ -1,5 +1,7 @@
 'use client'
 
+import { LogoMark } from '@/components/Logo'
+
 const navLinks = [
   ['/', '홈'],
   ['/about', '소개'],
@@ -21,8 +23,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 md:mb-16">
           <div className="col-span-2">
-            <div className="text-xl font-black text-black mb-3">
-              PRO<span className="text-sky-500">GEN</span>
+            <div className="flex items-center gap-2 mb-3">
+              <LogoMark className="w-8 h-8" />
+              <span className="text-xl font-black text-black">
+                PRO<span className="text-sky-500">GEN</span>
+              </span>
             </div>
             <p className="text-[#888] text-sm leading-relaxed max-w-xs">
               AI 시대, 도구를 지배하는 대학생들의 커뮤니티.

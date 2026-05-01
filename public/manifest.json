@@ -4,8 +4,8 @@
   "description": "PROGEN 관리자 대시보드",
   "start_url": "/admin/dashboard",
   "display": "standalone",
-  "background_color": "#f1f5f9",
-  "theme_color": "#0ea5e9",
+  "background_color": "#0f1b2d",
+  "theme_color": "#0f1b2d",
   "orientation": "any",
   "icons": [
     {
