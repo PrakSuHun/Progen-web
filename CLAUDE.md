@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-04-26 (Supabase RLS 잠금: 6개 테이블 모두 default-deny, anon 정책 전부 제거)
+> **마지막 최신화**: 2026-05-01 (행사 사전 신청 페이지 분리·보증금 5,000원 + 출석 흐름 안전성 + 활성 행사 fallback 7일 제한)
 
 ---
 
@@ -128,9 +128,14 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | status | TEXT | '사전신청' / '출석완료' / '노쇼확정' |
 | team_name | TEXT | 팀 배정명 (예: '1팀', null=미배정) |
 | checked_in_at | TIMESTAMPTZ | 출석 시각 |
+| deposit_paid | BOOLEAN | 보증금 입금 여부 (게스트 한정 의미, 기본 false) |
+| deposit_paid_at | TIMESTAMPTZ | 입금 처리 시각 |
 | created_at | TIMESTAMPTZ | 신청일 |
 
 > crew_id와 guest_id 중 하나만 값이 있다.
+> `deposit_paid`: 비회원(게스트) 사전 신청 시 노쇼 방지 보증금 5,000원 도입(2026-05-01).
+> 마이그레이션 파일: [supabase/migrations/2026-04-26_deposit_paid.sql](supabase/migrations/2026-04-26_deposit_paid.sql).
+> 과거 행사의 출석완료 게스트는 마이그레이션에서 자동 true 처리됨.
 
 ### 4-5. feedbacks (피드백, 익명)
 | 컬럼 | 타입 | 설명 |
@@ -208,30 +213,50 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 
 ---
 
-### 5-4. 행사 사전 신청 `/event-reg` ([app/event-reg/page.tsx](app/event-reg/page.tsx))
-1. 진입 시 신청 유형 선택 모달 (크루 / 비회원)
-2. **크루 폼**: 이름 + 연락처 + 나이 (3개)
-3. **비회원 폼**: 이름, 성별, 연락처, 나이, 학교, 학년, 전공, 경로 (8개)
-4. 하단 "← 유형 변경" 링크
+### 5-4. 행사 사전 신청 (3개 페이지로 분리, 2026-05-01)
+- **`/event-reg`** ([app/event-reg/page.tsx](app/event-reg/page.tsx)) — 랜딩. 두 카드(크루 / 비회원)로 분기.
+- **`/event-reg/crew`** ([app/event-reg/crew/page.tsx](app/event-reg/crew/page.tsx)) — 크루 폼. **이름 + 연락처 (2개)**.
+- **`/event-reg/guest`** ([app/event-reg/guest/page.tsx](app/event-reg/guest/page.tsx)) — 비회원 폼 (8개) + 보증금 5,000원 안내.
 
 **처리**:
-- 크루: crew_members에서 이름+연락처 조회 → 없으면 404
-- 게스트: guests에 phone 기준 upsert (신규면 source_event_id 설정)
-- 공통: event_registrations에 status='사전신청' 삽입
+- 크루: `crew_members`에서 `name+phone` 매칭 → 없으면 404 (이전: 토스트 → 현재: 모달 + 크루지원/비회원신청 안내)
+- 게스트: `guests`에 phone 기준 upsert (신규면 source_event_id 설정)
+- 공통: `event_registrations`에 `status='사전신청'` 삽입
 - 중복 → 409, 중앙 Modal (문의: https://open.kakao.com/o/sQqCopki)
+
+**보증금 안내 (게스트 한정)**:
+- 폼 위 노란색 안내 박스: 5,000원 보증금, 참석 시 전액 환불
+- 신청 완료 모달: 입금 계좌(하나은행 660-910011-22904 / 예금주: 프로젠(ProGen)) + 계좌번호 복사 버튼 + 오픈채팅 문의
+- 운영진은 어드민 대시보드 체크인 탭에서 게스트 카드의 "보증금 ✓ 입금 / ✗ 미입금" 뱃지 클릭으로 토글
+
+**테스트 단축키 (이름으로 모달만 미리보기, DB 미기록)**:
+- `테스트` → 신청 완료 모달
+- `테스트1` → 이미 신청 모달
+- `테스트2` → 크루 정보 없음 모달 (크루 폼만)
+
+**연락처 검증**: 정확히 11자리 숫자만 통과 ([lib/constants.ts](lib/constants.ts)의 `isValidPhone`).
+**나이 라벨**: "나이 *2007년생 기준 20살" 회색 주석 표시.
 
 ---
 
 ### 5-5. 현장 출석체크 `/checkin` ([app/checkin/page.tsx](app/checkin/page.tsx))
-**경로 A — 사전 신청자 출석**:
+**경로 A — 사전 신청자 출석** (2026-05-01 보안 강화):
 1. 이름 + 연락처 입력
 2. `POST /api/checkin` (walkin: false)
-3. crew_members 또는 guests에서 phone 조회 → 활성 행사의 event_registrations status='출석완료' + checked_in_at
-4. 응답에 `team_name` 포함 → "OOO님 출석 완료, X팀입니다" Modal
+3. **`phone + name` AND 매칭** (이전: phone-only)으로 본인 확인 강도 ↑. 공백/오타에 강하도록 normalize.
+4. 활성 행사의 `event_registrations` status='출석완료' + checked_in_at으로 UPDATE
+5. 이미 출석완료 상태면 409 + "이미 출석하셨어요" 모달 (이전: 200 silent)
+6. 응답에 `team_name` 포함 → "OOO님 출석 완료, X팀입니다" Modal
 
-**경로 B — Walk-in**:
+**경로 B — Walk-in** (2026-05-01 안전성 개선):
 - 사전 신청 404 시 자동으로 walk-in 폼 표시 (8개 필드)
-- `POST /api/checkin` (walkin: true) → guests upsert + event_registrations status='출석완료' 즉시 삽입
+- 크루 매칭은 **phone 단독** (이전: name+phone, 오타 시 게스트 중복 생성됨)
+- INSERT 전 **기존 사전 신청 row 확인 → 있으면 UPDATE**로 전환 (이전: 무조건 INSERT → 유니크 위반 → 출석 누락 사고)
+- 응답의 name은 DB 저장값 사용 (사용자 입력 오타 무시)
+
+**테스트 단축키 (DB 미기록)**:
+- `테스트` → 출석 완료 모달 (1팀 표시)
+- `테스트1` → 이미 출석 모달
 
 > **QR**: `/checkin` URL을 외부 QR 도구로 인쇄해 현장 비치.
 
@@ -312,6 +337,8 @@ robots: noindex.
 ---
 
 ### 5-13. 관리자 대시보드 `/admin/dashboard` ([app/admin/dashboard/page.tsx](app/admin/dashboard/page.tsx))
+
+**보증금 입금 관리 (2026-05-01 추가)**: 체크인 탭의 미출석/출석완료 컬럼에서 게스트 카드에 "보증금 ✓ 입금 / ✗ 미입금" 뱃지 표시. 클릭 시 [/api/admin/toggle-deposit](app/api/admin/toggle-deposit/route.ts)로 상태 토글 + 낙관적 업데이트. 상단에 "게스트 보증금 입금 X / 미입금 Y / 총 Z명" 합계 카드. 분석 탭의 게스트 섹션에도 입금/미입금 합계 표시 (full-stats `section2.guest_deposit_paid`, `guest_deposit_pending`).
 **통합 운영 화면**. 행사 선택자 + 4개 탭.
 
 **상단 컨트롤**:
@@ -403,6 +430,7 @@ AI 보고서 영역:
 | POST | `/api/admin/toggle-podo` | 포도 상태 토글 |
 | POST | `/api/admin/update-status` | 출석 상태 변경 |
 | GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
+| POST | `/api/admin/toggle-deposit` | 게스트 보증금 입금 상태 토글 (event_registrations.deposit_paid) |
 
 ---
 
@@ -420,7 +448,7 @@ AI 보고서 영역:
 
 - **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회.
 - **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키. **현재 import 0건** (클라이언트는 모두 fetch로 우리 API 라우트 경유). 향후 클라이언트가 DB 직접 접근하려 하면 RLS 정책부터 추가 후 사용.
-- **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직.
+- **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직. 2026-05-01부터 과거 행사 fallback은 **PAST_FALLBACK_DAYS=7일 이내**일 때만 동작. 그 이상 지난 후 다음 행사 row가 없으면 `null` 반환 → API들이 "현재 활성 행사를 찾을 수 없습니다" 안내. 운영진의 다음 달 events row 등록 누락 시 사용자가 지난 행사로 잘못 신청되는 사고 방지 목적.
 - **[lib/getLatestEventId.ts](lib/getLatestEventId.ts)**: created_at 기준 최신 행사 ID.
 
 **RLS** (2026-04-26 잠금 적용):
@@ -438,8 +466,8 @@ AI 보고서 영역:
 ## 9. 공통 유틸 ([lib/constants.ts](lib/constants.ts))
 
 **선택지**:
-- `SCHOOLS`: 13개 대학교
-- `GRADES`: 1~4학년, 휴학, 졸업유예
+- `SCHOOLS`: 11개 대학교 (2026-05-01: 충청대학교 제외)
+- `GRADES`: 1~4학년, 졸업유예 (2026-05-01: 휴학 제외)
 - `PATHS`: 6가지
 - `PROJECTS`: 6가지
 - `GENDERS`: '남성', '여성' (2가지, '선택 안함' 옵션 없음)
@@ -448,8 +476,8 @@ AI 보고서 영역:
 - `SCORE_LABELS`: 5단계 (현재 미사용 — 익명 피드백 전환 후 점수 폐기)
 
 **함수**:
-- `isValidPhone(phone)`: 숫자만 추출 후 10~11자리 확인
-- `formatPhone(phone)`: `XXX-XXXX-XXXX` 형식
+- `isValidPhone(phone)`: 숫자만 추출 후 **정확히 11자리** 확인 (2026-05-01부터 10자리는 거부)
+- `formatPhone(phone)`: 11자리 초과 자동 절단 + 점진적 포맷 (`010-` → `010-1234-` → `010-1234-5678`)
 
 ---
 
@@ -530,6 +558,8 @@ AI 보고서 영역:
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
+| 보증금 자동 입금 확인 | 수동 | 운영진이 통장 보고 어드민에서 토글. 자동 매칭(은행 API 등) 미구현 |
+| 다음 달 events row 사전 등록 운영 루틴 | 수동 | getActiveEventId가 7일 fallback 후 null → 행사 7일 이상 후 다음 행사 row 없으면 사용자 신청 차단됨. 매월 행사 종료 직후 다음 행사 row 미리 만들어야 함 |
 | 홈 애니메이션/풍부함 부족 | 2026-04-25 보완 | fadeInUp + Reveal 스크롤 + blob drift + card-lift 적용 |
 | 세미나 페이지 사진 | 없음 | 데이터 구조에 photo 필드 없음 |
 | 4월 행사 사진 (아카이브) | 없음 | photos 빈 배열로 두면 사진 없이 정보 카드만 렌더됨 — 사진 추가 시 `/public/archive/`에 업로드 후 events 배열에 경로 추가 |

@@ -10,7 +10,6 @@ export const SCHOOLS = [
   'KAIST',
   '을지대학교',
   '대덕대학교',
-  '충청대학교',
   '대전보건대학교',
   '혜천대학교',
 ]
@@ -21,7 +20,6 @@ export const GRADES = [
   '2학년',
   '3학년',
   '4학년',
-  '휴학',
   '졸업유예',
 ]
 
@@ -83,16 +81,12 @@ export const SCORE_LABELS = [
 // Phone validation and formatting
 export function isValidPhone(phone: string): boolean {
   const cleanPhone = phone.replace(/\D/g, '')
-  return cleanPhone.length === 10 || cleanPhone.length === 11
+  return cleanPhone.length === 11
 }
 
 export function formatPhone(phone: string): string {
-  const cleanPhone = phone.replace(/\D/g, '')
-  if (cleanPhone.length === 10) {
-    return `${cleanPhone.slice(0, 2)}-${cleanPhone.slice(2, 6)}-${cleanPhone.slice(6)}`
-  }
-  if (cleanPhone.length === 11) {
-    return `${cleanPhone.slice(0, 3)}-${cleanPhone.slice(3, 7)}-${cleanPhone.slice(7)}`
-  }
-  return phone
+  const cleanPhone = phone.replace(/\D/g, '').slice(0, 11)
+  if (cleanPhone.length <= 3) return cleanPhone
+  if (cleanPhone.length <= 7) return `${cleanPhone.slice(0, 3)}-${cleanPhone.slice(3)}`
+  return `${cleanPhone.slice(0, 3)}-${cleanPhone.slice(3, 7)}-${cleanPhone.slice(7)}`
 }

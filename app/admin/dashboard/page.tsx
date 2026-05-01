@@ -26,6 +26,7 @@ interface Attendee {
   is_crew: boolean
   status: string
   team_name: string | null
+  deposit_paid: boolean
 }
 
 interface DashboardData {
@@ -68,6 +69,8 @@ interface FullStats {
     crew_conversion_count: number
     crew_conversion_rate: number
     total_saengmyung: number
+    guest_deposit_paid?: number
+    guest_deposit_pending?: number
   }
   section3: {
     total_responses: number
@@ -141,7 +144,7 @@ function MiniPieChart({ data }: { data: DistItem[] }) {
   )
 }
 
-function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDraggable = false, onDragStart, onTap, isSelected = false }: {
+function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDraggable = false, onDragStart, onTap, isSelected = false, showDeposit = false, onToggleDeposit }: {
   person: Attendee
   showPhone?: boolean
   dimmed?: boolean
@@ -149,6 +152,8 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   onDragStart?: () => void
   onTap?: (e?: React.MouseEvent) => void
   isSelected?: boolean
+  showDeposit?: boolean
+  onToggleDeposit?: (registration_id: string, next: boolean) => void
 }) {
   const isTarget = person.noshow_count >= 2
   const isNoshow = person.status === '노쇼확정'
@@ -210,6 +215,19 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
         >
           {person.phone}
         </a>
+      )}
+      {showDeposit && !person.is_crew && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggleDeposit?.(person.registration_id, !person.deposit_paid) }}
+          className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border transition
+            ${person.deposit_paid
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
+              : 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'}`}
+          title={person.deposit_paid ? '클릭 시 입금 취소' : '클릭 시 입금 처리'}
+        >
+          보증금 {person.deposit_paid ? '✓ 입금' : '✗ 미입금'}
+        </button>
       )}
     </div>
   )
@@ -534,6 +552,37 @@ export default function AdminDashboardPage() {
     await fetchAll()
   }
 
+  const handleToggleDeposit = async (registration_id: string, next: boolean) => {
+    // 낙관적 업데이트
+    setData((prev) => {
+      if (!prev) return prev
+      const flip = (a: Attendee) => a.registration_id === registration_id ? { ...a, deposit_paid: next } : a
+      const newAssigned: Record<string, Attendee[]> = {}
+      for (const [k, v] of Object.entries(prev.assigned)) newAssigned[k] = v.map(flip)
+      return {
+        ...prev,
+        unassigned: prev.unassigned.map(flip),
+        not_arrived: prev.not_arrived.map(flip),
+        noshow: prev.noshow.map(flip),
+        assigned: newAssigned,
+      }
+    })
+    try {
+      const res = await fetch('/api/admin/toggle-deposit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registration_id, deposit_paid: next }),
+      })
+      if (!res.ok) {
+        showToast('보증금 상태 변경 실패', 'error')
+        await fetchAll()
+      }
+    } catch {
+      showToast('오류 발생', 'error')
+      await fetchAll()
+    }
+  }
+
   const handleUpdateStatus = async (registration_id: string, newStatus: string) => {
     try {
       const res = await fetch('/api/admin/update-status', {
@@ -591,6 +640,11 @@ export default function AdminDashboardPage() {
       ...assignedAll.filter((p) => p.status === '노쇼확정'),
     ]
 
+    // 보증금 통계 (게스트만 대상, 노쇼확정 제외)
+    const allGuests = [...allCheckedIn, ...notArrived].filter((p) => !p.is_crew)
+    const guestPaid = allGuests.filter((p) => p.deposit_paid).length
+    const guestUnpaid = allGuests.length - guestPaid
+
     const q = searchQuery.toLowerCase()
     const filterFn = (p: Attendee) => !q || p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)
     const filteredCheckedIn = sortAttendees(allCheckedIn.filter(filterFn), sortBy)
@@ -612,7 +666,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="p-4 md:p-6 overflow-y-auto h-full">
         {/* 숫자 카드 */}
-        <div className="grid grid-cols-4 gap-2 md:gap-4 mb-5">
+        <div className="grid grid-cols-4 gap-2 md:gap-4 mb-3">
           {[
             { label: '오기로 한 인원', value: pre, color: 'text-sky-700', bg: 'bg-sky-50 border-sky-200' },
             { label: '출석', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
@@ -625,6 +679,19 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </div>
+
+        {/* 게스트 보증금 입금 현황 */}
+        {allGuests.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 mb-5 flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">게스트 보증금</span>
+              <span className="text-emerald-700 font-bold text-sm bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">입금 {guestPaid}</span>
+              <span className="text-amber-700 font-bold text-sm bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">미입금 {guestUnpaid}</span>
+              <span className="text-slate-400 text-xs">/ 총 {allGuests.length}명</span>
+            </div>
+            <p className="text-slate-400 text-[11px]">게스트 카드의 보증금 뱃지를 클릭하면 입금 처리됩니다.</p>
+          </div>
+        )}
 
         {/* 검색 + 정렬 */}
         <div className="flex items-center gap-2 md:gap-3 mb-4 flex-wrap">
@@ -663,7 +730,7 @@ export default function AdminDashboardPage() {
               )}
               {filteredNotArrived.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1"><PersonCard person={p} showPhone /></div>
+                  <div className="flex-1"><PersonCard person={p} showPhone showDeposit onToggleDeposit={handleToggleDeposit} /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <StatusBtn label="출석" color="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200" onClick={() => handleUpdateStatus(p.registration_id, '출석완료')} />
                     <StatusBtn label="노쇼" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleUpdateStatus(p.registration_id, '노쇼확정')} />
@@ -685,7 +752,7 @@ export default function AdminDashboardPage() {
               )}
               {filteredCheckedIn.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-2">
-                  <div className="flex-1"><PersonCard person={p} /></div>
+                  <div className="flex-1"><PersonCard person={p} showDeposit onToggleDeposit={handleToggleDeposit} /></div>
                   <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
                 </div>
               ))}
@@ -704,7 +771,7 @@ export default function AdminDashboardPage() {
               )}
               {filteredNoshow.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-2">
-                  <div className="flex-1"><PersonCard person={p} showPhone /></div>
+                  <div className="flex-1"><PersonCard person={p} showPhone showDeposit onToggleDeposit={handleToggleDeposit} /></div>
                   <StatusBtn label="해제" color="bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
                 </div>
               ))}
@@ -1067,6 +1134,12 @@ export default function AdminDashboardPage() {
                           <p className="text-blue-400 text-xs">참여 ({s2.guest_attendance_rate}%)</p>
                         </div>
                       </div>
+                      {(s2.guest_deposit_paid > 0 || s2.guest_deposit_pending > 0) && (
+                        <div className="mt-3 pt-3 border-t border-blue-100 flex items-center justify-center gap-2 text-xs">
+                          <span className="bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-full px-2 py-0.5">입금 {s2.guest_deposit_paid ?? 0}</span>
+                          <span className="bg-amber-50 border border-amber-200 text-amber-700 font-bold rounded-full px-2 py-0.5">미입금 {s2.guest_deposit_pending ?? 0}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1100,6 +1173,12 @@ export default function AdminDashboardPage() {
                       <div className="bg-white border-2 border-blue-200 rounded-2xl p-4 shadow-sm text-center">
                         <p className="text-blue-500 text-xs font-semibold">게스트 참여</p>
                         <p className="text-2xl font-black text-blue-600 mt-1">{s2.guest_attended}명 <span className="text-sm font-medium">({s2.guest_attendance_rate}%)</span></p>
+                        {(s2.guest_deposit_paid > 0 || s2.guest_deposit_pending > 0) && (
+                          <div className="mt-2 flex items-center justify-center gap-1.5 text-[11px]">
+                            <span className="bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-full px-1.5 py-0.5">입금 {s2.guest_deposit_paid ?? 0}</span>
+                            <span className="bg-amber-50 border border-amber-200 text-amber-700 font-bold rounded-full px-1.5 py-0.5">미입금 {s2.guest_deposit_pending ?? 0}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

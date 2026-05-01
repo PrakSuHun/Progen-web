@@ -1,19 +1,21 @@
 import { createAdminClient } from './supabase-admin'
 
+const PAST_FALLBACK_DAYS = 7
+
 /**
  * 현재 활성 행사 ID를 자동으로 반환한다.
- * - 오늘 날짜(자정) 이후 가장 가까운 행사를 선택
- * - 행사 당일도 포함 (당일 자정부터 다음날 자정까지 해당 행사가 활성)
- * - 모든 행사가 지났으면 가장 최근 행사를 반환
+ * - 오늘 자정 이후 가장 가까운 미래 행사를 우선 선택 (당일 포함)
+ * - 미래 행사가 없으면, 가장 최근 과거 행사를 PAST_FALLBACK_DAYS일 이내일 때만 반환
+ * - 그 외(모든 행사가 충분히 지난 후 다음 행사 row가 아직 없음)에는 null 반환
+ *   → API 라우트에서 "현재 활성 행사를 찾을 수 없습니다" 안내로 이어진다.
+ *   이는 "사용자 신청이 의도치 않게 지난 행사로 들어가는" 사고를 방지하기 위함.
  */
 export async function getActiveEventId(): Promise<string | null> {
   const supabase = createAdminClient()
 
-  // 오늘 자정 (한국 시간 기준 UTC)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  // 오늘 이후 가장 가까운 행사 (당일 포함)
   const { data: upcoming } = await supabase
     .from('events')
     .select('id')
@@ -24,14 +26,19 @@ export async function getActiveEventId(): Promise<string | null> {
 
   if (upcoming) return upcoming.id
 
-  // 모든 행사가 지난 경우 가장 최근 행사 반환
   const { data: past } = await supabase
     .from('events')
-    .select('id')
+    .select('id, event_date')
     .lt('event_date', today.toISOString())
     .order('event_date', { ascending: false })
     .limit(1)
     .single()
 
-  return past?.id ?? null
+  if (!past) return null
+
+  const pastDate = new Date(past.event_date)
+  const daysSince = (today.getTime() - pastDate.getTime()) / (1000 * 60 * 60 * 24)
+  if (daysSince > PAST_FALLBACK_DAYS) return null
+
+  return past.id
 }

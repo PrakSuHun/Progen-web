@@ -47,6 +47,8 @@ export default function ApplyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (formData.name.trim() === '테스트') { setShowSuccess(true); return }
+    if (formData.name.trim() === '테스트1') { setShowDuplicate(true); return }
     if (!validateForm()) { showToast('필수 입력 항목을 확인해주세요', 'error'); return }
     setLoading(true)
     try {
@@ -82,7 +84,7 @@ export default function ApplyPage() {
             <Input label="이름" placeholder="홍길동" value={formData.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Select label="성별" options={GENDERS} value={formData.gender} onChange={(e) => set('gender', e.target.value)} error={errors.gender} />
             <Input label="연락처" type="tel" placeholder="010-1234-5678" value={formData.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
-            <Input label="나이" type="number" placeholder="20" value={formData.age} onChange={(e) => set('age', e.target.value)} error={errors.age} />
+            <Input label={<>나이 <span className="text-[#aaa] text-xs font-normal">*2007년생 기준 20살</span></>} type="number" placeholder="20" value={formData.age} onChange={(e) => set('age', e.target.value)} error={errors.age} />
             <Select label="학교" options={SCHOOLS} value={formData.school} onChange={(e) => set('school', e.target.value)} error={errors.school} />
             <Select label="학년" options={GRADES} value={formData.grade} onChange={(e) => set('grade', e.target.value)} error={errors.grade} />
             <Input label="전공" placeholder="컴퓨터과학" value={formData.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />

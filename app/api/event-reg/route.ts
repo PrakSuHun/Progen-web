@@ -7,7 +7,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { mode, name, phone, age, school, grade, major, path, gender } = body
 
-    if (!mode || !name || !phone || !age) {
+    if (!mode || !name || !phone) {
+      return NextResponse.json(
+        { message: '필수 항목을 입력해주세요' },
+        { status: 400 }
+      )
+    }
+
+    if (mode === 'guest' && !age) {
       return NextResponse.json(
         { message: '필수 항목을 입력해주세요' },
         { status: 400 }

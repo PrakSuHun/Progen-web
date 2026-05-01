@@ -57,6 +57,12 @@ export default function CheckInPage() {
 
   const handleCheckIn = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (checkInData.name.trim() === '테스트') {
+      setCheckedInName('테스트'); setCheckedInTeam('1팀'); setShowSuccess(true); return
+    }
+    if (checkInData.name.trim() === '테스트1') {
+      setCheckedInName('테스트1'); setShowDuplicate(true); return
+    }
     if (!validateCheckIn()) return
     setLoading(true)
     try {
@@ -75,6 +81,12 @@ export default function CheckInPage() {
 
   const handleWalkIn = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (walkInData.name.trim() === '테스트') {
+      setCheckedInName('테스트'); setCheckedInTeam(null); setShowSuccess(true); return
+    }
+    if (walkInData.name.trim() === '테스트1') {
+      setCheckedInName('테스트1'); setShowDuplicate(true); return
+    }
     if (!validateWalkIn()) return
     setLoading(true)
     try {
@@ -128,7 +140,7 @@ export default function CheckInPage() {
               <Input label="이름" placeholder="홍길동" value={walkInData.name} onChange={(e) => setWI('name', e.target.value)} error={walkInErrors.name} />
               <Select label="성별" options={GENDERS} value={walkInData.gender} onChange={(e) => setWI('gender', e.target.value)} error={walkInErrors.gender} />
               <Input label="연락처" placeholder="010-1234-5678" value={walkInData.phone} onChange={(e) => setWI('phone', e.target.value)} error={walkInErrors.phone} phoneFormat />
-              <Input label="나이" type="number" placeholder="20" value={walkInData.age} onChange={(e) => setWI('age', e.target.value)} error={walkInErrors.age} />
+              <Input label={<>나이 <span className="text-[#aaa] text-xs font-normal">*2007년생 기준 20살</span></>} type="number" placeholder="20" value={walkInData.age} onChange={(e) => setWI('age', e.target.value)} error={walkInErrors.age} />
               <Select label="학교" options={SCHOOLS} value={walkInData.school} onChange={(e) => setWI('school', e.target.value)} error={walkInErrors.school} />
               <Select label="학년" options={GRADES} value={walkInData.grade} onChange={(e) => setWI('grade', e.target.value)} error={walkInErrors.grade} />
               <Input label="전공" placeholder="컴퓨터과학" value={walkInData.major} onChange={(e) => setWI('major', e.target.value)} error={walkInErrors.major} />

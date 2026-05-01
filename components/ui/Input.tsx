@@ -3,7 +3,7 @@
 import { formatPhone } from '@/lib/constants'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string
+  label?: React.ReactNode
   error?: string
   phoneFormat?: boolean
 }

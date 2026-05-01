@@ -45,8 +45,11 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   event_id UUID REFERENCES events(id) ON DELETE CASCADE,
   crew_id UUID REFERENCES crew_members(id) ON DELETE SET NULL,
   guest_id UUID REFERENCES guests(id) ON DELETE SET NULL,
-  status TEXT DEFAULT '사전신청', -- '사전신청' or '출석완료'
+  status TEXT DEFAULT '사전신청', -- '사전신청' / '출석완료' / '노쇼확정'
+  team_name TEXT,
   checked_in_at TIMESTAMP WITH TIME ZONE,
+  deposit_paid BOOLEAN DEFAULT false,
+  deposit_paid_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(event_id, crew_id),
   UNIQUE(event_id, guest_id)

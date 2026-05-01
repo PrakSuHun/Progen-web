@@ -2,6 +2,8 @@ import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
 import { NextRequest, NextResponse } from 'next/server'
 
+const norm = (s: string) => (s || '').replace(/\s+/g, '').trim()
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -25,22 +27,24 @@ export async function POST(request: NextRequest) {
     }
 
     if (walkin) {
-      // Walk-in: Register and check in
+      // Walk-in: 등록 + 즉시 출석 처리.
+      // 핵심: 사전 신청 row가 이미 있는 사람이 walk-in 폼으로 들어왔을 때
+      // 새 INSERT가 아니라 기존 row를 UPDATE해서 출석 누락 사고를 막는다.
       let crewId: string | null = null
       let guestId: string | null = null
+      let resolvedName = name
 
-      // Try to find existing crew member
+      // 크루 매칭은 phone만으로 (오타로 인한 게스트 중복 생성 방지)
       const { data: crewMember } = await supabase
         .from('crew_members')
-        .select('id')
-        .eq('name', name)
+        .select('id, name')
         .eq('phone', phone)
-        .single()
+        .maybeSingle()
 
       if (crewMember) {
         crewId = crewMember.id
+        resolvedName = crewMember.name
       } else {
-        // Check if guest already exists
         const { data: existingGuest } = await supabase
           .from('guests')
           .select('id')
@@ -48,7 +52,6 @@ export async function POST(request: NextRequest) {
           .maybeSingle()
 
         if (existingGuest) {
-          // Update info but keep source_event_id
           const { data: guest } = await supabase
             .from('guests')
             .update({ name, age, school: school || null, grade: grade || null, major: major || null, path: path || null, gender: gender || null })
@@ -57,7 +60,6 @@ export async function POST(request: NextRequest) {
             .single()
           if (guest) guestId = guest.id
         } else {
-          // New guest: set source_event_id
           const { data: guest } = await supabase
             .from('guests')
             .insert({ name, phone, age, school: school || null, grade: grade || null, major: major || null, path: path || null, gender: gender || null, source_event_id: eventId })
@@ -67,8 +69,37 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Insert event registration with checked in status
-      const { data, error } = await supabase
+      // 사전 신청 row가 이미 있으면 UPDATE 경로로 빠진다
+      const personFilter = crewId ? { crew_id: crewId } : { guest_id: guestId as string }
+      const { data: existing } = await supabase
+        .from('event_registrations')
+        .select('id, status, team_name')
+        .eq('event_id', eventId)
+        .match(personFilter)
+        .maybeSingle()
+
+      if (existing) {
+        if (existing.status === '출석완료') {
+          return NextResponse.json(
+            { message: '이미 출석체크되었습니다', name: resolvedName },
+            { status: 409 }
+          )
+        }
+        // 사전 신청 → 출석완료로 전환. walk-in이라도 보증금은 입금했다고 보지 않는다(미정산은 운영진 판단).
+        await supabase
+          .from('event_registrations')
+          .update({ status: '출석완료', checked_in_at: new Date().toISOString() })
+          .eq('id', existing.id)
+
+        return NextResponse.json({
+          message: '출석 완료',
+          name: resolvedName,
+          team_name: existing.team_name ?? null,
+        })
+      }
+
+      // 진짜 신규 walk-in: INSERT
+      const { error: insertError } = await supabase
         .from('event_registrations')
         .insert([
           {
@@ -79,48 +110,48 @@ export async function POST(request: NextRequest) {
             checked_in_at: new Date().toISOString(),
           },
         ])
-        .select()
 
-      if (error) {
-        if (error.code === '23505') {
+      if (insertError) {
+        if (insertError.code === '23505') {
           return NextResponse.json(
-            { message: '이미 출석체크되었습니다' },
+            { message: '이미 출석체크되었습니다', name: resolvedName },
             { status: 409 }
           )
         }
-        throw error
+        throw insertError
       }
 
       return NextResponse.json({
         message: '현장 등록 + 출석 완료',
-        name,
+        name: resolvedName,
         team_name: null,
-        data,
       })
     } else {
-      // Regular check-in from pre-registration
+      // Regular check-in: 사전 신청자 출석 처리. phone+name AND 매칭으로 본인 확인 강도 ↑.
+      const nName = norm(name)
       let crewId: string | null = null
       let guestId: string | null = null
+      let resolvedName = name
 
-      // Try to find crew member
       const { data: crewMember } = await supabase
         .from('crew_members')
-        .select('id')
+        .select('id, name')
         .eq('phone', phone)
-        .single()
+        .maybeSingle()
 
-      if (crewMember) {
+      if (crewMember && norm(crewMember.name) === nName) {
         crewId = crewMember.id
+        resolvedName = crewMember.name
       } else {
-        // Try to find guest
         const { data: guest } = await supabase
           .from('guests')
-          .select('id')
+          .select('id, name')
           .eq('phone', phone)
-          .single()
+          .maybeSingle()
 
-        if (guest) {
+        if (guest && norm(guest.name) === nName) {
           guestId = guest.id
+          resolvedName = guest.name
         }
       }
 
@@ -131,35 +162,37 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Find and update registration
-      const { data: registrations, error: findError } = await supabase
+      const personFilter = crewId ? { crew_id: crewId } : { guest_id: guestId as string }
+      const { data: registration } = await supabase
         .from('event_registrations')
         .select('id, status, team_name')
         .eq('event_id', eventId)
-        .or(crewId ? `crew_id.eq.${crewId}` : `guest_id.eq.${guestId}`)
-        .single()
+        .match(personFilter)
+        .maybeSingle()
 
-      if (!registrations) {
+      if (!registration) {
         return NextResponse.json(
           { message: '사전 신청 정보를 찾을 수 없습니다' },
           { status: 404 }
         )
       }
 
-      if (registrations.status !== '출석완료') {
-        await supabase
-          .from('event_registrations')
-          .update({
-            status: '출석완료',
-            checked_in_at: new Date().toISOString(),
-          })
-          .eq('id', registrations.id)
+      if (registration.status === '출석완료') {
+        return NextResponse.json(
+          { message: '이미 출석체크되었습니다', name: resolvedName },
+          { status: 409 }
+        )
       }
+
+      await supabase
+        .from('event_registrations')
+        .update({ status: '출석완료', checked_in_at: new Date().toISOString() })
+        .eq('id', registration.id)
 
       return NextResponse.json({
         message: '출석 완료',
-        name,
-        team_name: registrations.team_name ?? null,
+        name: resolvedName,
+        team_name: registration.team_name ?? null,
       })
     }
   } catch (error) {

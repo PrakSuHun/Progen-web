@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
     const { data: registrations } = await supabase
       .from('event_registrations')
       .select(`
-        status, crew_id, guest_id,
+        status, crew_id, guest_id, deposit_paid,
         crew_members ( phone, school, grade, path, gender, is_member ),
         guests ( phone, school, grade, path, gender )
       `)
@@ -123,6 +123,7 @@ export async function GET(request: NextRequest) {
         is_member: crew?.is_member || podoPhoneSetEarly.has(phone) || phone.startsWith('PODO-'),
         status: r.status,
         is_crew: !!crew,
+        deposit_paid: !!r.deposit_paid,
       }
     })
 
@@ -314,6 +315,11 @@ export async function GET(request: NextRequest) {
       betweenEventsCrew = crewBeforeEvent ?? 0
     }
 
+    // 보증금 통계 (게스트 한정, 노쇼확정 제외)
+    const guestActive = eventGuests.filter((a: any) => a.status !== '노쇼확정')
+    const guestDepositPaid = guestActive.filter((a: any) => a.deposit_paid).length
+    const guestDepositPending = guestActive.length - guestDepositPaid
+
     const section2 = {
       total_registrations: nonPodo.length,
       podo_count: attendees.filter((a: any) => a.is_member).length,
@@ -325,6 +331,8 @@ export async function GET(request: NextRequest) {
       guest_attended: eventGuestsCheckedIn.length,
       guest_attendance_rate: eventGuests.length > 0
         ? Math.round((eventGuestsCheckedIn.length / eventGuests.length) * 100) : 0,
+      guest_deposit_paid: guestDepositPaid,
+      guest_deposit_pending: guestDepositPending,
       first_time_crew: firstTimeCrewCount,
       first_time_crew_checked_in: firstTimeCrewCheckedIn,
       first_time_guest: firstTimeGuestCount,
