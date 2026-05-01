@@ -72,25 +72,25 @@ export default function EventRegGuestPage() {
     <main className="min-h-screen">
       <SpotlightBackground variant="page">
       <Navbar />
-      <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
+      <div className="pt-20 md:pt-24 pb-16 px-4 sm:px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
 
           <Link href="/event-reg" className="inline-flex items-center gap-1 text-[#999] hover:text-sky-500 text-sm transition-colors mb-4">
             ← 유형 변경
           </Link>
 
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-4 md:mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Guest · Event Registration
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-black mb-2">비회원 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-5">행사에 참여하시는 분의 정보를 입력해주세요</p>
+          <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">비회원 사전 신청</h1>
+          <p className="text-[#888] text-sm mb-5 break-keep">행사에 참여하시는 분의 정보를 입력해주세요</p>
 
-          <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-amber-500 text-white font-black text-sm flex items-center justify-center shrink-0">!</div>
-              <div className="flex-1">
-                <p className="text-amber-900 font-bold text-sm mb-1">노쇼 방지 보증금 5,000원</p>
-                <p className="text-amber-800 text-xs leading-relaxed">
+          <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl p-3.5 md:p-5">
+            <div className="flex items-start gap-2.5 md:gap-3">
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-amber-500 text-white font-black text-sm flex items-center justify-center shrink-0">!</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-amber-900 font-bold text-sm mb-1 break-keep">노쇼 방지 보증금 5,000원</p>
+                <p className="text-amber-800 text-[11px] md:text-xs leading-relaxed break-keep">
                   비회원(게스트) 신청 시 노쇼 방지를 위해 보증금 5,000원이 부과됩니다.
                   <br />행사에 참석하시면 <span className="font-bold">전액 환불</span>되며, 무단 불참 시 환불되지 않습니다.
                   <br />입금 안내는 신청 완료 후 화면에서 확인하실 수 있습니다.
@@ -99,7 +99,7 @@ export default function EventRegGuestPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Select label="성별" options={GENDERS} value={form.gender} onChange={(e) => set('gender', e.target.value)} error={errors.gender} />
             <Input label="연락처" placeholder="010-1234-5678" value={form.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
@@ -121,20 +121,20 @@ export default function EventRegGuestPage() {
       </div>
 
       <Modal isOpen={showSuccess} onClose={() => { setShowSuccess(false); reset() }} title="신청 완료!">
-        <p className="text-[#333] mb-1">사전 신청이 완료되었습니다!</p>
-        <p className="text-[#888] text-sm mb-4">행사 당일 현장에서 이름과 연락처로 출석체크를 진행해주세요.</p>
+        <p className="text-[#333] mb-1 break-keep">사전 신청이 완료되었습니다!</p>
+        <p className="text-[#888] text-sm mb-4 break-keep">행사 당일 현장에서 이름과 연락처로 출석체크를 진행해주세요.</p>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5">
-          <p className="text-amber-900 font-bold text-sm mb-2">노쇼 방지 보증금 입금 안내</p>
-          <p className="text-amber-800 text-xs leading-relaxed mb-3">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 md:p-4 mb-5">
+          <p className="text-amber-900 font-bold text-sm mb-2 break-keep">노쇼 방지 보증금 입금 안내</p>
+          <p className="text-amber-800 text-[11px] md:text-xs leading-relaxed mb-3 break-keep">
             아래 계좌로 <span className="font-bold">5,000원</span>을 입금해주세요.
             <br />입금자명은 <span className="font-bold">신청자 본인 이름</span>으로 부탁드립니다.
             <br />행사 참석 시 <span className="font-bold">전액 환불</span>되며, 무단 불참 시 환불되지 않습니다.
           </p>
-          <div className="bg-white border border-amber-200 rounded-lg p-3 text-xs text-[#333] mb-2">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 text-xs text-[#333] mb-2 break-all">
             <p className="text-[#888] text-[10px] mb-1">입금 계좌</p>
             <p className="font-bold text-sm mb-0.5">하나은행 660-910011-22904</p>
-            <p className="text-[#666]">예금주: 프로젠(ProGen)</p>
+            <p className="text-[#666] break-keep">예금주: 프로젠(ProGen)</p>
           </div>
           <button
             type="button"

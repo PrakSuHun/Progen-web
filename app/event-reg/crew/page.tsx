@@ -56,20 +56,20 @@ export default function EventRegCrewPage() {
     <main className="min-h-screen">
       <SpotlightBackground variant="page">
       <Navbar />
-      <div className="pt-20 md:pt-24 pb-16 px-5 lg:px-8">
+      <div className="pt-20 md:pt-24 pb-16 px-4 sm:px-5 lg:px-8">
         <div className="max-w-lg mx-auto">
 
           <Link href="/event-reg" className="inline-flex items-center gap-1 text-[#999] hover:text-sky-500 text-sm transition-colors mb-4">
             ← 유형 변경
           </Link>
 
-          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 mb-4 md:mb-5 px-3 py-1 rounded-full bg-sky-50 border border-sky-100 text-sky-500 text-[11px] font-bold tracking-wider uppercase">
             Crew · Event Registration
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-black mb-2">크루 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-8">이름과 연락처로 본인 확인합니다</p>
+          <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">크루 사전 신청</h1>
+          <p className="text-[#888] text-sm mb-6 md:mb-8 break-keep">이름과 연락처로 본인 확인합니다</p>
 
-          <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Input label="연락처" placeholder="010-1234-5678" value={form.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
 
@@ -100,8 +100,8 @@ export default function EventRegCrewPage() {
       </Modal>
 
       <Modal isOpen={showNotFound} onClose={() => setShowNotFound(false)} title="크루 정보를 찾을 수 없어요">
-        <p className="text-[#333] mb-1">입력하신 이름과 연락처로 등록된 크루가 없어요.</p>
-        <p className="text-[#888] text-sm mb-5">아직 크루가 아니라면 먼저 크루 지원을, 비회원으로 행사만 참여하시려면 비회원 신청을 이용해주세요.</p>
+        <p className="text-[#333] mb-1 break-keep">입력하신 이름과 연락처로 등록된 크루가 없어요.</p>
+        <p className="text-[#888] text-sm mb-5 break-keep">아직 크루가 아니라면 먼저 크루 지원을, 비회원으로 행사만 참여하시려면 비회원 신청을 이용해주세요.</p>
         <Link href="/apply"
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">크루 지원하기</Link>
         <Link href="/event-reg/guest"
