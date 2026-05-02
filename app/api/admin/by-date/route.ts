@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
 
     const { data: registrations } = await supabase
       .from('event_registrations')
-      .select('created_at, status')
+      .select('registered_at, status')
       .eq('event_id', eventId)
-      .order('created_at')
+      .order('registered_at')
 
     if (!registrations) {
       return NextResponse.json({ data: [] })
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     const dateMap: Record<string, { 신청: number; 출석: number }> = {}
 
     for (const reg of registrations) {
-      const date = new Date(reg.created_at).toLocaleDateString('ko-KR', {
+      const date = new Date(reg.registered_at).toLocaleDateString('ko-KR', {
         month: '2-digit',
         day: '2-digit',
       })

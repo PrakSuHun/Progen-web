@@ -15,7 +15,7 @@ ALTER TABLE event_registrations
 -- (3) 미래 행사의 게스트 사전신청은 false 유지(운영진이 입금 확인 시 toggle)
 UPDATE event_registrations
 SET deposit_paid = true,
-    deposit_paid_at = COALESCE(checked_in_at, created_at)
+    deposit_paid_at = COALESCE(checked_in_at, registered_at)
 WHERE guest_id IS NOT NULL
   AND status = '출석완료'
   AND deposit_paid = false;

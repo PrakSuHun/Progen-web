@@ -130,7 +130,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | checked_in_at | TIMESTAMPTZ | 출석 시각 |
 | deposit_paid | BOOLEAN | 보증금 입금 여부 (게스트 한정 의미, 기본 false) |
 | deposit_paid_at | TIMESTAMPTZ | 입금 처리 시각 |
-| created_at | TIMESTAMPTZ | 신청일 |
+| registered_at | TIMESTAMPTZ | 신청일 (※ 다른 테이블의 created_at 컨벤션과 다름) |
 
 > crew_id와 guest_id 중 하나만 값이 있다.
 > `deposit_paid`: 비회원(게스트) 사전 신청 시 노쇼 방지 보증금 5,000원 도입(2026-05-01).
