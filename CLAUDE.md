@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-02 (PROGEN 공식 로고 PNG 적용: 다크 마크 + 커스텀 lowercase 워드마크 / favicon·navbar·footer)
+> **마지막 최신화**: 2026-05-02 (DB 스키마 문서 정정: crew_members.id BIGINT, guests에서 project/motivation 제거 명시, history 잔존 컬럼 표기)
 
 ---
 
@@ -77,7 +77,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 ### 4-2. crew_members (크루 지원자)
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
-| id | UUID (PK) | 자동 생성 |
+| id | BIGINT (PK) | 자동 생성 (※ guests/events와 달리 UUID 아님) |
 | name | TEXT | 이름 |
 | phone | TEXT (UNIQUE) | 연락처 (고유 식별자) |
 | school | TEXT | 학교 |
@@ -88,6 +88,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | project | TEXT | 관심 프로젝트 |
 | gender | TEXT | 성별 |
 | motivation | TEXT | 지원 동기 |
+| history | TEXT | (잔존 컬럼, 코드 미사용 / 79명 중 0명 채워짐) |
 | role | TEXT | 'participant' 또는 'staff' |
 | status | TEXT | '지원완료' (기본값) |
 | is_member | BOOLEAN | true=포도, false/null=일반 (내부 전용) |
@@ -103,18 +104,18 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
 | id | UUID (PK) | 자동 생성 |
-| name | TEXT | 이름 |
-| phone | TEXT (UNIQUE) | 연락처 |
+| name | TEXT (NOT NULL) | 이름 |
+| phone | TEXT (NOT NULL, UNIQUE) | 연락처 |
 | age | TEXT | 나이 |
 | school | TEXT | 학교 |
 | grade | TEXT | 학년 |
 | major | TEXT | 전공 |
 | path | TEXT | 알게 된 경로 |
-| project | TEXT | 관심 프로젝트 (현재 폼 미수집) |
 | gender | TEXT | 성별 |
-| motivation | TEXT | 참여 동기 (현재 폼 미수집) |
 | source_event_id | UUID (nullable) | 최초 유입 행사 |
 | created_at | TIMESTAMPTZ | 등록일 |
+
+> ⚠️ `project`, `motivation` 컬럼은 2026-04-02 마이그레이션(`remove_motivation_project_from_guests`)으로 제거됨. 코드 어디서도 참조 금지.
 
 > **유입 추적**: 게스트가 크루로 전환되면 동일 phone으로 crew_members 생성하면서 기존 행사 신청·피드백을 새 crew_id로 마이그레이션 (`/api/apply` 내부 로직).
 
