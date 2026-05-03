@@ -71,12 +71,12 @@ export function CurriculumSection() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug">
+                    <h3 className="text-base md:text-xl font-black text-black mb-1 leading-snug break-keep">
                       {m.headline} <span className={m.ended ? 'text-[#888]' : 'text-sky-500'}>{m.title}</span>
                     </h3>
-                    <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5">{m.desc}</p>
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-sky-50 border-sky-100'}`}>
-                      <span className={`text-xs md:text-sm leading-snug ${m.ended ? 'text-[#888]' : 'text-sky-500'}`}>{m.highlight}</span>
+                    <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5 break-keep">{m.desc}</p>
+                    <div className={`inline-flex max-w-full items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-sky-50 border-sky-100'}`}>
+                      <span className={`text-xs md:text-sm leading-snug break-keep ${m.ended ? 'text-[#888]' : 'text-sky-500'}`}>{m.highlight}</span>
                     </div>
                   </div>
                 </div>

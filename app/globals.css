@@ -19,6 +19,9 @@ body {
     'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 한글 어절 단위 줄바꿈 (단어 중간/orphan 방지). 너무 긴 영문/URL은 anywhere 폴백. */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 a {
