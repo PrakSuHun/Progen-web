@@ -30,7 +30,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <Link href="/" aria-label="PROGEN 홈" className="relative z-[60] flex items-center">
-              <Logo markSize={28} wordmarkHeight={18} gap={8} />
+              <Logo markSize={22} wordmarkHeight={14} gap={6} />
             </Link>
 
             <div className="hidden md:flex items-center gap-7">
