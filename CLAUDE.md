@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-02 (DB 스키마 문서 정정: crew_members.id BIGINT, guests에서 project/motivation 제거 명시, history 잔존 컬럼 표기)
+> **마지막 최신화**: 2026-05-03 (5월 행사 5/2 → 5/16 연기: events.event_date 갱신 + 홈 히어로 / 세미나 카드 일자 표기 동기화)
 
 ---
 

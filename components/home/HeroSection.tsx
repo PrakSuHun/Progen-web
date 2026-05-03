@@ -112,7 +112,7 @@ export function HeroSection() {
               color="from-sky-500 to-cyan-400"
               label="5월 모집중"
               title="일상 자동화"
-              sub="사전 신청 OPEN"
+              sub="5/16(토) · 사전 신청 OPEN"
               tags={['자동 알림', '노코드']}
               tilt="3deg"
               highlight

@@ -30,7 +30,7 @@ const seminars = [
   {
     status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
     month: '05', title: '시간을 돌려받는 — 일상 자동화 시스템',
-    date: '2026. 5월 (예정)', speaker: 'PROGEN 테크팀', capacity: 80,
+    date: '2026. 5. 16 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['자동 알림', '녹음 → 요약', '노코드'],
     desc: '장학금·공모전·채용 정보 키워드 자동 알림, 수업 녹음본 자동 텍스트화·요약·문제출제.',
   },
