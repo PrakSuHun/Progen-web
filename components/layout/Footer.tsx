@@ -24,7 +24,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 md:mb-16">
           <div className="col-span-2">
             <div className="mb-3">
-              <Logo markSize={26} wordmarkHeight={16} gap={8} />
+              <Logo markSize={20} wordmarkHeight={12} gap={6} />
             </div>
             <p className="text-[#888] text-sm leading-relaxed max-w-xs">
               AI 시대, 도구를 지배하는 대학생들의 커뮤니티.
