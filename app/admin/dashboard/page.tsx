@@ -785,6 +785,7 @@ export default function AdminDashboardPage() {
   // ── Tab 2: 팀 배정 ──
   const [teamPanelOpen, setTeamPanelOpen] = useState(false)
   const [teamSize, setTeamSize] = useState(4)
+  const [teamSearch, setTeamSearch] = useState('')
 
   const renderTeam = () => {
     const unassigned = data?.unassigned ?? []
@@ -798,6 +799,26 @@ export default function AdminDashboardPage() {
     const allNums = teamNames.map((n) => parseInt(n)).filter((n) => !isNaN(n))
     const nextNum = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
 
+    const sortByName = (a: Attendee, b: Attendee) => a.name.localeCompare(b.name, 'ko')
+    const unassignedSorted = [...unassigned].sort(sortByName)
+    const notArrivedSorted = [...notArrived].sort(sortByName)
+
+    // 검색: 미배정 + 미출석 + 팀 배정자 모두 대상. 이름/연락처 부분 일치.
+    const q = teamSearch.trim().toLowerCase()
+    const allPeople: { person: Attendee; fromTeam: string | null }[] = [
+      ...unassigned.map((p) => ({ person: p, fromTeam: null as string | null })),
+      ...notArrived.map((p) => ({ person: p, fromTeam: FROM_NOT_ARRIVED as string | null })),
+      ...teamNames.flatMap((t) => (assigned[t] || []).map((p) => ({ person: p, fromTeam: t as string | null }))),
+    ]
+    const searchResults = q
+      ? allPeople
+          .filter(({ person }) =>
+            person.name.toLowerCase().includes(q) ||
+            (person.phone || '').toLowerCase().includes(q),
+          )
+          .sort((a, b) => sortByName(a.person, b.person))
+      : []
+
     // 공통 미배정 패널 내용
     const UnassignedContent = () => (
       <>
@@ -806,37 +827,80 @@ export default function AdminDashboardPage() {
             &quot;{selected.person.name}&quot; 선택됨 — 팀을 탭하여 배정
           </div>
         )}
-        <div className="overflow-y-auto p-2 space-y-1.5 max-h-[25vh] md:max-h-none">
-          {unassigned.length > 0 && (
-            <div className="flex items-center gap-1.5 pb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-              <span className="text-slate-500 text-xs">출석완료 ({unassigned.length}명)</span>
-            </div>
-          )}
-          {unassigned.map((p) => (
-            <PersonCard key={p.registration_id} person={p} draggable
-              onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
-              onTap={() => handleTapSelect(p, null)}
-              isSelected={selected?.person.registration_id === p.registration_id}
+        <div className="px-3 pt-2 pb-1.5 border-b border-slate-100">
+          <div className="relative">
+            <input
+              type="text"
+              value={teamSearch}
+              onChange={(e) => setTeamSearch(e.target.value)}
+              placeholder="이름·연락처 검색 (팀 배정자 포함)"
+              className="w-full pl-7 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-sky-400 focus:bg-white text-slate-800 placeholder:text-slate-400"
             />
-          ))}
-          {notArrived.length > 0 && (
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">🔍</span>
+            {teamSearch && (
+              <button
+                type="button"
+                onClick={() => setTeamSearch('')}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 text-sm leading-none"
+                aria-label="검색어 지우기"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="overflow-y-auto p-2 space-y-1.5 max-h-[25vh] md:max-h-none">
+          {q ? (
             <>
-              <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-200">
-                <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                <span className="text-slate-500 text-xs">미출석 ({notArrived.length}명)</span>
+              <div className="flex items-center gap-1.5 pb-1">
+                <span className="w-2 h-2 rounded-full bg-sky-500 flex-shrink-0" />
+                <span className="text-slate-500 text-xs">검색 결과 ({searchResults.length}명)</span>
               </div>
-              {notArrived.map((p) => (
+              {searchResults.length === 0 && (
+                <p className="text-slate-400 text-sm text-center py-4">일치하는 사람이 없습니다</p>
+              )}
+              {searchResults.map(({ person: p, fromTeam }) => (
                 <PersonCard key={p.registration_id} person={p} draggable
-                  onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
-                  onTap={() => handleTapSelect(p, FROM_NOT_ARRIVED)}
+                  onDragStart={() => { dragRef.current = { person: p, fromTeam } }}
+                  onTap={() => handleTapSelect(p, fromTeam)}
                   isSelected={selected?.person.registration_id === p.registration_id}
                 />
               ))}
             </>
-          )}
-          {unassigned.length === 0 && notArrived.length === 0 && (
-            <p className="text-slate-400 text-sm text-center py-4">배정할 인원이 없습니다</p>
+          ) : (
+            <>
+              {unassignedSorted.length > 0 && (
+                <div className="flex items-center gap-1.5 pb-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                  <span className="text-slate-500 text-xs">출석완료 ({unassignedSorted.length}명)</span>
+                </div>
+              )}
+              {unassignedSorted.map((p) => (
+                <PersonCard key={p.registration_id} person={p} draggable
+                  onDragStart={() => { dragRef.current = { person: p, fromTeam: null } }}
+                  onTap={() => handleTapSelect(p, null)}
+                  isSelected={selected?.person.registration_id === p.registration_id}
+                />
+              ))}
+              {notArrivedSorted.length > 0 && (
+                <>
+                  <div className="flex items-center gap-1.5 pt-2 pb-1 border-t border-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+                    <span className="text-slate-500 text-xs">미출석 ({notArrivedSorted.length}명)</span>
+                  </div>
+                  {notArrivedSorted.map((p) => (
+                    <PersonCard key={p.registration_id} person={p} draggable
+                      onDragStart={() => { dragRef.current = { person: p, fromTeam: FROM_NOT_ARRIVED } }}
+                      onTap={() => handleTapSelect(p, FROM_NOT_ARRIVED)}
+                      isSelected={selected?.person.registration_id === p.registration_id}
+                    />
+                  ))}
+                </>
+              )}
+              {unassignedSorted.length === 0 && notArrivedSorted.length === 0 && (
+                <p className="text-slate-400 text-sm text-center py-4">배정할 인원이 없습니다</p>
+              )}
+            </>
           )}
         </div>
         <div className="p-3 border-t border-slate-200 flex gap-2">
@@ -910,10 +974,12 @@ export default function AdminDashboardPage() {
               onClick={() => setTeamPanelOpen(!teamPanelOpen)}
               className="w-full px-4 py-2.5 flex items-center justify-between bg-slate-50 border-b border-slate-200"
             >
-              <span className="text-slate-800 font-semibold text-sm">미배정 출석자 <span className="text-sky-500 font-bold">{unassigned.length + notArrived.length}명</span></span>
-              <span className="text-slate-400 text-xs">{teamPanelOpen ? '접기 ▲' : '펼치기 ▼'}</span>
+              <span className="text-slate-800 font-semibold text-sm">
+                {q ? <>검색 결과 <span className="text-sky-500 font-bold">{searchResults.length}명</span></> : <>미배정 출석자 <span className="text-sky-500 font-bold">{unassigned.length + notArrived.length}명</span></>}
+              </span>
+              <span className="text-slate-400 text-xs">{teamPanelOpen || q ? '접기 ▲' : '펼치기 ▼'}</span>
             </button>
-            {teamPanelOpen && <UnassignedContent />}
+            {(teamPanelOpen || q) && <UnassignedContent />}
           </div>
 
           {/* 하단 팀 그리드 */}
