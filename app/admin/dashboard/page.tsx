@@ -819,8 +819,9 @@ export default function AdminDashboardPage() {
           .sort((a, b) => sortByName(a.person, b.person))
       : []
 
-    // 공통 미배정 패널 내용
-    const UnassignedContent = () => (
+    // 공통 미배정 패널 내용 (※ 컴포넌트가 아닌 JSX 표현식. 컴포넌트로 만들면 매 렌더마다
+    //   재마운트되어 검색 input의 포커스가 즉시 유실됨 — 한 글자만 입력되는 버그 원인.)
+    const unassignedContent = (
       <>
         {selected && (
           <div className="px-3 py-2 bg-sky-50 border-b border-sky-200 text-xs text-sky-600 font-medium text-center">
@@ -979,7 +980,7 @@ export default function AdminDashboardPage() {
               </span>
               <span className="text-slate-400 text-xs">{teamPanelOpen || q ? '접기 ▲' : '펼치기 ▼'}</span>
             </button>
-            {(teamPanelOpen || q) && <UnassignedContent />}
+            {(teamPanelOpen || q) && unassignedContent}
           </div>
 
           {/* 하단 팀 그리드 */}
@@ -1002,7 +1003,7 @@ export default function AdminDashboardPage() {
               <span className="text-sky-500 text-xs font-bold">{unassigned.length}명</span>
             </div>
             <div className="flex-1 flex flex-col overflow-hidden">
-              <UnassignedContent />
+              {unassignedContent}
             </div>
           </div>
 
