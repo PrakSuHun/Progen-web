@@ -48,8 +48,9 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   status TEXT DEFAULT '사전신청', -- '사전신청' / '출석완료' / '노쇼확정'
   team_name TEXT,
   checked_in_at TIMESTAMP WITH TIME ZONE,
-  deposit_paid BOOLEAN DEFAULT false,
-  deposit_paid_at TIMESTAMP WITH TIME ZONE,
+  deposit_status TEXT DEFAULT '미입금', -- '미입금' / '입금' / '환불' (게스트 한정)
+  deposit_paid_at TIMESTAMP WITH TIME ZONE, -- 마지막 상태 변경 시각
+  refund_account TEXT, -- 게스트 환불 계좌 (예: "하나은행 110-123-456789")
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(event_id, crew_id),
   UNIQUE(event_id, guest_id)

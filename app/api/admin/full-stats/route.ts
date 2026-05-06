@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
     const { data: registrations } = await supabase
       .from('event_registrations')
       .select(`
-        status, crew_id, guest_id, deposit_paid,
+        status, crew_id, guest_id, deposit_status,
         crew_members ( phone, school, grade, path, gender, is_member ),
         guests ( phone, school, grade, path, gender )
       `)
@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
         is_member: crew?.is_member || podoPhoneSetEarly.has(phone) || phone.startsWith('PODO-'),
         status: r.status,
         is_crew: !!crew,
-        deposit_paid: !!r.deposit_paid,
+        deposit_status: (r.deposit_status as string) ?? '미입금',
       }
     })
 
@@ -317,8 +317,9 @@ export async function GET(request: NextRequest) {
 
     // 보증금 통계 (게스트 한정, 노쇼확정 제외)
     const guestActive = eventGuests.filter((a: any) => a.status !== '노쇼확정')
-    const guestDepositPaid = guestActive.filter((a: any) => a.deposit_paid).length
-    const guestDepositPending = guestActive.length - guestDepositPaid
+    const guestDepositPaid = guestActive.filter((a: any) => a.deposit_status === '입금').length
+    const guestDepositRefunded = guestActive.filter((a: any) => a.deposit_status === '환불').length
+    const guestDepositPending = guestActive.filter((a: any) => a.deposit_status === '미입금' || !a.deposit_status).length
 
     const section2 = {
       total_registrations: nonPodo.length,
@@ -333,6 +334,7 @@ export async function GET(request: NextRequest) {
         ? Math.round((eventGuestsCheckedIn.length / eventGuests.length) * 100) : 0,
       guest_deposit_paid: guestDepositPaid,
       guest_deposit_pending: guestDepositPending,
+      guest_deposit_refunded: guestDepositRefunded,
       first_time_crew: firstTimeCrewCount,
       first_time_crew_checked_in: firstTimeCrewCheckedIn,
       first_time_guest: firstTimeGuestCount,

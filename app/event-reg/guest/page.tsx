@@ -11,19 +11,21 @@ import { Modal } from '@/components/Modal'
 import { showToast } from '@/components/Toast'
 import { SpotlightBackground } from '@/components/SpotlightBackground'
 import {
-  SCHOOLS, GRADES, PATHS, GENDERS,
+  SCHOOLS, GRADES, PATHS, GENDERS, BANKS,
   formatPhone, isValidPhone,
 } from '@/lib/constants'
 
 interface GuestFormData {
   name: string; phone: string; age: string; school: string; grade: string
   major: string; path: string; gender: string
+  refund_bank: string; refund_account: string
 }
 
 export default function EventRegGuestPage() {
   const [form, setForm] = useState<GuestFormData>({
     name: '', phone: '', age: '', school: '', grade: '',
     major: '', path: '', gender: '',
+    refund_bank: '', refund_account: '',
   })
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -40,6 +42,8 @@ export default function EventRegGuestPage() {
     if (!form.major.trim()) e.major = '전공을 입력해주세요'
     if (!form.path) e.path = '경로를 선택해주세요'
     if (!form.gender) e.gender = '성별을 선택해주세요'
+    if (!form.refund_bank) e.refund_bank = '환불 은행을 선택해주세요'
+    if (!form.refund_account.trim()) e.refund_account = '환불 계좌번호를 입력해주세요'
     setErrors(e); return Object.keys(e).length === 0
   }
 
@@ -64,7 +68,7 @@ export default function EventRegGuestPage() {
 
   const set = (key: keyof GuestFormData, val: string) => setForm({ ...form, [key]: val })
   const reset = () => {
-    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '' })
+    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '', refund_bank: '', refund_account: '' })
     setErrors({})
   }
 
@@ -108,6 +112,15 @@ export default function EventRegGuestPage() {
             <Select label="학년" options={GRADES} value={form.grade} onChange={(e) => set('grade', e.target.value)} error={errors.grade} />
             <Input label="전공" placeholder="컴퓨터과학" value={form.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />
             <Select label="행사 참여 경로" options={PATHS} value={form.path} onChange={(e) => set('path', e.target.value)} error={errors.path} />
+
+            <div className="pt-2 border-t border-[#eee]">
+              <p className="text-[#555] text-sm font-bold mb-1">환불 계좌</p>
+              <p className="text-[#888] text-xs mb-3 break-keep">행사 참석 시 보증금이 환불될 계좌입니다</p>
+              <div className="space-y-4">
+                <Select label="은행" options={BANKS} value={form.refund_bank} onChange={(e) => set('refund_bank', e.target.value)} error={errors.refund_bank} />
+                <Input label="계좌번호" placeholder="110-123-456789" value={form.refund_account} onChange={(e) => set('refund_account', e.target.value)} error={errors.refund_account} />
+              </div>
+            </div>
 
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? '신청 중...' : '신청하기'}

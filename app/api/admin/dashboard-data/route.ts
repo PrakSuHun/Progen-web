@@ -29,8 +29,9 @@ export async function GET(request: NextRequest) {
         team_name,
         crew_id,
         guest_id,
-        deposit_paid,
+        deposit_status,
         deposit_paid_at,
+        refund_account,
         crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count ),
         guests ( name, phone, school, grade, age, gender, major )
       `)
@@ -65,7 +66,8 @@ export async function GET(request: NextRequest) {
         is_member: crew?.is_member ?? podoPhones.has(phone) ?? phone.startsWith('PODO-'),
         noshow_count: crew?.noshow_count ?? 0,
         is_crew: !!crew,
-        deposit_paid: !!reg.deposit_paid,
+        deposit_status: (reg.deposit_status as string) ?? '미입금',
+        refund_account: (reg.refund_account as string) ?? null,
       }
     }
 

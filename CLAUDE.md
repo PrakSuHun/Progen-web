@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-03 (5월 행사 5/2 → 5/16 연기: events.event_date 갱신 + 홈 히어로 / 세미나 카드 일자 표기 동기화)
+> **마지막 최신화**: 2026-05-06 (보증금 3-상태(미입금/입금/환불) + 게스트 환불 계좌 입력·관리: 마이그레이션 + 폼/어드민 보증금 탭)
 
 ---
 
@@ -129,14 +129,16 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | status | TEXT | '사전신청' / '출석완료' / '노쇼확정' |
 | team_name | TEXT | 팀 배정명 (예: '1팀', null=미배정) |
 | checked_in_at | TIMESTAMPTZ | 출석 시각 |
-| deposit_paid | BOOLEAN | 보증금 입금 여부 (게스트 한정 의미, 기본 false) |
-| deposit_paid_at | TIMESTAMPTZ | 입금 처리 시각 |
+| deposit_status | TEXT | '미입금' / '입금' / '환불' (게스트 한정 의미, 기본 '미입금') |
+| deposit_paid_at | TIMESTAMPTZ | 마지막 상태 변경 시각 |
+| refund_account | TEXT | 게스트 환불 계좌 (예: "하나은행 110-123-456789") |
 | registered_at | TIMESTAMPTZ | 신청일 (※ 다른 테이블의 created_at 컨벤션과 다름) |
 
 > crew_id와 guest_id 중 하나만 값이 있다.
-> `deposit_paid`: 비회원(게스트) 사전 신청 시 노쇼 방지 보증금 5,000원 도입(2026-05-01).
-> 마이그레이션 파일: [supabase/migrations/2026-04-26_deposit_paid.sql](supabase/migrations/2026-04-26_deposit_paid.sql).
-> 과거 행사의 출석완료 게스트는 마이그레이션에서 자동 true 처리됨.
+> `deposit_status`: 비회원(게스트) 사전 신청 시 노쇼 방지 보증금 5,000원 + 참석 시 환불 정산 트래킹용. 운영진 어드민 보증금 탭에서 클릭마다 미입금 → 입금 → 환불 → 미입금 순환.
+> 마이그레이션: [supabase/migrations/2026-05-06_deposit_status_refund_account.sql](supabase/migrations/2026-05-06_deposit_status_refund_account.sql) — `deposit_paid` BOOLEAN을 `deposit_status` TEXT로 교체 + `refund_account` 추가.
+> `refund_account`: 게스트 신청 폼에서 은행/계좌번호 2개로 받아 공백 구분 단일 텍스트로 저장. 어드민 보증금 탭에서 누락된 계좌 직접 입력·수정 가능.
+> 과거(2026-04-26) 마이그레이션: [supabase/migrations/2026-04-26_deposit_paid.sql](supabase/migrations/2026-04-26_deposit_paid.sql) (BOOLEAN 시절).
 
 ### 4-5. feedbacks (피드백, 익명)
 | 컬럼 | 타입 | 설명 |
@@ -217,7 +219,7 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 ### 5-4. 행사 사전 신청 (3개 페이지로 분리, 2026-05-01)
 - **`/event-reg`** ([app/event-reg/page.tsx](app/event-reg/page.tsx)) — 랜딩. 두 카드(크루 / 비회원)로 분기.
 - **`/event-reg/crew`** ([app/event-reg/crew/page.tsx](app/event-reg/crew/page.tsx)) — 크루 폼. **이름 + 연락처 (2개)**.
-- **`/event-reg/guest`** ([app/event-reg/guest/page.tsx](app/event-reg/guest/page.tsx)) — 비회원 폼 (8개) + 보증금 5,000원 안내.
+- **`/event-reg/guest`** ([app/event-reg/guest/page.tsx](app/event-reg/guest/page.tsx)) — 비회원 폼 (10개: 기본 8개 + 환불 은행 + 환불 계좌번호) + 보증금 5,000원 안내. 환불 계좌는 폼에서 2개 필드로 받아 `${bank} ${account}` 공백 구분 단일 텍스트로 `event_registrations.refund_account`에 저장 (게스트 단위 영속 저장 X — 일회성 행사마다 재입력).
 
 **처리**:
 - 크루: `crew_members`에서 `name+phone` 매칭 → 없으면 404 (이전: 토스트 → 현재: 모달 + 크루지원/비회원신청 안내)
@@ -339,14 +341,14 @@ robots: noindex.
 
 ### 5-13. 관리자 대시보드 `/admin/dashboard` ([app/admin/dashboard/page.tsx](app/admin/dashboard/page.tsx))
 
-**보증금 입금 관리 (2026-05-01 추가)**: 체크인 탭의 미출석/출석완료 컬럼에서 게스트 카드에 "보증금 ✓ 입금 / ✗ 미입금" 뱃지 표시. 클릭 시 [/api/admin/toggle-deposit](app/api/admin/toggle-deposit/route.ts)로 상태 토글 + 낙관적 업데이트. 상단에 "게스트 보증금 입금 X / 미입금 Y / 총 Z명" 합계 카드. 분석 탭의 게스트 섹션에도 입금/미입금 합계 표시 (full-stats `section2.guest_deposit_paid`, `guest_deposit_pending`).
-**통합 운영 화면**. 행사 선택자 + 4개 탭.
+**보증금 3-상태 관리 (2026-05-06 갱신)**: 체크인 탭 게스트 카드 뱃지 / 보증금 탭 행 / 분석 탭 게스트 섹션 모두 3-상태 표시 (미입금=amber, 입금=emerald, 환불=sky). 클릭마다 [/api/admin/toggle-deposit](app/api/admin/toggle-deposit/route.ts)이 미입금 → 입금 → 환불 → 미입금 사이클로 변경 (서버에서 현재 값을 읽어 다음 상태로 update). full-stats `section2.guest_deposit_paid` / `guest_deposit_pending` / `guest_deposit_refunded` 3 카운트 노출.
+**통합 운영 화면**. 행사 선택자 + 5개 탭.
 
 **상단 컨트롤**:
 - 행사 선택 드롭다운 (`/api/admin/events`, activeEventId 기본값)
 - 로그아웃 버튼
 
-**4개 탭**:
+**5개 탭**:
 
 #### A. 체크인 탭
 - 4개 StatCard: 오기로 한 인원 / 출석 / 미출석 / 노쇼확정
@@ -371,7 +373,14 @@ AI 보고서 영역:
 - 인쇄 페이지로 이동 (`/admin/report?id=xxx`)
 - 삭제 (`DELETE /api/admin/ai-report`)
 
-#### D. 멤버 탭
+#### D. 보증금 탭 (2026-05-06 신설)
+- 게스트 사전신청·출석·노쇼 모두 포함, 중복 제거. 크루는 노출 안 함.
+- 상단 통계 카드 4개: 총 게스트 / 미입금 / 입금 / 환불
+- 검색 (이름·연락처·계좌번호)
+- 행마다: 이름 + 포도 점 + 연락처 / 환불 계좌(없으면 "계좌 미입력" 안내) + 「수정」 → 인라인 입력으로 직접 추가·갱신 (`/api/admin/update-refund-account`) / 상태 뱃지 클릭 → 사이클 (`/api/admin/toggle-deposit`)
+- 정렬: 미입금 → 입금 → 환불 순, 같은 그룹 내 가나다순
+
+#### E. 멤버 탭
 - 모드 토글: 행사 신청자 / 누적 크루 전체 (mode=all)
 - 통계 카드 (성별 분포 등 — 일반만 기준)
 - 검색 + 정렬, 모바일/데스크톱 분기
@@ -431,7 +440,8 @@ AI 보고서 영역:
 | POST | `/api/admin/toggle-podo` | 포도 상태 토글 |
 | POST | `/api/admin/update-status` | 출석 상태 변경 |
 | GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
-| POST | `/api/admin/toggle-deposit` | 게스트 보증금 입금 상태 토글 (event_registrations.deposit_paid) |
+| POST | `/api/admin/toggle-deposit` | 게스트 보증금 상태 사이클 (미입금 → 입금 → 환불 → 미입금). 서버가 현재 deposit_status를 읽어 다음 값으로 update. 라우트 이름은 호환 유지(라우트 파일은 그대로지만 동작은 cycle) |
+| POST | `/api/admin/update-refund-account` | 게스트 환불 계좌(event_registrations.refund_account) 직접 입력·수정 |
 
 ---
 
@@ -472,6 +482,7 @@ AI 보고서 영역:
 - `PATHS`: 6가지
 - `PROJECTS`: 6가지
 - `GENDERS`: '남성', '여성' (2가지, '선택 안함' 옵션 없음)
+- `BANKS`: 21개 은행 (게스트 환불 계좌 입력용 Select, 2026-05-06 추가)
 - `GOOD_TAGS`: 6개
 - `BAD_TAGS`: 6개
 - `SCORE_LABELS`: 5단계 (현재 미사용 — 익명 피드백 전환 후 점수 폐기)

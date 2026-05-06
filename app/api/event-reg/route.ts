@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { mode, name, phone, age, school, grade, major, path, gender } = body
+    const { mode, name, phone, age, school, grade, major, path, gender, refund_bank, refund_account } = body
 
     if (!mode || !name || !phone) {
       return NextResponse.json(
@@ -102,6 +102,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 게스트일 때만 환불 계좌 합쳐서 저장
+    const refundCombined = mode === 'guest' && refund_bank && refund_account
+      ? `${String(refund_bank).trim()} ${String(refund_account).trim()}`
+      : null
+
     // Insert event registration
     const { data, error } = await supabase
       .from('event_registrations')
@@ -111,6 +116,7 @@ export async function POST(request: NextRequest) {
           crew_id: crewId,
           guest_id: guestId,
           status: '사전신청',
+          refund_account: refundCombined,
         },
       ])
       .select()
