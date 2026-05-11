@@ -148,10 +148,11 @@ function MiniPieChart({ data }: { data: DistItem[] }) {
   )
 }
 
-function DepositRow({ guest, onCycle, onSaveAccount }: {
+function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel }: {
   guest: Attendee
   onCycle: () => void
   onSaveAccount: (val: string) => void
+  onSendCancel: () => void
 }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(guest.refund_account ?? '')
@@ -196,18 +197,27 @@ function DepositRow({ guest, onCycle, onSaveAccount }: {
           )}
         </div>
       </div>
-      <button
-        onClick={onCycle}
-        className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border transition
-          ${status === '입금'
-            ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
-            : status === '환불'
-              ? 'bg-sky-50 border-sky-300 text-sky-700 hover:bg-sky-100'
-              : 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'}`}
-        title="클릭 시 다음 상태로 (미입금 → 입금 → 환불)"
-      >
-        {status === '입금' ? '✓ 입금' : status === '환불' ? '↩ 환불' : '✗ 미입금'}
-      </button>
+      <div className="shrink-0 flex items-center gap-2">
+        <button
+          onClick={onSendCancel}
+          className="text-[11px] text-red-400 hover:text-red-600 hover:underline"
+          title="신청 취소 알림톡 발송 (실제 삭제는 신청자 탭에서 별도로)"
+        >
+          취소 알림
+        </button>
+        <button
+          onClick={onCycle}
+          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border transition
+            ${status === '입금'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
+              : status === '환불'
+                ? 'bg-sky-50 border-sky-300 text-sky-700 hover:bg-sky-100'
+                : 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'}`}
+          title="클릭 시 다음 상태로 (미입금 → 입금 → 환불)"
+        >
+          {status === '입금' ? '✓ 입금' : status === '환불' ? '↩ 환불' : '✗ 미입금'}
+        </button>
+      </div>
     </div>
   )
 }
@@ -709,6 +719,23 @@ export default function AdminDashboardPage() {
     } catch {
       showToast('오류 발생', 'error')
       await fetchAll()
+    }
+  }
+
+  // 보증금 탭: "취소 알림" 버튼 → 5번(신청 취소 확인) 알림톡 수동 발송. 실제 행 삭제는 운영진이 신청자 탭에서 직접.
+  const handleSendCancelAlimtalk = async (registration_id: string, name: string) => {
+    if (!window.confirm(`${name}님께 신청 취소 알림톡을 보냅니다.\n(실제 신청 삭제는 신청자 탭에서 따로 하세요.)\n계속할까요?`)) return
+    try {
+      const res = await fetch('/api/admin/send-cancel-alimtalk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registration_id }),
+      })
+      const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
+      if (res.ok && d?.sent) showToast(d.message || '취소 알림톡 발송 완료', 'success')
+      else showToast(d?.message || '발송 실패', res.ok ? 'error' : 'error')
+    } catch {
+      showToast('발송 중 오류가 발생했습니다', 'error')
     }
   }
 
@@ -1930,6 +1957,7 @@ export default function AdminDashboardPage() {
               guest={g}
               onCycle={() => handleCycleDeposit(g.registration_id)}
               onSaveAccount={(val) => handleSaveRefundAccount(g.registration_id, val)}
+              onSendCancel={() => handleSendCancelAlimtalk(g.registration_id, g.name)}
             />
           ))}
         </div>

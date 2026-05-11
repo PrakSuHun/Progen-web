@@ -415,7 +415,7 @@ AI 보고서 영역:
 - 게스트 사전신청·출석·노쇼 모두 포함, 중복 제거. 크루는 노출 안 함.
 - 상단 통계 카드 4개: 총 게스트 / 미입금 / 입금 / 환불
 - 검색 (이름·연락처·계좌번호)
-- 행마다: 이름 + 포도 점 + 연락처 / 환불 계좌(없으면 "계좌 미입력" 안내) + 「수정」 → 인라인 입력으로 직접 추가·갱신 (`/api/admin/update-refund-account`) / 상태 뱃지 클릭 → 사이클 (`/api/admin/toggle-deposit`)
+- 행마다: 이름 + 포도 점 + 연락처 / 환불 계좌(없으면 "계좌 미입력" 안내) + 「수정」 → 인라인 입력으로 직접 추가·갱신 (`/api/admin/update-refund-account`) / 상태 뱃지 클릭 → 사이클 (`/api/admin/toggle-deposit`) / 「취소 알림」 버튼 → `window.confirm` 후 5번(신청 취소 확인) 알림톡 발송 (`/api/admin/send-cancel-alimtalk`). **실제 신청 행 삭제는 운영진이 신청자/멤버 탭에서 직접** (이 버튼은 알림톡만 보냄)
 - 정렬: 미입금 → 입금 → 환불 순, 같은 그룹 내 가나다순
 
 #### E. 멤버 탭
@@ -480,6 +480,7 @@ AI 보고서 영역:
 | GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
 | POST | `/api/admin/toggle-deposit` | 게스트 보증금 상태 사이클 (미입금 → 입금 → 환불 → 미입금). 미입금→입금 시 행사정보가 다 채워졌으면 2번(참석 확정) 알림톡 발송, 아니면 `alimtalk.pendingEventSettings` 응답 |
 | POST | `/api/admin/update-refund-account` | 게스트 환불 계좌(event_registrations.refund_account) 직접 입력·수정 |
+| POST | `/api/admin/send-cancel-alimtalk` | 5번(신청 취소 확인) 알림톡 1건 수동 발송 (보증금 탭 「취소 알림」 버튼). registration_id만 받음. 행 삭제는 별도 |
 | GET / POST | `/api/admin/event-settings` | 행사 정보(location/entry_time/materials/program_detail/kakao_chat_url) 조회·저장 + 알림톡 미발송자 카운트(confirm/d1) |
 | POST | `/api/admin/send-alimtalk-batch` | 일괄 발송. `template`: 'confirm'(2번, confirmReady 필수, 미발송자만) / 'd1'(4번, 미발송자만) / 'change'(8번, oldDate·oldLocation·newDate·newLocation 필요, 중복체크 없음) |
 
@@ -491,7 +492,7 @@ AI 보고서 영역:
 | 2 | EVENT_CONFIRMED | `Hr1xGhUEdc` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 `#{url}`(오픈채팅 코드) | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
 | 3 | CREW_CONFIRMED | `Yg6oevWar5` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
 | 4 | EVENT_D1_NOTICE | `6fdsTZv1SP` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 `#{url}`(오픈채팅 코드) | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
-| 5 | REG_CANCELLED | `g2N37purw7` | 이름·프로그램명 | **미연결** (자동 취소 cron 없음) |
+| 5 | REG_CANCELLED | `g2N37purw7` | 이름·프로그램명 | `send-cancel-alimtalk` (보증금 탭 「취소 알림」 버튼, 수동). 자동 취소 cron은 없음 |
 | 6 | CHECKIN_WITH_TEAM | `knpWVMYZII` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
 | 7 | CHECKIN_NO_TEAM | `1WwJJnwDbx` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
 | 8 | EVENT_CHANGED | `DfXtaxXo5L` | 이름·프로그램명·기존일시·기존장소·변경일시·변경장소 | `send-alimtalk-batch` template=change (어드민 입력값, 중복체크 없음) |
@@ -634,7 +635,7 @@ AI 보고서 영역:
 | 카카오 알림톡 검수 | 진행 중 | 솔라피 비즈센터에 템플릿 10종 등록, 카카오 검수 통과 후에야 실제 발송. 통과 전엔 `SOLAPI_*` 미설정 = 발송 skip |
 | 알림톡 발신 환경변수 | 미설정 추정 | `SOLAPI_API_KEY`/`SOLAPI_API_SECRET`/`SOLAPI_PFID`/`SOLAPI_SENDER_PHONE`를 `.env.local` + Vercel에 넣어야 발송됨 |
 | 알림톡 D-1 공지(4번) 자동 발송 | 수동 | cron 없음 → 어드민 "설정" → "알림톡 발송" 탭의 "행사 전 공지 발송" 버튼으로 수동. cron(Vercel Cron 등) 도입 시 자동화 |
-| 알림톡 신청 취소 확인(5번 `g2N37purw7`) | 미연결 | 템플릿은 등록됨. "신청 후 3일 미입금 자동 취소" 로직(cron) 자체가 없어서 발송 트리거 미구현. delete-member에도 미연결(템플릿 문구가 자동취소 시나리오 전용이라) |
+| 알림톡 신청 취소 확인(5번) 발송 방식 | 수동 | 보증금 탭 「취소 알림」 버튼으로 1건씩 수동 발송. "신청 후 3일 미입금 자동 취소" cron은 없음 — 운영진이 미입금자에게 버튼 누르고 신청자 탭에서 직접 삭제 |
 | 알림톡 게스트 환불 완료 통지 | 없음 | 별도 템플릿 안 만듦(확정 문자에 "참석 후 환불" 문구로 갈음). 입금→환불 토글 시 알림톡 발송 안 함 |
 | 알림톡 14번 게스트→크루 합류 권유 | 없음 | 광고성이라 알림톡 검수 불가 → 친구톡 필요. 미구현(피드백 완료 화면에 /apply 버튼은 이미 있음) |
 | 보증금 자동 입금 확인 | 수동 | 운영진이 통장 보고 어드민에서 토글. 자동 매칭(은행 API 등) 미구현 |
