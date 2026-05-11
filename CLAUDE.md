@@ -488,9 +488,9 @@ AI 보고서 영역:
 | # | 키 | 템플릿 코드 | 변수 | 발송 시점 |
 |---|-----|------------|------|----------|
 | 1 | EVENT_REG_RECEIVED | `Rp3JMecpqY` | 이름·프로그램명·일시·장소 | `/api/event-reg` mode=guest 즉시 (장소 비면 "추후 안내") |
-| 2 | EVENT_CONFIRMED | `Hr1xGhUEdc` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 오픈채팅URL | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
+| 2 | EVENT_CONFIRMED | `Hr1xGhUEdc` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 `#{url}`(오픈채팅 코드) | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
 | 3 | CREW_CONFIRMED | `Yg6oevWar5` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
-| 4 | EVENT_D1_NOTICE | `6fdsTZv1SP` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 오픈채팅URL | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
+| 4 | EVENT_D1_NOTICE | `6fdsTZv1SP` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 `#{url}`(오픈채팅 코드) | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
 | 5 | REG_CANCELLED | `g2N37purw7` | 이름·프로그램명 | **미연결** (자동 취소 cron 없음) |
 | 6 | CHECKIN_WITH_TEAM | `knpWVMYZII` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
 | 7 | CHECKIN_NO_TEAM | `1WwJJnwDbx` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
@@ -498,7 +498,7 @@ AI 보고서 영역:
 | 9 | NOSHOW_WARNING | `4bqcnsJSpx` | 이름·프로그램명 | `update-status` → 노쇼확정 전환 (크루만) |
 | 10 | CREW_REVOKED | `hoP2CmMrN3` | 이름 | `update-status` → 노쇼확정 후 noshow_count≥2 (크루만) |
 
-> 변수명은 한글 `#{이름}` 등 그대로 (검수 등록 형식). `sendAlimtalk()`은 빈 변수값을 공백 한 칸으로 방어. 모든 발송은 `alimtalk_logs`에 기록.
+> 변수명은 한글 `#{이름}` 등 그대로 (검수 등록 형식). 단 2·4번의 채팅방 버튼 변수는 `#{url}` — 템플릿 버튼 URL이 `https://open.kakao.com/o/#{url}` 라서 `events.kakao_chat_url`에 전체 URL을 넣어도 `openChatCode()`가 코드 조각(`gXySOpui`)만 추출해 넘김. **오픈채팅(`open.kakao.com/o/...`) 링크여야 버튼이 동작** (team chat invite 링크는 불가). `sendAlimtalk()`은 빈 변수값을 공백 한 칸으로 방어. 모든 발송은 `alimtalk_logs`에 기록.
 
 ---
 
