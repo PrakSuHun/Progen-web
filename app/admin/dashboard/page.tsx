@@ -954,6 +954,7 @@ export default function AdminDashboardPage() {
   const [teamPanelOpen, setTeamPanelOpen] = useState(false)
   const [teamSize, setTeamSize] = useState(4)
   const [teamSearch, setTeamSearch] = useState('')
+  const [teamSort, setTeamSort] = useState<SortKey>('name')
 
   const renderTeam = () => {
     const unassigned = data?.unassigned ?? []
@@ -968,8 +969,23 @@ export default function AdminDashboardPage() {
     const nextNum = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
 
     const sortByName = (a: Attendee, b: Attendee) => a.name.localeCompare(b.name, 'ko')
-    const unassignedSorted = [...unassigned].sort(sortByName)
-    const notArrivedSorted = [...notArrived].sort(sortByName)
+    // 미배정 패널 정렬 — teamSort 버튼으로 선택. 동률이면 가나다순.
+    const teamSortFn = (a: Attendee, b: Attendee): number => {
+      if (teamSort === 'crew') return a.is_member === b.is_member ? sortByName(a, b) : a.is_member ? -1 : 1
+      if (teamSort === 'school') return (a.school || '').localeCompare(b.school || '', 'ko') || sortByName(a, b)
+      if (teamSort === 'grade') return (a.grade || '').localeCompare(b.grade || '', 'ko') || sortByName(a, b)
+      if (teamSort === 'gender') return (a.gender || '').localeCompare(b.gender || '', 'ko') || sortByName(a, b)
+      return sortByName(a, b) // 'name' 등 기본
+    }
+    const TEAM_SORT_OPTIONS: { key: SortKey; label: string }[] = [
+      { key: 'name', label: '가나다' },
+      { key: 'school', label: '학교' },
+      { key: 'grade', label: '학년' },
+      { key: 'gender', label: '성별' },
+      { key: 'crew', label: '포도' },
+    ]
+    const unassignedSorted = [...unassigned].sort(teamSortFn)
+    const notArrivedSorted = [...notArrived].sort(teamSortFn)
 
     // 검색: 미배정 + 미출석 + 팀 배정자 모두 대상. 이름/연락처 부분 일치.
     const q = teamSearch.trim().toLowerCase()
@@ -984,7 +1000,7 @@ export default function AdminDashboardPage() {
             person.name.toLowerCase().includes(q) ||
             (person.phone || '').toLowerCase().includes(q),
           )
-          .sort((a, b) => sortByName(a.person, b.person))
+          .sort((a, b) => teamSortFn(a.person, b.person))
       : []
 
     // 공통 미배정 패널 내용 (※ 컴포넌트가 아닌 JSX 표현식. 컴포넌트로 만들면 매 렌더마다
@@ -1016,6 +1032,21 @@ export default function AdminDashboardPage() {
                 ✕
               </button>
             )}
+          </div>
+          {/* 정렬 버튼 (검색 밑) */}
+          <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+            <span className="text-slate-400 text-[10px] mr-0.5">정렬</span>
+            {TEAM_SORT_OPTIONS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setTeamSort(key)}
+                className={`px-2 py-0.5 text-[10px] rounded-md transition-colors font-medium
+                  ${teamSort === key ? 'bg-sky-500 text-white shadow-sm' : 'bg-white text-slate-500 hover:text-slate-700 border border-slate-200'}`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="overflow-y-auto p-2 space-y-1.5 max-h-[25vh] md:max-h-none">
