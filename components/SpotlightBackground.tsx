@@ -34,18 +34,18 @@ export function SpotlightBackground({ children, variant = 'page', className = ''
   return (
     <div
       ref={ref}
-      className={`relative ${className}`}
+      className={`relative overflow-hidden ${className}`}
       style={{ background: bg }}
     >
       {/* 격자 패턴 (옅게) */}
       <div className="absolute inset-0 bg-dot-grid opacity-30 pointer-events-none" />
 
-      {/* mesh blob 2개 (옅게, page variant 전용) */}
+      {/* mesh blob 2개 (옅게, page variant 전용) — 모바일에선 숨김(GPU 부담↓) */}
       {variant === 'page' && (
         <>
-          <div className="absolute -top-32 -right-32 w-[420px] h-[420px] bg-sky-200/30 rounded-full blur-[140px] pointer-events-none anim-blob" />
+          <div className="hidden lg:block absolute -top-32 -right-32 w-[420px] h-[420px] bg-sky-200/30 rounded-full blur-[140px] pointer-events-none anim-blob" />
           <div
-            className="absolute top-1/2 -left-32 w-[360px] h-[360px] bg-blue-200/25 rounded-full blur-[140px] pointer-events-none anim-blob-2"
+            className="hidden lg:block absolute top-1/2 -left-32 w-[360px] h-[360px] bg-blue-200/25 rounded-full blur-[140px] pointer-events-none anim-blob-2"
             style={{ animationDelay: '-6s' }}
           />
         </>

@@ -10,6 +10,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* 장식용 blob 등이 화면 밖으로 삐져나와도 가로 스크롤이 생기지 않도록 */
+  overflow-x: hidden;
 }
 
 body {
@@ -19,6 +21,7 @@ body {
     'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
   /* 한글 어절 단위 줄바꿈 (단어 중간/orphan 방지). 너무 긴 영문/URL은 anywhere 폴백. */
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -128,6 +131,8 @@ input:focus, textarea:focus, select:focus {
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+  /* 애니메이션 끝난 뒤엔 GPU 레이어 힌트 해제 (모바일 메모리/렌더 부담↓) */
+  will-change: auto;
 }
 
 /* 카드 lift hover */

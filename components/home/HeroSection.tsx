@@ -4,14 +4,14 @@ export function HeroSection() {
   return (
     <SpotlightBackground variant="hero" className="min-h-[100svh] overflow-hidden">
       <section className="min-h-[100svh] flex flex-col justify-center px-5 lg:px-8 pt-14 relative">
-        {/* mesh blobs */}
-        <div className="absolute -top-20 -right-20 w-[480px] h-[480px] bg-sky-300/30 rounded-full blur-[160px] pointer-events-none anim-blob" />
+        {/* mesh blobs — 모바일에선 숨김(GPU 부담↓), 데스크톱에서만 표시 */}
+        <div className="hidden lg:block absolute -top-20 -right-20 w-[480px] h-[480px] bg-sky-300/30 rounded-full blur-[160px] pointer-events-none anim-blob" />
         <div
-          className="absolute bottom-0 left-[-120px] w-[380px] h-[380px] bg-blue-300/25 rounded-full blur-[150px] pointer-events-none anim-blob-2"
+          className="hidden lg:block absolute bottom-0 left-[-120px] w-[380px] h-[380px] bg-blue-300/25 rounded-full blur-[150px] pointer-events-none anim-blob-2"
           style={{ animationDelay: '-6s' }}
         />
         <div
-          className="absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-sky-200/25 rounded-full blur-[140px] pointer-events-none anim-blob"
+          className="hidden lg:block absolute top-1/3 left-1/2 w-[300px] h-[300px] bg-sky-200/25 rounded-full blur-[140px] pointer-events-none anim-blob"
           style={{ animationDelay: '-9s' }}
         />
 
