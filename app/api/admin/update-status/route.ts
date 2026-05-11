@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow, programLabel } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -67,10 +67,9 @@ export async function POST(request: NextRequest) {
         if (becameNoshow && crew?.phone) {
           try {
             const ev = before?.event_id ? await loadEventRow(before.event_id) : null
-            const eventTitle = ev?.title ?? ' '
             const r1 = await sendAlimtalk(
               ALIMTALK.NOSHOW_WARNING, crew.phone,
-              { '#{이름}': crew.name || '회원', '#{프로그램명}': eventTitle },
+              { '#{이름}': crew.name || '회원', '#{프로그램명}': programLabel(ev?.title) },
               { crewId, registrationId: registration_id, eventId: before?.event_id ?? null },
             )
             alimtalk.noshowWarned = r1.ok

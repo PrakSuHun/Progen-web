@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, programLabel } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     const result = await sendAlimtalk(
       ALIMTALK.REG_CANCELLED, phone,
-      { '#{이름}': name, '#{프로그램명}': eventTitle },
+      { '#{이름}': name, '#{프로그램명}': programLabel(eventTitle) },
       { crewId: reg.crew_id ?? null, guestId: reg.guest_id ?? null, registrationId: registration_id, eventId: reg.event_id ?? null },
     )
 

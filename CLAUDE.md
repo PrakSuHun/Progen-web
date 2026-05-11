@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS/supabase-browser.ts 삭제 + next-mdx-remote·gray-matter 의존성 제거 + 잔존 파일(standalone HTML, 크루명단 xlsx) 삭제)
+> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS/supabase-browser.ts 삭제 + next-mdx-remote·gray-matter 의존성 제거 + 잔존 파일(standalone HTML, 크루명단 xlsx) 삭제. ⑥ 알림톡 `#{프로그램명}` 변수를 `lib/solapi.ts`의 `programLabel()`로 낫표(`「행사명」`)로 감싸 행사명 강조 — solapi.ts의 `vars*` 5종 + send-cancel-alimtalk/update-status/send-alimtalk-batch 라우트 모두 적용. ⑦ `lib/solapi.ts`의 `ALIMTALK` 맵 templateId 10종을 솔라피 실제 ID(`KA01TP260511...`)로 교체(이전엔 placeholder). 솔라피 채널 `KA01PF260511054914846rCGGdEqH9tS`(searchId `progen`). 10종 중 #5(신청 취소 확인)만 검수 승인(APPROVED), 나머지 9종은 검수중(INSPECTING) — ID 맞아도 검수 통과 전엔 발송 안 됨. → 6번·12번 표 참고.)
 
 ---
 
@@ -185,7 +185,7 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 | 컬럼 | 타입 | 설명 |
 |------|------|------|
 | id | UUID (PK) | 자동 생성 |
-| template_code | TEXT | 솔라피 카카오 템플릿 ID (예: 'Rp3JMecpqY') |
+| template_code | TEXT | 솔라피 카카오 템플릿 ID (예: 'KA01TP260511072253259HLsKXmMYVoG') |
 | template_name | TEXT | 사람이 읽는 이름 (예: '행사 신청 접수') |
 | to_phone | TEXT | 수신 번호 (숫자만) |
 | crew_id | BIGINT (FK → crew_members, ON DELETE SET NULL) | 크루 대상이면 |
@@ -479,18 +479,21 @@ AI 보고서 영역:
 
 ### 카카오 알림톡 템플릿 (솔라피) — `lib/solapi.ts`의 `ALIMTALK` 맵
 
-| # | 키 | 템플릿 코드 | 변수 | 발송 시점 |
+> 솔라피 채널: `KA01PF260511054914846rCGGdEqH9tS` (searchId `progen`). 검수 상태(2026-05-11): #5만 **APPROVED**, 나머지 9종 **INSPECTING(검수중)** — 검수 통과 전엔 발송 시 솔라피가 거부.
+> `#{프로그램명}` 변수 값은 `programLabel()`이 `「행사명」`(낫표)으로 감싸서 넘김.
+
+| # | 키 | 템플릿 코드 (솔라피 실제 ID) | 변수 | 발송 시점 |
 |---|-----|------------|------|----------|
-| 1 | EVENT_REG_RECEIVED | `Rp3JMecpqY` | 이름·프로그램명·일시·장소 | `/api/event-reg` mode=guest 즉시 (장소 비면 "추후 안내") |
-| 2 | EVENT_CONFIRMED | `Hr1xGhUEdc` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 `#{url}`(오픈채팅 코드) | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
-| 3 | CREW_CONFIRMED | `Yg6oevWar5` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
-| 4 | EVENT_D1_NOTICE | `6fdsTZv1SP` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 `#{url}`(오픈채팅 코드) | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
-| 5 | REG_CANCELLED | `g2N37purw7` | 이름·프로그램명 | `send-cancel-alimtalk` (보증금 탭 「취소 알림」 버튼, 수동). 자동 취소 cron은 없음 |
-| 6 | CHECKIN_WITH_TEAM | `knpWVMYZII` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
-| 7 | CHECKIN_NO_TEAM | `1WwJJnwDbx` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
-| 8 | EVENT_CHANGED | `DfXtaxXo5L` | 이름·프로그램명·기존일시·기존장소·변경일시·변경장소 | `send-alimtalk-batch` template=change (어드민 입력값, 중복체크 없음) |
-| 9 | NOSHOW_WARNING | `4bqcnsJSpx` | 이름·프로그램명 | `update-status` → 노쇼확정 전환 (크루만) |
-| 10 | CREW_REVOKED | `hoP2CmMrN3` | 이름 | `update-status` → 노쇼확정 후 noshow_count≥2 (크루만) |
+| 1 | EVENT_REG_RECEIVED | `KA01TP26051106373464071STWgjtSAK` | 이름·프로그램명·일시·장소 | `/api/event-reg` mode=guest 즉시 (장소 비면 "추후 안내") |
+| 2 | EVENT_CONFIRMED | `KA01TP260511064819169WuinqHjdJcx` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 `#{url}`(오픈채팅 코드) | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
+| 3 | CREW_CONFIRMED | `KA01TP260511070701744h8gIXOphWEW` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
+| 4 | EVENT_D1_NOTICE | `KA01TP260511071006653FkF3Kf1v8lW` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 `#{url}`(오픈채팅 코드) | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
+| 5 | REG_CANCELLED | `KA01TP260511072253259HLsKXmMYVoG` ✅승인 | 이름·프로그램명 | `send-cancel-alimtalk` (보증금 탭 「취소 알림」 버튼, 수동). 자동 취소 cron은 없음 |
+| 6 | CHECKIN_WITH_TEAM | `KA01TP260511073547316F1HdnAUi1RJ` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
+| 7 | CHECKIN_NO_TEAM | `KA01TP260511075330965NCintRaUSWU` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
+| 8 | EVENT_CHANGED | `KA01TP260511073928887bmEyE8XReNZ` | 이름·프로그램명·기존일시·기존장소·변경일시·변경장소 | `send-alimtalk-batch` template=change (어드민 입력값, 중복체크 없음) |
+| 9 | NOSHOW_WARNING | `KA01TP2605110744476078SNWeTQFA9a` | 이름·프로그램명 | `update-status` → 노쇼확정 전환 (크루만) |
+| 10 | CREW_REVOKED | `KA01TP260511074559176oBaEuf8Dkaq` | 이름 | `update-status` → 노쇼확정 후 noshow_count≥2 (크루만) |
 
 > 변수명은 한글 `#{이름}` 등 그대로 (검수 등록 형식). 단 2·4번의 채팅방 버튼 변수는 `#{url}` — 템플릿 버튼 URL이 `https://open.kakao.com/o/#{url}` 라서 `events.kakao_chat_url`에 전체 URL을 넣어도 `openChatCode()`가 코드 조각(`gXySOpui`)만 추출해 넘김. **오픈채팅(`open.kakao.com/o/...`) 링크여야 버튼이 동작** (team chat invite 링크는 불가). `sendAlimtalk()`은 빈 변수값을 공백 한 칸으로 방어. 모든 발송은 `alimtalk_logs`에 기록.
 
@@ -510,7 +513,7 @@ AI 보고서 영역:
 
 - **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회. **클라이언트(브라우저)용 supabase 클라이언트는 없음** — 모든 DB 접근은 우리 API 라우트를 fetch 경유로만. (anon key 클라이언트가 필요해지면 RLS 정책부터 추가 후 새로 만들어야 함)
 - **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직. 2026-05-01부터 과거 행사 fallback은 **PAST_FALLBACK_DAYS=7일 이내**일 때만 동작. 그 이상 지난 후 다음 행사 row가 없으면 `null` 반환 → API들이 "현재 활성 행사를 찾을 수 없습니다" 안내. 운영진의 다음 달 events row 등록 누락 시 사용자가 지난 행사로 잘못 신청되는 사고 방지 목적.
-- **[lib/solapi.ts](lib/solapi.ts)** (2026-05-11): 카카오 알림톡(솔라피) 헬퍼. `ALIMTALK` 템플릿 코드 맵(10종) / `sendAlimtalk(template, phone, variables, target)` — 솔라피 v4 REST 직접 호출(Node `crypto`로 HMAC-SHA256 서명, npm 패키지 미사용) + `alimtalk_logs` 기록 / `alreadySent()` / `loadEventRow()` / `formatEventDateKo()`(Asia/Seoul) / `eventConfirmReady()` / `varsEventRegReceived`·`varsEventConfirmed`·`varsEventD1Notice`·`varsCheckinWithTeam`·`varsCheckinNoTeam`. **환경변수(SOLAPI_*) 4개 미설정 시 발송 skip** — 사이트 동작 안 막음.
+- **[lib/solapi.ts](lib/solapi.ts)** (2026-05-11): 카카오 알림톡(솔라피) 헬퍼. `ALIMTALK` 템플릿 코드 맵(10종 — ⚠️ 현재 값은 placeholder, 솔라피 실제 ID `KA01TP260511...`와 불일치. 12번 항목 참고) / `sendAlimtalk(template, phone, variables, target)` — 솔라피 v4 REST 직접 호출(Node `crypto`로 HMAC-SHA256 서명, npm 패키지 미사용) + `alimtalk_logs` 기록 / `alreadySent()` / `loadEventRow()` / `formatEventDateKo()`(Asia/Seoul) / `eventConfirmReady()` / `programLabel(title)` — `#{프로그램명}` 변수 값을 `「행사명」`(낫표)으로 감싸 강조, 비면 공백 / `varsEventRegReceived`·`varsEventConfirmed`·`varsEventD1Notice`·`varsCheckinWithTeam`·`varsCheckinNoTeam`(모두 `#{프로그램명}`에 `programLabel()` 사용). **환경변수(SOLAPI_*) 4개 미설정 시 발송 skip** — 사이트 동작 안 막음.
 
 **RLS** (2026-04-26 잠금 적용, 2026-05-11 alimtalk_logs 추가):
 - 7개 테이블 (`crew_members`, `events`, `event_registrations`, `guests`, `feedbacks`, `reports`, `alimtalk_logs`) 모두 RLS 활성화 + **정책 0개 = anon default-deny**.
@@ -615,8 +618,9 @@ AI 보고서 영역:
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
-| 카카오 알림톡 검수 | 진행 중 | 솔라피 비즈센터에 템플릿 10종 등록, 카카오 검수 통과 후에야 실제 발송. 통과 전엔 `SOLAPI_*` 미설정 = 발송 skip |
-| 알림톡 발신 환경변수 | 미설정 추정 | `SOLAPI_API_KEY`/`SOLAPI_API_SECRET`/`SOLAPI_PFID`/`SOLAPI_SENDER_PHONE`를 `.env.local` + Vercel에 넣어야 발송됨 |
+| 카카오 알림톡 검수 | 부분 통과 | 솔라피 채널 `KA01PF260511054914846rCGGdEqH9tS`(searchId `progen`)에 템플릿 10종 등록. **#5(신청 취소 확인)만 APPROVED, 나머지 9종 INSPECTING(검수중)**. 검수중인 9종은 templateId 고쳐도 발송 시 솔라피가 거부 |
+| `lib/solapi.ts` 템플릿 ID | 수정 완료 (2026-05-11) | `ALIMTALK` 맵의 templateId 10개를 솔라피 실제 ID(`KA01TP260511...`)로 교체함. (이전엔 `Rp3JMecpqY` 등 placeholder라 발송 시 "유효한 템플릿 아이디가 아닙니다") `SOLAPI_PFID`(env)는 처음부터 정상값(`KA01PF...`). 단 #5 외 9종은 검수중이라 ID는 맞아도 검수 통과 전엔 발송 안 됨 |
+| 알림톡 발신 환경변수 | `SOLAPI_SENDER_PHONE` 만 미설정 | `.env.local`에 `SOLAPI_API_KEY`/`SOLAPI_API_SECRET`/`SOLAPI_PFID`는 채워짐(검증 OK). `SOLAPI_SENDER_PHONE`(=`01043232510`, 솔라피 등록 발신번호)만 빠짐 — 추가 + Vercel에도 넣어야 사이트 플로우로 발송됨 |
 | 알림톡 D-1 공지(4번) 자동 발송 | 수동 | cron 없음 → 어드민 "설정" → "알림톡 발송" 탭의 "행사 전 공지 발송" 버튼으로 수동. cron(Vercel Cron 등) 도입 시 자동화 |
 | 알림톡 신청 취소 확인(5번) 발송 방식 | 수동 | 보증금 탭 「취소 알림」 버튼으로 1건씩 수동 발송. "신청 후 3일 미입금 자동 취소" cron은 없음 — 운영진이 미입금자에게 버튼 누르고 신청자 탭에서 직접 삭제 |
 | 알림톡 게스트 환불 완료 통지 | 없음 | 별도 템플릿 안 만듦(확정 문자에 "참석 후 환불" 문구로 갈음). 입금→환불 토글 시 알림톡 발송 안 함 |

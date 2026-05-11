@@ -3,18 +3,22 @@ import { createAdminClient } from './supabase-admin'
 
 const SOLAPI_SEND_URL = 'https://api.solapi.com/messages/v4/send'
 
-/** 카카오 알림톡 템플릿 (솔라피 검수 통과한 templateId + 사람이 읽는 이름) */
+/**
+ * 카카오 알림톡 템플릿 (솔라피 채널 KA01PF260511054914846rCGGdEqH9tS / searchId 'progen').
+ * code = 솔라피 비즈센터에 등록된 실제 templateId.
+ * 검수 상태(2026-05-11): #5만 APPROVED, 나머지 9종은 INSPECTING(검수중) — 검수 통과 전엔 발송 시 솔라피가 거부.
+ */
 export const ALIMTALK = {
-  EVENT_REG_RECEIVED: { code: 'Rp3JMecpqY', name: '행사 신청 접수' },      // 1
-  EVENT_CONFIRMED:    { code: 'Hr1xGhUEdc', name: '행사 참석 확정' },      // 2
-  CREW_CONFIRMED:     { code: 'Yg6oevWar5', name: '크루원 신청 접수' },    // 3
-  EVENT_D1_NOTICE:    { code: '6fdsTZv1SP', name: '행사 전 공지' },        // 4
-  REG_CANCELLED:      { code: 'g2N37purw7', name: '신청 취소 확인' },      // 5
-  CHECKIN_WITH_TEAM:  { code: 'knpWVMYZII', name: '현장 출석 완료 + 팀 안내' }, // 6
-  CHECKIN_NO_TEAM:    { code: '1WwJJnwDbx', name: '팀 미배정' },           // 7
-  EVENT_CHANGED:      { code: 'DfXtaxXo5L', name: '행사 일정/장소 변경' }, // 8
-  NOSHOW_WARNING:     { code: '4bqcnsJSpx', name: '노쇼 경고 (1회)' },     // 9
-  CREW_REVOKED:       { code: 'hoP2CmMrN3', name: '크루 자격 박탈' },      // 10
+  EVENT_REG_RECEIVED: { code: 'KA01TP26051106373464071STWgjtSAK', name: '행사 신청 접수' },      // 1
+  EVENT_CONFIRMED:    { code: 'KA01TP260511064819169WuinqHjdJcx', name: '행사 참석 확정' },      // 2
+  CREW_CONFIRMED:     { code: 'KA01TP260511070701744h8gIXOphWEW', name: '크루원 신청 접수' },    // 3
+  EVENT_D1_NOTICE:    { code: 'KA01TP260511071006653FkF3Kf1v8lW', name: '행사 전 공지' },        // 4
+  REG_CANCELLED:      { code: 'KA01TP260511072253259HLsKXmMYVoG', name: '신청 취소 확인' },      // 5
+  CHECKIN_WITH_TEAM:  { code: 'KA01TP260511073547316F1HdnAUi1RJ', name: '현장 출석 완료 + 팀 안내' }, // 6
+  CHECKIN_NO_TEAM:    { code: 'KA01TP260511075330965NCintRaUSWU', name: '팀 미배정' },           // 7
+  EVENT_CHANGED:      { code: 'KA01TP260511073928887bmEyE8XReNZ', name: '행사 일정/장소 변경' }, // 8
+  NOSHOW_WARNING:     { code: 'KA01TP2605110744476078SNWeTQFA9a', name: '노쇼 경고 (1회)' },     // 9
+  CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10
 } as const
 
 export type AlimtalkTemplate = (typeof ALIMTALK)[keyof typeof ALIMTALK]
@@ -189,6 +193,12 @@ export type EventRow = {
 const FALLBACK = '추후 안내'
 const FALLBACK_CHAT = '채팅방 공지 참고'
 
+/** #{프로그램명} 변수 값 — 행사명이 도드라지게 낫표(「」)로 감싼다. 비어 있으면 공백 한 칸. */
+export function programLabel(title: string | null | undefined): string {
+  const t = (title ?? '').toString().trim()
+  return t ? `「${t}」` : ' '
+}
+
 /**
  * 오픈채팅 버튼 변수(#{url}) 값 — 카카오 템플릿 버튼 URL이 `https://open.kakao.com/o/#{url}` 형태라
  * 전체 링크가 아니라 코드 조각(`gXySOpui`)만 넘겨야 한다.
@@ -244,7 +254,7 @@ export function eventConfirmReady(ev: EventRow | null | undefined): boolean {
 export function varsEventRegReceived(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': ev.title || ' ',
+    '#{프로그램명}': programLabel(ev.title),
     '#{일시}': formatEventDateKo(ev.event_date),
     '#{장소}': ev.location || FALLBACK,
   }
@@ -254,7 +264,7 @@ export function varsEventRegReceived(ev: EventRow, name: string): Record<string,
 export function varsEventConfirmed(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': ev.title || ' ',
+    '#{프로그램명}': programLabel(ev.title),
     '#{일시}': formatEventDateKo(ev.event_date),
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
@@ -268,7 +278,7 @@ export function varsEventConfirmed(ev: EventRow, name: string): Record<string, s
 export function varsEventD1Notice(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': ev.title || ' ',
+    '#{프로그램명}': programLabel(ev.title),
     '#{일시}': formatEventDateKo(ev.event_date),
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
@@ -279,10 +289,10 @@ export function varsEventD1Notice(ev: EventRow, name: string): Record<string, st
 
 /** 6번 현장 출석 + 팀 안내 */
 export function varsCheckinWithTeam(name: string, eventTitle: string | null, teamName: string): Record<string, string> {
-  return { '#{이름}': name, '#{프로그램명}': eventTitle || ' ', '#{팀명}': teamName }
+  return { '#{이름}': name, '#{프로그램명}': programLabel(eventTitle), '#{팀명}': teamName }
 }
 
 /** 7번 팀 미배정 출석 */
 export function varsCheckinNoTeam(name: string, eventTitle: string | null): Record<string, string> {
-  return { '#{이름}': name, '#{프로그램명}': eventTitle || ' ' }
+  return { '#{이름}': name, '#{프로그램명}': programLabel(eventTitle) }
 }
