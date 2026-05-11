@@ -12,9 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",
     "autoprefixer": "^10.4.16",
-    "gray-matter": "^4.0.3",
     "next": "^15.0.0",
-    "next-mdx-remote": "^6.0.0",
     "postcss": "^8.4.31",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

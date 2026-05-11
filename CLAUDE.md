@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS 삭제)
+> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS/supabase-browser.ts 삭제 + next-mdx-remote·gray-matter 의존성 제거 + 잔존 파일(standalone HTML, 크루명단 xlsx) 삭제)
 
 ---
 
@@ -34,7 +34,6 @@
 | 배포 | Vercel |
 | 차트 | Recharts |
 | 아이콘 | react-icons |
-| 문서 | next-mdx-remote (의존성만 존재, 현재 미사용) |
 
 ---
 
@@ -509,8 +508,7 @@ AI 보고서 영역:
 
 ## 8. Supabase 클라이언트 / 라이브러리
 
-- **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회.
-- **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키. **현재 import 0건** (클라이언트는 모두 fetch로 우리 API 라우트 경유). 향후 클라이언트가 DB 직접 접근하려 하면 RLS 정책부터 추가 후 사용.
+- **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회. **클라이언트(브라우저)용 supabase 클라이언트는 없음** — 모든 DB 접근은 우리 API 라우트를 fetch 경유로만. (anon key 클라이언트가 필요해지면 RLS 정책부터 추가 후 새로 만들어야 함)
 - **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직. 2026-05-01부터 과거 행사 fallback은 **PAST_FALLBACK_DAYS=7일 이내**일 때만 동작. 그 이상 지난 후 다음 행사 row가 없으면 `null` 반환 → API들이 "현재 활성 행사를 찾을 수 없습니다" 안내. 운영진의 다음 달 events row 등록 누락 시 사용자가 지난 행사로 잘못 신청되는 사고 방지 목적.
 - **[lib/solapi.ts](lib/solapi.ts)** (2026-05-11): 카카오 알림톡(솔라피) 헬퍼. `ALIMTALK` 템플릿 코드 맵(10종) / `sendAlimtalk(template, phone, variables, target)` — 솔라피 v4 REST 직접 호출(Node `crypto`로 HMAC-SHA256 서명, npm 패키지 미사용) + `alimtalk_logs` 기록 / `alreadySent()` / `loadEventRow()` / `formatEventDateKo()`(Asia/Seoul) / `eventConfirmReady()` / `varsEventRegReceived`·`varsEventConfirmed`·`varsEventD1Notice`·`varsCheckinWithTeam`·`varsCheckinNoTeam`. **환경변수(SOLAPI_*) 4개 미설정 시 발송 skip** — 사이트 동작 안 막음.
 
@@ -521,8 +519,6 @@ AI 보고서 영역:
 - 결과적으로 "외부 anon key 직접 접근 = 0건" / "어드민 페이지 통한 접근 = 정상".
 
 > **외부에서 anon key로 직접 DB 붙는 통합(Zapier/Make/외부 분석 등)이 생기면, 그때 필요한 만큼만 좁은 정책을 추가해야 함.** 현재는 그런 통합 없음.
-
-> **`lib/supabase-browser.ts`(anon key)는 정의만 있고 import 0건.** 클라이언트 컴포넌트는 항상 우리 API 라우트를 fetch 경유로 사용.
 
 ---
 
@@ -636,8 +632,6 @@ AI 보고서 영역:
 | 운영진 지원 폼 | 없음 | 정적 안내만 |
 | 크루 합격/불합격 | 없음 | status='지원완료' 고정, 즉시 확정 |
 | 이메일 알림 | 없음 | |
-| `next-mdx-remote` / `gray-matter` 의존성 | 미사용 | package.json에만 존재. 코드 어디서도 import 안 함. 제거 가능(보류 중) |
-| `lib/supabase-browser.ts` | 미사용 | anon 키 클라이언트 정의만, import 0건. 향후 클라이언트 DB 직접 접근 대비 placeholder로 의도적으로 남김 |
 
 ---
 
