@@ -567,7 +567,7 @@ AI 보고서 영역:
 ### 공통 (2026-04-25~26 추가)
 - **[Logo](components/Logo.tsx)** (2026-05-02) — `LogoMark` / `LogoWordmark` / `Logo`(둘 결합). next/image 기반, props: `size`/`height`/`variant: 'dark'|'blue'`/`gap`. PNG 자산을 `public/`에서 로드. Navbar·Footer 사용.
 - **[Reveal](components/Reveal.tsx)** — IntersectionObserver 기반 스크롤 등장 wrapper. props: `delay?`, `className?`, `as?` ('div'|'section'|'article'|'li'). server component 안에서도 사용 가능 (`'use client'` 자체 선언).
-- **[SpotlightBackground](components/SpotlightBackground.tsx)** — 마우스 추적 spotlight + dot grid + mesh blob 배경 wrapper. props: `variant?` ('hero'|'page'), `className?`. variant='hero'는 풀스크린 강한 그라데이션, variant='page'는 옅은 톤 + 좌우 mesh blob 2개. 홈/소개/세미나/아카이브/커뮤니티/운영진/지원/사전신청/출석/피드백 모든 페이지에 적용. server component 안에서도 사용 가능.
+- **[SpotlightBackground](components/SpotlightBackground.tsx)** — 마우스 추적 spotlight + dot grid + mesh blob 배경 wrapper. props: `variant?` ('hero'|'page'), `className?`. variant='hero'는 풀스크린 강한 그라데이션, variant='page'는 옅은 톤 + 좌우 mesh blob 2개. 홈/소개/세미나/아카이브/커뮤니티/운영진/지원/사전신청/출석/피드백 모든 페이지에 적용. server component 안에서도 사용 가능. **(2026-05-11) wrapper에 `overflow-hidden` 추가(blob이 화면 밖으로 삐져나와 모바일 가로 스크롤 유발하던 버그 수정) + mesh blob들은 `hidden lg:block`(모바일 GPU 부담↓, 모바일선 거의 안 보이는 장식). HeroSection의 mesh blob 3개도 동일. globals.css `html, body { overflow-x: hidden }`.**
 
 ### UI 기본
 - **[Button](components/ui/Button.tsx)**: primary/secondary, sm/md/lg.
