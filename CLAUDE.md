@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 6개 라우트 발송 연결. ② 3·4·5월 행사명을 새 이름으로 변경(events 테이블 + 홈/세미나/아카이브 하드코딩), 2026-05-30 "PROGEN 1기 OT - 청년마을 만들기 협업 프로젝트" events row 추가)
+> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS 삭제)
 
 ---
 
@@ -225,7 +225,6 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 - 하단 "Scroll" 인디케이터 + 페이드 라인
 
 > **테마**: 흰 배경, 섹션별 `#fafafa`와 흰색 교차. 보라 포인트 `sky-500`. 히어로만 그라데이션 + spotlight.
-> **미사용 컴포넌트**: `AboutSection`, `NumbersSection`, `ActivitiesSection`, `StarField` (파일 존재, import 안 됨).
 
 ---
 
@@ -426,12 +425,7 @@ AI 보고서 영역:
 
 ---
 
-### 5-14. 전체 분석 `/admin/dashboard/full` ([app/admin/dashboard/full/page.tsx](app/admin/dashboard/full/page.tsx))
-**현재**: `useRouter.replace('/admin/dashboard')`로 즉시 리다이렉트만 함. 분석은 dashboard 분석 탭에 통합됨. 빈 라우트 정리 가능.
-
----
-
-### 5-15. AI 보고서 뷰어 `/admin/report` ([app/admin/report/page.tsx](app/admin/report/page.tsx))
+### 5-14. AI 보고서 뷰어 `/admin/report` ([app/admin/report/page.tsx](app/admin/report/page.tsx))
 - 쿼리 `?id=xxx`로 보고서 조회 (`GET /api/admin/ai-report?id=xxx`)
 - `dangerouslySetInnerHTML`로 HTML content 렌더링
 - 상단 바 (인쇄 / 돌아가기) — `print:hidden`
@@ -518,7 +512,6 @@ AI 보고서 영역:
 - **[lib/supabase-admin.ts](lib/supabase-admin.ts)**: 서비스 롤 키, API 라우트 전용, RLS 우회.
 - **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키. **현재 import 0건** (클라이언트는 모두 fetch로 우리 API 라우트 경유). 향후 클라이언트가 DB 직접 접근하려 하면 RLS 정책부터 추가 후 사용.
 - **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직. 2026-05-01부터 과거 행사 fallback은 **PAST_FALLBACK_DAYS=7일 이내**일 때만 동작. 그 이상 지난 후 다음 행사 row가 없으면 `null` 반환 → API들이 "현재 활성 행사를 찾을 수 없습니다" 안내. 운영진의 다음 달 events row 등록 누락 시 사용자가 지난 행사로 잘못 신청되는 사고 방지 목적.
-- **[lib/getLatestEventId.ts](lib/getLatestEventId.ts)**: created_at 기준 최신 행사 ID.
 - **[lib/solapi.ts](lib/solapi.ts)** (2026-05-11): 카카오 알림톡(솔라피) 헬퍼. `ALIMTALK` 템플릿 코드 맵(10종) / `sendAlimtalk(template, phone, variables, target)` — 솔라피 v4 REST 직접 호출(Node `crypto`로 HMAC-SHA256 서명, npm 패키지 미사용) + `alimtalk_logs` 기록 / `alreadySent()` / `loadEventRow()` / `formatEventDateKo()`(Asia/Seoul) / `eventConfirmReady()` / `varsEventRegReceived`·`varsEventConfirmed`·`varsEventD1Notice`·`varsCheckinWithTeam`·`varsCheckinNoTeam`. **환경변수(SOLAPI_*) 4개 미설정 시 발송 skip** — 사이트 동작 안 막음.
 
 **RLS** (2026-04-26 잠금 적용, 2026-05-11 alimtalk_logs 추가):
@@ -544,7 +537,6 @@ AI 보고서 영역:
 - `BANKS`: 21개 은행 (게스트 환불 계좌 입력용 Select, 2026-05-06 추가)
 - `GOOD_TAGS`: 6개
 - `BAD_TAGS`: 6개
-- `SCORE_LABELS`: 5단계 (현재 미사용 — 익명 피드백 전환 후 점수 폐기)
 
 **함수**:
 - `isValidPhone(phone)`: 숫자만 추출 후 **정확히 11자리** 확인 (2026-05-01부터 10자리는 거부)
@@ -558,12 +550,8 @@ AI 보고서 영역:
 - **[Navbar](components/layout/Navbar.tsx)** — 고정 상단, 스크롤 20px 이상 시 `bg-white/95` + backdrop blur. 모바일 햄버거 fullscreen 메뉴. 메뉴: 소개/세미나/아카이브/커뮤니티/운영진모집 + 지원하기 버튼.
 - **[Footer](components/layout/Footer.tsx)** — 4열 그리드 (로고/설명, NAVIGATE, CONTACT). 흰 배경.
 
-### 홈 (사용 중)
+### 홈
 - **[HeroSection](components/home/HeroSection.tsx)**, **[CurriculumSection](components/home/CurriculumSection.tsx)**, **[ReviewsSection](components/home/ReviewsSection.tsx)**, **[CtaBanner](components/home/CtaBanner.tsx)**
-
-### 홈 (미사용 — 파일만 존재)
-- `components/home/AboutSection.tsx`, `NumbersSection.tsx`, `ActivitiesSection.tsx`
-- `components/StarField.tsx` (별 파티클 캔버스, 어디에서도 import 안 됨)
 
 ### 공통 (2026-04-25~26 추가)
 - **[Logo](components/Logo.tsx)** (2026-05-02) — `LogoMark` / `LogoWordmark` / `Logo`(둘 결합). next/image 기반, props: `size`/`height`/`variant: 'dark'|'blue'`/`gap`. PNG 자산을 `public/`에서 로드. Navbar·Footer 사용.
@@ -576,7 +564,6 @@ AI 보고서 영역:
 - **[Select](components/ui/Select.tsx)**: 드롭다운.
 
 ### 피드백 전용
-- `StarRating` (현재 미사용)
 - `StepIndicator` — 진행 단계 바
 - `TagSelector` — 태그 다중 선택
 
@@ -649,9 +636,8 @@ AI 보고서 영역:
 | 운영진 지원 폼 | 없음 | 정적 안내만 |
 | 크루 합격/불합격 | 없음 | status='지원완료' 고정, 즉시 확정 |
 | 이메일 알림 | 없음 | |
-| `/admin/dashboard/full` | 리다이렉트만 | 빈 라우트 정리 가능 |
-| StarField 컴포넌트 | 파일 존재, 미사용 | |
-| AboutSection/NumbersSection/ActivitiesSection | 파일 존재, 미사용 | |
+| `next-mdx-remote` / `gray-matter` 의존성 | 미사용 | package.json에만 존재. 코드 어디서도 import 안 함. 제거 가능(보류 중) |
+| `lib/supabase-browser.ts` | 미사용 | anon 키 클라이언트 정의만, import 0건. 향후 클라이언트 DB 직접 접근 대비 placeholder로 의도적으로 남김 |
 
 ---
 

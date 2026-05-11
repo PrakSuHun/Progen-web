@@ -94,15 +94,6 @@ export const BAD_TAGS = [
   '없음',
 ]
 
-// Feedback Score Labels
-export const SCORE_LABELS = [
-  '매우 불만족',
-  '불만족',
-  '보통',
-  '만족',
-  '매우 만족',
-]
-
 // Phone validation and formatting
 export function isValidPhone(phone: string): boolean {
   const cleanPhone = phone.replace(/\D/g, '')

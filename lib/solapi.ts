@@ -55,11 +55,6 @@ function getConfig() {
   }
 }
 
-export function isSolapiConfigured(): boolean {
-  const c = getConfig()
-  return !!(c.apiKey && c.apiSecret && c.pfId && c.from)
-}
-
 async function logSend(params: {
   template: AlimtalkTemplate
   toPhone: string
