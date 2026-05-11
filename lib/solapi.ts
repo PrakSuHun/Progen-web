@@ -194,6 +194,20 @@ export type EventRow = {
 const FALLBACK = '추후 안내'
 const FALLBACK_CHAT = '채팅방 공지 참고'
 
+/**
+ * 오픈채팅 버튼 변수(#{url}) 값 — 카카오 템플릿 버튼 URL이 `https://open.kakao.com/o/#{url}` 형태라
+ * 전체 링크가 아니라 코드 조각(`gXySOpui`)만 넘겨야 한다.
+ * 어드민에서 전체 URL을 넣어도, 코드만 넣어도 둘 다 처리.
+ */
+export function openChatCode(input: string | null | undefined): string {
+  if (!input) return ''
+  const s = input.trim()
+  const m = s.match(/open\.kakao\.com\/o\/([^/?#\s]+)/i)
+  if (m) return m[1]
+  // URL 형태가 아니면(이미 코드만 넣었거나 다른 형식) 스킴/쿼리 제거 후 마지막 경로 조각
+  return s.replace(/^https?:\/\//i, '').replace(/[?#].*$/, '').split('/').filter(Boolean).pop() ?? ''
+}
+
 /** events 행을 알림톡 변수에 쓸 필드만 골라서 조회 */
 export async function loadEventRow(eventId: string): Promise<EventRow | null> {
   const supabase = createAdminClient()
@@ -241,7 +255,7 @@ export function varsEventRegReceived(ev: EventRow, name: string): Record<string,
   }
 }
 
-/** 2번 행사 참석 확정 — eventConfirmReady가 true일 때만 자동 발송. 버튼 #{오픈채팅URL} 포함 */
+/** 2번 행사 참석 확정 — eventConfirmReady가 true일 때만 자동 발송. 버튼 변수 #{url}(오픈채팅 코드) 포함 */
 export function varsEventConfirmed(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
@@ -251,11 +265,11 @@ export function varsEventConfirmed(ev: EventRow, name: string): Record<string, s
     '#{장소}': ev.location || FALLBACK,
     '#{준비물}': ev.materials || FALLBACK_CHAT,
     '#{진행내용}': ev.program_detail || FALLBACK_CHAT,
-    '#{오픈채팅URL}': ev.kakao_chat_url || '',
+    '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }
 
-/** 4번 행사 전 공지(D-1) — 운영진이 수동 발송. 비면 fallback */
+/** 4번 행사 전 공지(D-1) — 운영진이 수동 발송. 비면 fallback. 버튼 변수 #{url} 포함 */
 export function varsEventD1Notice(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
@@ -264,7 +278,7 @@ export function varsEventD1Notice(ev: EventRow, name: string): Record<string, st
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
     '#{준비물}': ev.materials || FALLBACK_CHAT,
-    '#{오픈채팅URL}': ev.kakao_chat_url || '',
+    '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }
 
