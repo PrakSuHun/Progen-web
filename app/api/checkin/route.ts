@@ -1,8 +1,35 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import {
+  ALIMTALK, sendAlimtalk, loadEventRow, varsCheckinWithTeam, varsCheckinNoTeam,
+} from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 const norm = (s: string) => (s || '').replace(/\s+/g, '').trim()
+
+// 출석 완료 시 6번(팀 있음) / 7번(팀 없음) 알림톡 발송. 실패해도 출석 처리 흐름은 막지 않는다.
+async function sendCheckinAlimtalk(args: {
+  name: string
+  phone: string
+  teamName: string | null
+  eventId: string
+  crewId: string | number | null
+  guestId: string | null
+  registrationId: string | null
+}) {
+  try {
+    const ev = await loadEventRow(args.eventId)
+    const title = ev?.title ?? null
+    const target = { crewId: args.crewId, guestId: args.guestId, registrationId: args.registrationId, eventId: args.eventId }
+    if (args.teamName) {
+      await sendAlimtalk(ALIMTALK.CHECKIN_WITH_TEAM, args.phone, varsCheckinWithTeam(args.name, title, args.teamName), target)
+    } else {
+      await sendAlimtalk(ALIMTALK.CHECKIN_NO_TEAM, args.phone, varsCheckinNoTeam(args.name, title), target)
+    }
+  } catch (e) {
+    console.error('checkin alimtalk send failed:', e)
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,6 +118,11 @@ export async function POST(request: NextRequest) {
           .update({ status: '출석완료', checked_in_at: new Date().toISOString() })
           .eq('id', existing.id)
 
+        await sendCheckinAlimtalk({
+          name: resolvedName, phone, teamName: existing.team_name ?? null,
+          eventId, crewId, guestId, registrationId: existing.id,
+        })
+
         return NextResponse.json({
           message: '출석 완료',
           name: resolvedName,
@@ -99,7 +131,7 @@ export async function POST(request: NextRequest) {
       }
 
       // 진짜 신규 walk-in: INSERT
-      const { error: insertError } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('event_registrations')
         .insert([
           {
@@ -110,6 +142,7 @@ export async function POST(request: NextRequest) {
             checked_in_at: new Date().toISOString(),
           },
         ])
+        .select('id')
 
       if (insertError) {
         if (insertError.code === '23505') {
@@ -120,6 +153,11 @@ export async function POST(request: NextRequest) {
         }
         throw insertError
       }
+
+      await sendCheckinAlimtalk({
+        name: resolvedName, phone, teamName: null,
+        eventId, crewId, guestId, registrationId: inserted?.[0]?.id ?? null,
+      })
 
       return NextResponse.json({
         message: '현장 등록 + 출석 완료',
@@ -188,6 +226,11 @@ export async function POST(request: NextRequest) {
         .from('event_registrations')
         .update({ status: '출석완료', checked_in_at: new Date().toISOString() })
         .eq('id', registration.id)
+
+      await sendCheckinAlimtalk({
+        name: resolvedName, phone, teamName: registration.team_name ?? null,
+        eventId, crewId, guestId, registrationId: registration.id,
+      })
 
       return NextResponse.json({
         message: '출석 완료',

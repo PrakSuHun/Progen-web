@@ -5,7 +5,7 @@
 
 > **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
 
-> **마지막 최신화**: 2026-05-06 (보증금 3-상태(미입금/입금/환불) + 게스트 환불 계좌 입력·관리: 마이그레이션 + 폼/어드민 보증금 탭)
+> **마지막 최신화**: 2026-05-11 (① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 6개 라우트 발송 연결. ② 3·4·5월 행사명을 새 이름으로 변경(events 테이블 + 홈/세미나/아카이브 하드코딩), 2026-05-30 "PROGEN 1기 OT - 청년마을 만들기 협업 프로젝트" events row 추가)
 
 ---
 
@@ -45,21 +45,29 @@ NEXT_PUBLIC_SUPABASE_URL=         # Supabase 프로젝트 URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Supabase anon 키
 SUPABASE_SERVICE_ROLE_KEY=        # Supabase 서비스 롤 키 (서버 전용)
 ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
+SOLAPI_API_KEY=                   # 솔라피 API Key (알림톡 발송, 서버 전용)
+SOLAPI_API_SECRET=                # 솔라피 API Secret (서버 전용)
+SOLAPI_PFID=                      # 솔라피 카카오 발신프로필 키(pfId)
+SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 대비. 숫자만)
 ```
+
+> **알림톡 환경변수가 비어 있으면** `lib/solapi.ts`의 `sendAlimtalk()`은 조용히 skip(발송 안 함) — 사이트 동작은 안 막힘. 카카오 검수 통과 + Vercel/`.env.local` 양쪽에 4개 다 채워야 실제 발송됨. 솔라피 API Key는 Vercel 서버리스 outbound IP가 고정이 아니므로 IP 제한 없이("모든 IP 허용") 발급.
 
 > **활성 행사 결정**: `lib/get-active-event.ts`의 `getActiveEventId()`가 자동 처리.
 > 오늘 자정 이후 가장 가까운 행사를 자동 선택. 모든 행사가 지났으면 가장 최근 행사 반환.
 
 ### 1기 커리큘럼 (홈페이지 노출 5개월, 종료 회차 포함)
-| 월 | 주제 | 헤드라인 | 상태 |
+| 월 | 주제 (홈 카드 title) | 헤드라인 | 상태 |
 |----|------|----------|------|
-| 03 | AI툴 클래스 | 대학생 실전 활용 | 종료 (80명) |
-| 04 | 시험공부용 AI | 중간고사 집중 대비 | 종료 (40명) |
-| 05 | 일상 자동화 시스템 | 시간을 돌려받는 | 모집 중 |
+| 03 | AI 시대 대학생으로 살아남기 | 대학생 실전 활용 | 종료 (80명) |
+| 04 | AI로 완성하는 가성비 벼락치기 클래스 | 중간고사 집중 대비 | 종료 (40명) |
+| 05 | 클로드 AI 실전 클래스 | 시간을 돌려받는 | 모집 중 (5/16 토) |
 | 06 | AI 숏폼과 음악 제작 | 온라인 수익화 | 예정 |
 | 07 | AI 캐릭터 굿즈 제작 | 기획부터 판매까지 (신세계·롯데백화점 플리마켓 입점 협의) | 예정 |
 
 > 종료 회차는 회색 월 박스 + opacity-75 + 회색 highlight 박스로 시각 구분 (홈/세미나 동일 스타일).
+> 위 5개는 홈 커리큘럼·세미나·아카이브의 하드코딩 copy. **`events` 테이블의 `title`도 2026-05-11에 동일하게 맞춤** (3월=`AI 시대 대학생으로 살아남기`, 4월=`AI로 완성하는 가성비 벼락치기 클래스`, 5월=`클로드 AI 실전 클래스`, 6월=`AI로 영상·음악 콘텐츠 제작`, 7월=`AI로 나만의 캐릭터 굿즈 만들기`, 8/1=`백화점 플리마켓 및 1기 종료`).
+> **추가 events row**: 2026-05-30 `PROGEN 1기 OT - 청년마을 만들기 협업 프로젝트` (is_mandatory=true). 14:00 KST. 홈/세미나 하드코딩엔 없음 — events 테이블·어드민·알림톡에서만 노출. 5/16 행사가 지나면 `getActiveEventId()`가 이 OT를 활성 행사로 잡음.
 
 ---
 
@@ -72,7 +80,14 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | title | TEXT | 행사 이름 |
 | event_date | TIMESTAMPTZ | 행사 일시 |
 | is_mandatory | BOOLEAN | 필수 참석 여부 |
+| location | TEXT (nullable) | 장소 — 알림톡 `#{장소}`. 어드민 "설정" 모달에서 입력 |
+| entry_time | TEXT (nullable) | 입장 시간 — 알림톡 `#{입장시간}` (예: "오후 1시 30분") |
+| materials | TEXT (nullable) | 준비물 — 알림톡 `#{준비물}` |
+| program_detail | TEXT (nullable) | 당일 진행 — 알림톡 `#{진행내용}` |
+| kakao_chat_url | TEXT (nullable) | 회차 참여자 채팅방 버튼 링크 |
 | created_at | TIMESTAMPTZ | 생성일 |
+
+> `location`~`kakao_chat_url` 5개는 2026-05-11 마이그레이션(`event_alimtalk_fields`)으로 추가. 비어 있으면 알림톡 발송 시 "추후 안내"/"채팅방 공지 참고" fallback. **5개가 모두 채워져야** 참석 확정(2번) 알림톡이 자동 발송됨(`eventConfirmReady`); 그 전까지는 보류 → 어드민 "설정" → "알림톡 발송" 탭에서 미발송자 일괄 발송.
 
 ### 4-2. crew_members (크루 지원자)
 | 컬럼 | 타입 | 설명 |
@@ -166,6 +181,25 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 | created_at | TIMESTAMPTZ | 생성일 |
 
 > 외부 AI(Claude 등)가 생성한 결과를 저장. `/admin/report?id=xxx`로 단일 페이지 뷰 + 인쇄.
+
+### 4-7. alimtalk_logs (알림톡 발송 로그, 2026-05-11 신설)
+| 컬럼 | 타입 | 설명 |
+|------|------|------|
+| id | UUID (PK) | 자동 생성 |
+| template_code | TEXT | 솔라피 카카오 템플릿 ID (예: 'Rp3JMecpqY') |
+| template_name | TEXT | 사람이 읽는 이름 (예: '행사 신청 접수') |
+| to_phone | TEXT | 수신 번호 (숫자만) |
+| crew_id | BIGINT (FK → crew_members, ON DELETE SET NULL) | 크루 대상이면 |
+| guest_id | UUID (FK → guests, ON DELETE SET NULL) | 게스트 대상이면 |
+| registration_id | UUID (FK → event_registrations, ON DELETE SET NULL) | 행사 신청 건이면 |
+| event_id | UUID (FK → events, ON DELETE SET NULL) | 어느 행사 |
+| status | TEXT | 'sent' / 'failed' |
+| solapi_message_id | TEXT | 솔라피 응답 messageId |
+| error | TEXT | 실패 사유 |
+| variables | JSONB | 발송에 쓴 치환 변수 스냅샷 |
+| created_at | TIMESTAMPTZ | 발송 시각 |
+
+> 알림톡 1건 보낼 때마다 `sendAlimtalk()`이 1행 기록. "미발송자 = 해당 행사·템플릿(template_code)에 대해 status='sent' 로그가 없는 사람" 으로 일괄 발송 대상 판단. RLS 활성화 + 정책 0개(anon default-deny). 마이그레이션: `2026-05-11_alimtalk_logs.sql`.
 
 ---
 
@@ -283,9 +317,9 @@ ADMIN_PASSWORD=                   # 관리자 로그인 비밀번호
 
 ### 5-7. 세미나 `/seminar` ([app/seminar/page.tsx](app/seminar/page.tsx))
 정적 데이터 (페이지 내 상수 `seminars` 5개):
-- 03(종료) AI툴 클래스 — 정원 80, 활동: 자료 서치 / 논문 파악 / PPT 제작 / 보고서 제작
-- 04(종료) 시험공부용 AI — 참가 40명, 활동: 수업 녹음 / 시험 키워드 분석 / 시험 문제 제작 / 벼락치기 요약본
-- 05(모집 중) 일상 자동화 시스템
+- 03(종료) AI 시대 대학생으로 살아남기 — 정원 80, 활동: 자료 서치 / 논문 파악 / PPT 제작 / 보고서 제작
+- 04(종료) 중간고사 집중 대비 — AI로 완성하는 가성비 벼락치기 클래스 — 참가 40명, 활동: 수업 녹음 / 시험 키워드 분석 / 시험 문제 제작 / 벼락치기 요약본
+- 05(모집 중) 클로드 AI 실전 클래스
 - 06/07 (예정)
 카드별: 월 박스 + 상태 배지 + 제목 + 설명 + 메타 + 태그 + 조건부 사전신청 버튼 (모집중일 때만 → /event-reg).
 종료 카드는 opacity-75 + 회색 월 박스로 시각적 구분.
@@ -297,8 +331,8 @@ robots: noindex.
 
 ### 5-8. 아카이브 `/archive` ([app/archive/page.tsx](app/archive/page.tsx))
 정적 데이터 (`events: ArchiveEvent[]`, 현재 2건):
-- **2026-04-11 중간고사 집중 대비 시험공부용 AI** (참가자 40명, 충남대) — 활동: 수업 녹음 / 시험 키워드 분석 / 시험 문제 제작 / 벼락치기 요약본. 사진 2장 (`/archive/0411-1.jpeg`, `/archive/0411-2.jpeg`).
-- **2026-03-28 AI툴 클래스** (참가자 80명+, 충남대) — 활동: 자료 서치 / 논문 파악 / PPT 제작 / 보고서 제작 / 팀 실습. 사진 2장 (`/archive/0328-1.JPG`, `/archive/0328-2.JPG`).
+- **2026-04-11 AI로 완성하는 가성비 벼락치기 클래스** (참가자 40명, 충남대) — 활동: 수업 녹음 / 시험 키워드 분석 / 시험 문제 제작 / 벼락치기 요약본. 사진 2장 (`/archive/0411-1.jpeg`, `/archive/0411-2.jpeg`).
+- **2026-03-28 AI 시대 대학생으로 살아남기** (참가자 80명+, 충남대) — 활동: 자료 서치 / 논문 파악 / PPT 제작 / 보고서 제작 / 팀 실습. 사진 2장 (`/archive/0328-1.JPG`, `/archive/0328-2.JPG`).
 
 각 카드: 사진 그리드(있을 때만, hover scale-105) + 태그 + 제목 + 메타(날짜·장소·참여자) + 설명 + highlights 박스들.
 하단: 보라색 안내 박스("더 많은 이야기가 쌓이고 있어요").
@@ -346,7 +380,11 @@ robots: noindex.
 
 **상단 컨트롤**:
 - 행사 선택 드롭다운 (`/api/admin/events`, activeEventId 기본값)
+- 새로고침 버튼
+- **설정 버튼** (실제 행사 선택 시에만 노출, 'crew-all' 모드 제외) → `EventAlimtalkSettings` 모달: 탭 A "행사 정보"(장소·입장시간·준비물·당일진행·채팅방링크 입력·저장 `/api/admin/event-settings`) / 탭 B "알림톡 발송"(참석확정 2번 미발송자 일괄발송 / D-1 공지 4번 발송 / 일정·장소 변경 8번 발송 — 모두 `window.confirm` 후 `/api/admin/send-alimtalk-batch`)
 - 로그아웃 버튼
+
+> 보증금 뱃지 "미입금→입금" 클릭 시 `window.confirm`("참석 확정 알림톡 발송됩니다") → `toggle-deposit`이 행사 정보가 다 채워졌으면 2번 발송, 아니면 보류 안내 토스트. 노쇼확정 처리 시 `window.confirm`("노쇼 경고 알림톡 발송됩니다") → `update-status`가 크루면 noshow_count +1 후 9번(노쇼 경고) 발송, 누적 2회면 10번(자격 박탈)도 발송.
 
 **5개 탭**:
 
@@ -409,9 +447,9 @@ AI 보고서 영역:
 ### 공개 API
 | 메서드 | 경로 | 기능 |
 |--------|------|------|
-| POST | `/api/apply` | 크루 지원 (게스트→크루 마이그레이션 포함) |
-| POST | `/api/event-reg` | 행사 사전 신청 (mode: crew/guest) |
-| POST | `/api/checkin` | 현장 출석 (walkin true/false) |
+| POST | `/api/apply` | 크루 지원 (게스트→크루 마이그레이션 포함) → 3번(크루원 합류 확정) 알림톡 |
+| POST | `/api/event-reg` | 행사 사전 신청 (mode: crew/guest) → 게스트는 1번(신청 접수), 크루는 행사정보 ready면 2번(참석 확정) 알림톡 |
+| POST | `/api/checkin` | 현장 출석 (walkin true/false) → 팀 있으면 6번, 없으면 7번 알림톡 |
 | POST | `/api/feedback` | 익명 피드백 |
 | POST | `/api/admin/login` | 관리자 로그인 |
 | POST | `/api/admin/logout` | 관리자 로그아웃 |
@@ -438,10 +476,29 @@ AI 보고서 영역:
 | POST | `/api/admin/reset-teams` | 팀 배정 초기화 |
 | POST | `/api/admin/delete-member` | 멤버/등록 삭제 |
 | POST | `/api/admin/toggle-podo` | 포도 상태 토글 |
-| POST | `/api/admin/update-status` | 출석 상태 변경 |
+| POST | `/api/admin/update-status` | 출석 상태 변경. 노쇼확정 전환 시(크루) noshow_count +1 → 9번 알림톡, 누적 2회면 10번도. 노쇼확정 해제 시 -1 |
 | GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
-| POST | `/api/admin/toggle-deposit` | 게스트 보증금 상태 사이클 (미입금 → 입금 → 환불 → 미입금). 서버가 현재 deposit_status를 읽어 다음 값으로 update. 라우트 이름은 호환 유지(라우트 파일은 그대로지만 동작은 cycle) |
+| POST | `/api/admin/toggle-deposit` | 게스트 보증금 상태 사이클 (미입금 → 입금 → 환불 → 미입금). 미입금→입금 시 행사정보가 다 채워졌으면 2번(참석 확정) 알림톡 발송, 아니면 `alimtalk.pendingEventSettings` 응답 |
 | POST | `/api/admin/update-refund-account` | 게스트 환불 계좌(event_registrations.refund_account) 직접 입력·수정 |
+| GET / POST | `/api/admin/event-settings` | 행사 정보(location/entry_time/materials/program_detail/kakao_chat_url) 조회·저장 + 알림톡 미발송자 카운트(confirm/d1) |
+| POST | `/api/admin/send-alimtalk-batch` | 일괄 발송. `template`: 'confirm'(2번, confirmReady 필수, 미발송자만) / 'd1'(4번, 미발송자만) / 'change'(8번, oldDate·oldLocation·newDate·newLocation 필요, 중복체크 없음) |
+
+### 카카오 알림톡 템플릿 (솔라피) — `lib/solapi.ts`의 `ALIMTALK` 맵
+
+| # | 키 | 템플릿 코드 | 변수 | 발송 시점 |
+|---|-----|------------|------|----------|
+| 1 | EVENT_REG_RECEIVED | `Rp3JMecpqY` | 이름·프로그램명·일시·장소 | `/api/event-reg` mode=guest 즉시 (장소 비면 "추후 안내") |
+| 2 | EVENT_CONFIRMED | `Hr1xGhUEdc` | 이름·프로그램명·일시·입장시간·장소·준비물·진행내용 + 버튼 오픈채팅URL | `/api/event-reg` mode=crew (행사정보 ready 시) / `toggle-deposit` 미입금→입금 (게스트, ready 시) / `send-alimtalk-batch` template=confirm |
+| 3 | CREW_CONFIRMED | `Yg6oevWar5` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
+| 4 | EVENT_D1_NOTICE | `6fdsTZv1SP` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 오픈채팅URL | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
+| 5 | REG_CANCELLED | `g2N37purw7` | 이름·프로그램명 | **미연결** (자동 취소 cron 없음) |
+| 6 | CHECKIN_WITH_TEAM | `knpWVMYZII` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
+| 7 | CHECKIN_NO_TEAM | `1WwJJnwDbx` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
+| 8 | EVENT_CHANGED | `DfXtaxXo5L` | 이름·프로그램명·기존일시·기존장소·변경일시·변경장소 | `send-alimtalk-batch` template=change (어드민 입력값, 중복체크 없음) |
+| 9 | NOSHOW_WARNING | `4bqcnsJSpx` | 이름·프로그램명 | `update-status` → 노쇼확정 전환 (크루만) |
+| 10 | CREW_REVOKED | `hoP2CmMrN3` | 이름 | `update-status` → 노쇼확정 후 noshow_count≥2 (크루만) |
+
+> 변수명은 한글 `#{이름}` 등 그대로 (검수 등록 형식). `sendAlimtalk()`은 빈 변수값을 공백 한 칸으로 방어. 모든 발송은 `alimtalk_logs`에 기록.
 
 ---
 
@@ -461,9 +518,10 @@ AI 보고서 영역:
 - **[lib/supabase-browser.ts](lib/supabase-browser.ts)**: anon 키. **현재 import 0건** (클라이언트는 모두 fetch로 우리 API 라우트 경유). 향후 클라이언트가 DB 직접 접근하려 하면 RLS 정책부터 추가 후 사용.
 - **[lib/get-active-event.ts](lib/get-active-event.ts)**: `getActiveEventId()` — 활성 행사 결정 로직. 2026-05-01부터 과거 행사 fallback은 **PAST_FALLBACK_DAYS=7일 이내**일 때만 동작. 그 이상 지난 후 다음 행사 row가 없으면 `null` 반환 → API들이 "현재 활성 행사를 찾을 수 없습니다" 안내. 운영진의 다음 달 events row 등록 누락 시 사용자가 지난 행사로 잘못 신청되는 사고 방지 목적.
 - **[lib/getLatestEventId.ts](lib/getLatestEventId.ts)**: created_at 기준 최신 행사 ID.
+- **[lib/solapi.ts](lib/solapi.ts)** (2026-05-11): 카카오 알림톡(솔라피) 헬퍼. `ALIMTALK` 템플릿 코드 맵(10종) / `sendAlimtalk(template, phone, variables, target)` — 솔라피 v4 REST 직접 호출(Node `crypto`로 HMAC-SHA256 서명, npm 패키지 미사용) + `alimtalk_logs` 기록 / `alreadySent()` / `loadEventRow()` / `formatEventDateKo()`(Asia/Seoul) / `eventConfirmReady()` / `varsEventRegReceived`·`varsEventConfirmed`·`varsEventD1Notice`·`varsCheckinWithTeam`·`varsCheckinNoTeam`. **환경변수(SOLAPI_*) 4개 미설정 시 발송 skip** — 사이트 동작 안 막음.
 
-**RLS** (2026-04-26 잠금 적용):
-- 6개 테이블 (`crew_members`, `events`, `event_registrations`, `guests`, `feedbacks`, `reports`) 모두 RLS 활성화 + **정책 0개 = anon default-deny**.
+**RLS** (2026-04-26 잠금 적용, 2026-05-11 alimtalk_logs 추가):
+- 7개 테이블 (`crew_members`, `events`, `event_registrations`, `guests`, `feedbacks`, `reports`, `alimtalk_logs`) 모두 RLS 활성화 + **정책 0개 = anon default-deny**.
 - `anon` / `public` 역할로 직접 Supabase REST에 붙으면 **모든 read/insert/update/delete 차단**.
 - `service_role` 키는 RLS를 우회하므로 우리 Next.js API(`createAdminClient()`)는 정상 작동.
 - 결과적으로 "외부 anon key 직접 접근 = 0건" / "어드민 페이지 통한 접근 = 정상".
@@ -523,6 +581,7 @@ AI 보고서 영역:
 
 ### 대시보드 전용
 - `StatCard`, `SchoolChart`, `GradeChart`, `PathChart`, `DateChart`, `FunnelChart`, `FeedbackRadar`, `FeedbackTagChart`, `MembersTable`
+- **[EventAlimtalkSettings](components/dashboard/EventAlimtalkSettings.tsx)** (2026-05-11) — 대시보드 "설정" 버튼이 여는 모달. props: `isOpen`/`onClose`/`eventId`. 탭 A "행사 정보"(5개 필드 입력·저장), 탭 B "알림톡 발송"(참석확정 2번 일괄발송·D-1 4번 발송·일정변경 8번 발송, 각 `window.confirm` 후 실행). `crew-all` 모드에선 렌더 안 함.
 
 ### 기타
 - `Modal` / `ConfirmModal`
@@ -572,6 +631,12 @@ AI 보고서 영역:
 
 | 항목 | 상태 | 비고 |
 |------|------|------|
+| 카카오 알림톡 검수 | 진행 중 | 솔라피 비즈센터에 템플릿 10종 등록, 카카오 검수 통과 후에야 실제 발송. 통과 전엔 `SOLAPI_*` 미설정 = 발송 skip |
+| 알림톡 발신 환경변수 | 미설정 추정 | `SOLAPI_API_KEY`/`SOLAPI_API_SECRET`/`SOLAPI_PFID`/`SOLAPI_SENDER_PHONE`를 `.env.local` + Vercel에 넣어야 발송됨 |
+| 알림톡 D-1 공지(4번) 자동 발송 | 수동 | cron 없음 → 어드민 "설정" → "알림톡 발송" 탭의 "행사 전 공지 발송" 버튼으로 수동. cron(Vercel Cron 등) 도입 시 자동화 |
+| 알림톡 신청 취소 확인(5번 `g2N37purw7`) | 미연결 | 템플릿은 등록됨. "신청 후 3일 미입금 자동 취소" 로직(cron) 자체가 없어서 발송 트리거 미구현. delete-member에도 미연결(템플릿 문구가 자동취소 시나리오 전용이라) |
+| 알림톡 게스트 환불 완료 통지 | 없음 | 별도 템플릿 안 만듦(확정 문자에 "참석 후 환불" 문구로 갈음). 입금→환불 토글 시 알림톡 발송 안 함 |
+| 알림톡 14번 게스트→크루 합류 권유 | 없음 | 광고성이라 알림톡 검수 불가 → 친구톡 필요. 미구현(피드백 완료 화면에 /apply 버튼은 이미 있음) |
 | 보증금 자동 입금 확인 | 수동 | 운영진이 통장 보고 어드민에서 토글. 자동 매칭(은행 API 등) 미구현 |
 | 다음 달 events row 사전 등록 운영 루틴 | 수동 | getActiveEventId가 7일 fallback 후 null → 행사 7일 이상 후 다음 행사 row 없으면 사용자 신청 차단됨. 매월 행사 종료 직후 다음 행사 row 미리 만들어야 함 |
 | 홈 애니메이션/풍부함 부족 | 2026-04-25 보완 | fadeInUp + Reveal 스크롤 + blob drift + card-lift 적용 |

@@ -7,6 +7,7 @@ import {
   PieChart, Pie, Cell, Legend, LabelList,
 } from 'recharts'
 import { showToast } from '@/components/Toast'
+import { EventAlimtalkSettings } from '@/components/dashboard/EventAlimtalkSettings'
 
 // ───────────── Types ─────────────
 type Tab = 'checkin' | 'team' | 'analysis' | 'members' | 'deposit'
@@ -397,6 +398,7 @@ export default function AdminDashboardPage() {
   // Event selector
   const [events, setEvents] = useState<EventItem[]>([])
   const [selectedEventId, setSelectedEventId] = useState<string>('')
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   // Deposit tab
   const [depositSearch, setDepositSearch] = useState('')
@@ -625,6 +627,15 @@ export default function AdminDashboardPage() {
   }
 
   const handleCycleDeposit = async (registration_id: string) => {
+    // 현재 상태가 '미입금'이면 다음은 '입금' = 게스트에게 참석 확정 알림톡 발송 → 사고 방지용 확인
+    const allAttendees = [
+      ...(data?.unassigned ?? []), ...(data?.not_arrived ?? []), ...(data?.noshow ?? []),
+      ...Object.values(data?.assigned ?? {}).flat(),
+    ]
+    const curDeposit = (allAttendees.find((a) => a.registration_id === registration_id)?.deposit_status ?? '미입금') as DepositStatus
+    if (curDeposit === '미입금') {
+      if (!window.confirm('보증금을 입금 처리합니다.\n해당 게스트에게 참석 확정 알림톡이 발송됩니다.\n계속할까요?')) return
+    }
     const NEXT: Record<DepositStatus, DepositStatus> = { '미입금': '입금', '입금': '환불', '환불': '미입금' }
     let nextStatus: DepositStatus = '입금'
     setData((prev) => {
@@ -654,6 +665,13 @@ export default function AdminDashboardPage() {
       if (!res.ok) {
         showToast('보증금 상태 변경 실패', 'error')
         await fetchAll()
+      } else {
+        const d = await res.json().catch(() => ({} as { alimtalk?: { sent?: boolean; pendingEventSettings?: boolean } }))
+        if (d?.alimtalk?.pendingEventSettings) {
+          showToast('입금 처리됨 · 행사 정보가 비어 있어 확정 알림톡은 보류 (설정 → 발송 탭에서 일괄 발송)', 'success')
+        } else if (d?.alimtalk?.sent) {
+          showToast('입금 처리됨 · 참석 확정 알림톡 발송됨', 'success')
+        }
       }
     } catch {
       showToast('오류 발생', 'error')
@@ -695,6 +713,9 @@ export default function AdminDashboardPage() {
   }
 
   const handleUpdateStatus = async (registration_id: string, newStatus: string) => {
+    if (newStatus === '노쇼확정') {
+      if (!window.confirm('노쇼확정 처리합니다.\n해당 인원이 크루라면 노쇼 경고 알림톡이 발송됩니다.\n계속할까요?')) return
+    }
     try {
       const res = await fetch('/api/admin/update-status', {
         method: 'POST',
@@ -702,7 +723,14 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ registration_id, status: newStatus }),
       })
       if (res.ok) {
-        showToast(newStatus === '출석완료' ? '출석 처리됨' : newStatus === '노쇼확정' ? '노쇼 확정됨' : '미출석으로 변경됨', 'success')
+        const d = await res.json().catch(() => ({} as { alimtalk?: { noshowWarned?: boolean; revoked?: boolean } }))
+        if (newStatus === '노쇼확정') {
+          if (d?.alimtalk?.revoked) showToast('노쇼확정 · 누적 2회 → 크루 자격 박탈 알림톡 발송됨', 'success')
+          else if (d?.alimtalk?.noshowWarned) showToast('노쇼확정 · 노쇼 경고 알림톡 발송됨', 'success')
+          else showToast('노쇼 확정됨', 'success')
+        } else {
+          showToast(newStatus === '출석완료' ? '출석 처리됨' : '미출석으로 변경됨', 'success')
+        }
         await fetchAll()
       } else {
         const d = await res.json()
@@ -1954,6 +1982,11 @@ export default function AdminDashboardPage() {
           <button onClick={() => fetchAll()} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
             새로고침
           </button>
+          {!isCrewMode && selectedEventId && (
+            <button onClick={() => setSettingsOpen(true)} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
+              설정
+            </button>
+          )}
           <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); router.push('/admin') }}
             className="hidden md:block text-sky-200 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
             로그아웃
@@ -2008,6 +2041,10 @@ export default function AdminDashboardPage() {
           ))}
         </div>
       </div>
+
+      {!isCrewMode && selectedEventId && (
+        <EventAlimtalkSettings isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} eventId={selectedEventId} />
+      )}
     </div>
   )
 }

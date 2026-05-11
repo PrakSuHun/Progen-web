@@ -89,7 +89,7 @@ export function HeroSection() {
               delay="0s"
               color="from-sky-500 to-blue-500"
               label="3월 종료"
-              title="AI툴 클래스"
+              title="AI 시대 살아남기"
               sub="80명 참가"
               tags={['논문 파악', 'PPT 제작']}
               tilt="-3deg"
@@ -100,7 +100,7 @@ export function HeroSection() {
               delay="-1.5s"
               color="from-sky-500 to-sky-400"
               label="4월 종료"
-              title="시험공부용 AI"
+              title="가성비 벼락치기"
               sub="40명 참가"
               tags={['수업 녹음', '벼락치기 요약']}
               tilt="2deg"
@@ -111,7 +111,7 @@ export function HeroSection() {
               delay="-3s"
               color="from-sky-500 to-cyan-400"
               label="5월 모집중"
-              title="일상 자동화"
+              title="클로드 AI 클래스"
               sub="5/16(토) · 사전 신청 OPEN"
               tags={['자동 알림', '노코드']}
               tilt="3deg"

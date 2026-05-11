@@ -3,7 +3,7 @@ import { Reveal } from '@/components/Reveal'
 const months = [
   {
     month: '03',
-    title: 'AI툴 클래스',
+    title: 'AI 시대 대학생으로 살아남기',
     headline: '대학생 실전 활용',
     desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
     highlight: '종료 · 80명 참가, 13개 대학교',
@@ -11,7 +11,7 @@ const months = [
   },
   {
     month: '04',
-    title: '시험공부용 AI',
+    title: 'AI로 완성하는 가성비 벼락치기 클래스',
     headline: '중간고사 집중 대비',
     desc: 'AI로 시험 범위를 요약·정리하고 예상 문제를 추출합니다. 시험 공부 시간을 절반으로 단축시켜 드립니다.',
     highlight: '종료 · 40명 참가, 중간고사 즉시 적용',
@@ -19,7 +19,7 @@ const months = [
   },
   {
     month: '05',
-    title: '일상 자동화 시스템',
+    title: '클로드 AI 실전 클래스',
     headline: '시간을 돌려받는',
     desc: '장학금·공모전·채용 정보 키워드 자동 알림 시스템을 구축하고, 수업 녹음본 하나로 요약·문제출제를 끝냅니다.',
     highlight: '반복 작업에 쓰던 시간을 통째로 돌려받으세요',

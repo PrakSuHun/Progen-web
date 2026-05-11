@@ -25,7 +25,7 @@ type ArchiveEvent = {
 
 const events: ArchiveEvent[] = [
   {
-    title: 'PROGEN 1기 — 중간고사 집중 대비 시험공부용 AI',
+    title: 'PROGEN 1기 — AI로 완성하는 가성비 벼락치기 클래스',
     date: '2026. 4. 11',
     location: '충남대학교',
     participants: 40,
@@ -35,7 +35,7 @@ const events: ArchiveEvent[] = [
     photos: ['/archive/0411-1.jpeg', '/archive/0411-2.jpeg'],
   },
   {
-    title: 'PROGEN 1기 — AI툴 클래스',
+    title: 'PROGEN 1기 — AI 시대 대학생으로 살아남기',
     date: '2026. 3. 28',
     location: '충남대학교',
     participants: 80,

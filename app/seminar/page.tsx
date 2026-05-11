@@ -15,21 +15,21 @@ export const metadata: Metadata = {
 const seminars = [
   {
     status: '종료', statusColor: 'bg-[#eee] text-[#888]',
-    month: '03', title: 'AI툴 클래스 — 대학생 실전 활용',
+    month: '03', title: 'AI 시대 대학생으로 살아남기',
     date: '2026. 3. 28 (금)', speaker: '대표 박수훈', capacity: 80,
     tags: ['자료 서치', '논문 파악', 'PPT 제작', '보고서 제작'],
     desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치부터 논문 파악, PPT 제작, 보고서 제작까지 직접 실습으로 익혀 갑니다.',
   },
   {
     status: '종료', statusColor: 'bg-[#eee] text-[#888]',
-    month: '04', title: '중간고사 집중 대비 — 시험공부용 AI',
+    month: '04', title: '중간고사 집중 대비 — AI로 완성하는 가성비 벼락치기 클래스',
     date: '2026. 4. 11 (금)', speaker: 'PROGEN 테크팀', capacity: 40,
     tags: ['수업 녹음', '시험 키워드 분석', '시험 문제 제작', '벼락치기 요약본'],
     desc: '수업 녹음본 하나로 시험 끝. 녹음에서 핵심 키워드 자동 분석 → 예상 시험 문제 자동 생성 → 벼락치기용 요약본까지 한 번에 만들어 드렸습니다.',
   },
   {
     status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
-    month: '05', title: '시간을 돌려받는 — 일상 자동화 시스템',
+    month: '05', title: '시간을 돌려받는 — 클로드 AI 실전 클래스',
     date: '2026. 5. 16 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['자동 알림', '녹음 → 요약', '노코드'],
     desc: '장학금·공모전·채용 정보 키워드 자동 알림, 수업 녹음본 자동 텍스트화·요약·문제출제.',

@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import { ALIMTALK, sendAlimtalk } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -94,6 +95,13 @@ export async function POST(request: NextRequest) {
           .from('feedbacks')
           .update({ crew_id: newCrew.id, guest_id: null })
           .eq('guest_id', existingGuest.id)
+      }
+
+      // 알림톡 3번: 크루원 합류 확정 (즉시)
+      try {
+        await sendAlimtalk(ALIMTALK.CREW_CONFIRMED, phone, { '#{이름}': name }, { crewId: newCrew.id })
+      } catch (e) {
+        console.error('apply alimtalk send failed:', e)
       }
     }
 

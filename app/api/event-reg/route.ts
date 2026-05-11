@@ -1,5 +1,9 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import {
+  ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady,
+  varsEventRegReceived, varsEventConfirmed,
+} from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -123,6 +127,25 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       throw error
+    }
+
+    // 알림톡: 게스트 → 1번 신청 접수 / 크루 → 행사 정보가 다 채워졌으면 2번 참석 확정 (아니면 보류)
+    const registrationId: string | null = data?.[0]?.id ?? null
+    try {
+      const ev = await loadEventRow(eventId)
+      if (ev) {
+        if (mode === 'guest') {
+          await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
+            guestId, registrationId, eventId,
+          })
+        } else if (mode === 'crew' && eventConfirmReady(ev)) {
+          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED, phone, varsEventConfirmed(ev, name), {
+            crewId, registrationId, eventId,
+          })
+        }
+      }
+    } catch (e) {
+      console.error('event-reg alimtalk send failed:', e)
     }
 
     return NextResponse.json({
