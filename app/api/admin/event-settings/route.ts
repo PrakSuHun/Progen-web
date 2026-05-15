@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
   const { data: regs } = await supabase
     .from('event_registrations')
-    .select('id, crew_id, guest_id, status, deposit_status')
+    .select('id, crew_id, guest_id, status, deposit_status, crew_members(name), guests(name)')
     .eq('event_id', eventId)
 
   const { data: logs } = await supabase
@@ -52,12 +52,39 @@ export async function GET(request: NextRequest) {
     .eq('status', 'sent')
 
   const sentSet = new Set((logs ?? []).map((l) => `${l.template_code}::${l.registration_id}`))
-  const list = regs ?? []
+
+  type Row = {
+    id: string
+    crew_id: number | null
+    guest_id: string | null
+    status: string | null
+    deposit_status: string | null
+    crew_members: { name: string | null } | null
+    guests: { name: string | null } | null
+  }
+  const list = (regs ?? []) as unknown as Row[]
+  const nameOf = (r: Row) => (r.crew_id != null ? r.crew_members?.name : r.guests?.name) || '이름없음'
+  const typeOf = (r: Row): 'crew' | 'guest' => (r.crew_id != null ? 'crew' : 'guest')
+  // confirm은 크루(EVENT_CONFIRMED_CREW)/게스트(EVENT_CONFIRMED) 템플릿이 분리돼서 각각 체크
+  const confirmCodeOf = (r: Row) => (r.crew_id != null ? ALIMTALK.EVENT_CONFIRMED_CREW.code : ALIMTALK.EVENT_CONFIRMED.code)
 
   const confirmEligible = list.filter(eligibleForConfirm)
-  const confirmSent = confirmEligible.filter((r) => sentSet.has(`${ALIMTALK.EVENT_CONFIRMED.code}::${r.id}`)).length
+  const confirmRecipients = confirmEligible.map((r) => ({
+    id: r.id,
+    name: nameOf(r),
+    type: typeOf(r),
+    sent: sentSet.has(`${confirmCodeOf(r)}::${r.id}`),
+  }))
+  const confirmSent = confirmRecipients.filter((r) => r.sent).length
+
   const d1Eligible = list.filter(eligibleForD1)
-  const d1Sent = d1Eligible.filter((r) => sentSet.has(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`)).length
+  const d1Recipients = d1Eligible.map((r) => ({
+    id: r.id,
+    name: nameOf(r),
+    type: typeOf(r),
+    sent: sentSet.has(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`),
+  }))
+  const d1Sent = d1Recipients.filter((r) => r.sent).length
 
   return NextResponse.json({
     event: { id: ev.id, title: ev.title, event_date: ev.event_date },
@@ -72,6 +99,10 @@ export async function GET(request: NextRequest) {
     pending: {
       confirm: { total: confirmEligible.length, sent: confirmSent, pending: confirmEligible.length - confirmSent },
       d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent },
+    },
+    recipients: {
+      confirm: confirmRecipients,
+      d1: d1Recipients,
     },
   })
 }

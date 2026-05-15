@@ -10,7 +10,10 @@ const SOLAPI_SEND_URL = 'https://api.solapi.com/messages/v4/send'
  */
 export const ALIMTALK = {
   EVENT_REG_RECEIVED: { code: 'KA01TP26051106373464071STWgjtSAK', name: '행사 신청 접수' },      // 1
-  EVENT_CONFIRMED:    { code: 'KA01TP260511064819169WuinqHjdJcx', name: '행사 참석 확정' },      // 2
+  // 2 참석 확정 — 게스트용(보증금 환불 안내 포함)
+  EVENT_CONFIRMED:    { code: 'KA01TP260511064819169WuinqHjdJcx', name: '행사 참석 확정 (게스트)' },
+  // 2 참석 확정 — 크루용(보증금 문구 없음). 같은 변수 셋 사용
+  EVENT_CONFIRMED_CREW: { code: 'KA01TP260512222214758QYG80poi9FS', name: '행사 참석 확정 (크루)' },
   CREW_CONFIRMED:     { code: 'KA01TP260511070701744h8gIXOphWEW', name: '크루원 신청 접수' },    // 3
   EVENT_D1_NOTICE:    { code: 'KA01TP260511071006653FkF3Kf1v8lW', name: '행사 전 공지' },        // 4
   REG_CANCELLED:      { code: 'KA01TP260511072253259HLsKXmMYVoG', name: '신청 취소 확인' },      // 5

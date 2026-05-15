@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
             guestId, registrationId, eventId,
           })
         } else if (mode === 'crew' && eventConfirmReady(ev)) {
-          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED, phone, varsEventConfirmed(ev, name), {
+          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, phone, varsEventConfirmed(ev, name), {
             crewId, registrationId, eventId,
           })
         }

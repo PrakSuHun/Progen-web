@@ -40,13 +40,20 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { eventId, template } = body as { eventId?: string; template?: string }
+    const { eventId, template, registrationIds } = body as {
+      eventId?: string
+      template?: string
+      registrationIds?: string[]
+    }
     if (!eventId || !template) {
       return NextResponse.json({ message: 'eventId와 template이 필요합니다' }, { status: 400 })
     }
     if (!['confirm', 'd1', 'change'].includes(template)) {
       return NextResponse.json({ message: '알 수 없는 template' }, { status: 400 })
     }
+    const idFilter = Array.isArray(registrationIds) && registrationIds.length > 0
+      ? new Set(registrationIds)
+      : null
 
     const supabase = createAdminClient()
     const ev = await loadEventRow(eventId)
@@ -75,6 +82,10 @@ export async function POST(request: NextRequest) {
       // d1 / change: 노쇼확정 제외 전원
       targets = regs.filter((r) => r.status !== '노쇼확정')
     }
+    // 운영진이 명단에서 일부만 선택한 경우: registration id로 추가 필터
+    if (idFilter) {
+      targets = targets.filter((r) => idFilter.has(r.id))
+    }
 
     // change(8번)는 운영진 입력값 필요
     let changeVars: { oldDate: string; oldLocation: string; newDate: string; newLocation: string } | null = null
@@ -86,7 +97,8 @@ export async function POST(request: NextRequest) {
       changeVars = { oldDate: String(oldDate), oldLocation: String(oldLocation), newDate: String(newDate), newLocation: String(newLocation) }
     }
 
-    const tpl = template === 'confirm' ? ALIMTALK.EVENT_CONFIRMED : template === 'd1' ? ALIMTALK.EVENT_D1_NOTICE : ALIMTALK.EVENT_CHANGED
+    // confirm은 크루/게스트별로 다른 템플릿. d1·change는 단일.
+    const fixedTpl = template === 'd1' ? ALIMTALK.EVENT_D1_NOTICE : template === 'change' ? ALIMTALK.EVENT_CHANGED : null
     // change(8번)는 행사가 바뀔 때마다 재발송 가능하도록 중복 체크 안 함. confirm/d1는 미발송자만.
     const dedup = template !== 'change'
 
@@ -97,6 +109,8 @@ export async function POST(request: NextRequest) {
       targets.map(async (r) => {
         const p = personOf(r)
         if (!p) { skipped++; return }
+
+        const tpl = fixedTpl ?? (p.crewId != null ? ALIMTALK.EVENT_CONFIRMED_CREW : ALIMTALK.EVENT_CONFIRMED)
         if (dedup && (await alreadySent(tpl.code, { registrationId: r.id }))) { alreadyDone++; return }
 
         let variables: Record<string, string>

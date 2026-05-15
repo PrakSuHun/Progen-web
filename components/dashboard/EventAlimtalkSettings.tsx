@@ -22,6 +22,18 @@ interface PendingInfo {
   d1: { total: number; sent: number; pending: number }
 }
 
+interface Recipient {
+  id: string
+  name: string
+  type: 'crew' | 'guest'
+  sent: boolean
+}
+
+interface RecipientsInfo {
+  confirm: Recipient[]
+  d1: Recipient[]
+}
+
 const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '' }
 
 export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
@@ -32,6 +44,9 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [eventTitle, setEventTitle] = useState('')
   const [confirmReady, setConfirmReady] = useState(false)
   const [pending, setPending] = useState<PendingInfo | null>(null)
+  const [recipients, setRecipients] = useState<RecipientsInfo | null>(null)
+  const [selectedConfirm, setSelectedConfirm] = useState<Set<string>>(new Set())
+  const [selectedD1, setSelectedD1] = useState<Set<string>>(new Set())
   const [sendingKey, setSendingKey] = useState<string | null>(null)
 
   // 일정/장소 변경 입력
@@ -48,6 +63,16 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
         setEventTitle(d.event?.title ?? '')
         setConfirmReady(!!d.confirmReady)
         setPending(d.pending ?? null)
+        const recs: RecipientsInfo | null = d.recipients ?? null
+        setRecipients(recs)
+        // 미발송자 기본 전체 선택
+        if (recs) {
+          setSelectedConfirm(new Set(recs.confirm.filter((r) => !r.sent).map((r) => r.id)))
+          setSelectedD1(new Set(recs.d1.filter((r) => !r.sent).map((r) => r.id)))
+        } else {
+          setSelectedConfirm(new Set())
+          setSelectedD1(new Set())
+        }
       } else {
         showToast(d.message || '설정을 불러올 수 없습니다', 'error')
       }
@@ -96,7 +121,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
     key: string,
     template: 'confirm' | 'd1' | 'change',
     confirmMsg: string,
-    extra?: Record<string, string>,
+    extra?: Record<string, string | string[]>,
   ) => {
     if (!window.confirm(confirmMsg)) return
     setSendingKey(key)
@@ -211,15 +236,22 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     )}
                   </div>
                   {!confirmReady && <div className="text-xs text-amber-600 mb-2">행사 정보 탭을 먼저 모두 채워주세요.</div>}
+                  <RecipientChecklist
+                    list={recipients?.confirm ?? []}
+                    selected={selectedConfirm}
+                    setSelected={setSelectedConfirm}
+                    emptyText="발송 대상이 없습니다"
+                  />
                   <button
                     onClick={() => runBatch(
                       'confirm', 'confirm',
-                      `미발송 ${pending?.confirm.pending ?? 0}명에게 참석 확정 알림톡을 보냅니다. 계속할까요?`,
+                      `선택한 ${selectedConfirm.size}명에게 참석 확정 알림톡을 보냅니다. 계속할까요?`,
+                      { registrationIds: Array.from(selectedConfirm) },
                     )}
-                    disabled={!confirmReady || sendingKey !== null || !pending || pending.confirm.pending === 0}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
+                    disabled={!confirmReady || sendingKey !== null || selectedConfirm.size === 0}
+                    className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
                   >
-                    {sendingKey === 'confirm' ? '발송 중...' : `미발송 ${pending?.confirm.pending ?? 0}명에게 발송`}
+                    {sendingKey === 'confirm' ? '발송 중...' : `선택한 ${selectedConfirm.size}명에게 발송`}
                   </button>
                 </div>
 
@@ -232,15 +264,22 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       <> 전체 {pending.d1.total}명 / 발송 {pending.d1.sent}명 / <b className="text-slate-700">미발송 {pending.d1.pending}명</b></>
                     )}
                   </div>
+                  <RecipientChecklist
+                    list={recipients?.d1 ?? []}
+                    selected={selectedD1}
+                    setSelected={setSelectedD1}
+                    emptyText="발송 대상이 없습니다"
+                  />
                   <button
                     onClick={() => runBatch(
                       'd1', 'd1',
-                      `미발송 ${pending?.d1.pending ?? 0}명에게 행사 전 공지를 보냅니다. 계속할까요?`,
+                      `선택한 ${selectedD1.size}명에게 행사 전 공지를 보냅니다. 계속할까요?`,
+                      { registrationIds: Array.from(selectedD1) },
                     )}
-                    disabled={sendingKey !== null || !pending || pending.d1.pending === 0}
-                    className="w-full bg-sky-600 hover:bg-sky-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
+                    disabled={sendingKey !== null || selectedD1.size === 0}
+                    className="mt-2 w-full bg-sky-600 hover:bg-sky-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
                   >
-                    {sendingKey === 'd1' ? '발송 중...' : `미발송 ${pending?.d1.pending ?? 0}명에게 발송`}
+                    {sendingKey === 'd1' ? '발송 중...' : `선택한 ${selectedD1.size}명에게 발송`}
                   </button>
                 </div>
 
@@ -273,5 +312,89 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
         </div>
       </div>
     </>
+  )
+}
+
+function RecipientChecklist({
+  list,
+  selected,
+  setSelected,
+  emptyText,
+}: {
+  list: Recipient[]
+  selected: Set<string>
+  setSelected: (s: Set<string>) => void
+  emptyText: string
+}) {
+  const unsent = list.filter((r) => !r.sent)
+  const sentList = list.filter((r) => r.sent)
+  const allChecked = unsent.length > 0 && unsent.every((r) => selected.has(r.id))
+
+  const toggle = (id: string) => {
+    const next = new Set(selected)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    setSelected(next)
+  }
+  const toggleAll = () => {
+    if (allChecked) setSelected(new Set())
+    else setSelected(new Set(unsent.map((r) => r.id)))
+  }
+
+  if (list.length === 0) {
+    return <div className="text-xs text-slate-400 italic py-2">{emptyText}</div>
+  }
+
+  return (
+    <div className="border border-slate-200 rounded-lg bg-slate-50/50">
+      <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-slate-200 bg-white rounded-t-lg">
+        <label className="flex items-center gap-1.5 text-xs font-bold text-slate-600 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={allChecked}
+            onChange={toggleAll}
+            disabled={unsent.length === 0}
+            className="w-3.5 h-3.5 accent-sky-500"
+          />
+          전체 {allChecked ? '해제' : '선택'} ({selected.size}/{unsent.length})
+        </label>
+        {sentList.length > 0 && (
+          <span className="text-[10px] text-slate-400">발송 완료 {sentList.length}명 회색 표시</span>
+        )}
+      </div>
+      <div className="max-h-40 overflow-y-auto px-1 py-1">
+        {unsent.map((r) => (
+          <label
+            key={r.id}
+            className="flex items-center gap-1.5 px-1.5 py-1 rounded hover:bg-white text-xs cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={selected.has(r.id)}
+              onChange={() => toggle(r.id)}
+              className="w-3.5 h-3.5 accent-sky-500"
+            />
+            <span className="text-slate-700 font-medium">{r.name}</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                r.type === 'crew' ? 'bg-violet-100 text-violet-700' : 'bg-amber-100 text-amber-700'
+              }`}
+            >
+              {r.type === 'crew' ? '크루' : '게스트'}
+            </span>
+          </label>
+        ))}
+        {sentList.map((r) => (
+          <div
+            key={r.id}
+            className="flex items-center gap-1.5 px-1.5 py-1 text-xs text-slate-300"
+          >
+            <span className="w-3.5 h-3.5 inline-flex items-center justify-center text-[10px]">✓</span>
+            <span className="line-through">{r.name}</span>
+            <span className="text-[10px]">({r.type === 'crew' ? '크루' : '게스트'})</span>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
