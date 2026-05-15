@@ -68,13 +68,15 @@ export async function GET(request: NextRequest) {
   // confirm은 크루(EVENT_CONFIRMED_CREW)/게스트(EVENT_CONFIRMED) 템플릿이 분리돼서 각각 체크
   const confirmCodeOf = (r: Row) => (r.crew_id != null ? ALIMTALK.EVENT_CONFIRMED_CREW.code : ALIMTALK.EVENT_CONFIRMED.code)
 
+  const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, 'ko')
+
   const confirmEligible = list.filter(eligibleForConfirm)
   const confirmRecipients = confirmEligible.map((r) => ({
     id: r.id,
     name: nameOf(r),
     type: typeOf(r),
     sent: sentSet.has(`${confirmCodeOf(r)}::${r.id}`),
-  }))
+  })).sort(byName)
   const confirmSent = confirmRecipients.filter((r) => r.sent).length
 
   const d1Eligible = list.filter(eligibleForD1)
@@ -83,7 +85,7 @@ export async function GET(request: NextRequest) {
     name: nameOf(r),
     type: typeOf(r),
     sent: sentSet.has(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`),
-  }))
+  })).sort(byName)
   const d1Sent = d1Recipients.filter((r) => r.sent).length
 
   return NextResponse.json({
