@@ -486,6 +486,7 @@ export default function AdminDashboardPage() {
   }
 
   const [membersMode, setMembersMode] = useState<'event' | 'all'>('event')
+  const [addCrewOpen, setAddCrewOpen] = useState(false)
 
   const fetchMembers = async (mode?: 'event' | 'all') => {
     setMembersLoading(true)
@@ -1743,9 +1744,14 @@ export default function AdminDashboardPage() {
             placeholder="이름, 학교 검색..."
             className="hidden md:block bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-52 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
           />
-          <button onClick={() => fetchMembers()} className="ml-auto text-slate-400 hover:text-slate-700 text-xs px-2 md:px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
-            새로고침
-          </button>
+          {membersMode === 'event' && !isCrewMode && selectedEventId && (
+            <button
+              onClick={() => setAddCrewOpen(true)}
+              className="ml-auto bg-sky-500 hover:bg-sky-600 text-white text-xs px-2.5 md:px-3 py-1.5 rounded-xl font-bold transition-colors shadow-sm"
+            >
+              + 크루 추가
+            </button>
+          )}
         </div>
 
         {/* 모바일: 카드형 리스트 (클릭 시 상세 펼침) */}
@@ -2104,6 +2110,149 @@ export default function AdminDashboardPage() {
       {!isCrewMode && selectedEventId && (
         <EventAlimtalkSettings isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} eventId={selectedEventId} />
       )}
+
+      {!isCrewMode && selectedEventId && addCrewOpen && (
+        <AddCrewModal
+          eventId={selectedEventId}
+          existingCrewIds={new Set(members.filter((m: any) => m.is_crew).map((m: any) => m.id))}
+          onClose={() => setAddCrewOpen(false)}
+          onAdded={() => { setAddCrewOpen(false); fetchMembers() }}
+        />
+      )}
     </div>
+  )
+}
+
+function AddCrewModal({
+  eventId,
+  existingCrewIds,
+  onClose,
+  onAdded,
+}: {
+  eventId: string
+  existingCrewIds: Set<string>
+  onClose: () => void
+  onAdded: () => void
+}) {
+  const [loading, setLoading] = useState(true)
+  const [list, setList] = useState<CrewMember[]>([])
+  const [q, setQ] = useState('')
+  const [adding, setAdding] = useState<string | null>(null)
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/admin/members-list?mode=all')
+        const json = await res.json()
+        setList((json.members ?? []) as CrewMember[])
+      } catch {
+        showToast('크루 목록을 불러올 수 없습니다', 'error')
+      } finally {
+        setLoading(false)
+      }
+    })()
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = 'unset' }
+  }, [])
+
+  const available = list
+    .filter((c) => !existingCrewIds.has(c.id))
+    .filter((c) => {
+      if (!q.trim()) return true
+      const s = q.toLowerCase()
+      return (c.name || '').toLowerCase().includes(s)
+        || (c.phone || '').includes(s)
+        || (c.school || '').toLowerCase().includes(s)
+    })
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ko'))
+
+  const addOne = async (c: CrewMember) => {
+    if (!window.confirm(`${c.name}님을 이 행사에 사전신청으로 추가합니다. 행사 정보가 다 채워졌으면 참석 확정 알림톡도 자동 발송됩니다. 계속할까요?`)) return
+    setAdding(c.id)
+    try {
+      const res = await fetch('/api/admin/add-registration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, crewId: c.id }),
+      })
+      const d = await res.json()
+      if (res.ok) {
+        const note = d.alimtalk === 'sent' ? ' (확정 알림톡 발송됨)'
+          : d.alimtalk === 'pending' ? ' (행사 정보 미입력 → 알림톡 보류)'
+          : ''
+        showToast(`${c.name}님 추가 완료${note}`, 'success')
+        onAdded()
+      } else {
+        showToast(d.message || '추가 실패', 'error')
+      }
+    } catch {
+      showToast('추가 중 오류가 발생했습니다', 'error')
+    } finally {
+      setAdding(null)
+    }
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center px-5 py-4 border-b border-slate-200">
+            <div>
+              <h2 className="text-base font-black text-slate-800">크루 추가</h2>
+              <p className="text-xs text-slate-400 mt-0.5">크루 명단에서 직접 사전신청에 추가</p>
+            </div>
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-lg">✕</button>
+          </div>
+
+          <div className="px-5 py-3 border-b border-slate-200 shrink-0">
+            <input
+              autoFocus
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="이름, 연락처, 학교 검색..."
+              className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-sky-400"
+            />
+          </div>
+
+          <div className="overflow-y-auto flex-1 px-2 py-2">
+            {loading ? (
+              <div className="py-10 text-center text-sm text-slate-400">불러오는 중...</div>
+            ) : available.length === 0 ? (
+              <div className="py-10 text-center text-sm text-slate-400">
+                {q ? '검색 결과 없음' : '추가 가능한 크루가 없습니다 (전원 이미 신청됨)'}
+              </div>
+            ) : (
+              available.map((c) => (
+                <div
+                  key={c.id}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-slate-800">{c.name}</span>
+                      {c.is_member && <span className="text-xs">🍇</span>}
+                      <span className="text-[10px] text-slate-400">{c.school} {c.grade}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500">{c.phone}</div>
+                  </div>
+                  <button
+                    onClick={() => addOne(c)}
+                    disabled={adding !== null}
+                    className="bg-sky-500 hover:bg-sky-600 disabled:opacity-40 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition-colors shrink-0"
+                  >
+                    {adding === c.id ? '추가 중...' : '추가'}
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
