@@ -42,7 +42,7 @@ interface DashboardData {
   noshow: Attendee[]
 }
 
-interface EventItem { id: string; title: string; event_date: string }
+interface EventItem { id: string; title: string; event_date: string; auto_checkin_alimtalk?: boolean }
 
 interface CrewMember {
   id: string; name: string; phone: string; school: string; grade: string
@@ -408,6 +408,7 @@ export default function AdminDashboardPage() {
   // Event selector
   const [events, setEvents] = useState<EventItem[]>([])
   const [selectedEventId, setSelectedEventId] = useState<string>('')
+  const [activeEventId, setActiveEventId] = useState<string>('')
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   // Deposit tab
@@ -424,8 +425,9 @@ export default function AdminDashboardPage() {
     fetch('/api/admin/events').then(async (res) => {
       if (res.ok) {
         const json = await res.json()
-        const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date }))
+        const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date, auto_checkin_alimtalk: e.auto_checkin_alimtalk ?? false }))
         setEvents(list)
+        setActiveEventId(json.activeEventId ?? '')
         if (list.length > 0) {
           // 서버에서 내려준 activeEventId(다음 예정 행사)를 기본값으로 사용
           const activeId = json.activeEventId
@@ -740,10 +742,8 @@ export default function AdminDashboardPage() {
     }
   }
 
+  // 상태 변경은 문자 없이 조용히 처리 (사전 불참 통보자도 부담 없이 체크/해제). 문자는 개별 버튼으로 따로.
   const handleUpdateStatus = async (registration_id: string, newStatus: string) => {
-    if (newStatus === '노쇼확정') {
-      if (!window.confirm('노쇼확정 처리합니다.\n해당 인원이 크루라면 노쇼 경고 알림톡이 발송됩니다.\n계속할까요?')) return
-    }
     try {
       const res = await fetch('/api/admin/update-status', {
         method: 'POST',
@@ -751,19 +751,42 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ registration_id, status: newStatus }),
       })
       if (res.ok) {
-        const d = await res.json().catch(() => ({} as { alimtalk?: { noshowWarned?: boolean; revoked?: boolean } }))
-        if (newStatus === '노쇼확정') {
-          if (d?.alimtalk?.revoked) showToast('노쇼확정 · 누적 2회 → 크루 자격 박탈 알림톡 발송됨', 'success')
-          else if (d?.alimtalk?.noshowWarned) showToast('노쇼확정 · 노쇼 경고 알림톡 발송됨', 'success')
-          else showToast('노쇼 확정됨', 'success')
-        } else {
-          showToast(newStatus === '출석완료' ? '출석 처리됨' : '미출석으로 변경됨', 'success')
-        }
+        showToast(newStatus === '출석완료' ? '출석 처리됨' : newStatus === '노쇼확정' ? '노쇼 확정됨' : '미출석으로 변경됨', 'success')
         await fetchAll()
       } else {
         const d = await res.json()
         showToast(d.message || '상태 변경 실패', 'error')
       }
+    } catch { showToast('오류 발생', 'error') }
+  }
+
+  // 개별 문자 수동 발송 — type='checkin'(출석문자 6/7) / 'noshow'(노쇼경고 9·10, 크루 한정)
+  const handleSendIndividual = async (registration_id: string, type: 'checkin' | 'noshow', label: string) => {
+    if (!window.confirm(`${label}을(를) 발송할까요?`)) return
+    try {
+      const res = await fetch('/api/admin/send-individual-alimtalk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registration_id, type }),
+      })
+      const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
+      showToast(d?.message || (res.ok ? '발송 완료' : '발송 실패'), res.ok && d?.sent ? 'success' : 'error')
+    } catch { showToast('발송 중 오류가 발생했습니다', 'error') }
+  }
+
+  // 활성 행사 자동 출석문자 토글 (events.auto_checkin_alimtalk)
+  const handleToggleAutoCheckin = async (eventId: string, enabled: boolean) => {
+    try {
+      const res = await fetch('/api/admin/toggle-auto-checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, enabled }),
+      })
+      const d = await res.json().catch(() => ({} as { message?: string }))
+      if (res.ok) {
+        setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, auto_checkin_alimtalk: enabled } : e)))
+        showToast(d?.message || (enabled ? '자동 출석문자 ON' : '자동 출석문자 OFF'), 'success')
+      } else showToast(d?.message || '변경 실패', 'error')
     } catch { showToast('오류 발생', 'error') }
   }
 
@@ -830,6 +853,10 @@ export default function AdminDashboardPage() {
     const StatusBtn = ({ label, color, onClick }: { label: string; color: string; onClick: () => void }) => (
       <button onClick={onClick} className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-colors ${color}`}>{label}</button>
     )
+
+    // 자동 출석문자 토글 — 현장 체크인(/checkin)은 항상 활성 행사만 처리하므로, 선택 행사가 활성 행사일 때만 의미 있음
+    const isActiveEvent = !isCrewMode && !!selectedEventId && selectedEventId === activeEventId
+    const autoCheckinOn = events.find((e) => e.id === selectedEventId)?.auto_checkin_alimtalk ?? false
 
     return (
       <div className="p-4 md:p-6 overflow-y-auto h-full">
@@ -911,18 +938,35 @@ export default function AdminDashboardPage() {
 
           {/* 출석완료 */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
-            </h3>
+            <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+              <h3 className="text-slate-800 font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
+              </h3>
+              {/* 자동문자 토글 — 활성 행사에서만 노출 (현장 체크인은 활성 행사만 처리) */}
+              {isActiveEvent && (
+                <button
+                  onClick={() => handleToggleAutoCheckin(selectedEventId, !autoCheckinOn)}
+                  title="현장 체크인(/checkin) 시 출석문자(6/7번) 자동 발송 여부"
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors
+                    ${autoCheckinOn ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${autoCheckinOn ? 'bg-white' : 'bg-slate-400'}`} />
+                  자동문자 {autoCheckinOn ? 'ON' : 'OFF'}
+                </button>
+              )}
+            </div>
             <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
               {filteredCheckedIn.length === 0 && (
                 <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '아직 출석자가 없습니다'}</p>
               )}
               {filteredCheckedIn.map((p) => (
-                <div key={p.registration_id} className="flex items-center gap-2">
+                <div key={p.registration_id} className="flex items-center gap-1.5">
                   <div className="flex-1"><PersonCard person={p} showDeposit onCycleDeposit={handleCycleDeposit} /></div>
-                  <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                  <div className="flex flex-col gap-1 shrink-0">
+                    <StatusBtn label="출석문자" color="bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200" onClick={() => handleSendIndividual(p.registration_id, 'checkin', '출석 문자')} />
+                    <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -939,9 +983,15 @@ export default function AdminDashboardPage() {
                 <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '노쇼 확정자 없음'}</p>
               )}
               {filteredNoshow.map((p) => (
-                <div key={p.registration_id} className="flex items-center gap-2">
+                <div key={p.registration_id} className="flex items-center gap-1.5">
                   <div className="flex-1"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
-                  <StatusBtn label="해제" color="bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                  <div className="flex flex-col gap-1 shrink-0">
+                    {/* 노쇼 경고는 크루 한정 (게스트는 보증금 미환불 페널티) */}
+                    {p.is_crew && (
+                      <StatusBtn label="노쇼경고" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleSendIndividual(p.registration_id, 'noshow', '노쇼 경고 알림톡')} />
+                    )}
+                    <StatusBtn label="해제" color="bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
+                  </div>
                 </div>
               ))}
             </div>

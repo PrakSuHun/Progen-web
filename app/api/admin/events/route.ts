@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('events')
-    .select('id, title, event_date, is_mandatory, created_at')
+    .select('id, title, event_date, is_mandatory, created_at, auto_checkin_alimtalk')
     .order('event_date', { ascending: true })
   if (error) return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
   const activeEventId = await getActiveEventId()

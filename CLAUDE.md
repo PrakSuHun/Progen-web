@@ -3,9 +3,9 @@
 > **규칙**: 모든 코드 수정 후에는 반드시 이 문서를 업데이트하고, 다음 작업은 이 문서를 기준으로 시작한다.
 > 사용자가 직접 코드를 수정한 경우에도 변경 내용을 알려주면 즉시 이 문서에 반영한다.
 
-> **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다.
+> **보고서 작성 시**: `docs/report-general-guide.md` (대외 공개용), `docs/report-podo-guide.md` (내부 포도용) 가이드를 먼저 읽고 작성한다. 생성한 보고서 HTML 백업본은 `docs/reports/` 에 `YYYY-MM-DD_행사명_보고서종류.html`(standalone, Pretendard CDN + 인쇄 스타일 내장)로 저장하고, `reports` 테이블에도 INSERT(`mode`: general/podo)해 `/admin/report?id=` 에서 열람·인쇄.
 
-> **마지막 최신화**: 2026-05-15 (① 신청자 탭 새로고침 버튼을 「+ 크루 추가」로 교체(상단 헤더에 새로고침 별도 존재) + 새 라우트 `POST /api/admin/add-registration`(eventId·crewId → event_registrations에 사전신청 INSERT + 행사정보 ready 시 2번 크루용 확정 알림톡 자동 발송) + `app/admin/dashboard/page.tsx`에 `AddCrewModal` 신설(크루 명단 검색·선택·추가, 이미 신청된 크루 제외, 이름 가나다순). 행사 신청자 모드(`membersMode === 'event'`)에서만 노출, crew-all 모드 제외. ② 어드민 "설정" → "알림톡 발송" 탭 미발송자 명단 가나다 정렬(이름 빨리 찾기 위함, `event-settings` GET에서 `localeCompare(name, 'ko')`로 정렬). ③ 어드민 "설정" → "알림톡 발송" 탭에 미발송자 체크박스 명단 추가 — 참석확정(2번)·D-1 공지(4번)에 대해 미발송 대상 명단을 표시하고 운영진이 일부만 골라 발송 가능. `GET /api/admin/event-settings`가 `recipients.confirm/d1` (각 `{id, name, type: 'crew'|'guest', sent}`) 반환 + confirm sent 카운트가 크루용(`EVENT_CONFIRMED_CREW.code`)/게스트용(`EVENT_CONFIRMED.code`) 템플릿 분리되어 정확히 집계되도록 수정. `POST /api/admin/send-alimtalk-batch`에 선택적 `registrationIds: string[]` 필터 옵션 — 있으면 그 ID만, 비우면 기존처럼 미발송자 전원. `components/dashboard/EventAlimtalkSettings.tsx`에 `RecipientChecklist` 추가(미발송자 체크박스, 발송완료자 회색 line-through, 크루/게스트 배지). 일정/장소 변경(8번)은 그대로 전원 발송. 이전 변경: 2026-05-13 참석 확정(2번) 알림톡을 크루용/게스트용 2종으로 분리 — `lib/solapi.ts`의 `ALIMTALK`에 `EVENT_CONFIRMED_CREW`(`KA01TP260512222214758QYG80poi9FS`, 보증금 문구 없음) 신설 + 기존 `EVENT_CONFIRMED`는 게스트 전용으로 라벨 변경. `/api/event-reg` mode=crew는 새 크루용으로, `/api/admin/toggle-deposit`은 그대로 게스트용. `/api/admin/send-alimtalk-batch` template=confirm은 대상이 크루(crew_id 존재)면 크루용, 아니면 게스트용으로 row별 분기 발송. dedup도 template_code 기준이라 자연스럽게 분리됨. → 6번 표 / 이전 변경: 2026-05-11 ① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS/supabase-browser.ts 삭제 + next-mdx-remote·gray-matter 의존성 제거 + 잔존 파일(standalone HTML, 크루명단 xlsx) 삭제. ⑥ 알림톡 `#{프로그램명}` 변수를 `lib/solapi.ts`의 `programLabel()`로 낫표(`「행사명」`)로 감싸 행사명 강조 — solapi.ts의 `vars*` 5종 + send-cancel-alimtalk/update-status/send-alimtalk-batch 라우트 모두 적용. ⑦ `lib/solapi.ts`의 `ALIMTALK` 맵 templateId 10종을 솔라피 실제 ID(`KA01TP260511...`)로 교체(이전엔 placeholder). 솔라피 채널 `KA01PF260511054914846rCGGdEqH9tS`(searchId `progen`). 10종 중 #5(신청 취소 확인)만 검수 승인(APPROVED), 나머지 9종은 검수중(INSPECTING) — ID 맞아도 검수 통과 전엔 발송 안 됨. → 6번·12번 표 참고. ⑧ 홈 `CurriculumSection` 카드 제목 레이아웃 변경: `headline`(키워드)을 작은 폰트(`text-[11px] md:text-xs`)·sky-500 라벨로 제목 윗줄에 분리, `title`(행사명)은 큰 굵은 글씨(`text-lg md:text-2xl font-black`)로 강조. 종료 회차는 키워드 `#aaa`/제목 `#888`.)
+> **마지막 최신화**: 2026-05-20 (출석 탭 알림톡 발송 방식 개편 — 상태 변경은 문자 없이 조용히, 문자는 개별 버튼으로 수동, 현장 체크인 자동문자는 행사별 토글). ① `update-status` 라우트에서 알림톡 자동 발송 **완전 제거**(노쇼확정 전환 시 9·10번 보내던 로직 삭제) — 출석/노쇼/미출석 전환은 이제 문자 없이 처리(사전 불참 통보자도 부담 없이 체크/해제). 단 크루 `noshow_count` 증감은 유지(데이터 정합성). 대시보드 `handleUpdateStatus`의 `window.confirm`·알림톡 토스트도 제거. ② **새 라우트 `POST /api/admin/send-individual-alimtalk`** — 개별 수동 발송. `{registration_id, type:'checkin'|'noshow'}`. `checkin`→6/7번(팀 유무 분기, 크루·게스트 공통), `noshow`→9번(+누적 2회면 10번, 크루 한정). 출석 탭 컬럼별 버튼에서 호출. ③ 출석 탭 UI: **출석완료 컬럼** 카드마다 「출석문자」 버튼(checkin 발송) + 「미출석」, **노쇼확정 컬럼** 카드마다 「노쇼경고」 버튼(crew만 노출) + 「해제」. ④ **현장 체크인(/checkin) 자동 출석문자 토글** — `events.auto_checkin_alimtalk BOOLEAN DEFAULT false`(마이그레이션 `2026-05-20_auto_checkin_alimtalk.sql`) 신설. `/checkin`의 `sendCheckinAlimtalk`가 발송 전 활성 행사의 이 플래그를 조회해 **true일 때만 자동 발송**(기본 OFF=발송 스킵). 출석 탭 「출석완료」 헤더에 `자동문자 ON/OFF` 토글 버튼 — **활성 행사(`selectedEventId === activeEventId`) 선택 시에만 노출**(현장 체크인은 활성 행사만 처리하므로). **새 라우트 `POST /api/admin/toggle-auto-checkin`**(`{eventId, enabled}`)로 저장. `/api/admin/events` GET이 `auto_checkin_alimtalk` 반환 + 대시보드가 `activeEventId` state 보관. 이전 변경: 2026-05-21 (events DB만 수정: 2026-05-30 행사명 `PROGEN 1기 OT - 청년마을 만들기 협업 프로젝트` → `'청년마을 만들기' X PROGEN 실전 프로젝트 OT`, 시작시각 14:00 → 15:00 KST(event_date=`2026-05-30 06:00:00+00`). 행사는 15:00~16:30 진행이나 events 테이블에 종료시간 컬럼 없어 시작시각만 반영. 코드 변경 없음. 이전 변경: 2026-05-15 ① 신청자 탭 새로고침 버튼을 「+ 크루 추가」로 교체(상단 헤더에 새로고침 별도 존재) + 새 라우트 `POST /api/admin/add-registration`(eventId·crewId → event_registrations에 사전신청 INSERT + 행사정보 ready 시 2번 크루용 확정 알림톡 자동 발송) + `app/admin/dashboard/page.tsx`에 `AddCrewModal` 신설(크루 명단 검색·선택·추가, 이미 신청된 크루 제외, 이름 가나다순). 행사 신청자 모드(`membersMode === 'event'`)에서만 노출, crew-all 모드 제외. ② 어드민 "설정" → "알림톡 발송" 탭 미발송자 명단 가나다 정렬(이름 빨리 찾기 위함, `event-settings` GET에서 `localeCompare(name, 'ko')`로 정렬). ③ 어드민 "설정" → "알림톡 발송" 탭에 미발송자 체크박스 명단 추가 — 참석확정(2번)·D-1 공지(4번)에 대해 미발송 대상 명단을 표시하고 운영진이 일부만 골라 발송 가능. `GET /api/admin/event-settings`가 `recipients.confirm/d1` (각 `{id, name, type: 'crew'|'guest', sent}`) 반환 + confirm sent 카운트가 크루용(`EVENT_CONFIRMED_CREW.code`)/게스트용(`EVENT_CONFIRMED.code`) 템플릿 분리되어 정확히 집계되도록 수정. `POST /api/admin/send-alimtalk-batch`에 선택적 `registrationIds: string[]` 필터 옵션 — 있으면 그 ID만, 비우면 기존처럼 미발송자 전원. `components/dashboard/EventAlimtalkSettings.tsx`에 `RecipientChecklist` 추가(미발송자 체크박스, 발송완료자 회색 line-through, 크루/게스트 배지). 일정/장소 변경(8번)은 그대로 전원 발송. 이전 변경: 2026-05-13 참석 확정(2번) 알림톡을 크루용/게스트용 2종으로 분리 — `lib/solapi.ts`의 `ALIMTALK`에 `EVENT_CONFIRMED_CREW`(`KA01TP260512222214758QYG80poi9FS`, 보증금 문구 없음) 신설 + 기존 `EVENT_CONFIRMED`는 게스트 전용으로 라벨 변경. `/api/event-reg` mode=crew는 새 크루용으로, `/api/admin/toggle-deposit`은 그대로 게스트용. `/api/admin/send-alimtalk-batch` template=confirm은 대상이 크루(crew_id 존재)면 크루용, 아니면 게스트용으로 row별 분기 발송. dedup도 template_code 기준이라 자연스럽게 분리됨. → 6번 표 / 이전 변경: 2026-05-11 ① 카카오 알림톡(솔라피) 시스템: 템플릿 10종 + lib/solapi.ts + events 행사정보 5컬럼 + alimtalk_logs 테이블 + 어드민 "설정" 모달 + 보증금 탭 「취소 알림」 버튼 + 7개 라우트 발송 연결. ② 3·4·5월 행사명 변경(events 테이블 + 홈/세미나/아카이브), 2026-05-30 "PROGEN 1기 OT" events row 추가. ③ 팀배정 탭 정렬 버튼. ④ 모바일 가로 스크롤·blur blob 수정. ⑤ 데드 코드 정리: StarField/AboutSection/NumbersSection/ActivitiesSection/StarRating/getLatestEventId/dashboard·full/SCORE_LABELS/supabase-browser.ts 삭제 + next-mdx-remote·gray-matter 의존성 제거 + 잔존 파일(standalone HTML, 크루명단 xlsx) 삭제. ⑥ 알림톡 `#{프로그램명}` 변수를 `lib/solapi.ts`의 `programLabel()`로 낫표(`「행사명」`)로 감싸 행사명 강조 — solapi.ts의 `vars*` 5종 + send-cancel-alimtalk/update-status/send-alimtalk-batch 라우트 모두 적용. ⑦ `lib/solapi.ts`의 `ALIMTALK` 맵 templateId 10종을 솔라피 실제 ID(`KA01TP260511...`)로 교체(이전엔 placeholder). 솔라피 채널 `KA01PF260511054914846rCGGdEqH9tS`(searchId `progen`). 10종 중 #5(신청 취소 확인)만 검수 승인(APPROVED), 나머지 9종은 검수중(INSPECTING) — ID 맞아도 검수 통과 전엔 발송 안 됨. → 6번·12번 표 참고. ⑧ 홈 `CurriculumSection` 카드 제목 레이아웃 변경: `headline`(키워드)을 작은 폰트(`text-[11px] md:text-xs`)·sky-500 라벨로 제목 윗줄에 분리, `title`(행사명)은 큰 굵은 글씨(`text-lg md:text-2xl font-black`)로 강조. 종료 회차는 키워드 `#aaa`/제목 `#888`.)
 
 ---
 
@@ -66,7 +66,7 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 
 > 종료 회차는 회색 월 박스 + opacity-75 + 회색 highlight 박스로 시각 구분 (홈/세미나 동일 스타일).
 > 위 5개는 홈 커리큘럼·세미나·아카이브의 하드코딩 copy. **`events` 테이블의 `title`도 2026-05-11에 동일하게 맞춤** (3월=`AI 시대 대학생으로 살아남기`, 4월=`AI로 완성하는 가성비 벼락치기 클래스`, 5월=`클로드 AI 실전 클래스`, 6월=`AI로 영상·음악 콘텐츠 제작`, 7월=`AI로 나만의 캐릭터 굿즈 만들기`, 8/1=`백화점 플리마켓 및 1기 종료`).
-> **추가 events row**: 2026-05-30 `PROGEN 1기 OT - 청년마을 만들기 협업 프로젝트` (is_mandatory=true). 14:00 KST. 홈/세미나 하드코딩엔 없음 — events 테이블·어드민·알림톡에서만 노출. 5/16 행사가 지나면 `getActiveEventId()`가 이 OT를 활성 행사로 잡음.
+> **추가 events row**: 2026-05-30 `'청년마을 만들기' X PROGEN 실전 프로젝트 OT` (is_mandatory=true). 15:00~16:30 KST (event_date=15:00 KST; events 테이블엔 종료시간 컬럼 없음). 홈/세미나 하드코딩엔 없음 — events 테이블·어드민·알림톡에서만 노출. 5/16 행사가 지나면 `getActiveEventId()`가 이 OT를 활성 행사로 잡음.
 
 ---
 
@@ -84,6 +84,7 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 | materials | TEXT (nullable) | 준비물 — 알림톡 `#{준비물}` |
 | program_detail | TEXT (nullable) | 당일 진행 — 알림톡 `#{진행내용}` |
 | kakao_chat_url | TEXT (nullable) | 회차 참여자 채팅방 버튼 링크 |
+| auto_checkin_alimtalk | BOOLEAN (NOT NULL, default false) | 현장 체크인(/checkin) 자동 출석문자(6/7번) 발송 토글. **활성 행사에서 true일 때만** 체크인 시 자동 발송. 마이그레이션 `2026-05-20_auto_checkin_alimtalk.sql` |
 | created_at | TIMESTAMPTZ | 생성일 |
 
 > `location`~`kakao_chat_url` 5개는 2026-05-11 마이그레이션(`event_alimtalk_fields`)으로 추가. 비어 있으면 알림톡 발송 시 "추후 안내"/"채팅방 공지 참고" fallback. **5개가 모두 채워져야** 참석 확정(2번) 알림톡이 자동 발송됨(`eventConfirmReady`); 그 전까지는 보류 → 어드민 "설정" → "알림톡 발송" 탭에서 미발송자 일괄 발송.
@@ -282,6 +283,7 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 4. 활성 행사의 `event_registrations` status='출석완료' + checked_in_at으로 UPDATE
 5. 이미 출석완료 상태면 409 + "이미 출석하셨어요" 모달 (이전: 200 silent)
 6. 응답에 `team_name` 포함 → "OOO님 출석 완료, X팀입니다" Modal
+7. **출석문자(6/7번) 자동 발송은 활성 행사 `events.auto_checkin_alimtalk = true`일 때만** (2026-05-20). 기본 OFF → 체크인해도 문자 안 나감. `sendCheckinAlimtalk`가 발송 직전 플래그 조회 후 false면 skip. 운영진은 어드민 출석 탭 「출석완료」 헤더의 `자동문자 ON/OFF` 토글로 켜고, 끈 상태에선 신청자 탭 개별 「출석문자」 버튼으로 수동 발송.
 
 **경로 B — Walk-in** (2026-05-01 안전성 개선):
 - 사전 신청 404 시 자동으로 walk-in 폼 표시 (8개 필드)
@@ -382,13 +384,15 @@ robots: noindex.
 - **설정 버튼** (실제 행사 선택 시에만 노출, 'crew-all' 모드 제외) → `EventAlimtalkSettings` 모달: 탭 A "행사 정보"(장소·입장시간·준비물·당일진행·채팅방링크 입력·저장 `/api/admin/event-settings`) / 탭 B "알림톡 발송"(참석확정 2번 미발송자 일괄발송 / D-1 공지 4번 발송 / 일정·장소 변경 8번 발송 — 모두 `window.confirm` 후 `/api/admin/send-alimtalk-batch`)
 - 로그아웃 버튼
 
-> 보증금 뱃지 "미입금→입금" 클릭 시 `window.confirm`("참석 확정 알림톡 발송됩니다") → `toggle-deposit`이 행사 정보가 다 채워졌으면 2번 발송, 아니면 보류 안내 토스트. 노쇼확정 처리 시 `window.confirm`("노쇼 경고 알림톡 발송됩니다") → `update-status`가 크루면 noshow_count +1 후 9번(노쇼 경고) 발송, 누적 2회면 10번(자격 박탈)도 발송.
+> 보증금 뱃지 "미입금→입금" 클릭 시 `window.confirm`("참석 확정 알림톡 발송됩니다") → `toggle-deposit`이 행사 정보가 다 채워졌으면 2번 발송, 아니면 보류 안내 토스트. **(2026-05-20) 출석 상태 변경(출석/노쇼/미출석/해제)은 알림톡 없이 조용히 처리** — `update-status`는 noshow_count만 증감하고 문자 안 보냄. 노쇼 경고·출석 문자는 아래 컬럼별 개별 버튼으로 수동 발송.
 
 **5개 탭**:
 
 #### A. 체크인 탭
 - 4개 StatCard: 오기로 한 인원 / 출석 / 미출석 / 노쇼확정
-- 3열 그리드 (미출석 / 출석완료 / 노쇼확정) — 각 컬럼에 필터·정렬·상태 변경 (`/api/admin/update-status`)
+- 3열 그리드 (미출석 / 출석완료 / 노쇼확정) — 각 컬럼에 필터·정렬·상태 변경 (`/api/admin/update-status`, 문자 없이)
+- **(2026-05-20) 컬럼별 개별 문자 버튼**: 출석완료 카드 「출석문자」(6/7번, `send-individual-alimtalk` type=checkin) / 노쇼확정 카드 「노쇼경고」(9·10번, 크루만 노출, type=noshow). 각 `window.confirm` 후 발송.
+- **(2026-05-20) 자동문자 토글**: 「출석완료」 컬럼 헤더에 `자동문자 ON/OFF` 버튼 — **활성 행사(`selectedEventId === activeEventId`) 선택 시에만 노출**. ON이면 현장 체크인(/checkin) 시 출석문자 자동 발송, OFF(기본)면 스킵. `toggle-auto-checkin`이 `events.auto_checkin_alimtalk` 저장.
 
 #### B. 팀 배정 탭
 - 좌: 미배정 인원 카드 (포도=🍇/보라점, 노쇼후보 흐림, noshow_count≥2 강조). 검색창 + 그 밑에 **정렬 버튼**(가나다/학교/학년/성별/포도, `teamSort` 기본 '가나다') — 미배정·미출석·검색결과 목록에 적용
@@ -462,14 +466,16 @@ AI 보고서 영역:
 | GET | `/api/admin/export` | CSV 내보내기 (UTF-8 BOM) |
 | GET | `/api/admin/dashboard-data` | 대시보드 통합 데이터 |
 | GET | `/api/admin/full-stats` | 분석 탭 3개 섹션 |
-| GET / POST | `/api/admin/events` | 행사 목록 / 행사 생성 |
+| GET / POST | `/api/admin/events` | 행사 목록(GET은 `auto_checkin_alimtalk` 포함 + `activeEventId`) / 행사 생성 |
 | POST | `/api/admin/assign-team` | 단일 팀 배정 |
 | POST | `/api/admin/auto-match` | 자동 팀 매칭 |
 | POST | `/api/admin/compact-teams` | 팀 번호 재정렬 |
 | POST | `/api/admin/reset-teams` | 팀 배정 초기화 |
 | POST | `/api/admin/delete-member` | 멤버/등록 삭제 |
 | POST | `/api/admin/toggle-podo` | 포도 상태 토글 |
-| POST | `/api/admin/update-status` | 출석 상태 변경. 노쇼확정 전환 시(크루) noshow_count +1 → 9번 알림톡, 누적 2회면 10번도. 노쇼확정 해제 시 -1 |
+| POST | `/api/admin/update-status` | 출석 상태 변경(출석완료/사전신청/노쇼확정). 노쇼확정 전환 시(크루) noshow_count +1, 해제 시 -1. **알림톡은 보내지 않음**(2026-05-20 자동 발송 로직 제거 — 사전 불참 통보자도 부담 없이 체크/해제). 노쇼 경고·출석 문자는 `send-individual-alimtalk`로 수동 |
+| POST | `/api/admin/send-individual-alimtalk` | 신청자(출석) 탭 개별 문자 수동 발송. `{registration_id, type:'checkin'\|'noshow'}`. checkin→6/7번(팀 유무 분기), noshow→9번(+누적2회면 10번, 크루 한정). 2026-05-20 신설 |
+| POST | `/api/admin/toggle-auto-checkin` | `{eventId, enabled}` → `events.auto_checkin_alimtalk` 토글. 활성 행사가 ON일 때만 /checkin 현장 체크인 시 출석문자 자동 발송. 2026-05-20 신설 |
 | GET / POST / DELETE | `/api/admin/ai-report` | 보고서 조회/생성/삭제 |
 | POST | `/api/admin/toggle-deposit` | 게스트 보증금 상태 사이클 (미입금 → 입금 → 환불 → 미입금). 미입금→입금 시 행사정보가 다 채워졌으면 2번(참석 확정) 알림톡 발송, 아니면 `alimtalk.pendingEventSettings` 응답 |
 | POST | `/api/admin/update-refund-account` | 게스트 환불 계좌(event_registrations.refund_account) 직접 입력·수정 |
@@ -491,11 +497,11 @@ AI 보고서 영역:
 | 3 | CREW_CONFIRMED | `KA01TP260511070701744h8gIXOphWEW` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
 | 4 | EVENT_D1_NOTICE | `KA01TP260511071006653FkF3Kf1v8lW` | 이름·프로그램명·일시·입장시간·장소·준비물 + 버튼 `#{url}`(오픈채팅 코드) | `send-alimtalk-batch` template=d1 (어드민 수동 버튼). cron 미구현 |
 | 5 | REG_CANCELLED | `KA01TP260511072253259HLsKXmMYVoG` ✅승인 | 이름·프로그램명 | `send-cancel-alimtalk` (보증금 탭 「취소 알림」 버튼, 수동). 자동 취소 cron은 없음 |
-| 6 | CHECKIN_WITH_TEAM | `KA01TP260511073547316F1HdnAUi1RJ` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음 |
-| 7 | CHECKIN_NO_TEAM | `KA01TP260511075330965NCintRaUSWU` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음 (walk-in 등) |
+| 6 | CHECKIN_WITH_TEAM | `KA01TP260511073547316F1HdnAUi1RJ` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음(**활성 행사 `auto_checkin_alimtalk=true`일 때만**) / `send-individual-alimtalk` type=checkin 수동 |
+| 7 | CHECKIN_NO_TEAM | `KA01TP260511075330965NCintRaUSWU` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음(**활성 행사 `auto_checkin_alimtalk=true`일 때만**) / `send-individual-alimtalk` type=checkin 수동 |
 | 8 | EVENT_CHANGED | `KA01TP260511073928887bmEyE8XReNZ` | 이름·프로그램명·기존일시·기존장소·변경일시·변경장소 | `send-alimtalk-batch` template=change (어드민 입력값, 중복체크 없음) |
-| 9 | NOSHOW_WARNING | `KA01TP2605110744476078SNWeTQFA9a` | 이름·프로그램명 | `update-status` → 노쇼확정 전환 (크루만) |
-| 10 | CREW_REVOKED | `KA01TP260511074559176oBaEuf8Dkaq` | 이름 | `update-status` → 노쇼확정 후 noshow_count≥2 (크루만) |
+| 9 | NOSHOW_WARNING | `KA01TP2605110744476078SNWeTQFA9a` | 이름·프로그램명 | **`send-individual-alimtalk` type=noshow 수동**(크루만). 2026-05-20부터 `update-status`는 자동 발송 안 함 |
+| 10 | CREW_REVOKED | `KA01TP260511074559176oBaEuf8Dkaq` | 이름 | **`send-individual-alimtalk` type=noshow + noshow_count≥2 시 동반 발송**(크루만). update-status 자동 발송 제거됨 |
 
 > 변수명은 한글 `#{이름}` 등 그대로 (검수 등록 형식). 단 2·4번의 채팅방 버튼 변수는 `#{url}` — 템플릿 버튼 URL이 `https://open.kakao.com/o/#{url}` 라서 `events.kakao_chat_url`에 전체 URL을 넣어도 `openChatCode()`가 코드 조각(`gXySOpui`)만 추출해 넘김. **오픈채팅(`open.kakao.com/o/...`) 링크여야 버튼이 동작** (team chat invite 링크는 불가). `sendAlimtalk()`은 빈 변수값을 공백 한 칸으로 방어. 모든 발송은 `alimtalk_logs`에 기록.
 
@@ -637,6 +643,7 @@ AI 보고서 영역:
 | 아카이브 동적 관리 | 하드코딩 | DB 연동 미정 |
 | 운영진 지원 폼 | 없음 | 정적 안내만 |
 | 크루 합격/불합격 | 없음 | status='지원완료' 고정, 즉시 확정 |
+| 사전신청 폼 중복 방지 | 없음 | 기존 크루/포도가 `/event-reg/guest`(비회원 폼)로 신청하면 게스트→크루 자동 마이그레이션은 `/api/apply`에서만 동작하므로 병합 안 됨 → 같은 행사에 게스트+크루 이중 등록 발생 가능. 2026-05-18 포도 정인우(crew #194, 010-7316-5949) 1건 수동 정리(게스트 행·등록 삭제, 포도로 통합). 전수 점검상 동일 케이스 그 1명뿐. 보완안: 게스트 폼 제출 시 phone이 crew_members에 있으면 크루 경로 안내·차단 |
 | 이메일 알림 | 없음 | |
 
 ---

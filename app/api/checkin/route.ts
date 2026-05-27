@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from 'next/server'
 const norm = (s: string) => (s || '').replace(/\s+/g, '').trim()
 
 // 출석 완료 시 6번(팀 있음) / 7번(팀 없음) 알림톡 발송. 실패해도 출석 처리 흐름은 막지 않는다.
+// ⚠️ 활성 행사의 events.auto_checkin_alimtalk = true 일 때만 자동 발송(기본 OFF).
+//    OFF면 현장 체크인해도 문자가 안 나가고, 운영진이 신청자 탭 개별 버튼으로 직접 보낸다.
 async function sendCheckinAlimtalk(args: {
   name: string
   phone: string
@@ -18,6 +20,14 @@ async function sendCheckinAlimtalk(args: {
   registrationId: string | null
 }) {
   try {
+    const supabase = createAdminClient()
+    const { data: evFlag } = await supabase
+      .from('events')
+      .select('auto_checkin_alimtalk')
+      .eq('id', args.eventId)
+      .maybeSingle()
+    if (!evFlag?.auto_checkin_alimtalk) return // 자동문자 OFF → 발송 스킵
+
     const ev = await loadEventRow(args.eventId)
     const title = ev?.title ?? null
     const target = { crewId: args.crewId, guestId: args.guestId, registrationId: args.registrationId, eventId: args.eventId }
