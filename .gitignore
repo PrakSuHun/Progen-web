@@ -99,6 +99,5 @@ jspm_packages/
 
 # TernJS port file
 .tern-port 
-# 로컬 백업/내보내기 (배포 제외)
+# 원본 사진 백업 (대용량 — 배포 제외)
 .archive-originals-backup/
-docs/exports/
