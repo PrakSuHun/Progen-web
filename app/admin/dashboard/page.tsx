@@ -411,6 +411,10 @@ export default function AdminDashboardPage() {
   const [activeEventId, setActiveEventId] = useState<string>('')
   const [settingsOpen, setSettingsOpen] = useState(false)
 
+  // Cohort(기수) selector — events를 기수로 스코프. 기본 현재 기수, 'all'=전체
+  const [cohorts, setCohorts] = useState<{ id: number; number: number; name: string; is_current: boolean }[]>([])
+  const [cohortFilter, setCohortFilter] = useState<string>('') // ''=현재 기수(기본), 숫자=특정, 'all'=전체
+
   // Deposit tab
   const [depositSearch, setDepositSearch] = useState('')
 
@@ -421,27 +425,40 @@ export default function AdminDashboardPage() {
   const [memberSort, setMemberSort] = useState<SortKey>('none')
   const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetch('/api/admin/events').then(async (res) => {
-      if (res.ok) {
-        const json = await res.json()
-        const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date, auto_checkin_alimtalk: e.auto_checkin_alimtalk ?? false }))
-        setEvents(list)
-        setActiveEventId(json.activeEventId ?? '')
-        if (list.length > 0) {
-          // 서버에서 내려준 activeEventId(다음 예정 행사)를 기본값으로 사용
-          const activeId = json.activeEventId
-          const defaultId = activeId && list.some((e) => e.id === activeId) ? activeId : list[0].id
-          setSelectedEventId(defaultId)
-          fetchAll(defaultId)
-        } else {
-          fetchAll()
-        }
+  const loadEvents = async (cohortParam?: string) => {
+    const qs = cohortParam ? `?cohort_id=${cohortParam}` : ''
+    const res = await fetch(`/api/admin/events${qs}`)
+    if (res.ok) {
+      const json = await res.json()
+      const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date, auto_checkin_alimtalk: e.auto_checkin_alimtalk ?? false }))
+      setEvents(list)
+      setActiveEventId(json.activeEventId ?? '')
+      if (json.cohorts) setCohorts(json.cohorts)
+      if (list.length > 0) {
+        // 서버에서 내려준 activeEventId(다음 예정 행사)를 기본값으로 사용
+        const activeId = json.activeEventId
+        const defaultId = activeId && list.some((e) => e.id === activeId) ? activeId : list[0].id
+        setSelectedEventId(defaultId)
+        fetchAll(defaultId)
       } else {
+        setSelectedEventId('')
         fetchAll()
       }
-    })
+    } else {
+      fetchAll()
+    }
+  }
+
+  useEffect(() => {
+    loadEvents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleCohortChange = (val: string) => {
+    setCohortFilter(val)
+    setMembers([])
+    loadEvents(val || undefined)
+  }
 
   const fetchAll = async (eventId?: string) => {
     setLoading(true)
@@ -2078,6 +2095,20 @@ export default function AdminDashboardPage() {
       <header className="bg-sky-700 px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
           <h1 className="text-sm md:text-lg font-bold text-white shrink-0">PROGEN</h1>
+          {cohorts.length > 1 && (
+            <select
+              value={cohortFilter}
+              onChange={(e) => handleCohortChange(e.target.value)}
+              className="bg-sky-800 border border-sky-500 text-white text-xs md:text-sm rounded-lg px-2 py-1.5 outline-none focus:border-sky-300 cursor-pointer shrink-0"
+              title="기수 필터"
+            >
+              <option value="">현재 기수</option>
+              {cohorts.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+              <option value="all">전체 기수</option>
+            </select>
+          )}
           {events.length > 0 && (
             <select
               value={selectedEventId}
@@ -2094,6 +2125,9 @@ export default function AdminDashboardPage() {
           )}
         </div>
         <div className="flex gap-2 shrink-0">
+          <a href="/admin/program" className="hidden md:block text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
+            수료관리
+          </a>
           <button onClick={() => fetchAll()} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
             새로고침
           </button>

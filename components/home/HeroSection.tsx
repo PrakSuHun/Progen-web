@@ -77,7 +77,7 @@ export function HeroSection() {
               className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
               style={{ animationDelay: '420ms' }}
             >
-              4월 ~ 7월 · 월 1회 · 참가비 무료
+              3월 ~ 8월 · 월 1회 · 참가비 무료
             </p>
           </div>
 
@@ -110,10 +110,10 @@ export function HeroSection() {
               left="5%"
               delay="-3s"
               color="from-sky-500 to-cyan-400"
-              label="5월 모집중"
-              title="클로드 AI 클래스"
-              sub="5/16(토) · 사전 신청 OPEN"
-              tags={['자동 알림', '노코드']}
+              label="6월 모집중"
+              title="카카오 이모티콘 클래스"
+              sub="6/27(토) · 사전 신청 OPEN"
+              tags={['이모티콘', '굿즈 제작']}
               tilt="3deg"
               highlight
             />
@@ -122,10 +122,10 @@ export function HeroSection() {
               left="50%"
               delay="-2s"
               color="from-cyan-400 to-sky-400"
-              label="6월 예정"
-              title="AI 숏폼·음악"
+              label="8월 예정"
+              title="AI 영상·음악"
               sub="온라인 수익화"
-              tags={['숏폼', '음악 AI']}
+              tags={['영상', '음악 AI']}
               tilt="-2deg"
             />
           </div>

@@ -3,7 +3,22 @@ import { getActiveEventId } from '@/lib/get-active-event'
 import {
   ALIMTALK, sendAlimtalk, loadEventRow, varsCheckinWithTeam, varsCheckinNoTeam,
 } from '@/lib/solapi'
+import { markProgramAttendanceFromCheckin } from '@/lib/program-checkin-bridge'
 import { NextRequest, NextResponse } from 'next/server'
+
+// 공식 행사 출석을 프로그램 누적 출석으로 반영(연동된 회차 + 수강중 크루일 때만).
+// 실패해도 체크인 흐름은 막지 않는다.
+async function bridgeProgramAttendance(
+  supabase: ReturnType<typeof createAdminClient>,
+  eventId: string,
+  crewId: string | null
+) {
+  try {
+    await markProgramAttendanceFromCheckin({ supabase, eventId, crewId: crewId ? Number(crewId) : null })
+  } catch (e) {
+    console.error('program attendance bridge failed:', e)
+  }
+}
 
 const norm = (s: string) => (s || '').replace(/\s+/g, '').trim()
 
@@ -132,6 +147,7 @@ export async function POST(request: NextRequest) {
           name: resolvedName, phone, teamName: existing.team_name ?? null,
           eventId, crewId, guestId, registrationId: existing.id,
         })
+        await bridgeProgramAttendance(supabase, eventId, crewId)
 
         return NextResponse.json({
           message: '출석 완료',
@@ -168,6 +184,7 @@ export async function POST(request: NextRequest) {
         name: resolvedName, phone, teamName: null,
         eventId, crewId, guestId, registrationId: inserted?.[0]?.id ?? null,
       })
+      await bridgeProgramAttendance(supabase, eventId, crewId)
 
       return NextResponse.json({
         message: '현장 등록 + 출석 완료',
@@ -241,6 +258,7 @@ export async function POST(request: NextRequest) {
         name: resolvedName, phone, teamName: registration.team_name ?? null,
         eventId, crewId, guestId, registrationId: registration.id,
       })
+      await bridgeProgramAttendance(supabase, eventId, crewId)
 
       return NextResponse.json({
         message: '출석 완료',
