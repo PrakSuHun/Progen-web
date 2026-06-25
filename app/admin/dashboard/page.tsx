@@ -1227,7 +1227,7 @@ export default function AdminDashboardPage() {
             selectedId={selected?.person.registration_id}
           />
         ))}
-        {teamNames.length < 30 && (
+        {teamNames.length < 100 && (
           <div
             className={`bg-white/60 border-2 border-dashed rounded-xl p-3 min-h-[120px] flex items-center justify-center text-sm transition-colors
               ${selected ? 'border-sky-400 text-sky-500 bg-sky-50/50' : 'border-slate-300 text-slate-400 hover:border-sky-300 hover:text-sky-500'}`}
