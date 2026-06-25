@@ -49,6 +49,19 @@ export async function GET(request: NextRequest) {
           path: countBy(nonPodo, (a) => a.path),
           gender: countBy(nonPodo, (a) => a.gender),
         },
+        // 차트 클릭 시 세그먼트 명단 표시용 (전체 크루 — is_member로 비포도 필터)
+        people: all.map((c: any) => ({
+          name: c.name ?? '',
+          school: c.school ?? '',
+          grade: c.grade ?? '',
+          gender: c.gender ?? '',
+          major: c.major ?? '',
+          phone: c.phone ?? '',
+          path: c.path ?? '',
+          age: c.age ?? '',
+          is_member: !!c.is_member,
+          is_crew: true,
+        })),
       }
 
       const maleAll = all.filter((c: any) => c.gender === '남성').length
@@ -98,8 +111,8 @@ export async function GET(request: NextRequest) {
       .from('event_registrations')
       .select(`
         status, crew_id, guest_id, deposit_status,
-        crew_members ( phone, school, grade, path, gender, is_member ),
-        guests ( phone, school, grade, path, gender )
+        crew_members ( name, phone, school, grade, major, path, gender, is_member ),
+        guests ( name, phone, school, grade, major, path, gender )
       `)
       .eq('event_id', eventId)
 
@@ -116,6 +129,9 @@ export async function GET(request: NextRequest) {
       const p = crew || guest
       const phone = guest?.phone ?? crew?.phone ?? ''
       return {
+        name: p?.name ?? '',
+        major: p?.major ?? '',
+        phone,
         school: p?.school ?? '',
         grade: p?.grade ?? '',
         path: p?.path ?? '',
@@ -152,6 +168,19 @@ export async function GET(request: NextRequest) {
         path: countBy(nonPodoGuest, (a) => a.path),
         gender: countBy(nonPodoGuest, (a) => a.gender),
       },
+      // 차트 클릭 시 세그먼트 명단 표시용 (포도 제외 참가자 — is_crew로 크루/게스트 필터)
+      people: nonPodo.map((a: any) => ({
+        name: a.name ?? '',
+        school: a.school ?? '',
+        grade: a.grade ?? '',
+        gender: a.gender ?? '',
+        major: a.major ?? '',
+        phone: a.phone ?? '',
+        path: a.path ?? '',
+        status: a.status ?? '',
+        is_crew: a.is_crew,
+        is_member: false,
+      })),
     }
 
     // ── 섹션 2: 이 행사 기준 통계 (포도 제외) ──

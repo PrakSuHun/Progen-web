@@ -54,11 +54,17 @@ interface CrewMember {
 
 interface DistItem { name: string; count: number }
 interface TagItem { tag: string; count: number }
+interface SegPerson {
+  name: string; school: string; grade: string; gender: string
+  major?: string; phone?: string; path?: string; age?: string
+  status?: string; is_member?: boolean; is_crew?: boolean
+}
 
 interface FullStats {
   section1: {
     all: { school: DistItem[]; grade: DistItem[]; path: DistItem[]; gender: DistItem[] }
     saengmyung: { school: DistItem[]; grade: DistItem[]; path: DistItem[]; gender: DistItem[] }
+    people?: SegPerson[]
   }
   section2: {
     total_registrations: number
@@ -108,15 +114,21 @@ function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
 }
 
 // ───────────── Sub-components ─────────────
-function MiniBarChart({ data, color = '#0ea5e9' }: { data: DistItem[]; color?: string }) {
+function MiniBarChart({ data, color = '#0ea5e9', onPick }: { data: DistItem[]; color?: string; onPick?: (name: string) => void }) {
   if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={180}>
       <BarChart data={data} margin={{ top: 16, right: 8, left: -20, bottom: 4 }}>
         <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} />
         <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} />
-        <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} />
-        <Bar dataKey="count" fill={color} radius={[4, 4, 0, 0]}>
+        <Tooltip cursor={{ fill: 'rgba(14,165,233,0.06)' }} contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} />
+        <Bar
+          dataKey="count"
+          fill={color}
+          radius={[4, 4, 0, 0]}
+          style={{ cursor: onPick ? 'pointer' : 'default' }}
+          onClick={(d: any) => onPick?.(d?.payload?.name ?? d?.name)}
+        >
           <LabelList dataKey="count" position="top" style={{ fill: '#374151', fontSize: 10, fontWeight: 600 }} />
         </Bar>
       </BarChart>
@@ -124,7 +136,7 @@ function MiniBarChart({ data, color = '#0ea5e9' }: { data: DistItem[]; color?: s
   )
 }
 
-function MiniPieChart({ data }: { data: DistItem[] }) {
+function MiniPieChart({ data, onPick }: { data: DistItem[]; onPick?: (name: string) => void }) {
   if (!data.length) return <p className="text-slate-400 text-sm py-4 text-center">데이터 없음</p>
   return (
     <ResponsiveContainer width="100%" height={220}>
@@ -136,6 +148,8 @@ function MiniPieChart({ data }: { data: DistItem[] }) {
           cx="50%"
           cy="45%"
           outerRadius={70}
+          style={{ cursor: onPick ? 'pointer' : 'default' }}
+          onClick={(d: any) => onPick?.(d?.payload?.name ?? d?.name)}
         >
           {data.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
         </Pie>
@@ -1284,6 +1298,7 @@ export default function AdminDashboardPage() {
   }
 
   const [chartTarget, setChartTarget] = useState<'all' | 'crew' | 'guest'>('all')
+  const [segment, setSegment] = useState<{ title: string; dimLabel: string; people: SegPerson[] } | null>(null)
   const [reports, setReports] = useState<any[]>([])
   const [selectedReport, setSelectedReport] = useState<any>(null)
 
@@ -1318,6 +1333,28 @@ export default function AdminDashboardPage() {
     const s3 = fullStats?.section3 as any
     const crewMode = !!(s2?._crew_mode)
 
+    // 차트 세그먼트 클릭 → 해당 인원 명단 팝업 (학교별·학년순 정렬)
+    const segPeople: SegPerson[] = (s1 as any)?.people ?? []
+    const gradeRank = (g: string) => {
+      const order = ['1학년', '2학년', '3학년', '4학년', '졸업유예']
+      const i = order.indexOf(g)
+      return i < 0 ? 99 : i
+    }
+    const openSeg = (dim: string, dimLabel: string, target: 'all' | 'crew' | 'guest' | 'saeng', value: string) => {
+      let subset = segPeople
+      if (target === 'crew') subset = segPeople.filter((p) => p.is_crew)
+      else if (target === 'guest') subset = segPeople.filter((p) => !p.is_crew)
+      else if (target === 'saeng') subset = segPeople.filter((p) => !p.is_member)
+      const matched = subset
+        .filter((p) => (((p as any)[dim] || '기타') === value))
+        .sort((a, b) =>
+          (a.school || '').localeCompare(b.school || '', 'ko') ||
+          gradeRank(a.grade) - gradeRank(b.grade) ||
+          (a.name || '').localeCompare(b.name || '', 'ko')
+        )
+      setSegment({ title: `${value} · ${matched.length}명`, dimLabel, people: matched })
+    }
+
     return (
       <div className="p-4 md:p-6 overflow-y-auto h-full space-y-10">
         {/* 섹션 1: 분포 차트 */}
@@ -1338,26 +1375,29 @@ export default function AdminDashboardPage() {
             )}
             <div className="space-y-6">
               {(crewMode ? [
-                { label: '학교별 분포', all: s1.all.school, crew: s1.saengmyung?.school, guest: null, type: 'bar' },
-                { label: '학년별 분포', all: s1.all.grade, crew: s1.saengmyung?.grade, guest: null, type: 'bar' },
-                { label: '알게 된 경로', all: s1.all.path, crew: s1.saengmyung?.path, guest: null, type: 'bar' },
-                { label: '성별 분포', all: s1.all.gender, crew: s1.saengmyung?.gender, guest: null, type: 'pie' },
+                { label: '학교별 분포', dim: 'school', all: s1.all.school, crew: s1.saengmyung?.school, guest: null, type: 'bar' },
+                { label: '학년별 분포', dim: 'grade', all: s1.all.grade, crew: s1.saengmyung?.grade, guest: null, type: 'bar' },
+                { label: '알게 된 경로', dim: 'path', all: s1.all.path, crew: s1.saengmyung?.path, guest: null, type: 'bar' },
+                { label: '성별 분포', dim: 'gender', all: s1.all.gender, crew: s1.saengmyung?.gender, guest: null, type: 'pie' },
               ] : [
-                { label: '학교별 분포', all: s1.all.school, crew: (s1 as any).crew?.school, guest: (s1 as any).guest?.school, type: 'bar' },
-                { label: '학년별 분포', all: s1.all.grade, crew: (s1 as any).crew?.grade, guest: (s1 as any).guest?.grade, type: 'bar' },
-                { label: '알게 된 경로', all: s1.all.path, crew: (s1 as any).crew?.path, guest: (s1 as any).guest?.path, type: 'bar' },
-                { label: '성별 분포', all: s1.all.gender, crew: (s1 as any).crew?.gender, guest: (s1 as any).guest?.gender, type: 'pie' },
-              ]).map(({ label, all, crew, guest, type }: any) => {
+                { label: '학교별 분포', dim: 'school', all: s1.all.school, crew: (s1 as any).crew?.school, guest: (s1 as any).guest?.school, type: 'bar' },
+                { label: '학년별 분포', dim: 'grade', all: s1.all.grade, crew: (s1 as any).crew?.grade, guest: (s1 as any).guest?.grade, type: 'bar' },
+                { label: '알게 된 경로', dim: 'path', all: s1.all.path, crew: (s1 as any).crew?.path, guest: (s1 as any).guest?.path, type: 'bar' },
+                { label: '성별 분포', dim: 'gender', all: s1.all.gender, crew: (s1 as any).crew?.gender, guest: (s1 as any).guest?.gender, type: 'pie' },
+              ]).map(({ label, dim, all, crew, guest, type }: any) => {
                 const mobileData = chartTarget === 'crew' ? crew : chartTarget === 'guest' ? guest : all
                 const mobileColor = chartTarget === 'crew' ? '#0ea5e9' : chartTarget === 'guest' ? '#3b82f6' : '#0ea5e9'
+                const mobileTarget: 'all' | 'crew' | 'guest' | 'saeng' = crewMode ? 'all' : chartTarget
                 return (
                 <div key={label}>
-                  <h3 className="text-slate-700 font-medium mb-3">{label}</h3>
+                  <h3 className="text-slate-700 font-medium mb-3">{label} <span className="text-slate-300 text-xs font-normal">· 클릭하면 명단</span></h3>
 
                   {/* 모바일: 선택된 대상 1개만 */}
                   <div className="md:hidden">
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                      {type === 'pie' ? <MiniPieChart data={mobileData ?? []} /> : <MiniBarChart data={mobileData ?? []} color={mobileColor} />}
+                      {type === 'pie'
+                        ? <MiniPieChart data={mobileData ?? []} onPick={(v) => openSeg(dim, label, mobileTarget, v)} />
+                        : <MiniBarChart data={mobileData ?? []} color={mobileColor} onPick={(v) => openSeg(dim, label, mobileTarget, v)} />}
                     </div>
                   </div>
 
@@ -1365,21 +1405,29 @@ export default function AdminDashboardPage() {
                   <div className={`hidden md:grid ${crewMode ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                       <p className="text-slate-400 text-xs mb-2">{crewMode ? '전체 크루' : '전체'}</p>
-                      {type === 'pie' ? <MiniPieChart data={all} /> : <MiniBarChart data={all} />}
+                      {type === 'pie'
+                        ? <MiniPieChart data={all} onPick={(v) => openSeg(dim, label, 'all', v)} />
+                        : <MiniBarChart data={all} onPick={(v) => openSeg(dim, label, 'all', v)} />}
                     </div>
                     {crewMode ? (
                       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                         <p className="text-slate-400 text-xs mb-2">비포도(일반)</p>
-                        {type === 'pie' ? <MiniPieChart data={crew} /> : <MiniBarChart data={crew} color="#34d399" />}
+                        {type === 'pie'
+                          ? <MiniPieChart data={crew} onPick={(v) => openSeg(dim, label, 'saeng', v)} />
+                          : <MiniBarChart data={crew} color="#34d399" onPick={(v) => openSeg(dim, label, 'saeng', v)} />}
                       </div>
                     ) : (<>
                       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                         <p className="text-sky-400 text-xs mb-2">크루</p>
-                        {type === 'pie' ? <MiniPieChart data={crew ?? []} /> : <MiniBarChart data={crew ?? []} color="#0ea5e9" />}
+                        {type === 'pie'
+                          ? <MiniPieChart data={crew ?? []} onPick={(v) => openSeg(dim, label, 'crew', v)} />
+                          : <MiniBarChart data={crew ?? []} color="#0ea5e9" onPick={(v) => openSeg(dim, label, 'crew', v)} />}
                       </div>
                       <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                         <p className="text-blue-400 text-xs mb-2">게스트</p>
-                        {type === 'pie' ? <MiniPieChart data={guest ?? []} /> : <MiniBarChart data={guest ?? []} color="#3b82f6" />}
+                        {type === 'pie'
+                          ? <MiniPieChart data={guest ?? []} onPick={(v) => openSeg(dim, label, 'guest', v)} />
+                          : <MiniBarChart data={guest ?? []} color="#3b82f6" onPick={(v) => openSeg(dim, label, 'guest', v)} />}
                       </div>
                     </>)}
                   </div>
@@ -1677,6 +1725,60 @@ export default function AdminDashboardPage() {
               </div>
             )}
           </section>
+        )}
+
+        {/* 차트 세그먼트 클릭 → 명단 팝업 */}
+        {segment && (
+          <>
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setSegment(null)} />
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-between items-center px-5 py-4 border-b border-slate-200 shrink-0">
+                  <div>
+                    <h2 className="text-base font-black text-slate-800">{segment.title}</h2>
+                    <p className="text-xs text-slate-400 mt-0.5">{segment.dimLabel} · 학교·학년순</p>
+                  </div>
+                  <button onClick={() => setSegment(null)} className="text-slate-400 hover:text-slate-700 text-lg">✕</button>
+                </div>
+                <div className="overflow-y-auto flex-1 px-2 py-2">
+                  {segment.people.length === 0 ? (
+                    <div className="py-10 text-center text-sm text-slate-400">해당 인원이 없습니다</div>
+                  ) : (
+                    segment.people.map((p, i) => {
+                      const prev = segment.people[i - 1]
+                      const showSchoolHeader = !prev || prev.school !== p.school
+                      const statusColor = p.status === '출석완료'
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                        : p.status === '노쇼확정'
+                        ? 'bg-red-50 text-red-500 border-red-200'
+                        : 'bg-slate-50 text-slate-500 border-slate-200'
+                      return (
+                        <div key={`${p.phone ?? ''}-${i}`}>
+                          {showSchoolHeader && (
+                            <p className="px-3 pt-3 pb-1 text-[11px] font-bold text-sky-500">{p.school || '학교 미입력'}</p>
+                          )}
+                          <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-sm font-bold text-slate-800">{p.name || '이름 미입력'}</span>
+                                {p.is_member && <span className="text-xs">🍇</span>}
+                                <span className={`text-[11px] ${genderColor(p.gender)}`}>{p.gender}</span>
+                                <span className="text-[10px] text-slate-400">{p.grade}{p.major ? ` · ${p.major}` : ''}</span>
+                              </div>
+                              {p.phone && <div className="text-[11px] text-slate-500">{p.phone}</div>}
+                            </div>
+                            {p.status && (
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border shrink-0 ${statusColor}`}>{p.status}</span>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     )
