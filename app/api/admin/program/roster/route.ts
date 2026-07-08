@@ -32,9 +32,13 @@ export async function GET(request: NextRequest) {
     // 출석 모수 세션(주차별, counts_for_attendance=true)
     const { data: sessions } = await supabase
       .from('program_sessions')
-      .select('id, week_no, counts_for_attendance')
+      .select('id, week_no, counts_for_attendance, session_date')
       .eq('program_id', programId)
-    const countingSessions = (sessions ?? []).filter((s) => s.counts_for_attendance)
+    // 오늘(KST) 이전에 열린 회차만 결석 모수에 포함 — 아직 날짜가 안 온(예정)·날짜 미정 회차는 제외
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+    const countingSessions = (sessions ?? []).filter(
+      (s) => s.counts_for_attendance && s.session_date != null && s.session_date <= today
+    )
     const countingSessionIds = new Set(countingSessions.map((s) => s.id))
     const weekBySession = new Map<number, number | null>((sessions ?? []).map((s) => [s.id, s.week_no]))
     // 주차 단위 모수: week_no가 있으면 distinct week, 없는(OT 등 비카운트) 세션은 모수 자체에서 제외돼 있음

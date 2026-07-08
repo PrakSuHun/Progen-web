@@ -428,6 +428,9 @@ function AttendanceTab({ data, program, teams, onToggle }: {
   const unassigned = data.people.filter((p) => !p.team_id).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
   if (unassigned.length > 0) groups.push({ key: 'un', label: '미배정', rows: unassigned })
 
+  // 오늘(KST) 이전에 열린 회차만 결석 모수에 포함 — 아직 날짜가 안 온(예정)·날짜 미정 회차는 제외
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' })
+
   const renderRow = (p: any) => {
     // 주당 1회 cap: 집계 세션을 주차(week) 단위로 묶어 present week 수 계산
     const presentWeeks = new Set<number>()
@@ -435,6 +438,7 @@ function AttendanceTab({ data, program, teams, onToggle }: {
     let nonWeek = 0
     for (const s of data.sessions) {
       if (!s.counts_for_attendance) continue
+      if (s.session_date == null || s.session_date > today) continue // 예정·날짜미정 제외
       if (s.week_no != null) weekSet.add(s.week_no); else nonWeek++
       const c = cellMap.get(`${p.enrollment_id}:${s.id}`)
       if (c?.present) presentWeeks.add(s.week_no != null ? s.week_no : -s.id)
