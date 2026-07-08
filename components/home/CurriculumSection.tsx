@@ -30,14 +30,15 @@ const months = [
     title: 'AI로 만드는 카카오 이모티콘 클래스',
     headline: '기획부터 굿즈까지',
     desc: 'AI로 나만의 카카오 이모티콘을 직접 만들고, 그 캐릭터를 굿즈로 제작하는 프로젝트까지 이어집니다.',
-    highlight: '6/27(토) · 사전 신청 OPEN',
+    highlight: '종료 · 나만의 카카오 이모티콘 제작',
+    ended: true,
   },
   {
     month: '08',
     title: 'AI 영상·음악 콘텐츠 제작',
     headline: '온라인 수익화',
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널을 만듭니다.',
-    highlight: '예정 · 알바 대신 자동 수익 채널',
+    highlight: '8/1(토) · 사전 신청 OPEN',
   },
 ]
 

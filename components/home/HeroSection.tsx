@@ -29,7 +29,7 @@ export function HeroSection() {
                 <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
               </span>
-              1기 크루 모집 중 · 5월 클래스 사전 신청 OPEN
+              1기 크루 모집 중 · 8월 클래스 사전 신청 OPEN
             </div>
 
             <h1
@@ -109,24 +109,24 @@ export function HeroSection() {
               top="55%"
               left="5%"
               delay="-3s"
-              color="from-sky-500 to-cyan-400"
-              label="6월 모집중"
+              color="from-sky-500 to-sky-400"
+              label="6월 종료"
               title="카카오 이모티콘 클래스"
-              sub="6/27(토) · 사전 신청 OPEN"
+              sub="나만의 이모티콘 제작"
               tags={['이모티콘', '굿즈 제작']}
               tilt="3deg"
-              highlight
             />
             <FloatCard
               top="70%"
               left="50%"
               delay="-2s"
-              color="from-cyan-400 to-sky-400"
-              label="8월 예정"
+              color="from-sky-500 to-cyan-400"
+              label="8월 모집중"
               title="AI 영상·음악"
-              sub="온라인 수익화"
+              sub="8/1(토) · 사전 신청 OPEN"
               tags={['영상', '음악 AI']}
               tilt="-2deg"
+              highlight
             />
           </div>
         </div>

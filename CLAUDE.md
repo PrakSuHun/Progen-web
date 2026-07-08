@@ -210,7 +210,7 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 ### 5-1. 홈 `/` ([app/page.tsx](app/page.tsx))
 **구성 섹션** (현재 4개):
 1. `HeroSection` — 풀스크린 히어로 (좌: 메인 카피·CTA, 우: 떠다니는 행사 미리보기 카드 4장 lg+에서만)
-2. `CurriculumSection` — 5개월 커리큘럼 카드 (3·4월 종료, 5월 모집중, 6·7월 예정)
+2. `CurriculumSection` — 커리큘럼 카드 (03·04·05·06 종료, **08 "AI 영상·음악 콘텐츠 제작" 모집중=8/1(토) 사전신청 OPEN**). 2026-07-08 갱신: 06 카카오 이모티콘 종료 처리, 08을 신청 OPEN으로. HeroSection 상단 배지도 "8월 클래스 사전 신청 OPEN", 우측 FloatCard 4장은 3·4·6월 종료 + 8월 모집중(highlight)
 3. `ReviewsSection` — 참가자 후기 3개 (5성 + 인용문 + 아바타)
 4. `CtaBanner` — 크루 혜택 4개 카드 + 진입장벽 해소 2개 박스 + 보라색 CTA 섹션
 
