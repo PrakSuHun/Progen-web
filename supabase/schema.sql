@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS events (
   program_detail TEXT,                            -- 알림톡 #{진행내용}
   kakao_chat_url TEXT,                            -- 회차 채팅방 링크
   auto_checkin_alimtalk BOOLEAN NOT NULL DEFAULT false, -- /checkin 자동 출석문자(6/7번) 토글. 활성 행사 ON일 때만 발송
+  is_public BOOLEAN NOT NULL DEFAULT true,        -- 공개 신청 대상(2026-07-08). getActiveEventId()는 true만 자동 선택. 내부 프로젝트 회차는 false
   cohort_id BIGINT REFERENCES cohorts(id),        -- 행사 소속 기수(2026-06-01). NULL=기수무관. 기존 행사는 1기 백필
   created_at TIMESTAMPTZ DEFAULT now()
 );
