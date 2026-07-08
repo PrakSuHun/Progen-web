@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { getActiveEventId } from '@/lib/get-active-event'
+import { getActivePublicEventId } from '@/lib/get-active-event'
 import {
   ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady,
   varsEventRegReceived, varsEventConfirmed,
@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = await getActiveEventId()
+    // 공개 신청 대상 행사만 — 내부 프로젝트 회차(경쟁 PT 등)로 신청이 잘못 들어가지 않도록
+    const eventId = await getActivePublicEventId()
 
     if (!eventId) {
       return NextResponse.json(
