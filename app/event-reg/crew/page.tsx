@@ -75,18 +75,20 @@ export default function EventRegCrewPage() {
 
             <div>
               <Input
-                label={<>동석자 이름 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
-                placeholder="같이 오는 분 이름 (여러 명은 쉼표로)"
+                label={<>같이 오는 분 이름 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
+                placeholder="예) 김철수, 이영희"
                 value={form.companion}
                 onChange={(e) => set('companion', e.target.value)}
               />
-              <div className="mt-2 bg-sky-50 border border-sky-100 rounded-xl p-3">
-                <p className="text-sky-700 text-[11px] md:text-xs leading-relaxed break-keep">
-                  행사는 대부분 팀플로 진행돼요. 함께 오는 분이 있다면 적어주시면
-                  <span className="font-bold"> 팀 배정 시 최대한 같은 팀으로 배치</span>해 드려요.
-                  <br />다만 인원·구성상 <span className="font-bold">부득이하게 다른 팀이 될 수 있고</span>,
-                  <span className="font-bold"> 행사 당일에는 원활한 진행을 위해 팀 변경이 불가</span>합니다.
+              <div className="mt-2 bg-sky-50 border border-sky-100 rounded-xl p-3.5">
+                <p className="text-sky-800 font-bold text-xs mb-2 flex items-center gap-1">
+                  <span>👥</span> 같은 팀으로 배치해 드려요
                 </p>
+                <ul className="space-y-1 text-[11px] md:text-xs text-sky-700 leading-relaxed break-keep">
+                  <li className="flex gap-1.5"><span className="text-sky-400 shrink-0">•</span><span>같이 오는 분을 적으면 <span className="font-bold">최대한 같은 팀</span>으로 묶어드려요.</span></li>
+                  <li className="flex gap-1.5"><span className="text-sky-400 shrink-0">•</span><span>인원·구성에 따라 <span className="font-bold">다른 팀이 될 수도</span> 있어요.</span></li>
+                  <li className="flex gap-1.5"><span className="text-sky-400 shrink-0">•</span><span>행사 당일에는 <span className="font-bold text-sky-900">팀 변경이 불가</span>해요.</span></li>
+                </ul>
               </div>
             </div>
 
