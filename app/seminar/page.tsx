@@ -35,15 +35,15 @@ const seminars = [
     desc: '장학금·공모전·채용 정보 키워드 자동 알림, 수업 녹음본 자동 텍스트화·요약·문제출제.',
   },
   {
-    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    status: '종료', statusColor: 'bg-[#eee] text-[#888]',
     month: '06', title: 'AI로 만드는 카카오 이모티콘 클래스',
     date: '2026. 6. 27 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['이모티콘', '캐릭터', '굿즈 제작'],
     desc: 'AI로 나만의 카카오 이모티콘을 직접 만들고, 그 캐릭터를 굿즈로 제작하는 프로젝트까지 이어집니다.',
   },
   {
-    status: '예정', statusColor: 'bg-[#fafafa] text-[#999] border border-[#eee]',
-    month: '08', title: 'AI 영상·음악 콘텐츠 제작',
+    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    month: '08', title: '여름방학 AI 영상 수익화 클래스',
     date: '2026. 8. 1 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['영상', '음악 AI', '수익화'],
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널.',

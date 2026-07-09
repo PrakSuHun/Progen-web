@@ -122,7 +122,7 @@ export function HeroSection() {
               delay="-2s"
               color="from-sky-500 to-cyan-400"
               label="8월 모집중"
-              title="AI 영상·음악"
+              title="여름방학 AI 영상 수익화"
               sub="8/1(토) · 사전 신청 OPEN"
               tags={['영상', '음악 AI']}
               tilt="-2deg"

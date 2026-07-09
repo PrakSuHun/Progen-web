@@ -34,7 +34,7 @@ const SEED_SESSIONS = [
   { week_no: 3, label: 'W3 · 팀모임 (시안·PT 준비)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
   { week_no: 4, label: 'W4 · 경쟁 PT (캐릭터)', session_date: '2026-07-18', type: 'pt', counts_for_attendance: true },
   { week_no: 5, label: 'W5 · 팀모임 (강의 기획)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
-  { week_no: 6, label: 'W6 · AI 영상·음악 클래스', session_date: '2026-08-01', type: 'class', counts_for_attendance: true },
+  { week_no: 6, label: 'W6 · 여름방학 AI 영상 수익화 클래스', session_date: '2026-08-01', type: 'class', counts_for_attendance: true },
   { week_no: 7, label: 'W7 · 팀모임 (강의영상)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
   { week_no: 8, label: 'W8 · 팀모임 (강의영상)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
   { week_no: 9, label: 'W9 · 중촌동 브랜드 매칭데이', session_date: '2026-08-21', type: 'milestone', counts_for_attendance: true },

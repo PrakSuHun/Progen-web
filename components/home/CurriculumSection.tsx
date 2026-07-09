@@ -35,7 +35,7 @@ const months = [
   },
   {
     month: '08',
-    title: 'AI 영상·음악 콘텐츠 제작',
+    title: '여름방학 AI 영상 수익화 클래스',
     headline: '온라인 수익화',
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널을 만듭니다.',
     highlight: '8/1(토) · 사전 신청 OPEN',
