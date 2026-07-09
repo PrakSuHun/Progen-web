@@ -11,10 +11,10 @@ import { showToast } from '@/components/Toast'
 import { SpotlightBackground } from '@/components/SpotlightBackground'
 import { formatPhone, isValidPhone } from '@/lib/constants'
 
-interface CrewFormData { name: string; phone: string }
+interface CrewFormData { name: string; phone: string; companion: string }
 
 export default function EventRegCrewPage() {
-  const [form, setForm] = useState<CrewFormData>({ name: '', phone: '' })
+  const [form, setForm] = useState<CrewFormData>({ name: '', phone: '', companion: '' })
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDuplicate, setShowDuplicate] = useState(false)
@@ -38,7 +38,7 @@ export default function EventRegCrewPage() {
     try {
       const response = await fetch('/api/event-reg', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'crew', name: form.name, phone: formatPhone(form.phone) }),
+        body: JSON.stringify({ mode: 'crew', name: form.name, phone: formatPhone(form.phone), companion: form.companion }),
       })
       const data = await response.json()
       if (response.ok) setShowSuccess(true)
@@ -50,7 +50,7 @@ export default function EventRegCrewPage() {
   }
 
   const set = (key: keyof CrewFormData, val: string) => setForm({ ...form, [key]: val })
-  const reset = () => { setForm({ name: '', phone: '' }); setErrors({}) }
+  const reset = () => { setForm({ name: '', phone: '', companion: '' }); setErrors({}) }
 
   return (
     <main className="min-h-screen">
@@ -72,6 +72,23 @@ export default function EventRegCrewPage() {
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Input label="연락처" placeholder="010-1234-5678" value={form.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
+
+            <div>
+              <Input
+                label={<>동석자 이름 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
+                placeholder="같이 오는 분 이름 (여러 명은 쉼표로)"
+                value={form.companion}
+                onChange={(e) => set('companion', e.target.value)}
+              />
+              <div className="mt-2 bg-sky-50 border border-sky-100 rounded-xl p-3">
+                <p className="text-sky-700 text-[11px] md:text-xs leading-relaxed break-keep">
+                  행사는 대부분 팀플로 진행돼요. 함께 오는 분이 있다면 적어주시면
+                  <span className="font-bold"> 팀 배정 시 최대한 같은 팀으로 배치</span>해 드려요.
+                  <br />다만 인원·구성상 <span className="font-bold">부득이하게 다른 팀이 될 수 있고</span>,
+                  <span className="font-bold"> 행사 당일에는 원활한 진행을 위해 팀 변경이 불가</span>합니다.
+                </p>
+              </div>
+            </div>
 
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? '신청 중...' : '신청하기'}

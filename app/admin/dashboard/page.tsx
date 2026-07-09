@@ -30,6 +30,7 @@ interface Attendee {
   team_name: string | null
   deposit_status: DepositStatus
   refund_account: string | null
+  companion?: string | null
 }
 
 interface DashboardData {
@@ -298,6 +299,12 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
       </div>
       {person.major && (
         <div className="text-xs text-slate-400 mt-0.5">{person.major}</div>
+      )}
+      {person.companion && (
+        <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-50 border border-violet-200 text-violet-700 text-[11px] font-medium max-w-full">
+          <span className="shrink-0">🤝 동석</span>
+          <span className="truncate">{person.companion}</span>
+        </div>
       )}
       {showPhone && person.phone && (
         <a

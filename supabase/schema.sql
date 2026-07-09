@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   deposit_status TEXT DEFAULT '미입금',           -- '미입금' / '입금' / '환불' (게스트 한정 의미)
   deposit_paid_at TIMESTAMPTZ,                    -- 마지막 상태 변경 시각
   refund_account TEXT,                            -- 게스트 환불 계좌 (예: "하나은행 110-123-456789")
+  companion TEXT,                                 -- 행사 동석자(같이 오는 사람) 이름. 팀 배정 참고용(2026-07-09). 자유 텍스트
   registered_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(crew_id, event_id)
 );

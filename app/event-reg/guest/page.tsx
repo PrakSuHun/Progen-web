@@ -17,14 +17,14 @@ import {
 
 interface GuestFormData {
   name: string; phone: string; age: string; school: string; grade: string
-  major: string; path: string; gender: string
+  major: string; path: string; gender: string; companion: string
   refund_bank: string; refund_account: string
 }
 
 export default function EventRegGuestPage() {
   const [form, setForm] = useState<GuestFormData>({
     name: '', phone: '', age: '', school: '', grade: '',
-    major: '', path: '', gender: '',
+    major: '', path: '', gender: '', companion: '',
     refund_bank: '', refund_account: '',
   })
   const [loading, setLoading] = useState(false)
@@ -68,7 +68,7 @@ export default function EventRegGuestPage() {
 
   const set = (key: keyof GuestFormData, val: string) => setForm({ ...form, [key]: val })
   const reset = () => {
-    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '', refund_bank: '', refund_account: '' })
+    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '', companion: '', refund_bank: '', refund_account: '' })
     setErrors({})
   }
 
@@ -112,6 +112,23 @@ export default function EventRegGuestPage() {
             <Select label="학년" options={GRADES} value={form.grade} onChange={(e) => set('grade', e.target.value)} error={errors.grade} />
             <Input label="전공" placeholder="컴퓨터과학" value={form.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />
             <Select label="행사 참여 경로" options={PATHS} value={form.path} onChange={(e) => set('path', e.target.value)} error={errors.path} />
+
+            <div>
+              <Input
+                label={<>동석자 이름 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
+                placeholder="같이 오는 분 이름 (여러 명은 쉼표로)"
+                value={form.companion}
+                onChange={(e) => set('companion', e.target.value)}
+              />
+              <div className="mt-2 bg-sky-50 border border-sky-100 rounded-xl p-3">
+                <p className="text-sky-700 text-[11px] md:text-xs leading-relaxed break-keep">
+                  행사는 대부분 팀플로 진행돼요. 함께 오는 분이 있다면 적어주시면
+                  <span className="font-bold"> 팀 배정 시 최대한 같은 팀으로 배치</span>해 드려요.
+                  <br />다만 인원·구성상 <span className="font-bold">부득이하게 다른 팀이 될 수 있고</span>,
+                  <span className="font-bold"> 행사 당일에는 원활한 진행을 위해 팀 변경이 불가</span>합니다.
+                </p>
+              </div>
+            </div>
 
             <div className="pt-2 border-t border-[#eee]">
               <p className="text-[#555] text-sm font-bold mb-1">환불 계좌</p>

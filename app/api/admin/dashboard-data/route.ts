@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         deposit_status,
         deposit_paid_at,
         refund_account,
+        companion,
         crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count ),
         guests ( name, phone, school, grade, age, gender, major )
       `)
@@ -68,6 +69,7 @@ export async function GET(request: NextRequest) {
         is_crew: !!crew,
         deposit_status: (reg.deposit_status as string) ?? '미입금',
         refund_account: (reg.refund_account as string) ?? null,
+        companion: (reg.companion as string) ?? null,
       }
     }
 

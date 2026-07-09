@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { mode, name, phone, age, school, grade, major, path, gender, refund_bank, refund_account } = body
+    const { mode, name, phone, age, school, grade, major, path, gender, refund_bank, refund_account, companion } = body
 
     if (!mode || !name || !phone) {
       return NextResponse.json(
@@ -122,6 +122,7 @@ export async function POST(request: NextRequest) {
           guest_id: guestId,
           status: '사전신청',
           refund_account: refundCombined,
+          companion: (typeof companion === 'string' && companion.trim()) ? companion.trim() : null,
         },
       ])
       .select()
