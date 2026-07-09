@@ -75,7 +75,7 @@ export default function EventRegCrewPage() {
 
             <div>
               <Input
-                label={<>같이 오는 분 이름 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
+                label={<>같은 팀 하고 싶은 분 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
                 placeholder="예) 김철수, 이영희"
                 value={form.companion}
                 onChange={(e) => set('companion', e.target.value)}

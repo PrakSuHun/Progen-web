@@ -302,7 +302,7 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
       )}
       {person.companion && (
         <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-50 border border-violet-200 text-violet-700 text-[11px] font-medium max-w-full">
-          <span className="shrink-0">🤝 동석</span>
+          <span className="shrink-0">🤝 팀희망</span>
           <span className="truncate">{person.companion}</span>
         </div>
       )}
