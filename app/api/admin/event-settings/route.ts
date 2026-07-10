@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   const { data: ev, error } = await supabase
     .from('events')
-    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url')
+    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, is_public')
     .eq('id', eventId)
     .maybeSingle()
 
@@ -97,6 +97,7 @@ export async function GET(request: NextRequest) {
       program_detail: ev.program_detail ?? '',
       kakao_chat_url: ev.kakao_chat_url ?? '',
     },
+    is_public: ev.is_public ?? true,
     confirmReady: eventConfirmReady(ev),
     pending: {
       confirm: { total: confirmEligible.length, sent: confirmSent, pending: confirmEligible.length - confirmSent },
@@ -119,10 +120,14 @@ export async function POST(request: NextRequest) {
     if (!eventId) {
       return NextResponse.json({ message: 'eventId가 필요합니다' }, { status: 400 })
     }
-    const update: Record<string, string | null> = {}
+    const update: Record<string, string | boolean | null> = {}
     for (const f of SETTINGS_FIELDS) {
       const v = typeof body[f] === 'string' ? body[f].trim() : ''
       update[f] = v || null
+    }
+    // 내부/외부 행사 토글(is_public) — 넘어온 경우에만 반영
+    if (typeof body.is_public === 'boolean') {
+      update.is_public = body.is_public
     }
     const supabase = createAdminClient()
     const { error } = await supabase.from('events').update(update).eq('id', eventId)

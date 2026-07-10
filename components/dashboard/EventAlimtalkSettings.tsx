@@ -41,6 +41,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [settings, setSettings] = useState<Settings>(EMPTY)
+  const [isPublic, setIsPublic] = useState(true)
   const [eventTitle, setEventTitle] = useState('')
   const [confirmReady, setConfirmReady] = useState(false)
   const [pending, setPending] = useState<PendingInfo | null>(null)
@@ -60,6 +61,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
       const d = await res.json()
       if (res.ok) {
         setSettings({ ...EMPTY, ...d.settings })
+        setIsPublic(d.is_public !== false)
         setEventTitle(d.event?.title ?? '')
         setConfirmReady(!!d.confirmReady)
         setPending(d.pending ?? null)
@@ -101,7 +103,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
       const res = await fetch('/api/admin/event-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId, ...settings }),
+        body: JSON.stringify({ eventId, ...settings, is_public: isPublic }),
       })
       const d = await res.json()
       if (res.ok) {
@@ -206,11 +208,44 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
               <div className="py-10 text-center text-sm text-slate-400">불러오는 중...</div>
             ) : tab === 'info' ? (
               <div className="space-y-3.5">
-                <div className={`text-xs rounded-lg px-3 py-2 ${confirmReady ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-                  {confirmReady
-                    ? '✅ 참석 확정 알림톡 자동 발송 준비 완료'
-                    : '⚠️ 아래 5개 항목을 모두 채워야 참석 확정 알림톡이 자동으로 나갑니다 (그 전까지는 보류 → 발송 탭에서 일괄 발송)'}
+                {/* 내부/외부 행사 토글 */}
+                <div className="rounded-xl border border-slate-200 p-3">
+                  <div className="text-xs font-bold text-slate-500 mb-2">행사 유형</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsPublic(true)}
+                      className={`rounded-lg border px-3 py-2 text-left transition-colors ${isPublic ? 'border-sky-500 bg-sky-50' : 'border-slate-200 hover:border-slate-300'}`}
+                    >
+                      <div className={`text-sm font-bold ${isPublic ? 'text-sky-700' : 'text-slate-500'}`}>외부 행사</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">신청폼 연결 · 자동 노출</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPublic(false)}
+                      className={`rounded-lg border px-3 py-2 text-left transition-colors ${!isPublic ? 'border-slate-700 bg-slate-100' : 'border-slate-200 hover:border-slate-300'}`}
+                    >
+                      <div className={`text-sm font-bold ${!isPublic ? 'text-slate-800' : 'text-slate-500'}`}>내부 행사</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">출석체크 전용 · 신청 X</div>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">
+                    {isPublic
+                      ? '웹 사전신청이 이 행사로 연결되고, 행사가 끝나면 다음 외부 행사가 자동으로 노출됩니다.'
+                      : '웹 신청폼·자동 선택 대상에서 제외됩니다. 행사 당일 현장 체크인(/checkin)은 날짜에 맞춰 정상 동작해요. (설정은 저장을 눌러야 반영)'}
+                  </p>
                 </div>
+                {isPublic ? (
+                  <div className={`text-xs rounded-lg px-3 py-2 ${confirmReady ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                    {confirmReady
+                      ? '✅ 참석 확정 알림톡 자동 발송 준비 완료'
+                      : '⚠️ 아래 5개 항목을 모두 채워야 참석 확정 알림톡이 자동으로 나갑니다 (그 전까지는 보류 → 발송 탭에서 일괄 발송)'}
+                  </div>
+                ) : (
+                  <div className="text-xs rounded-lg px-3 py-2 bg-slate-100 text-slate-500">
+                    🔒 내부 행사 — 알림톡·신청폼이 필요 없어요. 아래 항목은 비워둬도 됩니다.
+                  </div>
+                )}
                 {field('location', '장소 *', '예: 충남대학교 공대 5호관 201호')}
                 {field('entry_time', '입장 시간 *', '예: 오후 1시 30분')}
                 {field('materials', '준비물 *', '예: 노트북, 충전기', true)}

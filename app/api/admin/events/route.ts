@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { getActiveEventId } from '@/lib/get-active-event'
+import { getActiveEventId, getActivePublicEventId } from '@/lib/get-active-event'
 import { getCurrentCohortId } from '@/lib/get-active-cohort'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('events')
-    .select('id, title, event_date, is_mandatory, created_at, auto_checkin_alimtalk, cohort_id')
+    .select('id, title, event_date, is_mandatory, created_at, auto_checkin_alimtalk, is_public, cohort_id')
     .order('event_date', { ascending: true })
 
   let effectiveCohortId: number | null = null
@@ -42,8 +42,11 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await query
   if (error) return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
+  // activeEventId: 날짜 기반 활성 행사(모든 행사, 자동문자 토글 등에 사용)
+  // defaultEventId: 어드민 첫 진입 시 기본 선택 = 가장 가까운 외부(공개) 행사 → 내부 회차(7/18 등) 대신 8/1이 뜬다
   const activeEventId = await getActiveEventId()
-  return NextResponse.json({ data, activeEventId, cohorts: cohorts ?? [], currentCohortId, effectiveCohortId })
+  const defaultEventId = (await getActivePublicEventId()) ?? activeEventId
+  return NextResponse.json({ data, activeEventId, defaultEventId, cohorts: cohorts ?? [], currentCohortId, effectiveCohortId })
 }
 
 export async function POST(request: NextRequest) {

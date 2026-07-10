@@ -43,7 +43,7 @@ interface DashboardData {
   noshow: Attendee[]
 }
 
-interface EventItem { id: string; title: string; event_date: string; auto_checkin_alimtalk?: boolean }
+interface EventItem { id: string; title: string; event_date: string; auto_checkin_alimtalk?: boolean; is_public?: boolean }
 
 interface CrewMember {
   id: string; name: string; phone: string; school: string; grade: string
@@ -51,6 +51,8 @@ interface CrewMember {
   motivation: string; role: string; status: string; is_member: boolean
   noshow_count: number; created_at: string; is_crew: boolean
   registration_id?: string; guest_id?: string; registered_at?: string
+  companion?: string | null; reg_status?: string | null; team_name?: string | null
+  is_first_time?: boolean
 }
 
 interface DistItem { name: string; count: number }
@@ -451,14 +453,17 @@ export default function AdminDashboardPage() {
     const res = await fetch(`/api/admin/events${qs}`)
     if (res.ok) {
       const json = await res.json()
-      const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date, auto_checkin_alimtalk: e.auto_checkin_alimtalk ?? false }))
+      const list: EventItem[] = (json.data ?? json).map((e: any) => ({ id: e.id, title: e.title, event_date: e.event_date, auto_checkin_alimtalk: e.auto_checkin_alimtalk ?? false, is_public: e.is_public ?? true }))
       setEvents(list)
       setActiveEventId(json.activeEventId ?? '')
       if (json.cohorts) setCohorts(json.cohorts)
       if (list.length > 0) {
-        // 서버에서 내려준 activeEventId(다음 예정 행사)를 기본값으로 사용
-        const activeId = json.activeEventId
-        const defaultId = activeId && list.some((e) => e.id === activeId) ? activeId : list[0].id
+        // 기본 선택 = 가장 가까운 외부(공개) 행사(defaultEventId). 내부 회차(7/18 등)는 자동 선택 안 함.
+        // 없으면 날짜 기반 활성 행사(activeEventId), 그것도 없으면 목록 첫 행사.
+        const inList = (id: string | null | undefined) => !!id && list.some((e) => e.id === id)
+        const defaultId = inList(json.defaultEventId) ? json.defaultEventId
+          : inList(json.activeEventId) ? json.activeEventId
+          : list[0].id
         setSelectedEventId(defaultId)
         fetchAll(defaultId)
       } else {
@@ -1984,6 +1989,7 @@ export default function AdminDashboardPage() {
                       {m.project && <div><span className="text-slate-400">관심 프로젝트</span><br/><span className="text-slate-700">{m.project}</span></div>}
                       {m.motivation && <div className="col-span-2"><span className="text-slate-400">지원 동기</span><br/><span className="text-slate-700">{m.motivation}</span></div>}
                       {membersMode === 'event' && m.team_name && <div><span className="text-slate-400">팀</span><br/><span className="text-sky-600 font-medium">{m.team_name}</span></div>}
+                      {membersMode === 'event' && m.companion && <div className="col-span-2"><span className="text-slate-400">동석자</span><br/><span className="text-violet-600 font-medium">🤝 {m.companion}</span></div>}
                     </div>
                     {membersMode === 'event' && (
                       <button onClick={() => handleDeleteMember(m)} className="w-full mt-2 py-1.5 text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium">
@@ -2025,6 +2031,7 @@ export default function AdminDashboardPage() {
                   {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">출석</th>}
                   {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">유형</th>}
                   {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">팀</th>}
+                  {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">동석자</th>}
                   <th className="px-3 py-3 text-left font-semibold">신청일</th>
                   {membersMode === 'event' && <th className="px-3 py-3 text-center font-semibold w-10">삭제</th>}
                 </tr>
@@ -2071,6 +2078,9 @@ export default function AdminDashboardPage() {
                     )}
                     {membersMode === 'event' && (
                       <td className="px-3 py-3 text-slate-500 text-xs">{m.team_name || '—'}</td>
+                    )}
+                    {membersMode === 'event' && (
+                      <td className="px-3 py-3 text-xs whitespace-nowrap">{m.companion ? <span className="text-violet-600">🤝 {m.companion}</span> : <span className="text-slate-300">—</span>}</td>
                     )}
                     <td className="px-3 py-3 text-slate-400 text-xs whitespace-nowrap">{new Date(m.registered_at || m.created_at).toLocaleDateString('ko-KR')}</td>
                     {membersMode === 'event' && (
@@ -2226,7 +2236,7 @@ export default function AdminDashboardPage() {
             >
               {events.map((ev) => (
                 <option key={ev.id} value={ev.id}>
-                  {ev.title} ({new Date(ev.event_date).toLocaleDateString('ko-KR')})
+                  {ev.is_public === false ? '[내부] ' : ''}{ev.title} ({new Date(ev.event_date).toLocaleDateString('ko-KR')})
                 </option>
               ))}
               <option value="crew-all">PROGEN 1기 크루</option>
