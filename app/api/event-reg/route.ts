@@ -57,6 +57,19 @@ export async function POST(request: NextRequest) {
 
       crewId = crewMember.id
     } else if (mode === 'guest') {
+      // 이미 크루로 등록된 번호면 게스트 신청 차단 → 크루 폼으로 안내 (게스트/크루 이중 등록 방지)
+      const { data: crewByPhone } = await supabase
+        .from('crew_members')
+        .select('id')
+        .eq('phone', phone)
+        .maybeSingle()
+      if (crewByPhone) {
+        return NextResponse.json(
+          { message: '이미 크루로 등록된 번호입니다. 크루로 신청해주세요.', code: 'crew_exists' },
+          { status: 409 }
+        )
+      }
+
       // Upsert guest (source_event_id only set on first insert)
       const { data: existingGuest } = await supabase
         .from('guests')

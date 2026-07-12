@@ -30,6 +30,7 @@ export default function EventRegGuestPage() {
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDuplicate, setShowDuplicate] = useState(false)
+  const [showCrewExists, setShowCrewExists] = useState(false)
   const [errors, setErrors] = useState<Partial<GuestFormData>>({})
 
   const validate = (): boolean => {
@@ -60,6 +61,7 @@ export default function EventRegGuestPage() {
       })
       const data = await response.json()
       if (response.ok) setShowSuccess(true)
+      else if (response.status === 409 && data.code === 'crew_exists') setShowCrewExists(true)
       else if (response.status === 409) setShowDuplicate(true)
       else showToast(data.message || '신청 중 오류가 발생했습니다', 'error')
     } catch { showToast('오류가 발생했습니다. 다시 시도해주세요', 'error') }
@@ -185,6 +187,15 @@ export default function EventRegGuestPage() {
 
         <button onClick={() => { setShowSuccess(false); reset() }}
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
+      </Modal>
+
+      <Modal isOpen={showCrewExists} onClose={() => setShowCrewExists(false)} title="크루로 등록된 번호예요">
+        <p className="text-[#333] mb-1 break-keep">입력하신 번호는 이미 <span className="font-bold">크루로 등록</span>되어 있어요.</p>
+        <p className="text-[#888] text-sm mb-5 break-keep">크루는 보증금 없이 크루 전용 폼으로 신청하시면 됩니다. 아래 버튼으로 이동해주세요.</p>
+        <Link href="/event-reg/crew"
+          className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">크루로 신청하기</Link>
+        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+          className="block w-full text-center text-[#999] hover:text-black text-sm transition-colors">번호가 잘못됐다면 문의하기</a>
       </Modal>
 
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 신청하셨어요">
