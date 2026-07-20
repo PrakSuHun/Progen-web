@@ -32,6 +32,8 @@ export default function CheckInPage() {
   const [showDuplicate, setShowDuplicate] = useState(false)
   const [checkedInName, setCheckedInName] = useState('')
   const [checkedInTeam, setCheckedInTeam] = useState<string | null>(null)
+  // 크루/게스트 구분 — 게스트만 보증금 대상이라 운영진이 모달 배지를 보고 안내한다
+  const [checkedInIsCrew, setCheckedInIsCrew] = useState<boolean | null>(null)
   const [checkInErrors, setCheckInErrors] = useState<Partial<CheckInData>>({})
   const [walkInErrors, setWalkInErrors] = useState<Partial<WalkInData>>({})
 
@@ -58,10 +60,10 @@ export default function CheckInPage() {
   const handleCheckIn = async (e: React.FormEvent) => {
     e.preventDefault()
     if (checkInData.name.trim() === '테스트') {
-      setCheckedInName('테스트'); setCheckedInTeam('1팀'); setShowSuccess(true); return
+      setCheckedInName('테스트'); setCheckedInTeam('1팀'); setCheckedInIsCrew(true); setShowSuccess(true); return
     }
     if (checkInData.name.trim() === '테스트1') {
-      setCheckedInName('테스트1'); setShowDuplicate(true); return
+      setCheckedInName('테스트1'); setCheckedInIsCrew(false); setShowDuplicate(true); return
     }
     if (!validateCheckIn()) return
     setLoading(true)
@@ -71,9 +73,9 @@ export default function CheckInPage() {
         body: JSON.stringify({ name: checkInData.name, phone: formatPhone(checkInData.phone) }),
       })
       const data = await response.json()
-      if (response.ok) { setCheckedInName(data.name); setCheckedInTeam(data.team_name ?? null); setShowSuccess(true); setCheckInData({ name: '', phone: '' }); setShowWalkIn(false) }
+      if (response.ok) { setCheckedInName(data.name); setCheckedInTeam(data.team_name ?? null); setCheckedInIsCrew(data.is_crew ?? null); setShowSuccess(true); setCheckInData({ name: '', phone: '' }); setShowWalkIn(false) }
       else if (response.status === 404) { setWalkInData({ ...walkInData, name: checkInData.name, phone: checkInData.phone }); setShowWalkIn(true) }
-      else if (response.status === 409) { setCheckedInName(data.name || checkInData.name); setShowDuplicate(true) }
+      else if (response.status === 409) { setCheckedInName(data.name || checkInData.name); setCheckedInIsCrew(data.is_crew ?? null); setShowDuplicate(true) }
       else showToast('오류가 발생했습니다', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
     finally { setLoading(false) }
@@ -82,10 +84,10 @@ export default function CheckInPage() {
   const handleWalkIn = async (e: React.FormEvent) => {
     e.preventDefault()
     if (walkInData.name.trim() === '테스트') {
-      setCheckedInName('테스트'); setCheckedInTeam(null); setShowSuccess(true); return
+      setCheckedInName('테스트'); setCheckedInTeam(null); setCheckedInIsCrew(false); setShowSuccess(true); return
     }
     if (walkInData.name.trim() === '테스트1') {
-      setCheckedInName('테스트1'); setShowDuplicate(true); return
+      setCheckedInName('테스트1'); setCheckedInIsCrew(false); setShowDuplicate(true); return
     }
     if (!validateWalkIn()) return
     setLoading(true)
@@ -96,13 +98,30 @@ export default function CheckInPage() {
       })
       const data = await response.json()
       if (response.ok) {
-        setCheckedInName(data.name || walkInData.name); setCheckedInTeam(null); setShowSuccess(true)
+        setCheckedInName(data.name || walkInData.name); setCheckedInTeam(null); setCheckedInIsCrew(data.is_crew ?? null); setShowSuccess(true)
         setWalkInData({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '' })
         setShowWalkIn(false); setCheckInData({ name: '', phone: '' })
-      } else if (response.status === 409) { setCheckedInName(data.name || walkInData.name); setShowDuplicate(true) }
+      } else if (response.status === 409) { setCheckedInName(data.name || walkInData.name); setCheckedInIsCrew(data.is_crew ?? null); setShowDuplicate(true) }
       else showToast('오류가 발생했습니다', 'error')
     } catch { showToast('오류가 발생했습니다', 'error') }
     finally { setLoading(false) }
+  }
+
+  // 운영진 안내용 구분 배지(게스트 = 보증금 대상)
+  const TypeBadge = () => {
+    if (checkedInIsCrew === null) return null
+    return checkedInIsCrew ? (
+      <div className="mb-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500 text-white text-sm font-black">
+        크루
+      </div>
+    ) : (
+      <div className="mb-3">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500 text-white text-sm font-black">
+          게스트
+        </div>
+        <p className="mt-1.5 text-amber-600 text-xs font-bold">보증금 5,000원 환불 대상 — 운영진 안내 필요</p>
+      </div>
+    )
   }
 
   const setCI = (key: keyof CheckInData, val: string) => setCheckInData({ ...checkInData, [key]: val })
@@ -154,6 +173,7 @@ export default function CheckInPage() {
       </div>
 
       <Modal isOpen={showSuccess} onClose={() => setShowSuccess(false)} title="출석 완료!">
+        <TypeBadge />
         <p className="text-[#333] mb-3"><span className="font-bold text-sky-600">{checkedInName}</span>님 출석이 확인됐습니다!</p>
         {checkedInTeam ? (
           <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-5 text-center">
@@ -167,6 +187,7 @@ export default function CheckInPage() {
       </Modal>
 
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 출석하셨어요">
+        <TypeBadge />
         <p className="text-[#333] mb-1"><span className="font-bold">{checkedInName}</span>님은 이미 출석 처리되었습니다.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있으시면 운영진에게 문의해주세요.</p>
         <button onClick={() => setShowDuplicate(false)} className="block w-full text-center bg-[#f0f0f0] hover:bg-[#e5e5e5] text-[#333] font-bold px-6 py-3 rounded-full transition-colors">확인</button>

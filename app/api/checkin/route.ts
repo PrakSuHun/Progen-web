@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
       if (existing) {
         if (existing.status === '출석완료') {
           return NextResponse.json(
-            { message: '이미 출석체크되었습니다', name: resolvedName },
+            { message: '이미 출석체크되었습니다', name: resolvedName, is_crew: !!crewId },
             { status: 409 }
           )
         }
@@ -153,6 +153,7 @@ export async function POST(request: NextRequest) {
           message: '출석 완료',
           name: resolvedName,
           team_name: existing.team_name ?? null,
+          is_crew: !!crewId,
         })
       }
 
@@ -173,7 +174,7 @@ export async function POST(request: NextRequest) {
       if (insertError) {
         if (insertError.code === '23505') {
           return NextResponse.json(
-            { message: '이미 출석체크되었습니다', name: resolvedName },
+            { message: '이미 출석체크되었습니다', name: resolvedName, is_crew: !!crewId },
             { status: 409 }
           )
         }
@@ -190,6 +191,7 @@ export async function POST(request: NextRequest) {
         message: '현장 등록 + 출석 완료',
         name: resolvedName,
         team_name: null,
+        is_crew: !!crewId,
       })
     } else {
       // Regular check-in: 사전 신청자 출석 처리. phone+name AND 매칭으로 본인 확인 강도 ↑.
@@ -244,7 +246,7 @@ export async function POST(request: NextRequest) {
 
       if (registration.status === '출석완료') {
         return NextResponse.json(
-          { message: '이미 출석체크되었습니다', name: resolvedName },
+          { message: '이미 출석체크되었습니다', name: resolvedName, is_crew: !!crewId },
           { status: 409 }
         )
       }
@@ -264,6 +266,7 @@ export async function POST(request: NextRequest) {
         message: '출석 완료',
         name: resolvedName,
         team_name: registration.team_name ?? null,
+        is_crew: !!crewId,
       })
     }
   } catch (error) {
