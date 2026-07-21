@@ -1935,6 +1935,25 @@ export default function AdminDashboardPage() {
           )}
         </div>
 
+        {/* 모바일 전용 검색창 (데스크톱은 위 툴바에 인라인) */}
+        <div className="md:hidden relative mb-3">
+          <input
+            value={memberSearch}
+            onChange={(e) => setMemberSearch(e.target.value)}
+            placeholder="이름, 학교 검색..."
+            className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl pl-3 pr-8 py-2 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
+          />
+          {memberSearch && (
+            <button
+              onClick={() => setMemberSearch('')}
+              aria-label="검색어 지우기"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-lg leading-none"
+            >
+              ×
+            </button>
+          )}
+        </div>
+
         {/* 모바일: 카드형 리스트 (클릭 시 상세 펼침) */}
         <div className="md:hidden space-y-2">
           {filtered.map((m: any) => {
