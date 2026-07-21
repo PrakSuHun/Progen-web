@@ -111,8 +111,8 @@ export async function GET(request: NextRequest) {
       .from('event_registrations')
       .select(`
         status, crew_id, guest_id, deposit_status,
-        crew_members ( name, phone, school, grade, major, path, gender, is_member ),
-        guests ( name, phone, school, grade, major, path, gender )
+        crew_members ( name, phone, school, grade, age, major, path, gender, is_member ),
+        guests ( name, phone, school, grade, age, major, path, gender )
       `)
       .eq('event_id', eventId)
 
@@ -134,6 +134,7 @@ export async function GET(request: NextRequest) {
         phone,
         school: p?.school ?? '',
         grade: p?.grade ?? '',
+        age: p?.age ?? '',
         path: p?.path ?? '',
         gender: p?.gender ?? '',
         is_member: crew?.is_member || podoPhoneSetEarly.has(phone) || phone.startsWith('PODO-'),
@@ -174,6 +175,7 @@ export async function GET(request: NextRequest) {
         school: a.school ?? '',
         grade: a.grade ?? '',
         gender: a.gender ?? '',
+        age: a.age ?? '',
         major: a.major ?? '',
         phone: a.phone ?? '',
         path: a.path ?? '',

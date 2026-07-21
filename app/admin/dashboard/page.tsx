@@ -1775,7 +1775,7 @@ export default function AdminDashboardPage() {
                                 <span className="text-sm font-bold text-slate-800">{p.name || '이름 미입력'}</span>
                                 {p.is_member && <span className="text-xs">🍇</span>}
                                 <span className={`text-[11px] ${genderColor(p.gender)}`}>{p.gender}</span>
-                                <span className="text-[10px] text-slate-400">{p.grade}{p.major ? ` · ${p.major}` : ''}</span>
+                                <span className="text-[10px] text-slate-400">{p.grade}{p.age ? ` · ${p.age}세` : ''}{p.major ? ` · ${p.major}` : ''}</span>
                               </div>
                               {p.phone && <div className="text-[11px] text-slate-500">{p.phone}</div>}
                             </div>
