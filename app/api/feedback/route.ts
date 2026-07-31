@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { good_points, bad_points, good_tags, bad_tags, would_return, join_interest } = body
+    const { good_points, bad_points, good_tags, bad_tags, join_interest } = body
 
     if (!good_points?.trim() || !bad_points?.trim()) {
       return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
           good_points: good_points.trim(),
           bad_tags: Array.isArray(bad_tags) ? bad_tags : [],
           bad_points: bad_points.trim(),
-          would_return: would_return ?? false,
+          would_return: false,
           join_interest: join_interest ?? false,
         },
       ])

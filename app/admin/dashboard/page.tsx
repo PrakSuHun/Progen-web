@@ -1658,10 +1658,9 @@ export default function AdminDashboardPage() {
           {s3 ? (
             <>
               {!crewMode && (
-                <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6">
                   {[
                     { label: '총 응답 수', value: s3.total_responses, color: 'text-slate-800' },
-                    { label: '재참여 희망', value: s3.would_return_count, color: 'text-emerald-600' },
                     { label: '가입 관심', value: s3.join_interest_count, color: 'text-sky-600' },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">

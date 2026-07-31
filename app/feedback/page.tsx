@@ -13,7 +13,7 @@ import { SpotlightBackground } from '@/components/SpotlightBackground'
 interface FeedbackData {
   good_tags: string[]; good_points: string
   bad_tags: string[]; bad_points: string
-  would_return: boolean; join_interest: boolean
+  join_interest: boolean
 }
 
 export default function FeedbackPage() {
@@ -22,7 +22,7 @@ export default function FeedbackPage() {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FeedbackData>({
     good_tags: [], good_points: '', bad_tags: [], bad_points: '',
-    would_return: false, join_interest: false,
+    join_interest: false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -121,12 +121,9 @@ export default function FeedbackPage() {
           {step === 3 && (
             <div className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
               {stepIndicator(3)}
-              <h2 className="text-xl font-black text-black">행사 참여 의향</h2>
+              <h2 className="text-xl font-black text-black">PROGEN 가입 관심</h2>
+              <p className="text-[#888] text-sm">관심 있는 분만 체크해주세요. 원하지 않으면 바로 제출하셔도 됩니다.</p>
               <div className="space-y-3">
-                <label className="flex items-center gap-3 cursor-pointer p-4 bg-[#fafafa] border border-[#eee] rounded-xl hover:border-sky-200 transition">
-                  <input type="checkbox" checked={formData.would_return} onChange={(e) => setFormData({ ...formData, would_return: e.target.checked })} className="w-5 h-5 accent-sky-500" />
-                  <span className="text-[#333] text-sm">다음 행사에도 참여하고 싶습니다</span>
-                </label>
                 <label className="flex items-center gap-3 cursor-pointer p-4 bg-[#fafafa] border border-[#eee] rounded-xl hover:border-sky-200 transition">
                   <input type="checkbox" checked={formData.join_interest} onChange={(e) => setFormData({ ...formData, join_interest: e.target.checked })} className="w-5 h-5 accent-sky-500" />
                   <span className="text-[#333] text-sm">PROGEN 단체 가입에 관심이 있습니다</span>
