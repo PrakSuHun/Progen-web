@@ -99,27 +99,6 @@ interface FullStats {
 const PIE_COLORS = ['#0ea5e9', '#34d399', '#f472b6', '#60a5fa', '#fbbf24']
 const FROM_NOT_ARRIVED = '__NOT_ARRIVED__'
 
-// 팀 구조(빈 팀 포함) 로컬 저장 — 새로고침 후에도 빈 팀이 사라지지 않게 유지.
-// 팀은 event_registrations.team_name 문자열로만 존재해서 멤버 0명이면 서버엔 흔적이 없다.
-// 그래서 운영진이 직접 삭제하기 전까지는 이 브라우저의 localStorage로 팀 목록을 붙잡아 둔다.
-const teamStorageKey = (eventId?: string) => `progen_teams_${eventId || 'default'}`
-function loadPersistedTeams(eventId?: string): string[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(teamStorageKey(eventId))
-    const arr = raw ? JSON.parse(raw) : []
-    return Array.isArray(arr) ? arr.filter((x) => typeof x === 'string') : []
-  } catch { return [] }
-}
-function persistTeams(eventId: string | undefined, teams: Iterable<string>) {
-  if (typeof window === 'undefined') return
-  try { localStorage.setItem(teamStorageKey(eventId), JSON.stringify([...teams])) } catch { /* noop */ }
-}
-function clearPersistedTeams(eventId?: string) {
-  if (typeof window === 'undefined') return
-  try { localStorage.removeItem(teamStorageKey(eventId)) } catch { /* noop */ }
-}
-
 function genderColor(gender: string) {
   if (gender === '남성' || gender === '남') return 'text-blue-600'
   if (gender === '여성' || gender === '여') return 'text-pink-600'
@@ -444,7 +423,6 @@ export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<SortKey>('none')
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
-  const knownTeamsRef = useRef<Set<string>>(new Set())
 
   // 터치(iPad) 탭 배정용
   const [selected, setSelected] = useState<{ person: Attendee; fromTeam: string | null } | null>(null)
@@ -522,13 +500,7 @@ export default function AdminDashboardPage() {
       if (dashRes.status === 401) { router.push('/admin'); return }
       if (dashRes.ok) {
         const newData: DashboardData = await dashRes.json()
-        // 서버 팀(멤버 있는 팀) + localStorage에 저장해 둔 빈 팀을 합쳐 유지
-        const union = new Set<string>([...Object.keys(newData.assigned), ...loadPersistedTeams(eid)])
-        knownTeamsRef.current = union
-        for (const name of union) {
-          if (!newData.assigned[name]) newData.assigned[name] = []
-        }
-        persistTeams(eid, union)
+        // 빈 팀은 렌더 시 DB 팀 번호의 빈 번호(gap)로 계산한다(localStorage 미사용).
         setData(newData)
       }
       if (statsRes.ok) setFullStats(await statsRes.json())
@@ -633,28 +605,21 @@ export default function AdminDashboardPage() {
       }
       return { ...prev, unassigned: newUnassigned, not_arrived: newNotArrived, assigned: newAssigned }
     })
-    if (targetTeam) { knownTeamsRef.current.add(targetTeam); persistTeams(selectedEventId, knownTeamsRef.current) }
     assignTeam(person.registration_id, targetTeam)
   }
 
+  // 맨 뒤에 새 팀 추가(드롭). 빈 팀은 gap으로 렌더되므로 별도 저장 불필요 — 최대 번호 +1.
   const handleDropOnNewTeam = () => {
     if (!data) return
-    const allNums = [...Object.keys(data.assigned), ...knownTeamsRef.current]
-      .map((n) => parseInt(n)).filter((n) => !isNaN(n))
-    const next = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
-    const newTeamName = `${next}팀`
-    knownTeamsRef.current.add(newTeamName)
-    persistTeams(selectedEventId, knownTeamsRef.current)
-    handleDrop(newTeamName)
+    const nums = Object.keys(data.assigned).map((n) => parseInt(n)).filter((n) => !isNaN(n))
+    const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
+    handleDrop(`${next}팀`)
   }
 
   const handleRenameTeam = (oldName: string, newName: string) => {
     if (!data) return
     if (data.assigned[newName]) { showToast('이미 존재하는 팀명입니다', 'error'); return }
     const members = data.assigned[oldName] || []
-    knownTeamsRef.current.delete(oldName)
-    knownTeamsRef.current.add(newName)
-    persistTeams(selectedEventId, knownTeamsRef.current)
     setData((prev) => {
       if (!prev) return prev
       const a = { ...prev.assigned }
@@ -680,16 +645,37 @@ export default function AdminDashboardPage() {
     finally { setAutoMatchLoading(false) }
   }
 
+  // 팀 삭제(✕)는 명시적 동작 → 이때만 앞으로 당긴다.
+  // 삭제한 팀 X의 멤버는 미배정으로 보내고, X보다 큰 번호의 팀은 모두 -1 해서 그 자리를 메운다.
+  // (빈 팀은 gap으로 계산되므로, 위 팀들이 한 칸씩 내려오면 삭제한 자리만 닫히고 나머지 빈 자리는 유지됨)
   const handleDeleteTeam = async (teamName: string) => {
     if (!data) return
+    const delNum = parseInt(teamName)
     const members = data.assigned[teamName] ?? []
 
-    knownTeamsRef.current.delete(teamName)
-    persistTeams(selectedEventId, knownTeamsRef.current)
+    // 삭제 팀 멤버 → 미배정. 숫자 팀이면 X보다 큰 번호 팀들을 한 칸씩 앞당김.
+    const dbOps: Promise<Response>[] = members.map((m) => assignTeam(m.registration_id, null))
+    const shifts: { from: string; to: string }[] = []
+    if (!isNaN(delNum)) {
+      for (const t of Object.keys(data.assigned)) {
+        const n = parseInt(t)
+        if (!isNaN(n) && n > delNum) {
+          shifts.push({ from: t, to: `${n - 1}팀` })
+          for (const m of (data.assigned[t] ?? [])) dbOps.push(assignTeam(m.registration_id, `${n - 1}팀`))
+        }
+      }
+    }
+
+    // 낙관적 UI: 삭제 팀 제거 + 큰 번호 팀 -1
     setData((prev) => {
       if (!prev) return prev
-      const newAssigned = { ...prev.assigned }
-      delete newAssigned[teamName]
+      const newAssigned: Record<string, Attendee[]> = {}
+      for (const [t, arr] of Object.entries(prev.assigned)) {
+        if (t === teamName) continue
+        const s = shifts.find((x) => x.from === t)
+        const key = s ? s.to : t
+        newAssigned[key] = (arr ?? []).map((p) => ({ ...p, team_name: key }))
+      }
       return {
         ...prev,
         unassigned: [...members.map((m) => ({ ...m, team_name: null })), ...prev.unassigned],
@@ -697,10 +683,8 @@ export default function AdminDashboardPage() {
       }
     })
 
-    // 이 팀 멤버만 미배정으로 되돌린다. ※ compact-teams(번호 재정렬)는 호출하지 않는다 —
-    //   삭제한 팀 번호는 공백으로 남기고 나머지 팀 번호는 그대로 유지(앞당김 방지).
-    await Promise.all(members.map((m) => assignTeam(m.registration_id, null)))
-    // fetchAll은 멤버를 상태별(미출석/노쇼/출석)로 재분류 + 저장된 빈 팀 복원(방금 삭제한 팀은 제외).
+    await Promise.all(dbOps)
+    // 멤버 상태별(미출석/노쇼/출석) 재분류 + 서버 정합성 확인
     await fetchAll()
   }
 
@@ -866,8 +850,6 @@ export default function AdminDashboardPage() {
       })
       const d = await res.json()
       if (res.ok) {
-        knownTeamsRef.current.clear()
-        clearPersistedTeams(selectedEventId)
         showToast('팀 배정이 초기화되었습니다', 'success')
         await fetchAll()
       } else showToast(d.message || '오류 발생', 'error')
@@ -1077,13 +1059,14 @@ export default function AdminDashboardPage() {
     const unassigned = data?.unassigned ?? []
     const assigned = data?.assigned ?? {}
     const notArrived = data?.not_arrived ?? []
-    const teamNames = Object.keys(assigned).sort((a, b) => {
-      const na = parseInt(a); const nb = parseInt(b)
-      if (!isNaN(na) && !isNaN(nb)) return na - nb
-      return a.localeCompare(b)
-    })
-    const allNums = teamNames.map((n) => parseInt(n)).filter((n) => !isNaN(n))
-    const nextNum = allNums.length > 0 ? Math.max(...allNums) + 1 : 1
+    // 빈 팀 = DB 팀 번호의 빈 번호(gap). 1~최대번호를 모두 카드로 렌더하고, 멤버 없는 번호는 빈 팀 카드로 표시.
+    // localStorage가 아니라 DB에서 계산 → 모든 기기에서 동일하게 보이고 새로고침에도 유지됨.
+    const assignedNums = Object.keys(assigned).map((n) => parseInt(n)).filter((n) => !isNaN(n))
+    const maxTeam = assignedNums.length > 0 ? Math.max(...assignedNums) : 0
+    const numberedNames = Array.from({ length: maxTeam }, (_, i) => `${i + 1}팀`)
+    const customNames = Object.keys(assigned).filter((t) => isNaN(parseInt(t))).sort((a, b) => a.localeCompare(b))
+    const teamNames = [...numberedNames, ...customNames]
+    const nextNum = maxTeam + 1
 
     const sortByName = (a: Attendee, b: Attendee) => a.name.localeCompare(b.name, 'ko')
     // 미배정 패널 정렬 — teamSort 버튼으로 선택. 동률이면 가나다순.
@@ -1268,7 +1251,7 @@ export default function AdminDashboardPage() {
               ${selected ? 'border-sky-400 text-sky-500 bg-sky-50/50' : 'border-slate-300 text-slate-400 hover:border-sky-300 hover:text-sky-500'}`}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDropOnNewTeam}
-            onClick={() => { if (selected) { const allNums2 = [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current].map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = allNums2.length > 0 ? Math.max(...allNums2) + 1 : 1; const newName = `${next2}팀`; knownTeamsRef.current.add(newName); persistTeams(selectedEventId, knownTeamsRef.current); handleTapAssign(newName) } }}
+            onClick={() => { if (selected) { const nums2 = Object.keys(data?.assigned ?? {}).map((n) => parseInt(n)).filter((n) => !isNaN(n)); const next2 = nums2.length > 0 ? Math.max(...nums2) + 1 : 1; handleTapAssign(`${next2}팀`) } }}
           >
             + {nextNum}팀
           </div>
