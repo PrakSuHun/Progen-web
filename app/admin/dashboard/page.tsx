@@ -648,6 +648,21 @@ export default function AdminDashboardPage() {
     handleDrop(newTeamName)
   }
 
+  // 빈 팀 추가 — 비어 있는 가장 앞 번호(예: 2·3팀이 비었으면 2부터)로 빈 팀 카드를 만든다.
+  // 배치 중 비워둔 자리를 새로고침 후 다시 만들 때 사용. localStorage에 저장돼 유지됨.
+  const handleAddEmptyTeam = () => {
+    const present = new Set(
+      [...Object.keys(data?.assigned ?? {}), ...knownTeamsRef.current]
+        .map((n) => parseInt(n)).filter((n) => !isNaN(n)),
+    )
+    let next = 1
+    while (present.has(next)) next++
+    const name = `${next}팀`
+    knownTeamsRef.current.add(name)
+    persistTeams(selectedEventId, knownTeamsRef.current)
+    setData((prev) => (prev ? { ...prev, assigned: { ...prev.assigned, [name]: prev.assigned[name] ?? [] } } : prev))
+  }
+
   const handleRenameTeam = (oldName: string, newName: string) => {
     if (!data) return
     if (data.assigned[newName]) { showToast('이미 존재하는 팀명입니다', 'error'); return }
@@ -1221,6 +1236,12 @@ export default function AdminDashboardPage() {
           )}
         </div>
         <div className="p-3 border-t border-slate-200 flex gap-2">
+          <button
+            onClick={handleAddEmptyTeam}
+            className="flex-1 py-2 bg-slate-50 hover:bg-sky-50 text-slate-600 hover:text-sky-600 text-xs font-semibold rounded-xl transition-colors border border-slate-200 hover:border-sky-300"
+          >
+            + 빈 팀
+          </button>
           <button
             onClick={handleReset}
             disabled={resetLoading}
