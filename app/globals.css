@@ -56,6 +56,17 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
+/* 터치 기기(모바일·태블릿): 입력창 포커스 시 iOS 자동 확대 방지.
+   글자 크기가 16px 미만이면 포커스 순간 화면이 확대되고 그대로 남아 UI가 잘린다.
+   Tailwind text-sm/text-xs(14/12px)가 붙은 입력창을 강제 16px로 올려 확대를 막는다.
+   (핀치 줌은 그대로 유지 — 접근성 보존) */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* ── 애니메이션 ── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
