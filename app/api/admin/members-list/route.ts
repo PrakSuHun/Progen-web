@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import { isCrewAtRegistration } from '@/lib/registration-role'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -112,7 +113,8 @@ export async function GET(request: NextRequest) {
       motivation: person?.motivation ?? '',
       is_member: r.crew_members?.is_member ?? podoPhones.has(person?.phone ?? '') ?? false,
       noshow_count: r.crew_members?.noshow_count ?? 0,
-      is_crew: !!r.crew_members,
+      // 신청 시점 역할 기준 — 당일 크루 전환으로 flip 된 행도 게스트 배지 유지
+      is_crew: isCrewAtRegistration(r.crew_id, r.crew_members?.created_at, r.registered_at),
       is_first_time: !hasPrev,
       reg_status: r.status,
       team_name: r.team_name,

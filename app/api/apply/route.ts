@@ -86,11 +86,12 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (existingGuest) {
-        await supabase
-          .from('event_registrations')
-          .update({ crew_id: newCrew.id, guest_id: null })
-          .eq('guest_id', existingGuest.id)
-
+        // ⚠️ event_registrations 는 크루로 재배정하지 않는다 (2026-08-03).
+        // 각 행사 신청은 "신청 시점의 역할(게스트/크루)"로 고정되어야
+        //  ① 분석 탭의 게스트/크루 참여율 모수가 흔들리지 않고
+        //  ② 게스트로 낸 보증금이 보증금 탭(게스트 전용)에 남아 환불 대상이 유지된다.
+        // 게스트→크루 전환 자체는 full-stats 의 crew_conversion_count 가 별도(독립) 집계하므로
+        // 여기서 과거 신청을 갈아치우지 않아도 전환율은 정상적으로 나온다.
         await supabase
           .from('feedbacks')
           .update({ crew_id: newCrew.id, guest_id: null })

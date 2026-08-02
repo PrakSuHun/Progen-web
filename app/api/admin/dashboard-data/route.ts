@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import { isCrewAtRegistration } from '@/lib/registration-role'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -33,7 +34,8 @@ export async function GET(request: NextRequest) {
         deposit_paid_at,
         refund_account,
         companion,
-        crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count ),
+        registered_at,
+        crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count, created_at ),
         guests ( name, phone, school, grade, age, gender, major )
       `)
       .eq('event_id', eventId)
@@ -66,7 +68,8 @@ export async function GET(request: NextRequest) {
         gender: person?.gender ?? '',
         is_member: crew?.is_member ?? podoPhones.has(phone) ?? phone.startsWith('PODO-'),
         noshow_count: crew?.noshow_count ?? 0,
-        is_crew: !!crew,
+        // 신청 시점 역할 기준 — 당일 크루 전환자도 게스트로 유지(보증금 탭 환불 추적 보존)
+        is_crew: isCrewAtRegistration(reg.crew_id, crew?.created_at, reg.registered_at),
         deposit_status: (reg.deposit_status as string) ?? '미입금',
         refund_account: (reg.refund_account as string) ?? null,
         companion: (reg.companion as string) ?? null,

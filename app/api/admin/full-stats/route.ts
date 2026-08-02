@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
+import { isCrewAtRegistration } from '@/lib/registration-role'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -110,8 +111,8 @@ export async function GET(request: NextRequest) {
     const { data: registrations } = await supabase
       .from('event_registrations')
       .select(`
-        status, crew_id, guest_id, deposit_status,
-        crew_members ( name, phone, school, grade, age, major, path, gender, is_member ),
+        status, crew_id, guest_id, deposit_status, registered_at,
+        crew_members ( name, phone, school, grade, age, major, path, gender, is_member, created_at ),
         guests ( name, phone, school, grade, age, major, path, gender )
       `)
       .eq('event_id', eventId)
@@ -139,7 +140,8 @@ export async function GET(request: NextRequest) {
         gender: p?.gender ?? '',
         is_member: crew?.is_member || podoPhoneSetEarly.has(phone) || phone.startsWith('PODO-'),
         status: r.status,
-        is_crew: !!crew,
+        // 신청 시점 역할 기준 — 당일 크루 전환으로 crew_id 로 flip 된 행도 게스트로 집계
+        is_crew: isCrewAtRegistration(r.crew_id, crew?.created_at, r.registered_at),
         deposit_status: (r.deposit_status as string) ?? '미입금',
       }
     })
@@ -196,8 +198,8 @@ export async function GET(request: NextRequest) {
     const { data: regsFull } = await supabase
       .from('event_registrations')
       .select(`
-        crew_id, guest_id, status,
-        crew_members ( phone, is_member ),
+        crew_id, guest_id, status, registered_at,
+        crew_members ( phone, is_member, created_at ),
         guests ( phone )
       `)
       .eq('event_id', eventId)
@@ -211,7 +213,8 @@ export async function GET(request: NextRequest) {
 
     const thisEventPeople = (regsFull ?? []).map((r: any) => ({
       phone: r.crew_members?.phone ?? r.guests?.phone ?? '',
-      is_crew: !!r.crew_id,
+      // 신청 시점 역할 기준 (flip 된 행 → 게스트)
+      is_crew: isCrewAtRegistration(r.crew_id, r.crew_members?.created_at, r.registered_at),
       status: r.status,
     })).filter((p: any) => p.phone && !p.phone.startsWith('PODO-') && !podoPhoneSet.has(p.phone))
 
