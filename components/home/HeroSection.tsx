@@ -29,7 +29,7 @@ export function HeroSection() {
                 <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
               </span>
-              1기 크루 모집 중 · 9월 클래스 사전 신청 OPEN
+              9월 19일 클래스 · 사전 신청 중
             </div>
 
             <h1
@@ -59,17 +59,17 @@ export function HeroSection() {
               style={{ animationDelay: '340ms' }}
             >
               <a
-                href="/apply"
+                href="/event-reg"
                 className="group relative px-6 py-3.5 bg-gradient-to-r from-sky-500 to-blue-500 text-white font-bold rounded-full text-sm md:text-base text-center hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-sky-500/30 transition-all duration-200 shadow-lg shadow-sky-500/20 overflow-hidden"
               >
-                <span className="relative z-10">1기 크루 지원하기 →</span>
+                <span className="relative z-10">9/19 행사 사전 신청 →</span>
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </a>
               <a
-                href="#curriculum"
+                href="/apply"
                 className="px-6 py-3.5 bg-white/80 backdrop-blur-sm border border-[#e0e0e0] text-[#555] font-medium rounded-full text-sm md:text-base text-center hover:border-sky-300 hover:text-sky-500 hover:-translate-y-0.5 transition-all duration-200"
               >
-                커리큘럼 보기 ↓
+                1기 크루 지원하기
               </a>
             </div>
 
@@ -121,7 +121,7 @@ export function HeroSection() {
               left="50%"
               delay="-2s"
               color="from-sky-500 to-cyan-400"
-              label="9월 모집중"
+              label="9월 사전 신청 중"
               title="AI시대 대학생으로 살아남기"
               sub="9/19(토) · 사전 신청 OPEN"
               tags={['논문 파악', 'PPT 제작']}

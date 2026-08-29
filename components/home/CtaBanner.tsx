@@ -86,15 +86,15 @@ export function CtaBanner() {
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-300/20 rounded-full blur-2xl pointer-events-none" />
               <div className="relative">
-                <p className="text-white/70 text-xs mb-3">매달 새로운 클래스가 시작됩니다.</p>
+                <p className="text-white/70 text-xs mb-3">9월 19일 외부 행사 사전 신청 접수 중</p>
                 <h2 className="text-xl md:text-3xl font-black mb-2 leading-snug">
-                  합류를 원하신다면<br />
-                  PROGEN 1기 크루원으로<br className="md:hidden" /> 신청해주세요
+                  AI시대<br />
+                  대학생으로 살아남기
                 </h2>
-                <p className="text-white/60 text-xs md:text-sm mb-5">무료 · 전공 무관 · 대전 소재 대학생 누구나</p>
-                <a href="/apply"
+                <p className="text-white/60 text-xs md:text-sm mb-5">9/19(토) · 참가비 무료 · 크루·게스트 모두 신청 가능</p>
+                <a href="/event-reg"
                   className="inline-block px-7 py-3.5 bg-white text-sky-600 font-black rounded-full text-sm md:text-base hover:bg-sky-50 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200">
-                  1기 크루 지원하기 →
+                  9월 행사 사전 신청 →
                 </a>
               </div>
             </div>

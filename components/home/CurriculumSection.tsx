@@ -1,4 +1,5 @@
 import { Reveal } from '@/components/Reveal'
+import Link from 'next/link'
 
 const months = [
   {
@@ -46,7 +47,8 @@ const months = [
     title: 'AI시대 대학생으로 살아남기',
     headline: '대학생 AI 실전 활용',
     desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
-    highlight: '9/19(토) · 사전 신청 OPEN',
+    highlight: '9/19(토) · 사전 신청 중',
+    href: '/event-reg',
   },
 ]
 
@@ -91,6 +93,16 @@ export function CurriculumSection() {
                     <div className={`inline-flex max-w-full items-center px-3 py-1.5 rounded-lg border ${m.ended ? 'bg-[#f5f5f5] border-[#e5e5e5]' : 'bg-sky-50 border-sky-100'}`}>
                       <span className={`text-xs md:text-sm leading-snug break-keep ${m.ended ? 'text-[#888]' : 'text-sky-500'}`}>{m.highlight}</span>
                     </div>
+                    {m.href && (
+                      <div className="mt-3">
+                        <Link
+                          href={m.href}
+                          className="inline-flex items-center px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-xs md:text-sm font-bold rounded-full transition-colors"
+                        >
+                          9월 행사 사전 신청 →
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -49,7 +49,7 @@ const seminars = [
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널.',
   },
   {
-    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    status: '사전 신청 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
     month: '09', title: 'AI시대 대학생으로 살아남기',
     date: '2026. 9. 19 (토)', speaker: '대표 박수훈', capacity: 80,
     tags: ['자료 서치', '논문 파악', 'PPT 제작', '보고서 제작'],
@@ -110,10 +110,10 @@ export default function SeminarPage() {
                           <span key={tag} className="px-2 py-0.5 bg-white border border-[#e0e0e0] text-[#555] text-xs rounded-full">{tag}</span>
                         ))}
                       </div>
-                      {s.status === '모집 중' && (
+                      {s.status === '사전 신청 중' && (
                         <Link href="/event-reg"
                           className="inline-block px-6 py-2.5 bg-sky-500 hover:bg-sky-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30 text-white text-sm font-bold rounded-full transition-all duration-200">
-                          사전 신청 →
+                          9/19 행사 사전 신청 →
                         </Link>
                       )}
                     </div>

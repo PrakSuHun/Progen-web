@@ -90,7 +90,11 @@ export default function EventRegGuestPage() {
             Guest · Event Registration
           </div>
           <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">비회원 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-5 break-keep">행사에 참여하시는 분의 정보를 입력해주세요</p>
+          <p className="text-[#888] text-sm mb-4 break-keep">행사에 참여하시는 분의 정보를 입력해주세요</p>
+          <div className="mb-5 bg-sky-50 border border-sky-200 rounded-xl px-4 py-3">
+            <p className="text-sky-600 text-[10px] font-bold mb-0.5">사전 신청 접수 중 · 2026. 9. 19 (토)</p>
+            <p className="text-sky-950 text-sm font-black break-keep">AI시대 대학생으로 살아남기</p>
+          </div>
 
           <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl p-3.5 md:p-5">
             <div className="flex items-start gap-2.5 md:gap-3">

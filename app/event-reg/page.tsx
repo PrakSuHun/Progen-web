@@ -17,7 +17,16 @@ export default function EventRegPage() {
             Event Registration
           </div>
           <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">행사 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-6 md:mb-8 break-keep">신청 유형을 선택해주세요</p>
+          <p className="text-[#888] text-sm mb-5 break-keep">신청 유형을 선택해주세요</p>
+
+          <div className="mb-6 md:mb-8 bg-sky-50 border border-sky-200 rounded-2xl p-4 md:p-5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 rounded-full bg-sky-500 text-white text-[10px] md:text-xs font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              사전 신청 접수 중
+            </div>
+            <h2 className="text-base md:text-lg font-black text-sky-950 break-keep">AI시대 대학생으로 살아남기</h2>
+            <p className="text-sky-700 text-xs md:text-sm mt-1">2026. 9. 19 (토) · 참가비 무료</p>
+          </div>
 
           <div className="grid gap-3 md:gap-4">
             <Link
