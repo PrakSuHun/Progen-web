@@ -42,10 +42,10 @@ export function Navbar() {
             </div>
 
             <Link
-              href="/event-reg"
+              href="/apply"
               className="hidden md:inline-block px-5 py-2 bg-sky-500 text-white font-bold text-sm rounded-full hover:bg-sky-600 transition-all duration-200"
             >
-              9월 행사 신청
+              지원하기
             </Link>
 
             <button
@@ -70,11 +70,11 @@ export function Navbar() {
             <Link href="/recruit" className="text-black text-lg font-semibold" onClick={() => setIsOpen(false)}>운영진 모집</Link>
             <div className="pt-4 border-t border-[#eee]">
               <Link
-                href="/event-reg"
+                href="/apply"
                 className="block text-center py-3.5 bg-sky-500 text-white font-bold text-base rounded-full"
                 onClick={() => setIsOpen(false)}
               >
-                9월 행사 사전 신청
+                지원하기
               </Link>
             </div>
           </div>

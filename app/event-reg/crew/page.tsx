@@ -74,11 +74,7 @@ export default function EventRegCrewPage() {
             Crew · Event Registration
           </div>
           <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">크루 사전 신청</h1>
-          <p className="text-[#888] text-sm mb-4 break-keep">이름과 연락처로 본인 확인합니다</p>
-          <div className="mb-6 md:mb-8 bg-sky-50 border border-sky-200 rounded-xl px-4 py-3">
-            <p className="text-sky-600 text-[10px] font-bold mb-0.5">사전 신청 접수 중 · 2026. 9. 19 (토)</p>
-            <p className="text-sky-950 text-sm font-black break-keep">AI시대 대학생으로 살아남기</p>
-          </div>
+          <p className="text-[#888] text-sm mb-6 md:mb-8 break-keep">이름과 연락처로 본인 확인합니다</p>
 
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
