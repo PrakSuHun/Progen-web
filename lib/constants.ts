@@ -106,3 +106,12 @@ export function formatPhone(phone: string): string {
   if (cleanPhone.length <= 7) return `${cleanPhone.slice(0, 3)}-${cleanPhone.slice(3)}`
   return `${cleanPhone.slice(0, 3)}-${cleanPhone.slice(3, 7)}-${cleanPhone.slice(7)}`
 }
+
+// 학교마다 학번 길이가 다르므로 숫자 6~12자리를 허용한다.
+export function isValidStudentNumber(studentNumber: string): boolean {
+  return /^\d{6,12}$/.test(studentNumber.trim())
+}
+
+export function formatStudentNumber(studentNumber: string): string {
+  return studentNumber.replace(/\D/g, '').slice(0, 12)
+}

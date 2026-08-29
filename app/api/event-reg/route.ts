@@ -4,12 +4,14 @@ import {
   ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady,
   varsEventRegReceived, varsEventConfirmed,
 } from '@/lib/solapi'
+import { isValidStudentNumber } from '@/lib/constants'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { mode, name, phone, age, school, grade, major, path, gender, refund_bank, refund_account, companion } = body
+    const { mode, name, phone, age, school, grade, major, path, gender, refund_bank, refund_account, companion, student_number } = body
+    const studentNumber = typeof student_number === 'string' ? student_number.trim() : ''
 
     if (!mode || !name || !phone) {
       return NextResponse.json(
@@ -21,6 +23,13 @@ export async function POST(request: NextRequest) {
     if (mode === 'guest' && !age) {
       return NextResponse.json(
         { message: '필수 항목을 입력해주세요' },
+        { status: 400 }
+      )
+    }
+
+    if (!isValidStudentNumber(studentNumber)) {
+      return NextResponse.json(
+        { message: '학번을 숫자 6~12자리로 입력해주세요' },
         { status: 400 }
       )
     }
@@ -135,6 +144,7 @@ export async function POST(request: NextRequest) {
           guest_id: guestId,
           status: '사전신청',
           refund_account: refundCombined,
+          student_number: studentNumber,
           companion: (typeof companion === 'string' && companion.trim()) ? companion.trim() : null,
         },
       ])

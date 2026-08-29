@@ -9,12 +9,12 @@ import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/Modal'
 import { showToast } from '@/components/Toast'
 import { SpotlightBackground } from '@/components/SpotlightBackground'
-import { formatPhone, isValidPhone } from '@/lib/constants'
+import { formatPhone, formatStudentNumber, isValidPhone, isValidStudentNumber } from '@/lib/constants'
 
-interface CrewFormData { name: string; phone: string; companion: string }
+interface CrewFormData { name: string; phone: string; student_number: string; companion: string }
 
 export default function EventRegCrewPage() {
-  const [form, setForm] = useState<CrewFormData>({ name: '', phone: '', companion: '' })
+  const [form, setForm] = useState<CrewFormData>({ name: '', phone: '', student_number: '', companion: '' })
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDuplicate, setShowDuplicate] = useState(false)
@@ -25,6 +25,7 @@ export default function EventRegCrewPage() {
     const e: Partial<CrewFormData> = {}
     if (!form.name.trim()) e.name = '이름을 입력해주세요'
     if (!isValidPhone(form.phone)) e.phone = '올바른 연락처를 입력해주세요'
+    if (!isValidStudentNumber(form.student_number)) e.student_number = '학번을 숫자 6~12자리로 입력해주세요'
     setErrors(e); return Object.keys(e).length === 0
   }
 
@@ -38,7 +39,13 @@ export default function EventRegCrewPage() {
     try {
       const response = await fetch('/api/event-reg', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'crew', name: form.name, phone: formatPhone(form.phone), companion: form.companion }),
+        body: JSON.stringify({
+          mode: 'crew',
+          name: form.name,
+          phone: formatPhone(form.phone),
+          student_number: form.student_number,
+          companion: form.companion,
+        }),
       })
       const data = await response.json()
       if (response.ok) setShowSuccess(true)
@@ -50,7 +57,7 @@ export default function EventRegCrewPage() {
   }
 
   const set = (key: keyof CrewFormData, val: string) => setForm({ ...form, [key]: val })
-  const reset = () => { setForm({ name: '', phone: '', companion: '' }); setErrors({}) }
+  const reset = () => { setForm({ name: '', phone: '', student_number: '', companion: '' }); setErrors({}) }
 
   return (
     <main className="min-h-screen">
@@ -72,6 +79,15 @@ export default function EventRegCrewPage() {
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Input label="연락처" placeholder="010-1234-5678" value={form.phone} onChange={(e) => set('phone', e.target.value)} error={errors.phone} phoneFormat />
+            <Input
+              label="학번"
+              placeholder="202600178"
+              inputMode="numeric"
+              autoComplete="off"
+              value={form.student_number}
+              onChange={(e) => set('student_number', formatStudentNumber(e.target.value))}
+              error={errors.student_number}
+            />
 
             <div>
               <Input

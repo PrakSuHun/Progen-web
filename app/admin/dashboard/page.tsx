@@ -30,6 +30,7 @@ interface Attendee {
   team_name: string | null
   deposit_status: DepositStatus
   refund_account: string | null
+  student_number?: string | null
   companion?: string | null
 }
 
@@ -51,7 +52,7 @@ interface CrewMember {
   motivation: string; role: string; status: string; is_member: boolean
   noshow_count: number; created_at: string; is_crew: boolean
   registration_id?: string; guest_id?: string; registered_at?: string
-  companion?: string | null; reg_status?: string | null; team_name?: string | null
+  student_number?: string | null; companion?: string | null; reg_status?: string | null; team_name?: string | null
   is_first_time?: boolean
 }
 
@@ -301,6 +302,9 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
       </div>
       {person.major && (
         <div className="text-xs text-slate-400 mt-0.5">{person.major}</div>
+      )}
+      {person.student_number && (
+        <div className="text-xs text-slate-400 mt-0.5">학번 {person.student_number}</div>
       )}
       {person.companion && (
         <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-50 border border-violet-200 text-violet-700 text-[11px] font-medium max-w-full">
@@ -1851,7 +1855,7 @@ export default function AdminDashboardPage() {
 
     const q = memberSearch.toLowerCase()
     let filtered = q
-      ? members.filter((m) => (m.name || '').toLowerCase().includes(q) || (m.phone || '').includes(q) || (m.school || '').toLowerCase().includes(q) || (m.major || '').toLowerCase().includes(q))
+      ? members.filter((m) => (m.name || '').toLowerCase().includes(q) || (m.phone || '').includes(q) || (m.student_number || '').includes(q) || (m.school || '').toLowerCase().includes(q) || (m.major || '').toLowerCase().includes(q))
       : members
 
     if (memberSort !== 'none') {
@@ -1927,7 +1931,7 @@ export default function AdminDashboardPage() {
           <input
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
-            placeholder="이름, 학교 검색..."
+            placeholder="이름, 학교, 학번 검색..."
             className="hidden md:block bg-white border border-slate-200 text-slate-800 text-xs rounded-xl px-2.5 py-1.5 w-52 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
           />
           {membersMode === 'event' && !isCrewMode && selectedEventId && (
@@ -1945,7 +1949,7 @@ export default function AdminDashboardPage() {
           <input
             value={memberSearch}
             onChange={(e) => setMemberSearch(e.target.value)}
-            placeholder="이름, 학교 검색..."
+            placeholder="이름, 학교, 학번 검색..."
             className="w-full bg-white border border-slate-200 text-slate-800 text-sm rounded-xl pl-3 pr-8 py-2 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100 placeholder:text-slate-400 shadow-sm"
           />
           {memberSearch && (
@@ -2008,6 +2012,7 @@ export default function AdminDashboardPage() {
                       {m.age && <div><span className="text-slate-400">나이</span><br/><span className="text-slate-700">{m.age}세</span></div>}
                       {m.school && <div><span className="text-slate-400">학교</span><br/><span className="text-slate-700">{m.school}</span></div>}
                       {m.grade && <div><span className="text-slate-400">학년</span><br/><span className="text-slate-700">{m.grade}</span></div>}
+                      {membersMode === 'event' && m.student_number && <div><span className="text-slate-400">학번</span><br/><span className="text-slate-700">{m.student_number}</span></div>}
                       {m.major && <div><span className="text-slate-400">전공</span><br/><span className="text-slate-700">{m.major}</span></div>}
                       {m.path && <div><span className="text-slate-400">경로</span><br/><span className="text-slate-700">{m.path}</span></div>}
                       {m.project && <div><span className="text-slate-400">관심 프로젝트</span><br/><span className="text-slate-700">{m.project}</span></div>}
@@ -2047,6 +2052,7 @@ export default function AdminDashboardPage() {
                   <th className="px-3 py-3 text-left font-semibold">나이</th>
                   <th className="px-3 py-3 text-left font-semibold">성별</th>
                   <th className="px-3 py-3 text-left font-semibold">학교</th>
+                  {membersMode === 'event' && <th className="px-3 py-3 text-left font-semibold">학번</th>}
                   <th className="px-3 py-3 text-left font-semibold">전공</th>
                   <th className="px-3 py-3 text-left font-semibold">학년</th>
                   <th className="px-3 py-3 text-left font-semibold">경로</th>
@@ -2073,6 +2079,7 @@ export default function AdminDashboardPage() {
                     <td className="px-3 py-3 text-slate-600">{m.age}</td>
                     <td className={`px-3 py-3 font-medium ${genderColor(m.gender)}`}>{m.gender}</td>
                     <td className="px-3 py-3 text-slate-600 whitespace-nowrap">{m.school}</td>
+                    {membersMode === 'event' && <td className="px-3 py-3 text-slate-600 whitespace-nowrap">{m.student_number || '—'}</td>}
                     <td className="px-3 py-3 text-slate-600 whitespace-nowrap">{m.major}</td>
                     <td className="px-3 py-3 text-slate-600">{m.grade}</td>
                     <td className="px-3 py-3 text-slate-500 text-xs whitespace-nowrap">{m.path}</td>

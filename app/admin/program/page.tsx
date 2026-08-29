@@ -41,7 +41,7 @@ const SEED_SESSIONS = [
   { week_no: 10, label: 'W10 · 웹사이트 제작 교육', session_date: '2026-08-28', type: 'class', counts_for_attendance: true },
   { week_no: 11, label: 'W11 · 팀모임 (웹사이트)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
   { week_no: 12, label: 'W12 · 팀모임 (웹사이트)', session_date: null, type: 'team-meeting', counts_for_attendance: true },
-  { week_no: 13, label: 'W13 · 최종 경쟁 PT', session_date: '2026-09-19', type: 'pt', counts_for_attendance: true },
+  { week_no: 13, label: 'W13 · 최종 경쟁 PT', session_date: '2026-09-18', type: 'pt', counts_for_attendance: true },
   { week_no: null, label: '수료식', session_date: '2026-11-07', type: 'ceremony', counts_for_attendance: false },
 ]
 const SEED_PROJECTS = [

@@ -38,7 +38,15 @@ const months = [
     title: '여름방학 AI 영상 수익화 클래스',
     headline: '온라인 수익화',
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널을 만듭니다.',
-    highlight: '8/1(토) · 사전 신청 OPEN',
+    highlight: '종료 · AI 영상·음악 콘텐츠 제작',
+    ended: true,
+  },
+  {
+    month: '09',
+    title: 'AI시대 대학생으로 살아남기',
+    headline: '대학생 AI 실전 활용',
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
+    highlight: '9/19(토) · 사전 신청 OPEN',
   },
 ]
 

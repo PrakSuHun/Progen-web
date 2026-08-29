@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
   const { data: regs, error } = await supabase
     .from('event_registrations')
     .select(`
-      id, status, team_name, crew_id, guest_id, registered_at, companion,
+      id, status, team_name, crew_id, guest_id, registered_at, student_number, companion,
       crew_members ( id, name, phone, school, grade, age, major, path, project, gender, motivation, is_member, noshow_count, created_at ),
       guests ( id, name, phone, school, grade, age, major, path, gender, created_at )
     `)
@@ -118,6 +118,7 @@ export async function GET(request: NextRequest) {
       is_first_time: !hasPrev,
       reg_status: r.status,
       team_name: r.team_name,
+      student_number: r.student_number ?? null,
       companion: r.companion ?? null,
       registered_at: r.registered_at,
       created_at: person?.created_at ?? r.registered_at,

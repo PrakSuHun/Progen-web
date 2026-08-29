@@ -29,7 +29,7 @@ export function HeroSection() {
                 <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
               </span>
-              1기 크루 모집 중 · 8월 클래스 사전 신청 OPEN
+              1기 크루 모집 중 · 9월 클래스 사전 신청 OPEN
             </div>
 
             <h1
@@ -77,7 +77,7 @@ export function HeroSection() {
               className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
               style={{ animationDelay: '420ms' }}
             >
-              3월 ~ 8월 · 월 1회 · 참가비 무료
+              3월 ~ 9월 · 월 1회 · 참가비 무료
             </p>
           </div>
 
@@ -121,10 +121,10 @@ export function HeroSection() {
               left="50%"
               delay="-2s"
               color="from-sky-500 to-cyan-400"
-              label="8월 모집중"
-              title="여름방학 AI 영상 수익화"
-              sub="8/1(토) · 사전 신청 OPEN"
-              tags={['영상', '음악 AI']}
+              label="9월 모집중"
+              title="AI시대 대학생으로 살아남기"
+              sub="9/19(토) · 사전 신청 OPEN"
+              tags={['논문 파악', 'PPT 제작']}
               tilt="-2deg"
               highlight
             />

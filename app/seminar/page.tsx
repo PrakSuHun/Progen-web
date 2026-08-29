@@ -42,11 +42,18 @@ const seminars = [
     desc: 'AI로 나만의 카카오 이모티콘을 직접 만들고, 그 캐릭터를 굿즈로 제작하는 프로젝트까지 이어집니다.',
   },
   {
-    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    status: '종료', statusColor: 'bg-[#eee] text-[#888]',
     month: '08', title: '여름방학 AI 영상 수익화 클래스',
     date: '2026. 8. 1 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
     tags: ['영상', '음악 AI', '수익화'],
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널.',
+  },
+  {
+    status: '모집 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    month: '09', title: 'AI시대 대학생으로 살아남기',
+    date: '2026. 9. 19 (토)', speaker: '대표 박수훈', capacity: 80,
+    tags: ['자료 서치', '논문 파악', 'PPT 제작', '보고서 제작'],
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치부터 논문 파악, PPT 제작, 보고서 제작까지 직접 실습으로 익혀 갑니다.',
   },
 ]
 
