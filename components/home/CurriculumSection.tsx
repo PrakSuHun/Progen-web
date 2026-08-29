@@ -46,7 +46,8 @@ const months = [
     month: '09',
     title: 'AI시대 대학생으로 살아남기',
     headline: '대학생 AI 실전 활용',
-    desc: '2026. 9. 19 (토)',
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
+    date: '2026. 9. 19 (토)',
     highlight: '사전 신청 →',
     href: '/event-reg',
   },
@@ -90,6 +91,9 @@ export function CurriculumSection() {
                       {m.title}
                     </h3>
                     <p className="text-[#555] text-xs md:text-sm leading-relaxed mb-2.5 break-keep">{m.desc}</p>
+                    {m.date && (
+                      <p className="text-[#888] text-xs md:text-sm font-medium mb-2.5">{m.date}</p>
+                    )}
                     {m.href ? (
                       <Link
                         href={m.href}
