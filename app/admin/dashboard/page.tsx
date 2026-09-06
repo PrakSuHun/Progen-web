@@ -29,6 +29,7 @@ interface Attendee {
   status: string
   team_name: string | null
   deposit_status: DepositStatus
+  deposit_reminder_count?: number
   refund_account: string | null
   student_number?: string | null
   companion?: string | null
@@ -218,13 +219,17 @@ function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel, onSendReminde
       </div>
       <div className="shrink-0 flex items-center gap-2">
         {status === '미입금' && (
-          <button
-            onClick={onSendReminder}
-            className="text-[11px] text-amber-500 hover:text-amber-600 hover:underline"
-            title="보증금 미입금 안내 알림톡 발송 (11번 — 입금 계좌·참석 시 반환 안내)"
-          >
-            미입금 알림
-          </button>
+          (guest.deposit_reminder_count ?? 0) >= 3 ? (
+            <span className="text-[11px] text-slate-300" title="미입금 알림은 최대 3회까지">알림 3회 완료</span>
+          ) : (
+            <button
+              onClick={onSendReminder}
+              className="text-[11px] text-amber-500 hover:text-amber-600 hover:underline"
+              title="보증금 미입금 안내 알림톡 발송 (11번 — 입금 계좌·참석 시 반환 안내, 최대 3회)"
+            >
+              미입금 알림 {guest.deposit_reminder_count ?? 0}/3
+            </button>
+          )
         )}
         <button
           onClick={onSendCancel}
@@ -805,9 +810,9 @@ export default function AdminDashboardPage() {
     }
   }
 
-  // 보증금 탭: "미입금 알림" 버튼 → 11번(보증금 미입금 안내) 알림톡 수동 발송. 미입금 상태에서만 노출.
-  const handleSendDepositReminder = async (registration_id: string, name: string) => {
-    if (!window.confirm(`${name}님께 보증금 미입금 안내 알림톡을 보냅니다.\n계속할까요?`)) return
+  // 보증금 탭: "미입금 알림" 버튼 → 11번(보증금 미입금 안내) 알림톡 수동 발송. 미입금 상태에서만 노출, 최대 3회(서버도 재검증).
+  const handleSendDepositReminder = async (registration_id: string, name: string, sentSoFar: number) => {
+    if (!window.confirm(`${name}님께 보증금 미입금 안내 알림톡을 보냅니다.\n지금까지 ${sentSoFar}회 발송했어요 (최대 3회).\n계속할까요?`)) return
     try {
       const res = await fetch('/api/admin/send-deposit-reminder', {
         method: 'POST',
@@ -815,8 +820,10 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ registration_id }),
       })
       const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
-      if (res.ok && d?.sent) showToast(d.message || '미입금 알림톡 발송 완료', 'success')
-      else showToast(d?.message || '발송 실패', 'error')
+      if (res.ok && d?.sent) {
+        showToast(d.message || '미입금 알림톡 발송 완료', 'success')
+        fetchAll()  // 버튼의 발송 횟수(n/3) 갱신
+      } else showToast(d?.message || '발송 실패', 'error')
     } catch {
       showToast('발송 중 오류가 발생했습니다', 'error')
     }
@@ -2239,7 +2246,7 @@ export default function AdminDashboardPage() {
               onCycle={() => handleCycleDeposit(g.registration_id)}
               onSaveAccount={(val) => handleSaveRefundAccount(g.registration_id, val)}
               onSendCancel={() => handleSendCancelAlimtalk(g.registration_id, g.name)}
-              onSendReminder={() => handleSendDepositReminder(g.registration_id, g.name)}
+              onSendReminder={() => handleSendDepositReminder(g.registration_id, g.name, g.deposit_reminder_count ?? 0)}
             />
           ))}
         </div>

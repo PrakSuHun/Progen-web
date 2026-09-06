@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
 import { isCrewAtRegistration } from '@/lib/registration-role'
+import { ALIMTALK } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -51,6 +52,18 @@ export async function GET(request: NextRequest) {
 
     const podoPhones = new Set((crewList ?? []).filter((c: any) => c.is_member).map((c: any) => c.phone))
 
+    // 보증금 탭: 미입금 알림(11번) 발송 횟수 — 최대 3회 제한 표시용
+    const { data: reminderLogs } = await supabase
+      .from('alimtalk_logs')
+      .select('registration_id')
+      .eq('event_id', eventId)
+      .eq('template_code', ALIMTALK.DEPOSIT_REMINDER.code)
+      .eq('status', 'sent')
+    const reminderCounts = new Map<string, number>()
+    for (const log of reminderLogs ?? []) {
+      if (log.registration_id) reminderCounts.set(log.registration_id, (reminderCounts.get(log.registration_id) ?? 0) + 1)
+    }
+
     const toAttendee = (reg: any) => {
       const crew = reg.crew_members
       const guest = reg.guests
@@ -72,6 +85,7 @@ export async function GET(request: NextRequest) {
         // 신청 시점 역할 기준 — 당일 크루 전환자도 게스트로 유지(보증금 탭 환불 추적 보존)
         is_crew: isCrewAtRegistration(reg.crew_id, crew?.created_at, reg.registered_at),
         deposit_status: (reg.deposit_status as string) ?? '미입금',
+        deposit_reminder_count: reminderCounts.get(reg.id) ?? 0,
         refund_account: (reg.refund_account as string) ?? null,
         student_number: (reg.student_number as string) ?? null,
         companion: (reg.companion as string) ?? null,

@@ -8,6 +8,8 @@ function checkAuth(request: NextRequest) {
 
 // 보증금 미입금 안내(11번) 알림톡 — 운영진이 보증금 탭 「미입금 알림」 버튼으로 수동 발송 (2026-09-06).
 // 전용 템플릿(입금 계좌 + 참석 시 전액 반환 안내) 사용. 게스트 + 미입금 상태에서만 발송.
+// 같은 신청 건에 최대 3회까지 — alimtalk_logs의 sent 기록으로 카운트(별도 컬럼 없음).
+const MAX_REMINDERS = 3
 export async function POST(request: NextRequest) {
   if (!checkAuth(request)) {
     return NextResponse.json({ message: '인증이 필요합니다' }, { status: 401 })
@@ -35,6 +37,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '미입금 상태가 아니에요 (이미 입금/환불 처리됨)' }, { status: 409 })
     }
 
+    const { count: sentCount } = await supabase
+      .from('alimtalk_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('registration_id', registration_id)
+      .eq('template_code', ALIMTALK.DEPOSIT_REMINDER.code)
+      .eq('status', 'sent')
+    if ((sentCount ?? 0) >= MAX_REMINDERS) {
+      return NextResponse.json({ message: `미입금 알림은 최대 ${MAX_REMINDERS}회까지만 보낼 수 있어요 (이미 ${sentCount}회 발송)` }, { status: 409 })
+    }
+
     const { data: g } = await supabase.from('guests').select('name, phone').eq('id', reg.guest_id).maybeSingle()
     const name = g?.name || '게스트'
     const phone = g?.phone || ''
@@ -60,7 +72,8 @@ export async function POST(request: NextRequest) {
     if (!result.ok) {
       return NextResponse.json({ message: `발송 실패: ${result.error ?? '알 수 없음'}`, sent: false })
     }
-    return NextResponse.json({ message: `${name}님께 미입금 알림톡 발송 완료`, sent: true })
+    const newCount = (sentCount ?? 0) + 1
+    return NextResponse.json({ message: `${name}님께 미입금 알림톡 발송 완료 (${newCount}/${MAX_REMINDERS}회)`, sent: true, count: newCount })
   } catch (error) {
     console.error('send-deposit-reminder error:', error)
     return NextResponse.json({ message: '발송 중 오류가 발생했습니다' }, { status: 500 })
