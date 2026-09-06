@@ -22,6 +22,8 @@ export const ALIMTALK = {
   EVENT_CHANGED:      { code: 'KA01TP260511073928887bmEyE8XReNZ', name: '행사 일정/장소 변경' }, // 8
   NOSHOW_WARNING:     { code: 'KA01TP2605110744476078SNWeTQFA9a', name: '노쇼 경고 (1회)' },     // 9
   CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10
+  // 11 보증금 미입금 안내(2026-09-06 등록, 검수중) — 보증금 탭 「미입금 알림」 버튼. 검수 통과 전엔 발송 시 솔라피가 거부
+  DEPOSIT_REMINDER:   { code: 'KA01TP260906071133136qAave0oFtch', name: '보증금 미입금 안내' },
 } as const
 
 export type AlimtalkTemplate = (typeof ALIMTALK)[keyof typeof ALIMTALK]

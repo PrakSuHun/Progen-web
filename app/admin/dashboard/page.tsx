@@ -166,11 +166,12 @@ function MiniPieChart({ data, onPick }: { data: DistItem[]; onPick?: (name: stri
   )
 }
 
-function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel }: {
+function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel, onSendReminder }: {
   guest: Attendee
   onCycle: () => void
   onSaveAccount: (val: string) => void
   onSendCancel: () => void
+  onSendReminder: () => void
 }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(guest.refund_account ?? '')
@@ -216,6 +217,15 @@ function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel }: {
         </div>
       </div>
       <div className="shrink-0 flex items-center gap-2">
+        {status === '미입금' && (
+          <button
+            onClick={onSendReminder}
+            className="text-[11px] text-amber-500 hover:text-amber-600 hover:underline"
+            title="보증금 미입금 안내 알림톡 발송 (11번 — 입금 계좌·참석 시 반환 안내)"
+          >
+            미입금 알림
+          </button>
+        )}
         <button
           onClick={onSendCancel}
           className="text-[11px] text-red-400 hover:text-red-600 hover:underline"
@@ -790,6 +800,23 @@ export default function AdminDashboardPage() {
       const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
       if (res.ok && d?.sent) showToast(d.message || '취소 알림톡 발송 완료', 'success')
       else showToast(d?.message || '발송 실패', res.ok ? 'error' : 'error')
+    } catch {
+      showToast('발송 중 오류가 발생했습니다', 'error')
+    }
+  }
+
+  // 보증금 탭: "미입금 알림" 버튼 → 11번(보증금 미입금 안내) 알림톡 수동 발송. 미입금 상태에서만 노출.
+  const handleSendDepositReminder = async (registration_id: string, name: string) => {
+    if (!window.confirm(`${name}님께 보증금 미입금 안내 알림톡을 보냅니다.\n계속할까요?`)) return
+    try {
+      const res = await fetch('/api/admin/send-deposit-reminder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registration_id }),
+      })
+      const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
+      if (res.ok && d?.sent) showToast(d.message || '미입금 알림톡 발송 완료', 'success')
+      else showToast(d?.message || '발송 실패', 'error')
     } catch {
       showToast('발송 중 오류가 발생했습니다', 'error')
     }
@@ -2212,6 +2239,7 @@ export default function AdminDashboardPage() {
               onCycle={() => handleCycleDeposit(g.registration_id)}
               onSaveAccount={(val) => handleSaveRefundAccount(g.registration_id, val)}
               onSendCancel={() => handleSendCancelAlimtalk(g.registration_id, g.name)}
+              onSendReminder={() => handleSendDepositReminder(g.registration_id, g.name)}
             />
           ))}
         </div>
