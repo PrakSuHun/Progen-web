@@ -274,3 +274,15 @@ ALTER TABLE program_attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE program_projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE program_deliverable_specs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE program_deliverables ENABLE ROW LEVEL SECURITY;
+
+-- ── push_subscriptions (어드민 웹푸시 구독, 2026-09-06) ───────
+-- 계정 없는 어드민 구조: 구독은 기기(브라우저) 단위. 대시보드 「알림」 토글로 등록.
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  label TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;

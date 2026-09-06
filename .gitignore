@@ -101,3 +101,4 @@ jspm_packages/
 .tern-port 
 # 원본 사진 백업 (대용량 — 배포 제외)
 .archive-originals-backup/
+.vercel

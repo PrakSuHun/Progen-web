@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { showToast } from '@/components/Toast'
+import { PushToggle } from '@/components/dashboard/PushToggle'
 
 interface Props {
   isOpen: boolean
@@ -343,6 +344,11 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* 관리자 웹푸시 — 행사와 무관한 "이 기기" 설정이라 탭 밖 하단 고정 */}
+          <div className="shrink-0 border-t border-slate-200 px-5 py-3 bg-slate-50/60 rounded-b-2xl">
+            <PushToggle />
           </div>
         </div>
       </div>

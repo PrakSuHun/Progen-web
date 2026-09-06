@@ -5,6 +5,7 @@ import {
   varsEventRegReceived, varsEventConfirmed,
 } from '@/lib/solapi'
 import { isValidStudentNumber } from '@/lib/constants'
+import { sendPushToAdmins } from '@/lib/push'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -156,8 +157,10 @@ export async function POST(request: NextRequest) {
 
     // 알림톡: 게스트 → 1번 신청 접수 / 크루 → 행사 정보가 다 채워졌으면 2번 참석 확정 (아니면 보류)
     const registrationId: string | null = data?.[0]?.id ?? null
+    let eventTitle: string | null = null
     try {
       const ev = await loadEventRow(eventId)
+      eventTitle = ev?.title ?? null
       if (ev) {
         if (mode === 'guest') {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
@@ -171,6 +174,17 @@ export async function POST(request: NextRequest) {
       }
     } catch (e) {
       console.error('event-reg alimtalk send failed:', e)
+    }
+
+    // 어드민 웹푸시: 새 신청이 들어오면 알림 켜둔 관리자 기기 전체에 알림 (실패해도 신청 흐름 비차단)
+    try {
+      await sendPushToAdmins({
+        title: '🔔 새 행사 신청',
+        body: `${name}님이 「${eventTitle || '행사'}」에 ${mode === 'crew' ? '크루' : '게스트'}로 신청했어요`,
+        url: '/admin/dashboard',
+      })
+    } catch (e) {
+      console.error('event-reg admin push failed:', e)
     }
 
     return NextResponse.json({
