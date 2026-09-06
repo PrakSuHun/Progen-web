@@ -52,16 +52,22 @@ export async function GET(request: NextRequest) {
 
     const podoPhones = new Set((crewList ?? []).filter((c: any) => c.is_member).map((c: any) => c.phone))
 
-    // 보증금 탭: 미입금 알림(11번) 발송 횟수 — 최대 3회 제한 표시용
-    const { data: reminderLogs } = await supabase
+    // 보증금 탭: 알림 발송 이력 — 미입금 알림(11번, 최대 2회) 횟수 + 취소 알림(5번) 발송 여부
+    const { data: alertLogs } = await supabase
       .from('alimtalk_logs')
-      .select('registration_id')
+      .select('registration_id, template_code')
       .eq('event_id', eventId)
-      .eq('template_code', ALIMTALK.DEPOSIT_REMINDER.code)
+      .in('template_code', [ALIMTALK.DEPOSIT_REMINDER.code, ALIMTALK.REG_CANCELLED.code])
       .eq('status', 'sent')
     const reminderCounts = new Map<string, number>()
-    for (const log of reminderLogs ?? []) {
-      if (log.registration_id) reminderCounts.set(log.registration_id, (reminderCounts.get(log.registration_id) ?? 0) + 1)
+    const cancelSent = new Set<string>()
+    for (const log of alertLogs ?? []) {
+      if (!log.registration_id) continue
+      if (log.template_code === ALIMTALK.DEPOSIT_REMINDER.code) {
+        reminderCounts.set(log.registration_id, (reminderCounts.get(log.registration_id) ?? 0) + 1)
+      } else {
+        cancelSent.add(log.registration_id)
+      }
     }
 
     const toAttendee = (reg: any) => {
@@ -86,6 +92,7 @@ export async function GET(request: NextRequest) {
         is_crew: isCrewAtRegistration(reg.crew_id, crew?.created_at, reg.registered_at),
         deposit_status: (reg.deposit_status as string) ?? '미입금',
         deposit_reminder_count: reminderCounts.get(reg.id) ?? 0,
+        cancel_notice_sent: cancelSent.has(reg.id),
         refund_account: (reg.refund_account as string) ?? null,
         student_number: (reg.student_number as string) ?? null,
         companion: (reg.companion as string) ?? null,

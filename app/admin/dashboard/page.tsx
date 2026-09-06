@@ -7,6 +7,7 @@ import {
   PieChart, Pie, Cell, Legend, LabelList,
 } from 'recharts'
 import { showToast } from '@/components/Toast'
+import { Modal } from '@/components/Modal'
 import { EventAlimtalkSettings } from '@/components/dashboard/EventAlimtalkSettings'
 
 // ───────────── Types ─────────────
@@ -30,6 +31,7 @@ interface Attendee {
   team_name: string | null
   deposit_status: DepositStatus
   deposit_reminder_count?: number
+  cancel_notice_sent?: boolean
   refund_account: string | null
   student_number?: string | null
   companion?: string | null
@@ -167,12 +169,11 @@ function MiniPieChart({ data, onPick }: { data: DistItem[]; onPick?: (name: stri
   )
 }
 
-function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel, onSendReminder }: {
+function DepositRow({ guest, onCycle, onSaveAccount, onOpenAlert }: {
   guest: Attendee
   onCycle: () => void
   onSaveAccount: (val: string) => void
-  onSendCancel: () => void
-  onSendReminder: () => void
+  onOpenAlert: () => void
 }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(guest.refund_account ?? '')
@@ -219,25 +220,24 @@ function DepositRow({ guest, onCycle, onSaveAccount, onSendCancel, onSendReminde
       </div>
       <div className="shrink-0 flex items-center gap-2">
         {status === '미입금' && (
-          (guest.deposit_reminder_count ?? 0) >= 3 ? (
-            <span className="text-[11px] text-slate-300" title="미입금 알림은 최대 3회까지">알림 3회 완료</span>
+          guest.cancel_notice_sent ? (
+            <span className="text-[11px] text-slate-300" title="취소 알림까지 발송 완료 (실제 삭제는 신청자 탭에서 별도로)">취소 알림 완료</span>
           ) : (
             <button
-              onClick={onSendReminder}
-              className="text-[11px] text-amber-500 hover:text-amber-600 hover:underline"
-              title="보증금 미입금 안내 알림톡 발송 (11번 — 입금 계좌·참석 시 반환 안내, 최대 3회)"
+              onClick={onOpenAlert}
+              className={`text-[11px] hover:underline ${
+                (guest.deposit_reminder_count ?? 0) >= 2
+                  ? 'text-red-400 hover:text-red-600'
+                  : 'text-amber-500 hover:text-amber-600'
+              }`}
+              title="1·2회차 미입금 알림 → 3회차 취소 알림 (팝업에서 바로 취소 알림도 가능)"
             >
-              미입금 알림 {guest.deposit_reminder_count ?? 0}/3
+              {(guest.deposit_reminder_count ?? 0) >= 2
+                ? '취소 알림 (3회차)'
+                : `미입금 알림 ${guest.deposit_reminder_count ?? 0}/2`}
             </button>
           )
         )}
-        <button
-          onClick={onSendCancel}
-          className="text-[11px] text-red-400 hover:text-red-600 hover:underline"
-          title="신청 취소 알림톡 발송 (실제 삭제는 신청자 탭에서 별도로)"
-        >
-          취소 알림
-        </button>
         <button
           onClick={onCycle}
           className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border transition
@@ -458,6 +458,8 @@ export default function AdminDashboardPage() {
 
   // Deposit tab
   const [depositSearch, setDepositSearch] = useState('')
+  const [depositAlert, setDepositAlert] = useState<Attendee | null>(null)  // 보증금 탭 통합 알림 팝업 대상
+  const [depositAlertBusy, setDepositAlertBusy] = useState(false)
 
   // Members tab
   const [members, setMembers] = useState<CrewMember[]>([])
@@ -793,39 +795,27 @@ export default function AdminDashboardPage() {
     }
   }
 
-  // 보증금 탭: "취소 알림" 버튼 → 5번(신청 취소 확인) 알림톡 수동 발송. 실제 행 삭제는 운영진이 신청자 탭에서 직접.
-  const handleSendCancelAlimtalk = async (registration_id: string, name: string) => {
-    if (!window.confirm(`${name}님께 신청 취소 알림톡을 보냅니다.\n(실제 신청 삭제는 신청자 탭에서 따로 하세요.)\n계속할까요?`)) return
+  // 보증금 탭: 통합 알림 팝업 — 1·2회차 미입금 알림(11번), 3회차 취소 알림(5번). 팝업의 「바로 취소 알림」으로 단계 건너뛰기 가능.
+  // 팝업 자체가 확인 단계라 window.confirm 없음. 발송 성공 시 fetchAll()로 횟수/상태 갱신.
+  const sendDepositAlert = async (registration_id: string, type: 'reminder' | 'cancel') => {
+    setDepositAlertBusy(true)
     try {
-      const res = await fetch('/api/admin/send-cancel-alimtalk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ registration_id }),
-      })
-      const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
-      if (res.ok && d?.sent) showToast(d.message || '취소 알림톡 발송 완료', 'success')
-      else showToast(d?.message || '발송 실패', res.ok ? 'error' : 'error')
-    } catch {
-      showToast('발송 중 오류가 발생했습니다', 'error')
-    }
-  }
-
-  // 보증금 탭: "미입금 알림" 버튼 → 11번(보증금 미입금 안내) 알림톡 수동 발송. 미입금 상태에서만 노출, 최대 3회(서버도 재검증).
-  const handleSendDepositReminder = async (registration_id: string, name: string, sentSoFar: number) => {
-    if (!window.confirm(`${name}님께 보증금 미입금 안내 알림톡을 보냅니다.\n지금까지 ${sentSoFar}회 발송했어요 (최대 3회).\n계속할까요?`)) return
-    try {
-      const res = await fetch('/api/admin/send-deposit-reminder', {
+      const url = type === 'reminder' ? '/api/admin/send-deposit-reminder' : '/api/admin/send-cancel-alimtalk'
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ registration_id }),
       })
       const d = await res.json().catch(() => ({} as { message?: string; sent?: boolean }))
       if (res.ok && d?.sent) {
-        showToast(d.message || '미입금 알림톡 발송 완료', 'success')
-        fetchAll()  // 버튼의 발송 횟수(n/3) 갱신
+        showToast(d.message || '알림톡 발송 완료', 'success')
+        setDepositAlert(null)
+        fetchAll()
       } else showToast(d?.message || '발송 실패', 'error')
     } catch {
       showToast('발송 중 오류가 발생했습니다', 'error')
+    } finally {
+      setDepositAlertBusy(false)
     }
   }
 
@@ -2245,11 +2235,59 @@ export default function AdminDashboardPage() {
               guest={g}
               onCycle={() => handleCycleDeposit(g.registration_id)}
               onSaveAccount={(val) => handleSaveRefundAccount(g.registration_id, val)}
-              onSendCancel={() => handleSendCancelAlimtalk(g.registration_id, g.name)}
-              onSendReminder={() => handleSendDepositReminder(g.registration_id, g.name, g.deposit_reminder_count ?? 0)}
+              onOpenAlert={() => setDepositAlert(g)}
             />
           ))}
         </div>
+
+        {/* 통합 알림 팝업: 1·2회차 미입금 알림 → 3회차 취소 알림, 바로 취소도 가능 */}
+        <Modal
+          isOpen={!!depositAlert}
+          onClose={() => { if (!depositAlertBusy) setDepositAlert(null) }}
+          title={depositAlert ? `${depositAlert.name}님 알림 발송` : ''}
+        >
+          {depositAlert && (() => {
+            const n = depositAlert.deposit_reminder_count ?? 0
+            const isCancelStage = n >= 2
+            return (
+              <div className="space-y-4">
+                <div className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 leading-relaxed">
+                  지금까지 <b className="text-slate-700">미입금 알림 {n}/2회</b> 발송 · 취소 알림 미발송
+                  <br />총 3회 중 1·2회차는 미입금 안내, 3회차는 취소 알림이 나갑니다.
+                </div>
+                {isCancelStage ? (
+                  <button
+                    onClick={() => sendDepositAlert(depositAlert.registration_id, 'cancel')}
+                    disabled={depositAlertBusy}
+                    className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm font-bold rounded-lg py-2.5 transition-colors"
+                  >
+                    {depositAlertBusy ? '발송 중...' : '취소 알림 보내기 (3회차)'}
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => sendDepositAlert(depositAlert.registration_id, 'reminder')}
+                      disabled={depositAlertBusy}
+                      className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-bold rounded-lg py-2.5 transition-colors"
+                    >
+                      {depositAlertBusy ? '발송 중...' : `미입금 알림 보내기 (${n + 1}회차)`}
+                    </button>
+                    <button
+                      onClick={() => sendDepositAlert(depositAlert.registration_id, 'cancel')}
+                      disabled={depositAlertBusy}
+                      className="w-full bg-white border border-red-300 hover:bg-red-50 disabled:opacity-50 text-red-500 text-sm font-bold rounded-lg py-2.5 transition-colors"
+                    >
+                      바로 취소 알림 보내기
+                    </button>
+                  </>
+                )}
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  취소 알림 발송 후 실제 신청 삭제는 신청자 탭에서 따로 해주세요.
+                </p>
+              </div>
+            )
+          })()}
+        </Modal>
       </div>
     )
   }
