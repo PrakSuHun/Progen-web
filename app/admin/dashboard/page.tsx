@@ -930,8 +930,9 @@ export default function AdminDashboardPage() {
       <button onClick={onClick} className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-colors ${color}`}>{label}</button>
     )
 
-    // 자동 출석문자 토글 — 현장 체크인(/checkin)은 항상 활성 행사만 처리하므로, 선택 행사가 활성 행사일 때만 의미 있음
-    const isActiveEvent = !isCrewMode && !!selectedEventId && selectedEventId === activeEventId
+    // 자동 출석문자 토글 — 행사별 플래그(events.auto_checkin_alimtalk)라 미리 켜두는 것도 유효.
+    // (종전엔 활성 행사 선택 시에만 노출했는데, 내부 회차가 공개 행사보다 앞 날짜면 활성/기본선택이 어긋나 토글이 숨는 문제 → 실제 행사 선택 시 항상 노출)
+    const showAutoToggle = !isCrewMode && !!selectedEventId
     const autoCheckinOn = events.find((e) => e.id === selectedEventId)?.auto_checkin_alimtalk ?? false
 
     return (
@@ -1019,8 +1020,8 @@ export default function AdminDashboardPage() {
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 출석완료 <span className="text-emerald-600 font-normal text-sm">{allCheckedIn.length}명</span>
               </h3>
-              {/* 자동문자 토글 — 활성 행사에서만 노출 (현장 체크인은 활성 행사만 처리) */}
-              {isActiveEvent && (
+              {/* 자동문자 토글 — 발송은 이 행사가 활성(당일)일 때 현장 체크인에서만 일어나므로 미리 켜둬도 안전 */}
+              {showAutoToggle && (
                 <button
                   onClick={() => handleToggleAutoCheckin(selectedEventId, !autoCheckinOn)}
                   title="현장 체크인(/checkin) 시 출석문자(6/7번) 자동 발송 여부"
