@@ -15,19 +15,31 @@ const EVENT_WINDOW_DAYS = 14 // 행사일이 이보다 오래 지난 미입금 �
 
 const norm = (s: string) => (s || '').replace(/\s+/g, '')
 
+// SMS자동전달류 앱은 문자 내용을 쿼리스트링({msg})으로 보내므로 GET도 동일 처리
+export async function GET(request: NextRequest) {
+  return handle(request)
+}
+
 export async function POST(request: NextRequest) {
+  return handle(request)
+}
+
+async function handle(request: NextRequest) {
   const secret = process.env.SMS_HOOK_SECRET
   if (!secret) return NextResponse.json({ message: 'disabled' }, { status: 503 })
 
   let body: any = {}
-  try { body = await request.json() } catch { /* 빈 바디 허용 */ }
+  try { body = await request.json() } catch { /* 빈 바디·비JSON 허용 */ }
+  const q = request.nextUrl.searchParams
 
-  const given = request.headers.get('x-sms-secret') || body?.secret
+  const given = request.headers.get('x-sms-secret') || body?.secret || q.get('secret')
   if (given !== secret) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
 
-  const content: string = String(body?.content ?? body?.msg ?? body?.text ?? '')
+  const content: string = String(
+    body?.content ?? body?.msg ?? body?.text ?? q.get('msg') ?? q.get('content') ?? q.get('text') ?? '',
+  )
   if (!content) return NextResponse.json({ message: 'content가 비어 있습니다' }, { status: 400 })
-  const isTest = body?.test === true
+  const isTest = body?.test === true || q.get('test') === '1'
   const flat = norm(content)
 
   // 1) 입금 문자만 처리 (출금·기타 문자는 조용히 무시 — 공기계가 전체 문자를 전달해도 안전)
