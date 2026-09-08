@@ -52,6 +52,8 @@ SOLAPI_SENDER_PHONE=              # 솔라피 등록 발신번호 (실패 시 �
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=     # 웹푸시 VAPID 공개키 (클라이언트 구독용, 공개돼도 무방)
 VAPID_PRIVATE_KEY=                # 웹푸시 VAPID 비밀키 (서버 전용)
 SMS_HOOK_SECRET=                  # /api/sms-hook 인증 시크릿 (공기계 SmsForwarder 설정과 동일 값. 미설정 시 웹훅 비활성)
+CNUCARE_SUPABASE_URL=             # 씨엔유케어(별도 서비스) Supabase URL — 행사 명단 교차 표시용 (미설정 시 기능 꺼짐)
+CNUCARE_ANON_KEY=                 # 씨엔유케어 anon 키 (RLS 열려 있어 읽기 가능)
 ```
 
 > **알림톡 환경변수가 비어 있으면** `lib/solapi.ts`의 `sendAlimtalk()`은 조용히 skip(발송 안 함) — 사이트 동작은 안 막힘. 카카오 검수 통과 + Vercel/`.env.local` 양쪽에 4개 다 채워야 실제 발송됨. 솔라피 API Key는 Vercel 서버리스 outbound IP가 고정이 아니므로 IP 제한 없이("모든 IP 허용") 발급.
