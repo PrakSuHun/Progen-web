@@ -54,6 +54,11 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   // 일정/장소 변경 입력
   const [chg, setChg] = useState({ oldDate: '', oldLocation: '', newDate: '', newLocation: '' })
 
+  // 알림톡 테스트 발송 (임의 번호로 1건)
+  const [testPhone, setTestPhone] = useState('')
+  const [testTpl, setTestTpl] = useState('EVENT_REG_RECEIVED')
+  const [testSending, setTestSending] = useState(false)
+
   const load = useCallback(async () => {
     if (!eventId || eventId === 'crew-all') return
     setLoading(true)
@@ -341,6 +346,65 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   >
                     {sendingKey === 'change' ? '발송 중...' : '변경 안내 발송'}
                   </button>
+                </div>
+
+                {/* 알림톡 테스트 — 아무 번호로나 템플릿 1건 발송해 실제 수신 모습 확인 */}
+                <div className="border border-violet-200 bg-violet-50/40 rounded-xl p-3.5">
+                  <div className="text-sm font-bold text-slate-700 mb-1">🧪 알림톡 테스트</div>
+                  <div className="text-xs text-slate-500 mb-2.5">선택한 템플릿을 입력한 번호로 1건 발송합니다 (수신자명 &lsquo;테스트&rsquo;, 행사 정보는 현재 선택된 행사 기준).</div>
+                  <div className="flex flex-col gap-2">
+                    <select
+                      value={testTpl}
+                      onChange={(e) => setTestTpl(e.target.value)}
+                      className="text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400 bg-white"
+                    >
+                      <option value="EVENT_REG_RECEIVED">1. 행사 신청 접수 (게스트)</option>
+                      <option value="EVENT_CONFIRMED">2. 행사 참석 확정 (게스트)</option>
+                      <option value="EVENT_CONFIRMED_CREW">2. 행사 참석 확정 (크루)</option>
+                      <option value="CREW_CONFIRMED">3. 크루원 합류 확정</option>
+                      <option value="EVENT_D1_NOTICE">4. 행사 전 공지 (D-1)</option>
+                      <option value="REG_CANCELLED">5. 신청 취소 확인</option>
+                      <option value="CHECKIN_WITH_TEAM">6. 현장 출석 완료 + 팀 안내</option>
+                      <option value="CHECKIN_NO_TEAM">7. 현장 출석 완료 (팀 미배정)</option>
+                      <option value="EVENT_CHANGED">8. 행사 일정/장소 변경</option>
+                      <option value="NOSHOW_WARNING">9. 노쇼 경고</option>
+                      <option value="CREW_REVOKED">10. 크루 자격 박탈</option>
+                      <option value="DEPOSIT_REMINDER">11. 보증금 미입금 안내</option>
+                    </select>
+                    <div className="flex gap-2">
+                      <input
+                        value={testPhone}
+                        onChange={(e) => setTestPhone(e.target.value.replace(/[^\d-]/g, ''))}
+                        placeholder="받을 전화번호 (예: 01012345678)"
+                        inputMode="numeric"
+                        className="flex-1 text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400"
+                      />
+                      <button
+                        onClick={async () => {
+                          const digits = testPhone.replace(/\D/g, '')
+                          if (digits.length !== 11) { showToast('전화번호 11자리를 입력해주세요', 'error'); return }
+                          setTestSending(true)
+                          try {
+                            const res = await fetch('/api/admin/test-alimtalk', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ eventId, template: testTpl, phone: digits }),
+                            })
+                            const d = await res.json().catch(() => ({}))
+                            showToast(d?.message || (res.ok ? '테스트 발송 완료' : '테스트 발송 실패'), res.ok ? 'success' : 'error')
+                          } catch {
+                            showToast('테스트 발송 중 오류 발생', 'error')
+                          } finally {
+                            setTestSending(false)
+                          }
+                        }}
+                        disabled={testSending}
+                        className="shrink-0 bg-violet-500 hover:bg-violet-600 disabled:opacity-40 text-white text-xs font-bold rounded-lg px-4 py-2 transition-colors"
+                      >
+                        {testSending ? '발송 중...' : '테스트 발송'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
