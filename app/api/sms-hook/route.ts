@@ -28,16 +28,29 @@ async function handle(request: NextRequest) {
   const secret = process.env.SMS_HOOK_SECRET
   if (!secret) return NextResponse.json({ message: 'disabled' }, { status: 503 })
 
+  // 본문은 앱마다 형식이 달라(JSON/form-urlencoded/원문) 순차 파싱: JSON → form → 원문 텍스트
+  const raw = await request.text().catch(() => '')
   let body: any = {}
-  try { body = await request.json() } catch { /* 빈 바디·비JSON 허용 */ }
+  try { body = JSON.parse(raw) } catch { /* 비JSON 허용 */ }
+  if (!body || typeof body !== 'object') body = {}
+  let formText = ''
+  if (Object.keys(body).length === 0 && raw.includes('=')) {
+    try { formText = [...new URLSearchParams(raw).values()].join(' ') } catch { /* 무시 */ }
+  }
   const q = request.nextUrl.searchParams
 
   const given = request.headers.get('x-sms-secret') || body?.secret || q.get('secret')
   if (given !== secret) return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
 
-  const content: string = String(
-    body?.content ?? body?.msg ?? body?.text ?? q.get('msg') ?? q.get('content') ?? q.get('text') ?? '',
-  )
+  // 미치환 템플릿 리터럴({msg} 등)은 값으로 취급하지 않음
+  const usable = (v: unknown): string => {
+    const s = v == null ? '' : String(v).trim()
+    return s && !/^\{[a-z_]+\}$/i.test(s) ? s : ''
+  }
+  const content: string =
+    usable(body?.content) || usable(body?.msg) || usable(body?.text) || usable(body?.key) ||
+    usable(q.get('msg')) || usable(q.get('content')) || usable(q.get('text')) ||
+    usable(formText) || usable(raw)
   if (!content) return NextResponse.json({ message: 'content가 비어 있습니다' }, { status: 400 })
   const isTest = body?.test === true || q.get('test') === '1'
   const flat = norm(content)
