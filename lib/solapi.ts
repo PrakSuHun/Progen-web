@@ -304,6 +304,7 @@ export function varsEventD1Notice(ev: EventRow, name: string): Record<string, st
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
     '#{준비물}': ev.materials || FALLBACK_CHAT,
+    '#{진행내용}': ev.program_detail || FALLBACK_CHAT,
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }
