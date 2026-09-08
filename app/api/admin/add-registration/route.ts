@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady, varsEventConfirmed } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady, varsEventConfirmedCrew } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     try {
       const ev = await loadEventRow(eventId)
       if (ev && crew.phone) {
-        if (eventConfirmReady(ev)) {
-          const r = await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, crew.phone, varsEventConfirmed(ev, crew.name || '회원'), {
+        if (confirmChatReady(ev)) {
+          const r = await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, crew.phone, varsEventConfirmedCrew(ev, crew.name || '회원'), {
             crewId: crew.id, registrationId, eventId,
           })
           alimtalk = r.ok ? 'sent' : 'skipped'

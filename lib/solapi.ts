@@ -6,14 +6,14 @@ const SOLAPI_SEND_URL = 'https://api.solapi.com/messages/v4/send'
 /**
  * 카카오 알림톡 템플릿 (솔라피 채널 KA01PF260511054914846rCGGdEqH9tS / searchId 'progen').
  * code = 솔라피 비즈센터에 등록된 실제 templateId.
- * 검수 상태(2026-05-11): #5만 APPROVED, 나머지 9종은 INSPECTING(검수중) — 검수 통과 전엔 발송 시 솔라피가 거부.
+ * 검수 상태: #1·#2게스트·#2크루(2026-09-08 신규 교체분)·#5는 APPROVED 확인. 나머지는 솔라피 비즈센터에서 확인 — 검수 통과 전엔 발송 시 솔라피가 거부.
  */
 export const ALIMTALK = {
-  EVENT_REG_RECEIVED: { code: 'KA01TP26051106373464071STWgjtSAK', name: '행사 신청 접수' },      // 1
-  // 2 참석 확정 — 게스트용(보증금 환불 안내 포함)
-  EVENT_CONFIRMED:    { code: 'KA01TP260511064819169WuinqHjdJcx', name: '행사 참석 확정 (게스트)' },
-  // 2 참석 확정 — 크루용(보증금 문구 없음). 같은 변수 셋 사용
-  EVENT_CONFIRMED_CREW: { code: 'KA01TP260512222214758QYG80poi9FS', name: '행사 참석 확정 (크루)' },
+  EVENT_REG_RECEIVED: { code: 'KA01TP260906103329534uNkFHnMsp0a', name: '행사 신청 접수 (게스트)' }, // 1 — 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시)
+  // 2 참석 확정 — 게스트용(보증금 환불 안내 포함). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·url — varsEventConfirmedGuest 사용)
+  EVENT_CONFIRMED:    { code: 'KA01TP260906103529205rx0U0oQ90Q7', name: '행사 참석 확정 (게스트)' },
+  // 2 참석 확정 — 크루용(보증금 문구 없음). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시·url — varsEventConfirmedCrew 사용)
+  EVENT_CONFIRMED_CREW: { code: 'KA01TP260906112122409DXPjnrJCl2k', name: '행사 참석 확정 (크루)' },
   CREW_CONFIRMED:     { code: 'KA01TP260511070701744h8gIXOphWEW', name: '크루원 신청 접수' },    // 3
   EVENT_D1_NOTICE:    { code: 'KA01TP260511071006653FkF3Kf1v8lW', name: '행사 전 공지' },        // 4
   REG_CANCELLED:      { code: 'KA01TP260511072253259HLsKXmMYVoG', name: '신청 취소 확인' },      // 5
@@ -249,35 +249,39 @@ export function formatEventDateKo(input: string | Date | null | undefined): stri
   }
 }
 
-/** 참석 확정(2번) 알림톡을 자동 발송해도 되는지 — 5개 행사 정보가 모두 채워졌을 때만 */
-export function eventConfirmReady(ev: EventRow | null | undefined): boolean {
-  if (!ev) return false
-  return !!(ev.event_date && ev.location && ev.entry_time && ev.materials && ev.program_detail && ev.kakao_chat_url)
-}
-
-/** 1번 행사 신청 접수 — 장소가 비어도 fallback으로 그냥 보냄 */
+/** 1번 행사 신청 접수(게스트) — 신규 템플릿은 장소 변수 없음(본문에 보증금 계좌 안내 포함) */
 export function varsEventRegReceived(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
     '#{프로그램명}': programLabel(ev.title),
     '#{일시}': formatEventDateKo(ev.event_date),
-    '#{장소}': ev.location || FALLBACK,
   }
 }
 
-/** 2번 행사 참석 확정 — eventConfirmReady가 true일 때만 자동 발송. 버튼 변수 #{url}(오픈채팅 코드) 포함 */
-export function varsEventConfirmed(ev: EventRow, name: string): Record<string, string> {
+/** 참석 확정(신규 2번, 게스트·크루 공통)을 자동 발송해도 되는지 — 채팅방 링크(버튼 #{url})만 있으면 됨 */
+export function confirmChatReady(ev: EventRow | null | undefined): boolean {
+  return !!(ev && openChatCode(ev.kakao_chat_url))
+}
+
+/** 2번 행사 참석 확정 — 게스트용 신규 템플릿(변수 3개: 이름·프로그램명·url) */
+export function varsEventConfirmedGuest(ev: EventRow, name: string): Record<string, string> {
+  return {
+    '#{이름}': name,
+    '#{프로그램명}': programLabel(ev.title),
+    '#{url}': openChatCode(ev.kakao_chat_url),
+  }
+}
+
+/** 2번 행사 참석 확정 — 크루용 신규 템플릿(변수 4개: 이름·프로그램명·일시·url) */
+export function varsEventConfirmedCrew(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
     '#{프로그램명}': programLabel(ev.title),
     '#{일시}': formatEventDateKo(ev.event_date),
-    '#{입장시간}': ev.entry_time || FALLBACK,
-    '#{장소}': ev.location || FALLBACK,
-    '#{준비물}': ev.materials || FALLBACK_CHAT,
-    '#{진행내용}': ev.program_detail || FALLBACK_CHAT,
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }
+
 
 /** 4번 행사 전 공지(D-1) — 운영진이 수동 발송. 비면 fallback. 버튼 변수 #{url} 포함 */
 export function varsEventD1Notice(ev: EventRow, name: string): Record<string, string> {

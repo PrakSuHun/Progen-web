@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
 import {
-  ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady, varsEventConfirmed,
+  ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady, varsEventConfirmedGuest,
 } from '@/lib/solapi'
 import { sendPushToAdmins } from '@/lib/push'
 
@@ -133,9 +133,9 @@ async function handle(request: NextRequest) {
     let alimtalkSent = false
     try {
       const ev = await loadEventRow(reg.event_id)
-      if (reg.phone && ev && eventConfirmReady(ev)) {
+      if (reg.phone && ev && confirmChatReady(ev)) {
         const res = await sendAlimtalk(
-          ALIMTALK.EVENT_CONFIRMED, reg.phone, varsEventConfirmed(ev, reg.name || '게스트'),
+          ALIMTALK.EVENT_CONFIRMED, reg.phone, varsEventConfirmedGuest(ev, reg.name || '게스트'),
           { guestId: reg.guest_id, registrationId: reg.id, eventId: reg.event_id },
         )
         alimtalkSent = res.ok

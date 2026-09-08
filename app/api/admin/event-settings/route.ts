@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, eventConfirmReady } from '@/lib/solapi'
+import { ALIMTALK, confirmChatReady } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       kakao_chat_url: ev.kakao_chat_url ?? '',
     },
     is_public: ev.is_public ?? true,
-    confirmReady: eventConfirmReady(ev),
+    confirmReady: confirmChatReady(ev),
     pending: {
       confirm: { total: confirmEligible.length, sent: confirmSent, pending: confirmEligible.length - confirmSent },
       d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent },

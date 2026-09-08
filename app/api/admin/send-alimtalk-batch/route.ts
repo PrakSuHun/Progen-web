@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import {
-  ALIMTALK, sendAlimtalk, alreadySent, loadEventRow, eventConfirmReady,
-  varsEventConfirmed, varsEventD1Notice, programLabel,
+  ALIMTALK, sendAlimtalk, alreadySent, loadEventRow, confirmChatReady,
+  varsEventConfirmedCrew, varsEventConfirmedGuest, varsEventD1Notice, programLabel,
 } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: '행사를 찾을 수 없습니다' }, { status: 404 })
     }
 
-    if (template === 'confirm' && !eventConfirmReady(ev)) {
+    if (template === 'confirm' && !confirmChatReady(ev)) {
       return NextResponse.json(
-        { message: '행사 정보(장소·입장시간·준비물·진행내용·채팅방 링크)를 먼저 모두 입력해주세요' },
+        { message: '행사 정보에서 채팅방 링크(오픈채팅)를 먼저 입력해주세요' },
         { status: 400 },
       )
     }
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         if (dedup && (await alreadySent(tpl.code, { registrationId: r.id }))) { alreadyDone++; return }
 
         let variables: Record<string, string>
-        if (template === 'confirm') variables = varsEventConfirmed(ev, p.name)
+        if (template === 'confirm') variables = p.crewId != null ? varsEventConfirmedCrew(ev, p.name) : varsEventConfirmedGuest(ev, p.name)
         else if (template === 'd1') variables = varsEventD1Notice(ev, p.name)
         else variables = {
           '#{이름}': p.name,

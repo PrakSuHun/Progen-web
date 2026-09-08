@@ -1,8 +1,8 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActivePublicEventId } from '@/lib/get-active-event'
 import {
-  ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady,
-  varsEventRegReceived, varsEventConfirmed,
+  ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady,
+  varsEventRegReceived, varsEventConfirmedCrew,
 } from '@/lib/solapi'
 import { isValidStudentNumber } from '@/lib/constants'
 import { sendPushToAdmins } from '@/lib/push'
@@ -166,8 +166,8 @@ export async function POST(request: NextRequest) {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
             guestId, registrationId, eventId,
           })
-        } else if (mode === 'crew' && eventConfirmReady(ev)) {
-          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, phone, varsEventConfirmed(ev, name), {
+        } else if (mode === 'crew' && confirmChatReady(ev)) {
+          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, phone, varsEventConfirmedCrew(ev, name), {
             crewId, registrationId, eventId,
           })
         }

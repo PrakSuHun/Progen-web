@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import {
-  ALIMTALK, sendAlimtalk, loadEventRow, eventConfirmReady, varsEventConfirmed,
+  ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady, varsEventConfirmedGuest,
 } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -57,9 +57,9 @@ export async function POST(request: NextRequest) {
           .maybeSingle()
         const ev = await loadEventRow(row.event_id)
         if (guest?.phone && ev) {
-          if (eventConfirmReady(ev)) {
+          if (confirmChatReady(ev)) {
             const result = await sendAlimtalk(
-              ALIMTALK.EVENT_CONFIRMED, guest.phone, varsEventConfirmed(ev, guest.name || '게스트'),
+              ALIMTALK.EVENT_CONFIRMED, guest.phone, varsEventConfirmedGuest(ev, guest.name || '게스트'),
               { guestId: row.guest_id, registrationId: registration_id, eventId: row.event_id },
             )
             alimtalk = result.ok ? { sent: true } : { sent: false, skipped: true }
