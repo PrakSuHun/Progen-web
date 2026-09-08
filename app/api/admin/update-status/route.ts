@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     // 변경 전 상태/대상 (노쇼 카운트 처리에 필요)
     const { data: before } = await supabase
       .from('event_registrations')
-      .select('status, crew_id')
+      .select('status, crew_id, events(is_public)')
       .eq('id', registration_id)
       .maybeSingle()
     const prevStatus = before?.status ?? null
@@ -50,8 +50,10 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     // 노쇼 카운트 증감 — 크루 한정 (게스트는 noshow_count 컬럼 없음). 알림톡은 보내지 않음.
+    // 외부(공개) 행사만 집계 — 내부 회차(프로젝트 인원)는 노쇼확정 상태 표시는 되지만 카운트에 반영 안 함(2026-09-08).
     const crewId = before?.crew_id ?? null
-    if (crewId != null && prevStatus !== status) {
+    const isPublicEvent = (before as any)?.events?.is_public !== false
+    if (crewId != null && prevStatus !== status && isPublicEvent) {
       const becameNoshow = status === '노쇼확정' && prevStatus !== '노쇼확정'
       const leftNoshow = prevStatus === '노쇼확정' && status !== '노쇼확정'
 
