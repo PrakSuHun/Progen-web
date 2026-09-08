@@ -35,6 +35,8 @@ interface Attendee {
   refund_account: string | null
   student_number?: string | null
   companion?: string | null
+  /** 씨엔유케어 행사 참여 이력 (포도 아님 + 전화번호 완전 일치 시에만 서버가 부착) */
+  cnucare_events?: { name: string; date: string | null }[]
 }
 
 interface DashboardData {
@@ -291,8 +293,16 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
         }`}
     >
       <div className="flex items-center gap-1 font-medium text-slate-800">
-        <span>{person.name}</span>
+        <span className={person.cnucare_events?.length ? 'text-orange-600' : ''}>{person.name}</span>
         {person.is_member && <span className="w-2 h-2 rounded-full bg-sky-500 inline-block" />}
+        {!!person.cnucare_events?.length && (
+          <span
+            className="text-[9px] font-bold text-orange-600 bg-orange-100 border border-orange-200 rounded px-1"
+            title={`씨엔유케어 참여: ${person.cnucare_events.map((e) => e.name).join(', ')}`}
+          >
+            CNU
+          </span>
+        )}
         {isNoshow && (
           <span className="text-red-500 text-xs font-bold">노쇼</span>
         )}
@@ -1999,9 +2009,9 @@ export default function AdminDashboardPage() {
                 <div className="p-3">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-800 font-bold text-sm w-12 shrink-0">{m.name}</span>
+                      <span className={`font-bold text-sm w-12 shrink-0 ${m.cnucare_events?.length ? 'text-orange-600' : 'text-slate-800'}`}>{m.name}</span>
                       <span className="w-4 shrink-0 text-center">
-                        {m.is_member ? <span className="text-xs">🍇</span> : m.is_first_time ? <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" /> : null}
+                        {m.is_member ? <span className="text-xs">🍇</span> : m.cnucare_events?.length ? <span className="inline-block w-1.5 h-1.5 rounded-full bg-orange-500" /> : m.is_first_time ? <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" /> : null}
                       </span>
                       {membersMode === 'event' && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 w-10 text-center"
@@ -2043,6 +2053,16 @@ export default function AdminDashboardPage() {
                       {membersMode === 'event' && m.team_name && <div><span className="text-slate-400">팀</span><br/><span className="text-sky-600 font-medium">{m.team_name}</span></div>}
                       {membersMode === 'event' && m.companion && <div className="col-span-2"><span className="text-slate-400">동석자</span><br/><span className="text-violet-600 font-medium">🤝 {m.companion}</span></div>}
                     </div>
+                    {!!m.cnucare_events?.length && (
+                      <div className="text-xs bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-2">
+                        <span className="text-orange-600 font-bold">씨엔유케어 참여 이력</span>
+                        <ul className="mt-1 space-y-0.5 text-slate-700">
+                          {m.cnucare_events.map((e: { name: string; date: string | null }, i: number) => (
+                            <li key={i}>· {e.name}{e.date ? ` (${new Date(e.date).toLocaleDateString('ko-KR')})` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                     {membersMode === 'event' && (
                       <button onClick={() => handleDeleteMember(m)} className="w-full mt-2 py-1.5 text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium">
                         삭제
@@ -2094,7 +2114,18 @@ export default function AdminDashboardPage() {
                   <tr key={m.registration_id || m.id} className="hover:bg-sky-50/40 transition-colors">
                     <td className="px-3 py-3 text-slate-400 text-xs">{i + 1}</td>
                     <td className="px-3 py-3 text-slate-800 font-medium whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1">{m.name}{m.is_first_time && !m.is_member && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <span className={m.cnucare_events?.length ? 'text-orange-600 font-bold' : ''}>{m.name}</span>
+                        {!!m.cnucare_events?.length && (
+                          <span
+                            className="text-[9px] font-bold text-orange-600 bg-orange-100 border border-orange-200 rounded px-1"
+                            title={`씨엔유케어 참여: ${m.cnucare_events.map((e: { name: string }) => e.name).join(', ')}`}
+                          >
+                            CNU
+                          </span>
+                        )}
+                        {m.is_first_time && !m.is_member && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />}
+                      </span>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
                       <a href={`tel:${m.phone}`} className="text-sky-500 hover:text-sky-600">{m.phone}</a>

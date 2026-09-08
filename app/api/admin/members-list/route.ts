@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
 import { isCrewAtRegistration } from '@/lib/registration-role'
+import { getCnucareEventsByPhone, annotateCnucare } from '@/lib/cnucare'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -21,12 +22,15 @@ export async function GET(request: NextRequest) {
     if (error) return NextResponse.json({ message: error.message }, { status: 500 })
 
     return NextResponse.json({
-      members: (data ?? []).map((m: any) => ({
-        ...m,
-        is_crew: true,
-        reg_status: null,
-        team_name: null,
-      })),
+      members: annotateCnucare(
+        (data ?? []).map((m: any) => ({
+          ...m,
+          is_crew: true,
+          reg_status: null,
+          team_name: null,
+        })),
+        await getCnucareEventsByPhone(),
+      ),
     })
   }
 
@@ -125,5 +129,5 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({ members })
+  return NextResponse.json({ members: annotateCnucare(members, await getCnucareEventsByPhone()) })
 }

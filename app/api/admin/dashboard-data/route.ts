@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
 import { isCrewAtRegistration } from '@/lib/registration-role'
 import { ALIMTALK } from '@/lib/solapi'
+import { getCnucareEventsByPhone, annotateCnucare } from '@/lib/cnucare'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -99,7 +100,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const all = (registrations ?? []).map(toAttendee)
+    // 씨엔유케어 행사 명단 교차 표시 — 포도 아닌 사람 중 전화번호 완전 일치자에 cnucare_events 부착
+    const cnucareMap = await getCnucareEventsByPhone()
+    const all = annotateCnucare((registrations ?? []).map(toAttendee), cnucareMap)
     const preRegistered = all.filter((a) => a.status === '사전신청' || a.status === '출석완료' || a.status === '노쇼확정')
     const checkedIn = all.filter((a) => a.status === '출석완료')
     const unassigned = checkedIn.filter((a) => !a.team_name)
