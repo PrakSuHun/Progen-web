@@ -10,6 +10,10 @@ const SOLAPI_SEND_URL = 'https://api.solapi.com/messages/v4/send'
  */
 export const ALIMTALK = {
   EVENT_REG_RECEIVED: { code: 'KA01TP260906103329534uNkFHnMsp0a', name: '행사 신청 접수 (게스트)' }, // 1 — 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시)
+  // 1 신청 접수 — 크루용(2026-09-08 등록, 검수중). 변수 게스트용과 동일(이름·프로그램명·일시) — varsEventRegReceived 공용
+  EVENT_REG_RECEIVED_CREW: { code: 'KA01TP260908051130190N5evwOwCriP', name: '행사 신청 접수 (크루)' },
+  // 2 보증금 입금완료 — 게스트(2026-09-08 등록, 검수중). 입금 확인 시 자동 발송("확정은 추후 공지" 안내). 변수: 이름·프로그램명
+  DEPOSIT_RECEIVED: { code: 'KA01TP2609080453491757bL3GWWKncA', name: '보증금 입금완료 (게스트)' },
   // 2 참석 확정 — 게스트용(보증금 환불 안내 포함). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·url — varsEventConfirmedGuest 사용)
   EVENT_CONFIRMED:    { code: 'KA01TP260906103529205rx0U0oQ90Q7', name: '행사 참석 확정 (게스트)' },
   // 2 참석 확정 — 크루용(보증금 문구 없음). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시·url — varsEventConfirmedCrew 사용)
@@ -20,8 +24,9 @@ export const ALIMTALK = {
   CHECKIN_WITH_TEAM:  { code: 'KA01TP260511073547316F1HdnAUi1RJ', name: '현장 출석 완료 + 팀 안내' }, // 6
   CHECKIN_NO_TEAM:    { code: 'KA01TP260511075330965NCintRaUSWU', name: '팀 미배정' },           // 7
   EVENT_CHANGED:      { code: 'KA01TP260511073928887bmEyE8XReNZ', name: '행사 일정/장소 변경' }, // 8
-  NOSHOW_WARNING:     { code: 'KA01TP2605110744476078SNWeTQFA9a', name: '노쇼 경고 (1회)' },     // 9
-  CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10
+  // ⚠️ 9 노쇼 경고·10 크루 자격 박탈 — 2026-09-08 운영진이 솔라피에서 템플릿 삭제함. 발송 시 실패(출석탭 노쇼경고 버튼 처리 방침 미정)
+  NOSHOW_WARNING:     { code: 'KA01TP2605110744476078SNWeTQFA9a', name: '노쇼 경고 (1회)' },     // 9 (솔라피에서 삭제됨)
+  CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10 (솔라피에서 삭제됨)
   // 11 보증금 미입금 안내(2026-09-06 등록, 검수중) — 보증금 탭 「미입금 알림」 버튼. 검수 통과 전엔 발송 시 솔라피가 거부
   DEPOSIT_REMINDER:   { code: 'KA01TP260906071133136qAave0oFtch', name: '보증금 미입금 안내' },
 } as const

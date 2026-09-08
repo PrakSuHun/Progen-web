@@ -163,9 +163,12 @@ export async function POST(request: NextRequest) {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
             guestId, registrationId, eventId,
           })
+        } else if (mode === 'crew') {
+          // 크루도 "신청 접수" 안내만 자동 발송 (확정은 설정 탭에서 수동 — 운영 방침 2026-09-08)
+          await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED_CREW, phone, varsEventRegReceived(ev, name), {
+            crewId, registrationId, eventId,
+          })
         }
-        // 크루 확정 알림톡은 자동 발송하지 않음(운영 방침, 2026-09-08) —
-        // 설정 → 알림톡 발송 탭 일괄발송 명단에서 운영진 확인 후 수동 발송.
       }
     } catch (e) {
       console.error('event-reg alimtalk send failed:', e)

@@ -11,6 +11,8 @@ const TEST_NAME = '테스트'
 
 const BUILDERS: Record<string, (ev: EventRow) => Record<string, string>> = {
   EVENT_REG_RECEIVED: (ev) => varsEventRegReceived(ev, TEST_NAME),
+  EVENT_REG_RECEIVED_CREW: (ev) => varsEventRegReceived(ev, TEST_NAME),
+  DEPOSIT_RECEIVED: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
   EVENT_CONFIRMED: (ev) => varsEventConfirmedGuest(ev, TEST_NAME),
   EVENT_CONFIRMED_CREW: (ev) => varsEventConfirmedCrew(ev, TEST_NAME),
   CREW_CONFIRMED: () => ({ '#{이름}': TEST_NAME }),
@@ -26,8 +28,6 @@ const BUILDERS: Record<string, (ev: EventRow) => Record<string, string>> = {
     '#{변경일시}': '(테스트) 변경 후 일시',
     '#{변경장소}': '(테스트) 변경 후 장소',
   }),
-  NOSHOW_WARNING: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
-  CREW_REVOKED: () => ({ '#{이름}': TEST_NAME }),
   DEPOSIT_REMINDER: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
 }
 

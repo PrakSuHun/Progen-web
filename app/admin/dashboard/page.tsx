@@ -717,7 +717,7 @@ export default function AdminDashboardPage() {
     ]
     const curDeposit = (allAttendees.find((a) => a.registration_id === registration_id)?.deposit_status ?? '미입금') as DepositStatus
     if (curDeposit === '미입금') {
-      if (!window.confirm('보증금을 입금 처리합니다.\n(확정 알림톡은 자동 발송되지 않아요 — 설정 → 알림톡 발송 탭에서 확인 후 발송)\n계속할까요?')) return
+      if (!window.confirm('보증금을 입금 처리합니다.\n게스트에게 「입금완료 안내」 알림톡이 발송됩니다.\n(참석 확정 알림톡은 설정 → 알림톡 발송 탭에서 별도 발송)\n계속할까요?')) return
     }
     const NEXT: Record<DepositStatus, DepositStatus> = { '미입금': '입금', '입금': '환불', '환불': '미입금' }
     let nextStatus: DepositStatus = '입금'

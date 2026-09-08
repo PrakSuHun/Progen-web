@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
+import { ALIMTALK, sendAlimtalk, loadEventRow, programLabel } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 const NEXT_STATUS: Record<string, string> = {
@@ -43,8 +44,24 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error
 
-    // 확정 알림톡은 자동 발송하지 않음(운영 방침, 2026-09-08) — 상태만 변경.
-    // 발송은 설정 → 알림톡 발송 탭 일괄발송 명단(입금 게스트만 포함)에서 확인 후 수동으로.
+    // 미입금 → 입금: 입금완료 안내(2번 신규)만 자동 발송 — 확정(3번)은 설정 탭에서 수동(운영 방침, 2026-09-08)
+    if (current === '미입금' && next === '입금' && row.guest_id && row.event_id && row.status !== '노쇼확정') {
+      try {
+        const { data: guest } = await supabase
+          .from('guests').select('name, phone').eq('id', row.guest_id).maybeSingle()
+        const ev = await loadEventRow(row.event_id)
+        if (guest?.phone) {
+          await sendAlimtalk(
+            ALIMTALK.DEPOSIT_RECEIVED, guest.phone,
+            { '#{이름}': guest.name || '게스트', '#{프로그램명}': programLabel(ev?.title ?? null) },
+            { guestId: row.guest_id, registrationId: registration_id, eventId: row.event_id },
+          )
+        }
+      } catch (e) {
+        console.error('toggle-deposit deposit-received alimtalk failed:', e)
+      }
+    }
+
     return NextResponse.json({ message: `${next}으로 변경됨`, deposit_status: next })
   } catch (error) {
     console.error('cycle-deposit error:', error)
