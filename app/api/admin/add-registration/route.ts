@@ -1,5 +1,4 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady, varsEventConfirmedCrew } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 function checkAuth(request: NextRequest) {
@@ -44,26 +43,8 @@ export async function POST(request: NextRequest) {
       .select()
     if (error) throw error
 
-    // 행사정보가 다 채워졌으면 2번(크루용 참석 확정) 알림톡 자동 발송 — /api/event-reg crew 흐름과 동일
-    const registrationId: string | null = data?.[0]?.id ?? null
-    let alimtalk: 'sent' | 'pending' | 'skipped' = 'skipped'
-    try {
-      const ev = await loadEventRow(eventId)
-      if (ev && crew.phone) {
-        if (confirmChatReady(ev)) {
-          const r = await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, crew.phone, varsEventConfirmedCrew(ev, crew.name || '회원'), {
-            crewId: crew.id, registrationId, eventId,
-          })
-          alimtalk = r.ok ? 'sent' : 'skipped'
-        } else {
-          alimtalk = 'pending'
-        }
-      }
-    } catch (e) {
-      console.error('add-registration alimtalk send failed:', e)
-    }
-
-    return NextResponse.json({ message: '추가되었습니다', alimtalk, data })
+    // 확정 알림톡은 자동 발송하지 않음(운영 방침, 2026-09-08) — 설정 → 알림톡 발송 탭에서 수동 발송.
+    return NextResponse.json({ message: '추가되었습니다', alimtalk: 'pending', data })
   } catch (error) {
     console.error('add-registration error:', error)
     return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })

@@ -717,7 +717,7 @@ export default function AdminDashboardPage() {
     ]
     const curDeposit = (allAttendees.find((a) => a.registration_id === registration_id)?.deposit_status ?? '미입금') as DepositStatus
     if (curDeposit === '미입금') {
-      if (!window.confirm('보증금을 입금 처리합니다.\n해당 게스트에게 참석 확정 알림톡이 발송됩니다.\n계속할까요?')) return
+      if (!window.confirm('보증금을 입금 처리합니다.\n(확정 알림톡은 자동 발송되지 않아요 — 설정 → 알림톡 발송 탭에서 확인 후 발송)\n계속할까요?')) return
     }
     const NEXT: Record<DepositStatus, DepositStatus> = { '미입금': '입금', '입금': '환불', '환불': '미입금' }
     let nextStatus: DepositStatus = '입금'
@@ -749,11 +749,9 @@ export default function AdminDashboardPage() {
         showToast('보증금 상태 변경 실패', 'error')
         await fetchAll()
       } else {
-        const d = await res.json().catch(() => ({} as { alimtalk?: { sent?: boolean; pendingEventSettings?: boolean } }))
-        if (d?.alimtalk?.pendingEventSettings) {
-          showToast('입금 처리됨 · 행사 정보가 비어 있어 확정 알림톡은 보류 (설정 → 발송 탭에서 일괄 발송)', 'success')
-        } else if (d?.alimtalk?.sent) {
-          showToast('입금 처리됨 · 참석 확정 알림톡 발송됨', 'success')
+        const d = await res.json().catch(() => ({} as { deposit_status?: string }))
+        if (d?.deposit_status === '입금') {
+          showToast('입금 처리됨 · 확정 알림톡은 설정 → 알림톡 발송 탭에서 발송', 'success')
         }
       }
     } catch {

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
-import {
-  ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady, varsEventConfirmedGuest,
-} from '@/lib/solapi'
 import { sendPushToAdmins } from '@/lib/push'
 
 // 보증금 입금 SMS 웹훅 — 공기계(SmsForwarder)가 하나은행 입출금 문자를 받는 즉시 POST.
@@ -129,24 +126,11 @@ async function handle(request: NextRequest) {
       return NextResponse.json({ matched: true, duplicate: true, name: reg.name })
     }
 
-    // 6) 참석 확정(2번) 알림톡 — toggle-deposit 수동 입금 처리와 동일 조건
-    let alimtalkSent = false
-    try {
-      const ev = await loadEventRow(reg.event_id)
-      if (reg.phone && ev && confirmChatReady(ev)) {
-        const res = await sendAlimtalk(
-          ALIMTALK.EVENT_CONFIRMED, reg.phone, varsEventConfirmedGuest(ev, reg.name || '게스트'),
-          { guestId: reg.guest_id, registrationId: reg.id, eventId: reg.event_id },
-        )
-        alimtalkSent = res.ok
-      }
-    } catch (e) {
-      console.error('sms-hook alimtalk failed:', e)
-    }
+    // 확정 알림톡은 자동 발송하지 않음(운영 방침, 2026-09-08) — 입금 처리만 하고,
+    // 발송은 운영진이 설정 → 알림톡 발송 탭 일괄발송 명단(입금 게스트만 포함)에서 확인 후 수동으로.
+    await safePush('✅ 보증금 입금 자동 확인', `${reg.name}님 5,000원 입금 확인 — 「${reg.eventTitle}」 입금 처리 완료. 확정 알림톡은 설정 → 알림톡 발송 탭에서 보내주세요.`)
 
-    await safePush('✅ 보증금 입금 자동 확인', `${reg.name}님 5,000원 입금 확인 — 「${reg.eventTitle}」 입금 처리${alimtalkSent ? ' + 확정 알림톡 발송' : ''} 완료`)
-
-    return NextResponse.json({ matched: true, name: reg.name, eventTitle: reg.eventTitle, alimtalkSent })
+    return NextResponse.json({ matched: true, name: reg.name, eventTitle: reg.eventTitle })
   } catch (e: any) {
     console.error('sms-hook error:', e)
     return NextResponse.json({ message: e?.message || 'error' }, { status: 500 })

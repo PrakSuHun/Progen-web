@@ -1,9 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActivePublicEventId } from '@/lib/get-active-event'
-import {
-  ALIMTALK, sendAlimtalk, loadEventRow, confirmChatReady,
-  varsEventRegReceived, varsEventConfirmedCrew,
-} from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow, varsEventRegReceived } from '@/lib/solapi'
 import { isValidStudentNumber } from '@/lib/constants'
 import { sendPushToAdmins } from '@/lib/push'
 import { NextRequest, NextResponse } from 'next/server'
@@ -166,11 +163,9 @@ export async function POST(request: NextRequest) {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
             guestId, registrationId, eventId,
           })
-        } else if (mode === 'crew' && confirmChatReady(ev)) {
-          await sendAlimtalk(ALIMTALK.EVENT_CONFIRMED_CREW, phone, varsEventConfirmedCrew(ev, name), {
-            crewId, registrationId, eventId,
-          })
         }
+        // 크루 확정 알림톡은 자동 발송하지 않음(운영 방침, 2026-09-08) —
+        // 설정 → 알림톡 발송 탭 일괄발송 명단에서 운영진 확인 후 수동 발송.
       }
     } catch (e) {
       console.error('event-reg alimtalk send failed:', e)
