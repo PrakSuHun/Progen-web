@@ -210,7 +210,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
             ))}
           </div>
 
-          <div className="px-5 py-4 overflow-y-auto">
+          <div className="px-5 py-4 overflow-y-auto overflow-x-hidden">
             {loading ? (
               <div className="py-10 text-center text-sm text-slate-400">불러오는 중...</div>
             ) : tab === 'info' ? (
@@ -359,7 +359,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     <select
                       value={testTpl}
                       onChange={(e) => setTestTpl(e.target.value)}
-                      className="text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400 bg-white"
+                      className="w-full min-w-0 text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400 bg-white"
                     >
                       <option value="EVENT_REG_RECEIVED">1. 행사 신청 접수 (게스트)</option>
                       <option value="EVENT_REG_RECEIVED_CREW">1. 행사 신청 접수 (크루) — 검수중</option>
@@ -378,9 +378,9 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       <input
                         value={testPhone}
                         onChange={(e) => setTestPhone(e.target.value.replace(/[^\d-]/g, ''))}
-                        placeholder="받을 전화번호 (예: 01012345678)"
+                        placeholder="받을 전화번호"
                         inputMode="numeric"
-                        className="flex-1 text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400"
+                        className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400"
                       />
                       <button
                         onClick={async () => {
