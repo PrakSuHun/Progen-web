@@ -16,6 +16,7 @@ interface Settings {
   materials: string
   program_detail: string
   kakao_chat_url: string
+  datetime_text: string
 }
 
 interface PendingInfo {
@@ -35,7 +36,7 @@ interface RecipientsInfo {
   d1: Recipient[]
 }
 
-const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '' }
+const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '', datetime_text: '' }
 
 export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [tab, setTab] = useState<'info' | 'send'>('info')
@@ -245,13 +246,14 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   <div className={`text-xs rounded-lg px-3 py-2 ${confirmReady ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
                     {confirmReady
                       ? '✅ 참석 확정 알림톡 자동 발송 준비 완료'
-                      : '⚠️ 아래 5개 항목을 모두 채워야 참석 확정 알림톡이 자동으로 나갑니다 (그 전까지는 보류 → 발송 탭에서 일괄 발송)'}
+                      : '⚠️ 참여자 채팅방 링크를 입력해야 참석 확정 알림톡이 자동으로 나갑니다 (그 전까지는 보류 → 발송 탭에서 일괄 발송)'}
                   </div>
                 ) : (
                   <div className="text-xs rounded-lg px-3 py-2 bg-slate-100 text-slate-500">
                     🔒 내부 행사 — 알림톡·신청폼이 필요 없어요. 아래 항목은 비워둬도 됩니다.
                   </div>
                 )}
+                {field('datetime_text', '알림톡 일시 표기 (선택)', '예: 9월 19일(토) 오후 2시~5시 — 비우면 행사일시 자동 표기')}
                 {field('location', '장소 *', '예: 충남대학교 공대 5호관 201호')}
                 {field('entry_time', '입장 시간 *', '예: 오후 1시 30분')}
                 {field('materials', '준비물 *', '예: 노트북, 충전기', true)}

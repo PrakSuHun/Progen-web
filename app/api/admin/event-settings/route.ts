@@ -6,7 +6,7 @@ function checkAuth(request: NextRequest) {
   return !!request.cookies.get('admin_session')
 }
 
-const SETTINGS_FIELDS = ['location', 'entry_time', 'materials', 'program_detail', 'kakao_chat_url'] as const
+const SETTINGS_FIELDS = ['location', 'entry_time', 'materials', 'program_detail', 'kakao_chat_url', 'datetime_text'] as const
 
 // 참석 확정(2번) 대상: 크루 신청 + 입금된 게스트 신청 (노쇼확정 제외)
 function eligibleForConfirm(r: { crew_id: number | null; guest_id: string | null; status: string | null; deposit_status: string | null }) {
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   const { data: ev, error } = await supabase
     .from('events')
-    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, is_public')
+    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, datetime_text, is_public')
     .eq('id', eventId)
     .maybeSingle()
 
@@ -96,6 +96,7 @@ export async function GET(request: NextRequest) {
       materials: ev.materials ?? '',
       program_detail: ev.program_detail ?? '',
       kakao_chat_url: ev.kakao_chat_url ?? '',
+      datetime_text: ev.datetime_text ?? '',
     },
     is_public: ev.is_public ?? true,
     confirmReady: confirmChatReady(ev),
