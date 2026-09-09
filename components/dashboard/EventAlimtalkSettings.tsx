@@ -363,8 +363,8 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     >
                       {/* 라벨은 솔라피 템플릿 제목과 동일하게 유지 */}
                       <option value="EVENT_REG_RECEIVED">1. 행사 신청 접수(게스트)</option>
-                      <option value="EVENT_REG_RECEIVED_CREW">1. 행사 신청 접수(크루) — 검수중</option>
-                      <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료(게스트) — 검수중</option>
+                      <option value="EVENT_REG_RECEIVED_CREW">1. 행사 신청 접수(크루)</option>
+                      <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료(게스트)</option>
                       <option value="EVENT_CONFIRMED">3. 행사 참석 확정(게스트)</option>
                       <option value="EVENT_CONFIRMED_CREW">3. 행사 참석 확정(크루)</option>
                       <option value="EVENT_D1_NOTICE">4. 행사 사전 공지</option>

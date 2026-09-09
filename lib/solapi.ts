@@ -6,13 +6,13 @@ const SOLAPI_SEND_URL = 'https://api.solapi.com/messages/v4/send'
 /**
  * 카카오 알림톡 템플릿 (솔라피 채널 KA01PF260511054914846rCGGdEqH9tS / searchId 'progen').
  * code = 솔라피 비즈센터에 등록된 실제 templateId.
- * 검수 상태: #1·#2게스트·#2크루(2026-09-08 신규 교체분)·#5는 APPROVED 확인. 나머지는 솔라피 비즈센터에서 확인 — 검수 통과 전엔 발송 시 솔라피가 거부.
+ * 검수 상태(2026-09-09 전수 확인): 등록된 12종 전부 APPROVED. 단 노쇼 경고·크루 자격 박탈 2종은 솔라피에서 삭제된 상태(재등록 예정).
  */
 export const ALIMTALK = {
   EVENT_REG_RECEIVED: { code: 'KA01TP260906103329534uNkFHnMsp0a', name: '행사 신청 접수 (게스트)' }, // 1 — 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시)
-  // 1 신청 접수 — 크루용(2026-09-08 등록, 검수중). 변수 게스트용과 동일(이름·프로그램명·일시) — varsEventRegReceived 공용
+  // 1 신청 접수 — 크루용(2026-09-09 승인). 변수 게스트용과 동일(이름·프로그램명·일시) — varsEventRegReceived 공용
   EVENT_REG_RECEIVED_CREW: { code: 'KA01TP260908051130190N5evwOwCriP', name: '행사 신청 접수 (크루)' },
-  // 2 보증금 입금완료 — 게스트(2026-09-08 등록, 검수중). 입금 확인 시 자동 발송("확정은 추후 공지" 안내). 변수: 이름·프로그램명
+  // 2 보증금 입금완료 — 게스트(2026-09-09 승인). 입금 확인 시 자동 발송("확정은 추후 공지" 안내). 변수: 이름·프로그램명
   DEPOSIT_RECEIVED: { code: 'KA01TP2609080453491757bL3GWWKncA', name: '보증금 입금완료 (게스트)' },
   // 2 참석 확정 — 게스트용(보증금 환불 안내 포함). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·url — varsEventConfirmedGuest 사용)
   EVENT_CONFIRMED:    { code: 'KA01TP260906103529205rx0U0oQ90Q7', name: '행사 참석 확정 (게스트)' },
@@ -28,7 +28,7 @@ export const ALIMTALK = {
   // ⚠️ 9 노쇼 경고·10 크루 자격 박탈 — 2026-09-08 운영진이 솔라피에서 템플릿 삭제함. 발송 시 실패(출석탭 노쇼경고 버튼 처리 방침 미정)
   NOSHOW_WARNING:     { code: 'KA01TP2605110744476078SNWeTQFA9a', name: '노쇼 경고 (1회)' },     // 9 (솔라피에서 삭제됨)
   CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10 (솔라피에서 삭제됨)
-  // 11 보증금 미입금 안내(2026-09-06 등록, 검수중) — 보증금 탭 「미입금 알림」 버튼. 검수 통과 전엔 발송 시 솔라피가 거부
+  // 5 보증금 미입금 안내(승인됨) — 보증금 탭 「미입금 알림」 버튼
   DEPOSIT_REMINDER:   { code: 'KA01TP260906071133136qAave0oFtch', name: '보증금 미입금 안내' },
 } as const
 
