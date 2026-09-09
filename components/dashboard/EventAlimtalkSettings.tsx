@@ -361,18 +361,19 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       onChange={(e) => setTestTpl(e.target.value)}
                       className="w-full min-w-0 text-xs border border-slate-200 rounded-lg px-2.5 py-2 outline-none focus:border-violet-400 bg-white"
                     >
-                      <option value="EVENT_REG_RECEIVED">1. 행사 신청 접수 (게스트)</option>
-                      <option value="EVENT_REG_RECEIVED_CREW">1. 행사 신청 접수 (크루) — 검수중</option>
-                      <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료 (게스트) — 검수중</option>
-                      <option value="EVENT_CONFIRMED">3. 행사 참석 확정 (게스트)</option>
-                      <option value="EVENT_CONFIRMED_CREW">3. 행사 참석 확정 (크루)</option>
-                      <option value="EVENT_D1_NOTICE">4. 행사 전 공지 (D-1)</option>
+                      {/* 라벨은 솔라피 템플릿 제목과 동일하게 유지 */}
+                      <option value="EVENT_REG_RECEIVED">1. 행사 신청 접수(게스트)</option>
+                      <option value="EVENT_REG_RECEIVED_CREW">1. 행사 신청 접수(크루) — 검수중</option>
+                      <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료(게스트) — 검수중</option>
+                      <option value="EVENT_CONFIRMED">3. 행사 참석 확정(게스트)</option>
+                      <option value="EVENT_CONFIRMED_CREW">3. 행사 참석 확정(크루)</option>
+                      <option value="EVENT_D1_NOTICE">4. 행사 전 공지</option>
                       <option value="DEPOSIT_REMINDER">5. 보증금 미입금 안내</option>
-                      <option value="REG_CANCELLED">신청 취소 확인</option>
+                      <option value="REG_CANCELLED">5. 신청 취소 확인</option>
                       <option value="CHECKIN_WITH_TEAM">6. 현장 출석 완료 + 팀 안내</option>
                       <option value="CHECKIN_NO_TEAM">7. 팀 미배정</option>
                       <option value="EVENT_CHANGED">8. 행사 일정/장소 변경</option>
-                      <option value="CREW_CONFIRMED">10. 크루원 지원 접수</option>
+                      <option value="CREW_CONFIRMED">10. 크루원 신청 접수</option>
                     </select>
                     <div className="flex gap-2">
                       <input
