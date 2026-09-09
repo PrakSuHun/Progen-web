@@ -299,9 +299,9 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   </button>
                 </div>
 
-                {/* 행사 전 공지 */}
+                {/* 행사 사전 공지 */}
                 <div className="border border-slate-200 rounded-xl p-3.5">
-                  <div className="text-sm font-bold text-slate-700 mb-1">행사 전 공지 (4번 · D-1)</div>
+                  <div className="text-sm font-bold text-slate-700 mb-1">행사 사전 공지 (4번)</div>
                   <div className="text-xs text-slate-500 mb-2.5">
                     노쇼확정 제외 전 신청자 대상.
                     {pending && (
@@ -317,7 +317,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   <button
                     onClick={() => runBatch(
                       'd1', 'd1',
-                      `선택한 ${selectedD1.size}명에게 행사 전 공지를 보냅니다. 계속할까요?`,
+                      `선택한 ${selectedD1.size}명에게 행사 사전 공지를 보냅니다. 계속할까요?`,
                       { registrationIds: Array.from(selectedD1) },
                     )}
                     disabled={sendingKey !== null || selectedD1.size === 0}
@@ -367,7 +367,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료(게스트) — 검수중</option>
                       <option value="EVENT_CONFIRMED">3. 행사 참석 확정(게스트)</option>
                       <option value="EVENT_CONFIRMED_CREW">3. 행사 참석 확정(크루)</option>
-                      <option value="EVENT_D1_NOTICE">4. 행사 전 공지</option>
+                      <option value="EVENT_D1_NOTICE">4. 행사 사전 공지</option>
                       <option value="DEPOSIT_REMINDER">5. 보증금 미입금 안내</option>
                       <option value="REG_CANCELLED">5. 신청 취소 확인</option>
                       <option value="CHECKIN_WITH_TEAM">6. 현장 출석 완료 + 팀 안내</option>
