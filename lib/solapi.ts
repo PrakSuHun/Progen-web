@@ -205,10 +205,10 @@ export type EventRow = {
 const FALLBACK = '추후 안내'
 const FALLBACK_CHAT = '채팅방 공지 참고'
 
-/** #{프로그램명} 변수 값 — 행사명이 도드라지게 낫표(「」)로 감싼다. 비어 있으면 공백 한 칸. */
+/** #{프로그램명} 변수 값 — 행사명 그대로(2026-09-09 낫표 감싸기 제거). 비어 있으면 공백 한 칸. */
 export function programLabel(title: string | null | undefined): string {
   const t = (title ?? '').toString().trim()
-  return t ? `「${t}」` : ' '
+  return t || ' '
 }
 
 /**
