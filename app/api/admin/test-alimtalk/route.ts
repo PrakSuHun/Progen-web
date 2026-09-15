@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
-  ALIMTALK, sendAlimtalk, loadEventRow, programLabel,
+  ALIMTALK, sendAlimtalk, loadEventRow, programNameOf,
   varsEventRegReceived, varsEventConfirmedGuest, varsEventConfirmedCrew,
   varsEventD1Notice, varsCheckinWithTeam, varsCheckinNoTeam,
   type EventRow,
@@ -12,23 +12,23 @@ const TEST_NAME = '테스트'
 const BUILDERS: Record<string, (ev: EventRow) => Record<string, string>> = {
   EVENT_REG_RECEIVED: (ev) => varsEventRegReceived(ev, TEST_NAME),
   EVENT_REG_RECEIVED_CREW: (ev) => varsEventRegReceived(ev, TEST_NAME),
-  DEPOSIT_RECEIVED: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
+  DEPOSIT_RECEIVED: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programNameOf(ev) }),
   EVENT_CONFIRMED: (ev) => varsEventConfirmedGuest(ev, TEST_NAME),
   EVENT_CONFIRMED_CREW: (ev) => varsEventConfirmedCrew(ev, TEST_NAME),
   CREW_CONFIRMED: () => ({ '#{이름}': TEST_NAME }),
   EVENT_D1_NOTICE: (ev) => varsEventD1Notice(ev, TEST_NAME),
-  REG_CANCELLED: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
+  REG_CANCELLED: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programNameOf(ev) }),
   CHECKIN_WITH_TEAM: (ev) => varsCheckinWithTeam(TEST_NAME, ev.title, '1팀'),
   CHECKIN_NO_TEAM: (ev) => varsCheckinNoTeam(TEST_NAME, ev.title),
   EVENT_CHANGED: (ev) => ({
     '#{이름}': TEST_NAME,
-    '#{프로그램명}': programLabel(ev.title),
+    '#{프로그램명}': programNameOf(ev),
     '#{기존일시}': '(테스트) 변경 전 일시',
     '#{기존장소}': '(테스트) 변경 전 장소',
     '#{변경일시}': '(테스트) 변경 후 일시',
     '#{변경장소}': '(테스트) 변경 후 장소',
   }),
-  DEPOSIT_REMINDER: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programLabel(ev.title) }),
+  DEPOSIT_REMINDER: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programNameOf(ev) }),
 }
 
 export async function POST(request: NextRequest) {

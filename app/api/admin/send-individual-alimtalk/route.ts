@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import {
-  ALIMTALK, sendAlimtalk, loadEventRow, programLabel,
+  ALIMTALK, sendAlimtalk, loadEventRow, programNameOf,
   varsCheckinWithTeam, varsCheckinNoTeam,
 } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
 
     if (type === 'checkin') {
       const r = reg.team_name
-        ? await sendAlimtalk(ALIMTALK.CHECKIN_WITH_TEAM, phone, varsCheckinWithTeam(name, ev?.title ?? null, reg.team_name), target)
-        : await sendAlimtalk(ALIMTALK.CHECKIN_NO_TEAM, phone, varsCheckinNoTeam(name, ev?.title ?? null), target)
+        ? await sendAlimtalk(ALIMTALK.CHECKIN_WITH_TEAM, phone, varsCheckinWithTeam(name, programNameOf(ev), reg.team_name), target)
+        : await sendAlimtalk(ALIMTALK.CHECKIN_NO_TEAM, phone, varsCheckinNoTeam(name, programNameOf(ev)), target)
       if (!r.ok) {
         return NextResponse.json({ message: r.error || '발송 실패', sent: false }, { status: 502 })
       }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     const r1 = await sendAlimtalk(
       ALIMTALK.NOSHOW_WARNING, phone,
-      { '#{이름}': name, '#{프로그램명}': programLabel(ev?.title) },
+      { '#{이름}': name, '#{프로그램명}': programNameOf(ev) },
       target,
     )
     let revoked = false

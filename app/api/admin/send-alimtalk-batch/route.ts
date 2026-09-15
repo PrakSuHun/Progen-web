@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import {
   ALIMTALK, sendAlimtalk, alreadySent, loadEventRow, confirmChatReady,
-  varsEventConfirmedCrew, varsEventConfirmedGuest, varsEventD1Notice, programLabel,
+  varsEventConfirmedCrew, varsEventConfirmedGuest, varsEventD1Notice, programNameOf,
 } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         else if (template === 'd1') variables = varsEventD1Notice(ev, p.name)
         else variables = {
           '#{이름}': p.name,
-          '#{프로그램명}': programLabel(ev.title),
+          '#{프로그램명}': programNameOf(ev),
           '#{기존일시}': changeVars!.oldDate,
           '#{기존장소}': changeVars!.oldLocation,
           '#{변경일시}': changeVars!.newDate,

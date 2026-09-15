@@ -17,6 +17,7 @@ interface Settings {
   program_detail: string
   kakao_chat_url: string
   datetime_text: string
+  program_name_text: string
 }
 
 interface PendingInfo {
@@ -36,7 +37,7 @@ interface RecipientsInfo {
   d1: Recipient[]
 }
 
-const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '', datetime_text: '' }
+const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '', datetime_text: '', program_name_text: '' }
 
 export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [tab, setTab] = useState<'info' | 'send'>('info')
@@ -254,6 +255,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   </div>
                 )}
                 {/* 입력 순서 = 공지 알림톡(4번) 본문 순서: 일시·입장 → 장소 → 당일 진행 → 준비물 → 채팅방 */}
+                {field('program_name_text', '알림톡 행사명 표기 (선택)', '예: AI시대 대학생으로 살아남기 — 비우면 행사명 그대로')}
                 {field('datetime_text', '알림톡 일시 표기 (선택)', '예: 9월 19일(토) 오후 2시~5시 — 비우면 행사일시 자동 표기')}
                 {field('entry_time', '입장 시간 *', '예: 오후 1시 30분')}
                 {field('location', '장소 *', '예: 충남대학교 공대 5호관 201호')}

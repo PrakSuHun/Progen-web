@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
 
     let eventTitle = ' '
     if (reg.event_id) {
-      const { data: ev } = await supabase.from('events').select('title').eq('id', reg.event_id).maybeSingle()
-      eventTitle = ev?.title || ' '
+      const { data: ev } = await supabase.from('events').select('title, program_name_text').eq('id', reg.event_id).maybeSingle()
+      eventTitle = (ev?.program_name_text || '').trim() || ev?.title || ' '
     }
 
     const result = await sendAlimtalk(

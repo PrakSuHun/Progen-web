@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow, programLabel } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow, programNameOf } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 const NEXT_STATUS: Record<string, string> = {
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         if (guest?.phone) {
           await sendAlimtalk(
             ALIMTALK.DEPOSIT_RECEIVED, guest.phone,
-            { '#{이름}': guest.name || '게스트', '#{프로그램명}': programLabel(ev?.title ?? null) },
+            { '#{이름}': guest.name || '게스트', '#{프로그램명}': programNameOf(ev) },
             { guestId: row.guest_id, registrationId: registration_id, eventId: row.event_id },
           )
         }

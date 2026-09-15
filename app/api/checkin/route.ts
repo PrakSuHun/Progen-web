@@ -44,7 +44,7 @@ async function sendCheckinAlimtalk(args: {
     if (!evFlag?.auto_checkin_alimtalk) return // 자동문자 OFF → 발송 스킵
 
     const ev = await loadEventRow(args.eventId)
-    const title = ev?.title ?? null
+    const title = (ev?.program_name_text || '').trim() || (ev?.title ?? null)
     const target = { crewId: args.crewId, guestId: args.guestId, registrationId: args.registrationId, eventId: args.eventId }
     if (args.teamName) {
       await sendAlimtalk(ALIMTALK.CHECKIN_WITH_TEAM, args.phone, varsCheckinWithTeam(args.name, title, args.teamName), target)

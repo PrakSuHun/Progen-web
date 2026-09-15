@@ -72,7 +72,7 @@ async function handle(request: NextRequest) {
     // 3) 미입금 게스트 (노쇼확정 제외, 최근 행사만)
     const { data: pending, error } = await supabase
       .from('event_registrations')
-      .select('id, guest_id, event_id, status, guests(name, phone), events(title, event_date)')
+      .select('id, guest_id, event_id, status, guests(name, phone), events(title, event_date, program_name_text)')
       .eq('deposit_status', '미입금')
       .not('guest_id', 'is', null)
       .neq('status', '노쇼확정')
@@ -87,6 +87,7 @@ async function handle(request: NextRequest) {
         name: norm(r.guests?.name || ''),
         phone: (r.guests?.phone || '') as string,
         eventTitle: (r.events?.title || '') as string,
+        programName: ((r.events?.program_name_text || '').trim() || r.events?.title || '') as string,
         eventDate: r.events?.event_date ? new Date(r.events.event_date).getTime() : 0,
       }))
       .filter((r) => r.name && r.eventDate >= cutoff)
@@ -133,7 +134,7 @@ async function handle(request: NextRequest) {
       if (reg.phone) {
         const res = await sendAlimtalk(
           ALIMTALK.DEPOSIT_RECEIVED, reg.phone,
-          { '#{이름}': reg.name, '#{프로그램명}': programLabel(reg.eventTitle) },
+          { '#{이름}': reg.name, '#{프로그램명}': programLabel(reg.programName) },
           { guestId: reg.guest_id, registrationId: reg.id, eventId: reg.event_id },
         )
         receiptSent = res.ok

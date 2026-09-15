@@ -200,6 +200,7 @@ export type EventRow = {
   program_detail?: string | null
   kakao_chat_url?: string | null
   datetime_text?: string | null
+  program_name_text?: string | null
 }
 
 const FALLBACK = '추후 안내'
@@ -230,7 +231,7 @@ export async function loadEventRow(eventId: string): Promise<EventRow | null> {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from('events')
-    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, datetime_text')
+    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, datetime_text, program_name_text')
     .eq('id', eventId)
     .maybeSingle()
   return (data as EventRow) ?? null
@@ -256,6 +257,12 @@ export function formatEventDateKo(input: string | Date | null | undefined): stri
   }
 }
 
+/** #{프로그램명} 변수 값 — 운영진이 입력한 표기(program_name_text)가 있으면 그대로, 없으면 행사명(title) */
+export function programNameOf(ev: EventRow | null | undefined): string {
+  const t = (ev?.program_name_text ?? '').trim()
+  return t || programLabel(ev?.title)
+}
+
 /** #{일시} 변수 값 — 운영진이 입력한 표기(datetime_text)가 있으면 그대로, 없으면 event_date 자동 포맷 */
 export function eventDateLabel(ev: EventRow): string {
   const t = (ev.datetime_text ?? '').trim()
@@ -266,7 +273,7 @@ export function eventDateLabel(ev: EventRow): string {
 export function varsEventRegReceived(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': programLabel(ev.title),
+    '#{프로그램명}': programNameOf(ev),
     '#{일시}': eventDateLabel(ev),
   }
 }
@@ -280,7 +287,7 @@ export function confirmChatReady(ev: EventRow | null | undefined): boolean {
 export function varsEventConfirmedGuest(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': programLabel(ev.title),
+    '#{프로그램명}': programNameOf(ev),
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }
@@ -289,7 +296,7 @@ export function varsEventConfirmedGuest(ev: EventRow, name: string): Record<stri
 export function varsEventConfirmedCrew(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': programLabel(ev.title),
+    '#{프로그램명}': programNameOf(ev),
     '#{일시}': eventDateLabel(ev),
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
@@ -300,7 +307,7 @@ export function varsEventConfirmedCrew(ev: EventRow, name: string): Record<strin
 export function varsEventD1Notice(ev: EventRow, name: string): Record<string, string> {
   return {
     '#{이름}': name,
-    '#{프로그램명}': programLabel(ev.title),
+    '#{프로그램명}': programNameOf(ev),
     '#{일시}': eventDateLabel(ev),
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
