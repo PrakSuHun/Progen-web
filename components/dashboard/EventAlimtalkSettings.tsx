@@ -22,7 +22,7 @@ interface Settings {
 
 interface PendingInfo {
   confirm: { total: number; sent: number; pending: number }
-  d1: { total: number; sent: number; pending: number }
+  d1: { total: number; sent: number; pending: number; sent2?: number }
 }
 
 interface Recipient {
@@ -30,6 +30,7 @@ interface Recipient {
   name: string
   type: 'crew' | 'guest'
   sent: boolean
+  count?: number
 }
 
 interface RecipientsInfo {
@@ -51,6 +52,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [recipients, setRecipients] = useState<RecipientsInfo | null>(null)
   const [selectedConfirm, setSelectedConfirm] = useState<Set<string>>(new Set())
   const [selectedD1, setSelectedD1] = useState<Set<string>>(new Set())
+  const [d1Round, setD1Round] = useState<1 | 2>(1)
   const [sendingKey, setSendingKey] = useState<string | null>(null)
 
   // 일정/장소 변경 입력
@@ -78,7 +80,8 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
         // 미발송자 기본 전체 선택
         if (recs) {
           setSelectedConfirm(new Set(recs.confirm.filter((r) => !r.sent).map((r) => r.id)))
-          setSelectedD1(new Set(recs.d1.filter((r) => !r.sent).map((r) => r.id)))
+          setD1Round(1)
+          setSelectedD1(new Set(recs.d1.filter((r) => (r.count ?? 0) < 1).map((r) => r.id)))
         } else {
           setSelectedConfirm(new Set())
           setSelectedD1(new Set())
@@ -301,17 +304,34 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   </button>
                 </div>
 
-                {/* 행사 사전 공지 */}
+                {/* 행사 사전 공지 — 같은 템플릿을 1차(확정 대체)·2차(행사 전날) 두 번 발송 */}
                 <div className="border border-slate-200 rounded-xl p-3.5">
                   <div className="text-sm font-bold text-slate-700 mb-1">행사 사전 공지 (4번)</div>
                   <div className="text-xs text-slate-500 mb-2.5">
-                    노쇼확정 제외 전 신청자 대상.
+                    노쇼확정 제외 전 신청자 대상 · 1차(확정 안내 대체) → 2차(행사 전날 리마인드).
                     {pending && (
-                      <> 전체 {pending.d1.total}명 / 발송 {pending.d1.sent}명 / <b className="text-slate-700">미발송 {pending.d1.pending}명</b></>
+                      <> 1차 발송 {pending.d1.sent}/{pending.d1.total}명 · 2차 발송 {pending.d1.sent2 ?? 0}/{pending.d1.total}명</>
                     )}
                   </div>
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    {([1, 2] as const).map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => {
+                          setD1Round(r)
+                          setSelectedD1(new Set((recipients?.d1 ?? []).filter((x) => (x.count ?? 0) < r).map((x) => x.id)))
+                        }}
+                        className={`rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors ${
+                          d1Round === r ? 'border-sky-500 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                        }`}
+                      >
+                        {r}차 발송
+                      </button>
+                    ))}
+                  </div>
                   <RecipientChecklist
-                    list={recipients?.d1 ?? []}
+                    list={(recipients?.d1 ?? []).map((r) => ({ ...r, sent: (r.count ?? 0) >= d1Round }))}
                     selected={selectedD1}
                     setSelected={setSelectedD1}
                     emptyText="발송 대상이 없습니다"
@@ -319,13 +339,13 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                   <button
                     onClick={() => runBatch(
                       'd1', 'd1',
-                      `선택한 ${selectedD1.size}명에게 행사 사전 공지를 보냅니다. 계속할까요?`,
-                      { registrationIds: Array.from(selectedD1) },
+                      `선택한 ${selectedD1.size}명에게 행사 사전 공지(${d1Round}차)를 보냅니다. 계속할까요?`,
+                      { registrationIds: Array.from(selectedD1), round: String(d1Round) },
                     )}
                     disabled={sendingKey !== null || selectedD1.size === 0}
                     className="mt-2 w-full bg-sky-600 hover:bg-sky-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
                   >
-                    {sendingKey === 'd1' ? '발송 중...' : `선택한 ${selectedD1.size}명에게 발송`}
+                    {sendingKey === 'd1' ? '발송 중...' : `${d1Round}차 — 선택한 ${selectedD1.size}명에게 발송`}
                   </button>
                 </div>
 

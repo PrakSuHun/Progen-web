@@ -52,6 +52,12 @@ export async function GET(request: NextRequest) {
     .eq('status', 'sent')
 
   const sentSet = new Set((logs ?? []).map((l) => `${l.template_code}::${l.registration_id}`))
+  // 같은 템플릿 복수 발송(사전 공지 1차/2차) 판정용 발송 횟수
+  const sentCounts = new Map<string, number>()
+  for (const l of logs ?? []) {
+    const k = `${l.template_code}::${l.registration_id}`
+    sentCounts.set(k, (sentCounts.get(k) ?? 0) + 1)
+  }
 
   type Row = {
     id: string
@@ -80,13 +86,12 @@ export async function GET(request: NextRequest) {
   const confirmSent = confirmRecipients.filter((r) => r.sent).length
 
   const d1Eligible = list.filter(eligibleForD1)
-  const d1Recipients = d1Eligible.map((r) => ({
-    id: r.id,
-    name: nameOf(r),
-    type: typeOf(r),
-    sent: sentSet.has(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`),
-  })).sort(byName)
+  const d1Recipients = d1Eligible.map((r) => {
+    const count = sentCounts.get(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`) ?? 0
+    return { id: r.id, name: nameOf(r), type: typeOf(r), sent: count >= 1, count }
+  }).sort(byName)
   const d1Sent = d1Recipients.filter((r) => r.sent).length
+  const d1Sent2 = d1Recipients.filter((r) => r.count >= 2).length
 
   return NextResponse.json({
     event: { id: ev.id, title: ev.title, event_date: ev.event_date },
@@ -103,7 +108,7 @@ export async function GET(request: NextRequest) {
     confirmReady: confirmChatReady(ev),
     pending: {
       confirm: { total: confirmEligible.length, sent: confirmSent, pending: confirmEligible.length - confirmSent },
-      d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent },
+      d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent, sent2: d1Sent2 },
     },
     recipients: {
       confirm: confirmRecipients,

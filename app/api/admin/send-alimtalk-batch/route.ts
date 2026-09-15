@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
     const idFilter = Array.isArray(registrationIds) && registrationIds.length > 0
       ? new Set(registrationIds)
       : null
+    // 사전 공지(d1)는 1차/2차 두 번 발송 가능 — 회차별 중복 방지는 발송 로그 횟수로 판정
+    const d1Round = template === 'd1' ? (Number((body as any).round) === 2 ? 2 : 1) : 1
 
     const supabase = createAdminClient()
     const ev = await loadEventRow(eventId)
@@ -102,6 +104,21 @@ export async function POST(request: NextRequest) {
     // change(8번)는 행사가 바뀔 때마다 재발송 가능하도록 중복 체크 안 함. confirm/d1는 미발송자만.
     const dedup = template !== 'change'
 
+    let d1Counts: Map<string, number> | null = null
+    if (template === 'd1') {
+      const { data: d1Logs } = await supabase
+        .from('alimtalk_logs')
+        .select('registration_id')
+        .eq('event_id', eventId)
+        .eq('template_code', ALIMTALK.EVENT_D1_NOTICE.code)
+        .eq('status', 'sent')
+      d1Counts = new Map()
+      for (const l of d1Logs ?? []) {
+        if (!l.registration_id) continue
+        d1Counts.set(l.registration_id, (d1Counts.get(l.registration_id) ?? 0) + 1)
+      }
+    }
+
     let sent = 0, failed = 0, skipped = 0, alreadyDone = 0
     let configMissing = false
 
@@ -111,7 +128,10 @@ export async function POST(request: NextRequest) {
         if (!p) { skipped++; return }
 
         const tpl = fixedTpl ?? (p.crewId != null ? ALIMTALK.EVENT_CONFIRMED_CREW : ALIMTALK.EVENT_CONFIRMED)
-        if (dedup && (await alreadySent(tpl.code, { registrationId: r.id }))) { alreadyDone++; return }
+        if (template === 'd1') {
+          // n차 발송: 이미 n회 이상 받은 사람은 건너뜀 (1차=미발송자만, 2차=1회 받은 사람까지)
+          if ((d1Counts?.get(r.id) ?? 0) >= d1Round) { alreadyDone++; return }
+        } else if (dedup && (await alreadySent(tpl.code, { registrationId: r.id }))) { alreadyDone++; return }
 
         let variables: Record<string, string>
         if (template === 'confirm') variables = p.crewId != null ? varsEventConfirmedCrew(ev, p.name) : varsEventConfirmedGuest(ev, p.name)
