@@ -23,7 +23,7 @@ interface Settings {
 
 interface PendingInfo {
   confirm: { total: number; sent: number; pending: number }
-  d1: { total: number; sent: number; pending: number; sent2?: number }
+  d1: { total: number; sent: number; pending: number; sent2?: number; all?: number; unpaid?: number }
 }
 
 interface Recipient {
@@ -305,10 +305,10 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                 <div className="border border-slate-200 rounded-xl p-3.5">
                   <div className="text-sm font-bold text-slate-700 mb-1">행사 사전 공지 (4번)</div>
                   <div className="text-xs text-slate-500 mb-2.5">
-                    노쇼확정 제외 전 신청자 대상 · 1차(확정 안내 대체) → 2차(행사 전날 리마인드).
-                    {pending && (
-                      <> 1차 발송 {pending.d1.sent}/{pending.d1.total}명 · 2차 발송 {pending.d1.sent2 ?? 0}/{pending.d1.total}명</>
-                    )}
+                    {pending ? (
+                      <>전체 신청 <b className="text-slate-700">{pending.d1.all ?? pending.d1.total}명</b> · 미입금 제외 <b className="text-amber-600">{pending.d1.unpaid ?? 0}명</b> → 발송 대상 <b className="text-slate-700">{pending.d1.total}명</b>
+                      <br />1차 발송 <b className="text-sky-600">{pending.d1.sent}명</b> · 2차 발송 <b className="text-sky-600">{pending.d1.sent2 ?? 0}명</b></>
+                    ) : '크루 + 입금 게스트 대상 · 1차(확정 안내 대체) → 2차(행사 전날 리마인드)'}
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-2">
                     {([1, 2] as const).map((r) => (

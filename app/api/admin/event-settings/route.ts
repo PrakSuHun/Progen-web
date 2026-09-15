@@ -91,6 +91,9 @@ export async function GET(request: NextRequest) {
   }).sort(byName)
   const d1Sent = d1Recipients.filter((r) => r.sent).length
   const d1Sent2 = d1Recipients.filter((r) => r.count >= 2).length
+  // 전체(노쇼확정 제외) vs 대상(크루+입금) 차이 = 미입금 게스트 수
+  const allCount = list.filter((r) => r.status !== '노쇼확정').length
+  const unpaidCount = allCount - confirmEligible.length
 
   return NextResponse.json({
     event: { id: ev.id, title: ev.title, event_date: ev.event_date },
@@ -108,7 +111,7 @@ export async function GET(request: NextRequest) {
     confirmReady: confirmChatReady(ev),
     pending: {
       confirm: { total: confirmEligible.length, sent: confirmSent, pending: confirmEligible.length - confirmSent },
-      d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent, sent2: d1Sent2 },
+      d1: { total: d1Eligible.length, sent: d1Sent, pending: d1Eligible.length - d1Sent, sent2: d1Sent2, all: allCount, unpaid: unpaidCount },
     },
     recipients: {
       confirm: confirmRecipients,
