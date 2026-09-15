@@ -2382,8 +2382,8 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
           )}
         </div>
         <div className="flex gap-2 shrink-0">
-          <a href={isEventKind ? '/admin/dashboard' : '/admin/event'} className="hidden md:block text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
-            {isEventKind ? '행사 어드민' : '이벤트'}
+          <a href={isEventKind ? '/admin/dashboard' : '/admin/event'} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors shrink-0">
+            {isEventKind ? '행사' : '이벤트'}
           </a>
           {!isEventKind && (
             <a href="/admin/program" className="hidden md:block text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
