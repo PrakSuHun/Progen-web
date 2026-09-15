@@ -76,7 +76,7 @@ export default function EventRegEventPage() {
           <div className="inline-flex items-center gap-2 mb-4 md:mb-5 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-500 text-[11px] font-bold tracking-wider uppercase">
             Event Registration
           </div>
-          <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">이벤트 신청</h1>
+          <h1 className="text-[26px] sm:text-3xl md:text-4xl font-black text-black mb-2 break-keep">AI STUDY CREW 이벤트</h1>
           <p className="text-[#888] text-sm mb-5 break-keep">이벤트에 참여하시는 분의 정보를 입력해주세요</p>
 
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-4 sm:p-5 md:p-8 space-y-5">
