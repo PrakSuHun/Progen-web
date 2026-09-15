@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
 
         let variables: Record<string, string>
         if (template === 'confirm') variables = p.crewId != null ? varsEventConfirmedCrew(ev, p.name) : varsEventConfirmedGuest(ev, p.name)
-        else if (template === 'd1') variables = varsEventD1Notice(ev, p.name)
+        else if (template === 'd1') variables = varsEventD1Notice(ev, p.name, d1Round as 1 | 2)
         else variables = {
           '#{이름}': p.name,
           '#{프로그램명}': programNameOf(ev),

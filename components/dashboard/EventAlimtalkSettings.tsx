@@ -14,6 +14,7 @@ interface Settings {
   location: string
   entry_time: string
   materials: string
+  materials2: string
   program_detail: string
   kakao_chat_url: string
   datetime_text: string
@@ -38,7 +39,7 @@ interface RecipientsInfo {
   d1: Recipient[]
 }
 
-const EMPTY: Settings = { location: '', entry_time: '', materials: '', program_detail: '', kakao_chat_url: '', datetime_text: '', program_name_text: '' }
+const EMPTY: Settings = { location: '', entry_time: '', materials: '', materials2: '', program_detail: '', kakao_chat_url: '', datetime_text: '', program_name_text: '' }
 
 export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [tab, setTab] = useState<'info' | 'send'>('info')
@@ -56,6 +57,9 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
 
   // 일정/장소 변경 입력
   const [chg, setChg] = useState({ oldDate: '', oldLocation: '', newDate: '', newLocation: '' })
+
+  // 준비물 편집 회차(1차/2차 공지용 문구 분리)
+  const [matRound, setMatRound] = useState<1 | 2>(1)
 
   // 알림톡 테스트 발송 (임의 번호로 1건)
   const [testPhone, setTestPhone] = useState('')
@@ -260,7 +264,32 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                 {field('entry_time', '입장 시간 *', '예: 오후 1시 30분')}
                 {field('location', '장소 *', '예: 충남대학교 공대 5호관 201호')}
                 {field('program_detail', '당일 진행 *', '예: 14:00 오리엔테이션 / 14:30 실습 ...', true)}
-                {field('materials', '준비물 *', '예: 노트북, 충전기', true)}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-500">준비물 * <span className="font-normal text-slate-400">(사전 공지 회차별)</span></label>
+                    <div className="flex gap-1">
+                      {([1, 2] as const).map((r) => (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => setMatRound(r)}
+                          className={`text-[11px] font-bold px-2 py-1 rounded-md border transition-colors ${
+                            matRound === r ? 'border-sky-500 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-400 hover:border-slate-300'
+                          }`}
+                        >
+                          {r}차 공지
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <textarea
+                    value={matRound === 1 ? settings.materials : settings.materials2}
+                    onChange={(e) => setSettings((s) => (matRound === 1 ? { ...s, materials: e.target.value } : { ...s, materials2: e.target.value }))}
+                    placeholder={matRound === 1 ? '1차 공지 준비물 — 예: 노트북, 충전기' : '2차 공지 준비물 — 비우면 1차 준비물 그대로 발송'}
+                    rows={3}
+                    className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-sky-400 resize-y"
+                  />
+                </div>
                 {field('kakao_chat_url', '참여자 채팅방 링크 *', 'https://open.kakao.com/o/...')}
                 <button
                   onClick={handleSave}

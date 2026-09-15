@@ -197,6 +197,7 @@ export type EventRow = {
   location?: string | null
   entry_time?: string | null
   materials?: string | null
+  materials2?: string | null
   program_detail?: string | null
   kakao_chat_url?: string | null
   datetime_text?: string | null
@@ -231,7 +232,7 @@ export async function loadEventRow(eventId: string): Promise<EventRow | null> {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from('events')
-    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, datetime_text, program_name_text')
+    .select('id, title, event_date, location, entry_time, materials, program_detail, kakao_chat_url, datetime_text, program_name_text, materials2')
     .eq('id', eventId)
     .maybeSingle()
   return (data as EventRow) ?? null
@@ -304,14 +305,16 @@ export function varsEventConfirmedCrew(ev: EventRow, name: string): Record<strin
 
 
 /** 4번 행사 사전 공지 — 운영진이 수동 발송. 비면 fallback. 버튼 변수 #{url} 포함 */
-export function varsEventD1Notice(ev: EventRow, name: string): Record<string, string> {
+export function varsEventD1Notice(ev: EventRow, name: string, round: 1 | 2 = 1): Record<string, string> {
+  // 준비물은 회차별 분리 — 2차는 materials2, 비어 있으면 1차(materials)로 fallback
+  const materials = round === 2 ? (ev.materials2 || ev.materials) : ev.materials
   return {
     '#{이름}': name,
     '#{프로그램명}': programNameOf(ev),
     '#{일시}': eventDateLabel(ev),
     '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
-    '#{준비물}': ev.materials || FALLBACK_CHAT,
+    '#{준비물}': materials || FALLBACK_CHAT,
     '#{진행내용}': ev.program_detail || FALLBACK_CHAT,
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
