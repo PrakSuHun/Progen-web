@@ -102,12 +102,23 @@ export default function EventRegEventPage() {
             <Input label="전공" placeholder="컴퓨터과학" value={form.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />
             <Select label="참여 경로" options={PATHS} value={form.path} onChange={(e) => set('path', e.target.value)} error={errors.path} />
 
-            <Input
-              label={<>같이 오는 분 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
-              placeholder="예) 김철수, 이영희"
-              value={form.companion}
-              onChange={(e) => set('companion', e.target.value)}
-            />
+            <div>
+              <Input
+                label={<>함께 하고 싶은 친구 <span className="text-[#aaa] text-xs font-normal">(선택)</span></>}
+                placeholder="예) 김철수, 이영희"
+                value={form.companion}
+                onChange={(e) => set('companion', e.target.value)}
+              />
+              <div className="mt-2 bg-violet-50 border border-violet-200 rounded-xl p-3.5">
+                <p className="text-violet-800 font-bold text-xs mb-1.5 flex items-center gap-1">
+                  <span>👥</span> 희망 매칭 안내
+                </p>
+                <p className="text-[11px] md:text-xs text-violet-700 leading-relaxed break-keep">
+                  희망하시는 분과 함께 매칭될 수 있도록 <span className="font-bold text-violet-900">최대한 반영할 예정</span>입니다.
+                  다만 신청 인원 및 운영 상황에 따라 <span className="font-bold text-violet-900">희망 매칭이 어려울 수 있으며, 일부 인원은 랜덤으로 배치</span>될 수 있는 점 양해 부탁드립니다.
+                </p>
+              </div>
+            </div>
 
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? '신청 중...' : '신청하기'}
