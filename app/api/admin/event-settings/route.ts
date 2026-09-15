@@ -14,10 +14,9 @@ function eligibleForConfirm(r: { crew_id: number | null; guest_id: string | null
   if (r.crew_id != null) return true
   return r.guest_id != null && r.deposit_status === '입금'
 }
-// D-1 공지(4번) 대상: 노쇼확정 아닌 모든 신청
-function eligibleForD1(r: { status: string | null }) {
-  return r.status !== '노쇼확정'
-}
+// 사전 공지(4번) 대상: 확정 기준과 동일 — 크루 + 입금된 게스트 (미입금 제외, 노쇼확정 제외)
+// 미입금자 안내는 보증금 탭의 미입금 알림(11번) → 취소(5번) 시퀀스가 담당.
+const eligibleForD1 = eligibleForConfirm
 
 export async function GET(request: NextRequest) {
   if (!checkAuth(request)) {

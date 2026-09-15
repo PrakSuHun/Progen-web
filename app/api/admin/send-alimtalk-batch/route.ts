@@ -78,10 +78,11 @@ export async function POST(request: NextRequest) {
 
     // 대상 추리기
     let targets: RegRow[]
-    if (template === 'confirm') {
+    if (template === 'confirm' || template === 'd1') {
+      // 확정·사전 공지: 크루 + 입금된 게스트 (미입금 제외 — 미입금자는 보증금 탭 알림 시퀀스가 담당)
       targets = regs.filter((r) => r.status !== '노쇼확정' && (r.crew_id != null || (r.guest_id != null && r.deposit_status === '입금')))
     } else {
-      // d1 / change: 노쇼확정 제외 전원
+      // change: 노쇼확정 제외 전원
       targets = regs.filter((r) => r.status !== '노쇼확정')
     }
     // 운영진이 명단에서 일부만 선택한 경우: registration id로 추가 필터
