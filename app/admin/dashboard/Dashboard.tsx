@@ -502,7 +502,10 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
         fetchAll(defaultId)
       } else {
         setSelectedEventId('')
-        fetchAll()
+        // 이벤트 어드민에서 이벤트가 하나도 없으면 데이터를 불러오지 않음
+        // (eventId 없이 fetchAll하면 서버가 날짜 기반 활성 "행사" 데이터를 반환해 남의 명단이 보임)
+        if (!isEventKind) fetchAll()
+        else setLoading(false)
       }
     } else {
       fetchAll()
