@@ -50,7 +50,6 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
   const [confirmReady, setConfirmReady] = useState(false)
   const [pending, setPending] = useState<PendingInfo | null>(null)
   const [recipients, setRecipients] = useState<RecipientsInfo | null>(null)
-  const [selectedConfirm, setSelectedConfirm] = useState<Set<string>>(new Set())
   const [selectedD1, setSelectedD1] = useState<Set<string>>(new Set())
   const [d1Round, setD1Round] = useState<1 | 2>(1)
   const [sendingKey, setSendingKey] = useState<string | null>(null)
@@ -79,11 +78,9 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
         setRecipients(recs)
         // 미발송자 기본 전체 선택
         if (recs) {
-          setSelectedConfirm(new Set(recs.confirm.filter((r) => !r.sent).map((r) => r.id)))
           setD1Round(1)
           setSelectedD1(new Set(recs.d1.filter((r) => (r.count ?? 0) < 1).map((r) => r.id)))
         } else {
-          setSelectedConfirm(new Set())
           setSelectedD1(new Set())
         }
       } else {
@@ -249,8 +246,8 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                 {isPublic ? (
                   <div className={`text-xs rounded-lg px-3 py-2 ${confirmReady ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
                     {confirmReady
-                      ? '✅ 참석 확정 알림톡 자동 발송 준비 완료'
-                      : '⚠️ 참여자 채팅방 링크를 입력해야 참석 확정 알림톡이 자동으로 나갑니다 (그 전까지는 보류 → 발송 탭에서 일괄 발송)'}
+                      ? '✅ 채팅방 링크 입력됨 — 알림톡 오픈채팅 버튼 정상 동작'
+                      : '⚠️ 참여자 채팅방 링크를 입력해야 알림톡의 오픈채팅 버튼이 동작합니다'}
                   </div>
                 ) : (
                   <div className="text-xs rounded-lg px-3 py-2 bg-slate-100 text-slate-500">
@@ -275,35 +272,6 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
               </div>
             ) : (
               <div className="space-y-4">
-                {/* 참석 확정 일괄 발송 */}
-                <div className="border border-slate-200 rounded-xl p-3.5">
-                  <div className="text-sm font-bold text-slate-700 mb-1">참석 확정 알림톡 (2번)</div>
-                  <div className="text-xs text-slate-500 mb-2.5">
-                    크루 신청 + 입금된 게스트 대상.
-                    {pending && (
-                      <> 전체 {pending.confirm.total}명 / 발송 {pending.confirm.sent}명 / <b className="text-slate-700">미발송 {pending.confirm.pending}명</b></>
-                    )}
-                  </div>
-                  {!confirmReady && <div className="text-xs text-amber-600 mb-2">행사 정보 탭을 먼저 모두 채워주세요.</div>}
-                  <RecipientChecklist
-                    list={recipients?.confirm ?? []}
-                    selected={selectedConfirm}
-                    setSelected={setSelectedConfirm}
-                    emptyText="발송 대상이 없습니다"
-                  />
-                  <button
-                    onClick={() => runBatch(
-                      'confirm', 'confirm',
-                      `선택한 ${selectedConfirm.size}명에게 참석 확정 알림톡을 보냅니다. 계속할까요?`,
-                      { registrationIds: Array.from(selectedConfirm) },
-                    )}
-                    disabled={!confirmReady || sendingKey !== null || selectedConfirm.size === 0}
-                    className="mt-2 w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 text-white text-sm font-bold rounded-lg py-2 transition-colors"
-                  >
-                    {sendingKey === 'confirm' ? '발송 중...' : `선택한 ${selectedConfirm.size}명에게 발송`}
-                  </button>
-                </div>
-
                 {/* 행사 사전 공지 — 같은 템플릿을 1차(확정 대체)·2차(행사 전날) 두 번 발송 */}
                 <div className="border border-slate-200 rounded-xl p-3.5">
                   <div className="text-sm font-bold text-slate-700 mb-1">행사 사전 공지 (4번)</div>
