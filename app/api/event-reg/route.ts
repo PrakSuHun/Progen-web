@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!isValidStudentNumber(studentNumber)) {
+    const isEventKindEarly = body.kind === 'event'
+    if (!isEventKindEarly && !isValidStudentNumber(studentNumber)) {
       return NextResponse.json(
         { message: '학번을 숫자 6~12자리로 입력해주세요' },
         { status: 400 }
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient()
     // kind='event' → 이벤트 전용 신청(/event-reg/event): is_event=true 행사로만 연결, 보증금·알림톡 없음
-    const isEventKind = body.kind === 'event'
+    const isEventKind = isEventKindEarly
     const eventId = isEventKind ? await getActivePromoEventId() : await getActivePublicEventId()
 
     if (!eventId) {
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
           guest_id: guestId,
           status: '사전신청',
           refund_account: refundCombined,
-          student_number: studentNumber,
+          student_number: studentNumber || null,
           companion: (typeof companion === 'string' && companion.trim()) ? companion.trim() : null,
         },
       ])

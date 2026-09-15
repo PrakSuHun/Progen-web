@@ -11,20 +11,17 @@ import { Select } from '@/components/ui/Select'
 import { Modal } from '@/components/Modal'
 import { showToast } from '@/components/Toast'
 import { SpotlightBackground } from '@/components/SpotlightBackground'
-import {
-  SCHOOLS, GRADES, PATHS, GENDERS,
-  formatPhone, formatStudentNumber, isValidPhone, isValidStudentNumber,
-} from '@/lib/constants'
+import { SCHOOLS, GRADES, PATHS, GENDERS, formatPhone, isValidPhone } from '@/lib/constants'
 
 interface EventFormData {
   name: string; phone: string; age: string; school: string; grade: string
-  major: string; path: string; gender: string; student_number: string; companion: string
+  major: string; path: string; gender: string; companion: string
 }
 
 export default function EventRegEventPage() {
   const [form, setForm] = useState<EventFormData>({
     name: '', phone: '', age: '', school: '', grade: '',
-    major: '', path: '', gender: '', student_number: '', companion: '',
+    major: '', path: '', gender: '', companion: '',
   })
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -38,7 +35,6 @@ export default function EventRegEventPage() {
     if (!form.age.trim()) e.age = '나이를 입력해주세요'
     if (!form.school) e.school = '학교를 선택해주세요'
     if (!form.grade) e.grade = '학년을 선택해주세요'
-    if (!isValidStudentNumber(form.student_number)) e.student_number = '학번을 숫자 6~12자리로 입력해주세요'
     if (!form.major.trim()) e.major = '전공을 입력해주세요'
     if (!form.path) e.path = '경로를 선택해주세요'
     if (!form.gender) e.gender = '성별을 선택해주세요'
@@ -66,7 +62,7 @@ export default function EventRegEventPage() {
 
   const set = (key: keyof EventFormData, val: string) => setForm({ ...form, [key]: val })
   const reset = () => {
-    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '', student_number: '', companion: '' })
+    setForm({ name: '', phone: '', age: '', school: '', grade: '', major: '', path: '', gender: '', companion: '' })
     setErrors({})
   }
 
@@ -90,15 +86,6 @@ export default function EventRegEventPage() {
             <Input label={<>나이 <span className="text-[#aaa] text-xs font-normal">*2007년생 기준 20살</span></>} type="number" placeholder="20" value={form.age} onChange={(e) => set('age', e.target.value)} error={errors.age} />
             <Select label="학교" options={SCHOOLS} value={form.school} onChange={(e) => set('school', e.target.value)} error={errors.school} />
             <Select label="학년" options={GRADES} value={form.grade} onChange={(e) => set('grade', e.target.value)} error={errors.grade} />
-            <Input
-              label="학번"
-              placeholder="202600178"
-              inputMode="numeric"
-              autoComplete="off"
-              value={form.student_number}
-              onChange={(e) => set('student_number', formatStudentNumber(e.target.value))}
-              error={errors.student_number}
-            />
             <Input label="전공" placeholder="컴퓨터과학" value={form.major} onChange={(e) => set('major', e.target.value)} error={errors.major} />
             <Select label="참여 경로" options={PATHS} value={form.path} onChange={(e) => set('path', e.target.value)} error={errors.path} />
 
