@@ -2385,9 +2385,12 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
           )}
         </div>
         <div className="flex gap-2 shrink-0">
-          <a href={isEventKind ? '/admin/dashboard' : '/admin/event'} className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors shrink-0">
-            {isEventKind ? '행사' : '이벤트'}
-          </a>
+          {/* 이벤트는 일회성 — 행사 어드민에 진입 버튼을 두지 않고 /admin/event 직접 링크로만 접근 */}
+          {isEventKind && (
+            <a href="/admin/dashboard" className="text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors shrink-0">
+              행사
+            </a>
+          )}
           {!isEventKind && (
             <a href="/admin/program" className="hidden md:block text-sky-200 hover:text-white text-xs md:text-sm px-2 md:px-3 py-1.5 rounded-lg border border-sky-500 hover:border-sky-300 transition-colors">
               수료관리
