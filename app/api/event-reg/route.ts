@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { getActivePublicEventId } from '@/lib/get-active-event'
+import { getActivePublicEventId, getActivePromoEventId } from '@/lib/get-active-event'
 import { ALIMTALK, sendAlimtalk, loadEventRow, varsEventRegReceived } from '@/lib/solapi'
 import { isValidStudentNumber } from '@/lib/constants'
 import { sendPushToAdmins } from '@/lib/push'
@@ -33,12 +33,13 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    // 공개 신청 대상 행사만 — 내부 프로젝트 회차(경쟁 PT 등)로 신청이 잘못 들어가지 않도록
-    const eventId = await getActivePublicEventId()
+    // kind='event' → 이벤트 전용 신청(/event-reg/event): is_event=true 행사로만 연결, 보증금·알림톡 없음
+    const isEventKind = body.kind === 'event'
+    const eventId = isEventKind ? await getActivePromoEventId() : await getActivePublicEventId()
 
     if (!eventId) {
       return NextResponse.json(
-        { message: '현재 활성 행사를 찾을 수 없습니다' },
+        { message: isEventKind ? '현재 진행 중인 이벤트를 찾을 수 없습니다' : '현재 활성 행사를 찾을 수 없습니다' },
         { status: 500 }
       )
     }
@@ -65,11 +66,14 @@ export async function POST(request: NextRequest) {
       crewId = crewMember.id
     } else if (mode === 'guest') {
       // 이미 크루로 등록된 번호면 게스트 신청 차단 → 크루 폼으로 안내 (게스트/크루 이중 등록 방지)
-      const { data: crewByPhone } = await supabase
-        .from('crew_members')
-        .select('id')
-        .eq('phone', phone)
-        .maybeSingle()
+      // 이벤트 신청은 크루/게스트 구분 없이 단일 폼이라 이 차단을 건너뜀
+      const { data: crewByPhone } = isEventKind
+        ? { data: null }
+        : await supabase
+          .from('crew_members')
+          .select('id')
+          .eq('phone', phone)
+          .maybeSingle()
       if (crewByPhone) {
         return NextResponse.json(
           { message: '이미 크루로 등록된 번호입니다. 크루로 신청해주세요.', code: 'crew_exists' },
@@ -159,7 +163,9 @@ export async function POST(request: NextRequest) {
       const ev = await loadEventRow(eventId)
       eventTitle = ev?.title ?? null
       if (ev) {
-        if (mode === 'guest') {
+        if (isEventKind) {
+          // 이벤트 신청은 알림톡 미발송 — 접수 템플릿에 보증금 안내가 있어 부적합
+        } else if (mode === 'guest') {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
             guestId, registrationId, eventId,
           })
@@ -177,9 +183,9 @@ export async function POST(request: NextRequest) {
     // 어드민 웹푸시: 새 신청이 들어오면 알림 켜둔 관리자 기기 전체에 알림 (실패해도 신청 흐름 비차단)
     try {
       await sendPushToAdmins({
-        title: '🔔 새 행사 신청',
-        body: `${name}님이 「${eventTitle || '행사'}」에 ${mode === 'crew' ? '크루' : '게스트'}로 신청했어요`,
-        url: '/admin/dashboard',
+        title: isEventKind ? '🔔 새 이벤트 신청' : '🔔 새 행사 신청',
+        body: `${name}님이 「${eventTitle || '행사'}」에 ${isEventKind ? '이벤트 참여자' : mode === 'crew' ? '크루' : '게스트'}로 신청했어요`,
+        url: isEventKind ? '/admin/event' : '/admin/dashboard',
       })
     } catch (e) {
       console.error('event-reg admin push failed:', e)

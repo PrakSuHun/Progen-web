@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { getActiveEventId, getActivePublicEventId } from '@/lib/get-active-event'
+import { getActiveEventId, getActivePublicEventId, getActivePromoEventId } from '@/lib/get-active-event'
 import { getCurrentCohortId } from '@/lib/get-active-cohort'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
   }
   const supabase = createAdminClient()
   const param = request.nextUrl.searchParams.get('cohort_id')
+  // ?kind=event → 이벤트(is_event=true)만. 기본은 이벤트 제외(일반 행사 어드민).
+  const isEventKind = request.nextUrl.searchParams.get('kind') === 'event'
 
   const { data: cohorts } = await supabase
     .from('cohorts')
@@ -26,8 +28,9 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('events')
-    .select('id, title, event_date, is_mandatory, created_at, auto_checkin_alimtalk, is_public, cohort_id')
+    .select('id, title, event_date, is_mandatory, created_at, auto_checkin_alimtalk, is_public, cohort_id, is_event')
     .order('event_date', { ascending: true })
+  query = isEventKind ? query.eq('is_event', true) : query.eq('is_event', false)
 
   let effectiveCohortId: number | null = null
   if (param === 'all') {
@@ -45,7 +48,9 @@ export async function GET(request: NextRequest) {
   // activeEventId: 날짜 기반 활성 행사(모든 행사, 자동문자 토글 등에 사용)
   // defaultEventId: 어드민 첫 진입 시 기본 선택 = 가장 가까운 외부(공개) 행사 → 내부 회차(7/18 등) 대신 8/1이 뜬다
   const activeEventId = await getActiveEventId()
-  const defaultEventId = (await getActivePublicEventId()) ?? activeEventId
+  const defaultEventId = isEventKind
+    ? await getActivePromoEventId()
+    : (await getActivePublicEventId()) ?? activeEventId
   return NextResponse.json({ data, activeEventId, defaultEventId, cohorts: cohorts ?? [], currentCohortId, effectiveCohortId })
 }
 
@@ -54,7 +59,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: '인증이 필요합니다' }, { status: 401 })
   }
   try {
-    const { title, event_date, is_mandatory, cohort_id } = await request.json()
+    const { title, event_date, is_mandatory, cohort_id, is_event } = await request.json()
     if (!title || !event_date) {
       return NextResponse.json({ message: '제목과 날짜를 입력해주세요' }, { status: 400 })
     }
@@ -63,7 +68,11 @@ export async function POST(request: NextRequest) {
     const effectiveCohortId = cohort_id ?? (await getCurrentCohortId())
     const { data, error } = await supabase
       .from('events')
-      .insert([{ title, event_date, is_mandatory: is_mandatory ?? false, cohort_id: effectiveCohortId }])
+      .insert([{
+        title, event_date, is_mandatory: is_mandatory ?? false, cohort_id: effectiveCohortId,
+        // 이벤트는 별도 어드민/폼 전용 — 기존 행사 신청·기본선택에 안 잡히게 비공개로 생성
+        ...(is_event === true ? { is_event: true, is_public: false } : {}),
+      }])
       .select()
       .single()
     if (error) throw error

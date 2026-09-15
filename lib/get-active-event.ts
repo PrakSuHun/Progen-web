@@ -11,8 +11,9 @@ const PAST_FALLBACK_DAYS = 7
  *   이는 "사용자 신청이 의도치 않게 지난 행사로 들어가는" 사고를 방지하기 위함.
  *
  * @param publicOnly true면 is_public=true(공개 신청 대상) 행사만 후보로 삼는다.
+ * @param eventOnly true면 is_event=true(이벤트) row만 후보로 삼는다. — /event-reg/event, /admin/event
  */
-async function resolveActiveEventId(publicOnly: boolean): Promise<string | null> {
+async function resolveActiveEventId(publicOnly: boolean, eventOnly = false): Promise<string | null> {
   const supabase = createAdminClient()
 
   const today = new Date()
@@ -25,6 +26,7 @@ async function resolveActiveEventId(publicOnly: boolean): Promise<string | null>
     .order('event_date', { ascending: true })
     .limit(1)
   if (publicOnly) upcomingQuery = upcomingQuery.eq('is_public', true)
+  if (eventOnly) upcomingQuery = upcomingQuery.eq('is_event', true)
 
   const { data: upcoming } = await upcomingQuery.single()
   if (upcoming) return upcoming.id
@@ -36,6 +38,7 @@ async function resolveActiveEventId(publicOnly: boolean): Promise<string | null>
     .order('event_date', { ascending: false })
     .limit(1)
   if (publicOnly) pastQuery = pastQuery.eq('is_public', true)
+  if (eventOnly) pastQuery = pastQuery.eq('is_event', true)
 
   const { data: past } = await pastQuery.single()
   if (!past) return null
@@ -63,4 +66,13 @@ export async function getActiveEventId(): Promise<string | null> {
  */
 export async function getActivePublicEventId(): Promise<string | null> {
   return resolveActiveEventId(true)
+}
+
+/**
+ * 활성 이벤트 ID(is_event=true row만, 날짜 기반).
+ * 이벤트 전용 신청 폼(/event-reg/event)과 이벤트 어드민(/admin/event) 기본 선택에 사용.
+ * 이벤트 row는 is_public=false라 기존 행사 신청/기본선택 경로에는 잡히지 않는다.
+ */
+export async function getActivePromoEventId(): Promise<string | null> {
+  return resolveActiveEventId(false, true)
 }
