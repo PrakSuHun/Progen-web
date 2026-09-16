@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
         student_number,
         companion,
         registered_at,
+        checked_in_at,
         crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count, created_at ),
         guests ( name, phone, school, grade, age, gender, major )
       `)
@@ -79,6 +80,8 @@ export async function GET(request: NextRequest) {
       return {
         registration_id: reg.id,
         status: reg.status,
+        registered_at: reg.registered_at ?? null,
+        checked_in_at: reg.checked_in_at ?? null,
         team_name: reg.team_name ?? null,
         name: person?.name ?? '알 수 없음',
         phone,

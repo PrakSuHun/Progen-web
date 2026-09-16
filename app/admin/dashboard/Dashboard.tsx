@@ -12,7 +12,7 @@ import { EventAlimtalkSettings } from '@/components/dashboard/EventAlimtalkSetti
 
 // ───────────── Types ─────────────
 type Tab = 'checkin' | 'team' | 'analysis' | 'members' | 'deposit'
-type SortKey = 'none' | 'name' | 'school' | 'grade' | 'gender' | 'crew'
+type SortKey = 'none' | 'latest' | 'name' | 'school' | 'grade' | 'gender' | 'crew'
 type DepositStatus = '미입금' | '입금' | '환불'
 
 interface Attendee {
@@ -28,6 +28,8 @@ interface Attendee {
   noshow_count: number
   is_crew: boolean
   status: string
+  registered_at?: string | null
+  checked_in_at?: string | null
   team_name: string | null
   deposit_status: DepositStatus
   deposit_reminder_count?: number
@@ -114,6 +116,12 @@ function genderColor(gender: string) {
 function sortAttendees(list: Attendee[], sortBy: SortKey): Attendee[] {
   if (sortBy === 'none') return list
   return [...list].sort((a, b) => {
+    // 최신순: 출석완료는 체크인 시각, 그 외는 신청 시각 기준 내림차순
+    if (sortBy === 'latest') {
+      const ta = Date.parse(a.checked_in_at || a.registered_at || '') || 0
+      const tb = Date.parse(b.checked_in_at || b.registered_at || '') || 0
+      return tb - ta
+    }
     if (sortBy === 'name') return a.name.localeCompare(b.name, 'ko')
     if (sortBy === 'school') return a.school.localeCompare(b.school, 'ko')
     if (sortBy === 'grade') return a.grade.localeCompare(b.grade, 'ko')
@@ -451,7 +459,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
   const [autoMatchLoading, setAutoMatchLoading] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState<SortKey>('none')
+  const [sortBy, setSortBy] = useState<SortKey>('latest')
   const dragRef = useRef<{ person: Attendee; fromTeam: string | null } | null>(null)
 
   // 터치(iPad) 탭 배정용
@@ -937,7 +945,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     const filteredNoshow = sortAttendees(noshowList.filter(filterFn), sortBy)
 
     const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-      { key: 'none', label: '기본' },
+      { key: 'latest', label: '최신순' },
       { key: 'name', label: '가나다' },
       { key: 'school', label: '학교' },
       { key: 'grade', label: '학년' },
