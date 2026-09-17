@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const { data: crew } = await supabase
       .from('crew_members')
-      .select('id, name, phone')
+      .select('id, name, phone, student_number')
       .eq('id', crewId)
       .maybeSingle()
     if (!crew) {
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('event_registrations')
-      .insert([{ event_id: eventId, crew_id: crewId, status: '사전신청' }])
+      .insert([{ event_id: eventId, crew_id: crewId, status: '사전신청', student_number: crew.student_number ?? null }])
       .select()
     if (error) throw error
 
