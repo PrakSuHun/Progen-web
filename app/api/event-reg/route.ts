@@ -65,6 +65,14 @@ export async function POST(request: NextRequest) {
       }
 
       crewId = crewMember.id
+
+      // 신청 시 입력한 학번을 크루 프로필에도 저장 (매 신청마다 최신 값으로 갱신)
+      if (studentNumber) {
+        await supabase
+          .from('crew_members')
+          .update({ student_number: studentNumber })
+          .eq('id', crewId)
+      }
     } else if (mode === 'guest') {
       // 이미 크루로 등록된 번호면 게스트 신청 차단 → 크루 폼으로 안내 (게스트/크루 이중 등록 방지)
       // 이벤트 신청은 크루/게스트 구분 없이 단일 폼이라 이 차단을 건너뜀
