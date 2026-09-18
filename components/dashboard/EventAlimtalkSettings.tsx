@@ -284,7 +284,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     value={matRound === 1 ? settings.materials : settings.materials2}
                     onChange={(e) => setSettings((s) => (matRound === 1 ? { ...s, materials: e.target.value } : { ...s, materials2: e.target.value }))}
                     placeholder={matRound === 1 ? '1차 공지 준비물 — 예: 노트북, 충전기' : '2차 공지 준비물 — 비우면 1차 준비물 그대로 발송'}
-                    rows={3}
+                    rows={10}
                     className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-sky-400 resize-y"
                   />
                 </div>
