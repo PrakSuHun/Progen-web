@@ -19,8 +19,8 @@ export const ALIMTALK = {
   // 2 참석 확정 — 크루용(보증금 문구 없음). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시·url — varsEventConfirmedCrew 사용)
   EVENT_CONFIRMED_CREW: { code: 'KA01TP260906112122409DXPjnrJCl2k', name: '행사 참석 확정 (크루)' },
   CREW_CONFIRMED:     { code: 'KA01TP260511070701744h8gIXOphWEW', name: '크루원 신청 접수' },    // 3
-  // 4 행사 사전 공지 — 2026-09-09 신규 템플릿 교체(구 '행사 전 공지'는 솔라피에서 삭제됨). 변수 동일(진행내용 포함), 레이아웃 개편
-  EVENT_D1_NOTICE:    { code: 'KA01TP260907034359294lbAuExhWRIx', name: '행사 사전 공지' },
+  // 4 행사 사전 공지 — 2026-09-18 「4. 행사 사전 공지(사본)」으로 교체(승인 확인). 변수 축소: 입장시간·진행내용 삭제 → 이름·프로그램명·일시·장소·준비물·url
+  EVENT_D1_NOTICE:    { code: 'KA01TP260915043622989u7WTWk06rij', name: '행사 사전 공지' },
   REG_CANCELLED:      { code: 'KA01TP260511072253259HLsKXmMYVoG', name: '신청 취소 확인' },      // 5
   CHECKIN_WITH_TEAM:  { code: 'KA01TP260511073547316F1HdnAUi1RJ', name: '현장 출석 완료 + 팀 안내' }, // 6
   CHECKIN_NO_TEAM:    { code: 'KA01TP260511075330965NCintRaUSWU', name: '팀 미배정' },           // 7
@@ -312,10 +312,8 @@ export function varsEventD1Notice(ev: EventRow, name: string, round: 1 | 2 = 1):
     '#{이름}': name,
     '#{프로그램명}': programNameOf(ev),
     '#{일시}': eventDateLabel(ev),
-    '#{입장시간}': ev.entry_time || FALLBACK,
     '#{장소}': ev.location || FALLBACK,
     '#{준비물}': materials || FALLBACK_CHAT,
-    '#{진행내용}': ev.program_detail || FALLBACK_CHAT,
     '#{url}': openChatCode(ev.kakao_chat_url),
   }
 }

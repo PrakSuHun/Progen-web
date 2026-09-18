@@ -258,12 +258,10 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     🔒 내부 행사 — 알림톡·신청폼이 필요 없어요. 아래 항목은 비워둬도 됩니다.
                   </div>
                 )}
-                {/* 입력 순서 = 공지 알림톡(4번) 본문 순서: 일시·입장 → 장소 → 당일 진행 → 준비물 → 채팅방 */}
+                {/* 입력 순서 = 사전 공지 알림톡(4번) 본문 순서: 일시 → 장소 → 준비물 → 채팅방 */}
                 {field('program_name_text', '알림톡 행사명 표기 (선택)', '예: AI시대 대학생으로 살아남기 — 비우면 행사명 그대로')}
                 {field('datetime_text', '알림톡 일시 표기 (선택)', '예: 9월 19일(토) 오후 2시~5시 — 비우면 행사일시 자동 표기')}
-                {field('entry_time', '입장 시간 *', '예: 오후 1시 30분')}
                 {field('location', '장소 *', '예: 충남대학교 공대 5호관 201호')}
-                {field('program_detail', '당일 진행 *', '예: 14:00 오리엔테이션 / 14:30 실습 ...', true)}
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-bold text-slate-500">준비물 * <span className="font-normal text-slate-400">(사전 공지 회차별)</span></label>
