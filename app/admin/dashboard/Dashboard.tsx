@@ -373,29 +373,23 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   )
 }
 
-function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDelete, onTapAssign, onTapSelectMember, selectedId }: {
+function TeamCard({ teamName, members, allTeams, onDrop, onDragStartMember, onSwap, onDelete, onTapAssign, onTapSelectMember, selectedId }: {
   teamName: string
   members: Attendee[]
+  allTeams: string[]
   onDrop: (t: string) => void
   onDragStartMember: (p: Attendee, from: string) => void
-  onRename: (old: string, next: string) => void
+  onSwap: (a: string, b: string) => void
   onDelete: (t: string) => void
   onTapAssign?: () => void
   onTapSelectMember?: (p: Attendee) => void
   selectedId?: string
 }) {
-  const [editing, setEditing] = useState(false)
-  const [inputVal, setInputVal] = useState(teamName)
+  const [swapping, setSwapping] = useState(false)
   const [over, setOver] = useState(false)
   const podoOnly = members.length > 0 && members.every((m) => m.is_member)
   const checkedInCount = members.filter((m) => m.status === '출석완료').length
   const hasNoshowIssue = members.length > 0 && checkedInCount <= 2 && checkedInCount < members.length
-
-  const confirmRename = () => {
-    const t = inputVal.trim()
-    if (t && t !== teamName) onRename(teamName, t)
-    setEditing(false)
-  }
 
   return (
     <div
@@ -406,7 +400,7 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
       onDragOver={(e) => { e.preventDefault(); setOver(true) }}
       onDragLeave={() => setOver(false)}
       onDrop={() => { setOver(false); onDrop(teamName) }}
-      onClick={(e) => { if ((e.target as HTMLElement).closest('button, input')) return; onTapAssign?.() }}
+      onClick={(e) => { if ((e.target as HTMLElement).closest('button, input, select')) return; onTapAssign?.() }}
     >
       {podoOnly && <span className="absolute top-1.5 right-6 w-2 h-2 rounded-full bg-sky-500" />}
       <button
@@ -415,16 +409,19 @@ function TeamCard({ teamName, members, onDrop, onDragStartMember, onRename, onDe
         title="팀 삭제"
       >✕</button>
       <div className="mb-2">
-        {editing ? (
-          <input autoFocus value={inputVal}
-            onChange={(e) => setInputVal(e.target.value)}
-            onBlur={confirmRename}
-            onKeyDown={(e) => e.key === 'Enter' && confirmRename()}
-            className="bg-slate-50 text-slate-800 text-sm font-semibold px-2 py-0.5 rounded w-full outline-none border border-sky-400"
-          />
+        {swapping ? (
+          <select autoFocus value={teamName}
+            onChange={(e) => { const to = e.target.value; setSwapping(false); if (to !== teamName) onSwap(teamName, to) }}
+            onBlur={() => setSwapping(false)}
+            className="bg-slate-50 text-slate-800 text-sm font-semibold px-1.5 py-0.5 rounded w-full outline-none border border-sky-400 cursor-pointer"
+          >
+            {allTeams.map((t) => (
+              <option key={t} value={t}>{t === teamName ? `${t} (현재)` : `${t}와 교체`}</option>
+            ))}
+          </select>
         ) : (
-          <button onClick={() => setEditing(true)} className="text-slate-800 text-sm font-semibold hover:text-sky-500 transition-colors">
-            {teamName}
+          <button onClick={() => setSwapping(true)} title="다른 팀과 순서 교체" className="text-slate-800 text-sm font-semibold hover:text-sky-500 transition-colors">
+            {teamName} <span className="text-slate-300 text-xs">⇄</span>
           </button>
         )}
       </div>
@@ -665,17 +662,22 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     handleDrop(`${next}팀`)
   }
 
-  const handleRenameTeam = (oldName: string, newName: string) => {
-    if (!data) return
-    if (data.assigned[newName]) { showToast('이미 존재하는 팀명입니다', 'error'); return }
-    const members = data.assigned[oldName] || []
+  // 팀 순서 교체: a팀 멤버 전원 ↔ b팀 멤버 전원 (팀명 드롭다운에서 상대 팀 선택 시)
+  const handleSwapTeams = (a: string, b: string) => {
+    if (!data || a === b) return
+    const membersA = data.assigned[a] ?? []
+    const membersB = data.assigned[b] ?? []
+    if (membersA.length === 0 && membersB.length === 0) return
     setData((prev) => {
       if (!prev) return prev
-      const a = { ...prev.assigned }
-      a[newName] = a[oldName]; delete a[oldName]
-      return { ...prev, assigned: a }
+      const na = { ...prev.assigned }
+      if (membersB.length) na[a] = membersB.map((p) => ({ ...p, team_name: a })); else delete na[a]
+      if (membersA.length) na[b] = membersA.map((p) => ({ ...p, team_name: b })); else delete na[b]
+      return { ...prev, assigned: na }
     })
-    members.forEach((m) => assignTeam(m.registration_id, newName))
+    membersA.forEach((m) => assignTeam(m.registration_id, b))
+    membersB.forEach((m) => assignTeam(m.registration_id, a))
+    showToast(`${a} ↔ ${b} 교체 완료`, 'success')
   }
 
   const handleAutoMatch = async () => {
@@ -1291,9 +1293,10 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {teamNames.map((t) => (
           <TeamCard key={t} teamName={t} members={[...(assigned[t] || [])].sort((a, b) => a.is_member === b.is_member ? a.name.localeCompare(b.name, 'ko') : a.is_member ? -1 : 1)}
+            allTeams={teamNames}
             onDrop={handleDrop}
             onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
-            onRename={handleRenameTeam}
+            onSwap={handleSwapTeams}
             onDelete={handleDeleteTeam}
             onTapAssign={() => handleTapAssign(t)}
             onTapSelectMember={(p) => handleTapSelect(p, t)}
