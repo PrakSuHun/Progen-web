@@ -95,6 +95,7 @@ export async function GET(request: NextRequest) {
         good_tags: projectDist.map((d: any) => ({ tag: d.name, count: d.count })),
         bad_tags: [] as any[],
         responses: [] as any[],
+        grape_responses: [] as any[],
         _crew_mode: true,
       }
 
@@ -400,6 +401,13 @@ export async function GET(request: NextRequest) {
     const toSorted = (map: Record<string, number>) =>
       Object.entries(map).map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count)
 
+    // 포도용 피드백 (/grapefeedback 기명 3문항)
+    const { data: grapeFeedbacks } = await supabase
+      .from('grape_feedbacks')
+      .select('name, q1, q2, q3, created_at')
+      .eq('event_id', eventId)
+      .order('created_at', { ascending: true })
+
     const section3 = {
       total_responses: feedbacks?.length ?? 0,
       would_return_count: feedbacks?.filter((f: any) => f.would_return).length ?? 0,
@@ -407,6 +415,7 @@ export async function GET(request: NextRequest) {
       good_tags: toSorted(goodTagCount),
       bad_tags: toSorted(badTagCount),
       responses: (feedbacks ?? []).map((f: any) => ({ good_points: f.good_points, bad_points: f.bad_points })),
+      grape_responses: (grapeFeedbacks ?? []).map((f: any) => ({ name: f.name, q1: f.q1, q2: f.q2, q3: f.q3 })),
     }
 
     return NextResponse.json({ section1, section2, section3 })

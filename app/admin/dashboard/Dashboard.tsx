@@ -100,6 +100,7 @@ interface FullStats {
     good_tags: TagItem[]
     bad_tags: TagItem[]
     responses: { good_points: string; bad_points: string }[]
+    grape_responses: { name: string; q1: string; q2: string; q3: string }[]
   }
 }
 
@@ -1767,6 +1768,32 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+              {!crewMode && (
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 mt-4 shadow-sm">
+                  <h3 className="text-slate-700 font-medium mb-4">🍇 포도용 피드백 ({s3.grape_responses?.length ?? 0}개)</h3>
+                  {s3.grape_responses && s3.grape_responses.length > 0 ? (
+                    <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                      {s3.grape_responses.map((r: any, i: number) => (
+                        <div key={i} className="bg-violet-50 rounded-xl p-4 space-y-2 border border-violet-100">
+                          <p className="text-violet-700 text-sm font-bold">{r.name}</p>
+                          <div>
+                            <span className="text-violet-500 text-xs font-medium">1. 생명과 친해질 수 있었나요? 어떤 부분이 도움이 되었나요?</span>
+                            <p className="text-slate-700 text-sm mt-0.5">{r.q1}</p>
+                          </div>
+                          <div>
+                            <span className="text-violet-500 text-xs font-medium">2. 애로사항이 있었나요?</span>
+                            <p className="text-slate-700 text-sm mt-0.5">{r.q2}</p>
+                          </div>
+                          <div>
+                            <span className="text-violet-500 text-xs font-medium">3. 생명을 2차 만남 혹은 이후 계획이 있으신가요?</span>
+                            <p className="text-slate-700 text-sm mt-0.5">{r.q3}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : <p className="text-slate-400 text-sm">아직 응답이 없습니다 (/grapefeedback)</p>}
                 </div>
               )}
             </>
