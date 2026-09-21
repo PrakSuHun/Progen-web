@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { getActiveEventId } from '@/lib/get-active-event'
+import { getFeedbackEventId } from '@/lib/get-active-event'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient()
-    const eventId = await getActiveEventId()
+    const eventId = await getFeedbackEventId()
 
     if (!eventId) {
       return NextResponse.json(

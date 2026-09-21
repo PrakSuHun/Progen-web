@@ -69,6 +69,51 @@ export async function getActivePublicEventId(): Promise<string | null> {
 }
 
 /**
+ * 피드백 귀속 행사 ID.
+ * 피드백은 행사가 끝난 뒤(당일 저녁~며칠 후)에 들어오는 경우가 많아,
+ * "가장 가까운 미래 행사" 우선인 getActiveEventId()를 그대로 쓰면
+ * 지난 행사 피드백이 다음 행사(특히 프로모션 이벤트 row)로 잘못 연결된다.
+ * - 1순위: 가장 최근에 지난 행사(당일 포함)가 FEEDBACK_WINDOW_DAYS일 이내면 그 행사
+ * - 2순위: 가장 가까운 미래 행사
+ * - is_event=true(프로모션 이벤트) row는 후보에서 제외
+ */
+const FEEDBACK_WINDOW_DAYS = 7
+
+export async function getFeedbackEventId(): Promise<string | null> {
+  const supabase = createAdminClient()
+
+  // "당일 포함 지난 행사" = 내일 자정 이전의 행사 중 최신
+  const tomorrow = new Date()
+  tomorrow.setHours(0, 0, 0, 0)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const { data: recent } = await supabase
+    .from('events')
+    .select('id, event_date')
+    .lt('event_date', tomorrow.toISOString())
+    .eq('is_event', false)
+    .order('event_date', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (recent) {
+    const daysSince = (Date.now() - new Date(recent.event_date).getTime()) / (1000 * 60 * 60 * 24)
+    if (daysSince <= FEEDBACK_WINDOW_DAYS) return recent.id
+  }
+
+  const { data: upcoming } = await supabase
+    .from('events')
+    .select('id')
+    .gte('event_date', tomorrow.toISOString())
+    .eq('is_event', false)
+    .order('event_date', { ascending: true })
+    .limit(1)
+    .single()
+
+  return upcoming?.id ?? null
+}
+
+/**
  * 활성 이벤트 ID(is_event=true row만, 날짜 기반).
  * 이벤트 전용 신청 폼(/event-reg/event)과 이벤트 어드민(/admin/event) 기본 선택에 사용.
  * 이벤트 row는 is_public=false라 기존 행사 신청/기본선택 경로에는 잡히지 않는다.
