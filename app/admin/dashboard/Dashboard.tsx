@@ -2385,11 +2385,11 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     { id: 'members', label: '신청자', icon: '♟' },
     { id: 'deposit', label: '보증금', icon: '₩' },
   ]
-  // 크루 전체 모드: 분석·신청자만 / 이벤트 어드민: 출석·보증금 제외
+  // 크루 전체 모드: 분석·신청자만 / 이벤트 어드민: 출석·보증금 제외 + 신청자 우선 순서
   const visibleTabs = isCrewMode
     ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members')
     : isEventKind
-      ? tabs.filter((t) => t.id !== 'checkin' && t.id !== 'deposit')
+      ? (['members', 'team', 'analysis'] as Tab[]).map((id) => tabs.find((t) => t.id === id)!)
       : tabs
 
   if (loading) {
