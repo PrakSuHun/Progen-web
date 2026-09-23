@@ -450,7 +450,8 @@ function TeamCard({ teamName, members, allTeams, onDrop, onDragStartMember, onSw
 export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event' }) {
   const isEventKind = kind === 'event'
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<Tab>('checkin')
+  // 이벤트 어드민은 출석·보증금 탭이 없으므로 신청자 탭으로 시작
+  const [activeTab, setActiveTab] = useState<Tab>(isEventKind ? 'members' : 'checkin')
   const [data, setData] = useState<DashboardData | null>(null)
   const [fullStats, setFullStats] = useState<FullStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -965,7 +966,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     const autoCheckinOn = events.find((e) => e.id === selectedEventId)?.auto_checkin_alimtalk ?? false
 
     return (
-      <div className="p-4 md:p-6 overflow-y-auto h-full">
+      <div className="p-4 md:p-6 overflow-y-auto overflow-x-hidden h-full">
         {/* 숫자 카드 */}
         <div className="grid grid-cols-4 gap-2 md:gap-4 mb-3">
           {[
@@ -1026,13 +1027,13 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
               <span className="w-2 h-2 rounded-full bg-amber-400" />
               미출석 <span className="text-amber-500 font-normal text-sm">{notArrived.length}명</span>
             </h3>
-            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto overflow-x-hidden pr-1">
               {filteredNotArrived.length === 0 && (
                 <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '모두 출석했습니다'}</p>
               )}
               {filteredNotArrived.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <StatusBtn label="출석" color="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200" onClick={() => handleUpdateStatus(p.registration_id, '출석완료')} />
                     <StatusBtn label="노쇼" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleUpdateStatus(p.registration_id, '노쇼확정')} />
@@ -1062,13 +1063,13 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
                 </button>
               )}
             </div>
-            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto overflow-x-hidden pr-1">
               {filteredCheckedIn.length === 0 && (
                 <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '아직 출석자가 없습니다'}</p>
               )}
               {filteredCheckedIn.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1"><PersonCard person={p} showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} showDeposit onCycleDeposit={handleCycleDeposit} /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <StatusBtn label="출석문자" color="bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200" onClick={() => handleSendIndividual(p.registration_id, 'checkin', '출석 문자')} />
                     <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
@@ -1084,13 +1085,13 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
               <span className="w-2 h-2 rounded-full bg-red-500" />
               노쇼확정 <span className="text-red-500 font-normal text-sm">{noshowList.length}명</span>
             </h3>
-            <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto overflow-x-hidden pr-1">
               {filteredNoshow.length === 0 && (
                 <p className="text-slate-400 text-sm text-center py-6">{q ? '검색 결과 없음' : '노쇼 확정자 없음'}</p>
               )}
               {filteredNoshow.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     {/* 노쇼 경고는 크루 한정 (게스트는 보증금 미환불 페널티) */}
                     {p.is_crew && (
@@ -1342,7 +1343,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
           </div>
 
           {/* 하단 팀 그리드 */}
-          <div className="flex-1 overflow-y-auto p-3">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-3">
             <TeamGrid />
           </div>
         </div>
@@ -1366,7 +1367,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
           </div>
 
           {/* 팀 그리드 */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
             <TeamGrid />
           </div>
         </div>
@@ -1433,7 +1434,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     }
 
     return (
-      <div className="p-4 md:p-6 overflow-y-auto h-full space-y-10">
+      <div className="p-4 md:p-6 overflow-y-auto overflow-x-hidden h-full space-y-10">
         {/* 섹션 1: 분포 차트 */}
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-1">{crewMode ? '크루 분석' : '행사 참여자 분석'}</h2>
@@ -1968,7 +1969,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     ]
 
     return (
-      <div className="p-3 md:p-6 overflow-y-auto h-full">
+      <div className="p-3 md:p-6 overflow-y-auto overflow-x-hidden h-full">
         {/* 통계 카드 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4">
           {(membersMode === 'event' ? [
@@ -2083,6 +2084,12 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
                     {m.grade && <><span className="text-slate-300">·</span><span>{m.grade}</span></>}
                     {m.gender && <><span className="text-slate-300">·</span><span className={genderColor(m.gender)}>{m.gender}</span></>}
                   </div>
+                  {membersMode === 'event' && m.companion && (
+                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-50 border border-violet-200 text-violet-700 text-[11px] font-medium max-w-full">
+                      <span className="shrink-0">🤝 같이 신청</span>
+                      <span className="truncate">{m.companion}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* 상세 정보 */}
@@ -2273,7 +2280,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     }
 
     return (
-      <div className="p-4 md:p-6 overflow-y-auto h-full">
+      <div className="p-4 md:p-6 overflow-y-auto overflow-x-hidden h-full">
         <div className="grid grid-cols-4 gap-2 md:gap-3 mb-5">
           <div className="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 text-center">
             <div className="text-2xl md:text-3xl font-black text-slate-700">{guests.length}</div>
@@ -2378,6 +2385,12 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     { id: 'members', label: '신청자', icon: '♟' },
     { id: 'deposit', label: '보증금', icon: '₩' },
   ]
+  // 크루 전체 모드: 분석·신청자만 / 이벤트 어드민: 출석·보증금 제외
+  const visibleTabs = isCrewMode
+    ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members')
+    : isEventKind
+      ? tabs.filter((t) => t.id !== 'checkin' && t.id !== 'deposit')
+      : tabs
 
   if (loading) {
     return (
@@ -2452,7 +2465,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
 
       {/* 탭바 (모바일+태블릿: 상단) */}
       <div className="lg:hidden flex bg-white border-b border-slate-200 shrink-0">
-        {(isCrewMode ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members') : tabs).map((tab) => (
+        {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -2471,22 +2484,22 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
       <div className="flex flex-1 overflow-hidden relative">
         {/* 콘텐츠 */}
         <div className="flex-1 overflow-hidden">
-          {activeTab === 'checkin' && renderCheckin()}
+          {activeTab === 'checkin' && !isEventKind && renderCheckin()}
           {activeTab === 'team' && renderTeam()}
           {activeTab === 'analysis' && renderAnalysis()}
           {activeTab === 'members' && renderMembers()}
-          {activeTab === 'deposit' && renderDeposit()}
+          {activeTab === 'deposit' && !isEventKind && renderDeposit()}
         </div>
 
         {/* 우측 책갈피 탭 (데스크톱���) */}
         <div className="hidden lg:flex flex-shrink-0 flex-col justify-center gap-0 absolute right-0 top-1/2 -translate-y-1/2 z-20">
-          {(isCrewMode ? tabs.filter((t) => t.id === 'analysis' || t.id === 'members') : tabs).map((tab, i) => (
+          {visibleTabs.map((tab, i) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{ writingMode: 'vertical-rl' }}
               className={`py-5 px-2.5 text-sm font-bold transition-all duration-150 shadow-md
-                ${i === 0 ? 'rounded-tl-xl' : ''} ${i === tabs.length - 1 ? 'rounded-bl-xl' : ''}
+                ${i === 0 ? 'rounded-tl-xl' : ''} ${i === visibleTabs.length - 1 ? 'rounded-bl-xl' : ''}
                 ${activeTab === tab.id
                   ? 'bg-sky-600 text-white -translate-x-1 z-10'
                   : 'bg-white text-slate-400 hover:bg-slate-50 hover:text-slate-600 border border-slate-200 border-r-0'
