@@ -189,9 +189,9 @@ export default function EventRegGuestPage() {
             className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2.5 rounded-full text-sm transition-colors mb-2">
             계좌번호 복사하기
           </button>
-          <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+          <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
             className="block w-full text-center bg-white hover:bg-amber-50 border border-amber-300 text-amber-700 font-bold px-4 py-2.5 rounded-full text-sm transition-colors">
-            문의하기 (오픈채팅)
+            문의하기 (카카오톡 채널)
           </a>
         </div>
 
@@ -204,14 +204,14 @@ export default function EventRegGuestPage() {
         <p className="text-[#888] text-sm mb-5 break-keep">크루는 보증금 없이 크루 전용 폼으로 신청하시면 됩니다. 아래 버튼으로 이동해주세요.</p>
         <Link href="/event-reg/crew"
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">크루로 신청하기</Link>
-        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+        <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
           className="block w-full text-center text-[#999] hover:text-black text-sm transition-colors">번호가 잘못됐다면 문의하기</a>
       </Modal>
 
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 신청하셨어요">
         <p className="text-[#333] mb-1">이미 이번 행사에 신청하셨어요.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있으시면 아래 버튼으로 문의해주세요.</p>
-        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+        <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">문의하기</a>
         <button onClick={() => setShowDuplicate(false)} className="block w-full text-center text-[#999] hover:text-black text-sm transition-colors">닫기</button>
       </Modal>

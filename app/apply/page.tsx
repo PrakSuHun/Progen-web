@@ -125,7 +125,7 @@ export default function ApplyPage() {
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 지원하셨어요">
         <p className="text-[#333] mb-1">동일한 연락처로 이미 지원 내역이 있어요.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있거나 정보를 수정하고 싶으시면 아래 버튼으로 문의해주세요.</p>
-        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+        <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">
           문의하기
         </a>

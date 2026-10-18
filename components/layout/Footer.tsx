@@ -14,7 +14,7 @@ const navLinks = [
 const contactLinks = [
   ['/apply', '크루 지원하기'],
   ['/recruit', '운영진 모집'],
-  ['https://open.kakao.com/o/sQqCopki', '카카오 문의'],
+  ['https://pf.kakao.com/_nLiKX/chat', '카카오 문의'],
 ]
 
 export function Footer() {

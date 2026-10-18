@@ -116,10 +116,10 @@ export default function EventRegEventPage() {
 
       <Modal isOpen={showSuccess} onClose={() => { setShowSuccess(false); reset() }} title="신청 완료!">
         <p className="text-[#333] mb-1 break-keep">이벤트 신청이 완료되었습니다!</p>
-        <p className="text-[#888] text-sm mb-5 break-keep">자세한 안내는 추후 연락드릴게요. 문의사항은 아래 오픈채팅으로 남겨주세요.</p>
-        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+        <p className="text-[#888] text-sm mb-5 break-keep">자세한 안내는 추후 연락드릴게요. 문의사항은 아래 카카오톡 채널로 남겨주세요.</p>
+        <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
           className="block w-full text-center bg-white hover:bg-violet-50 border border-violet-200 text-violet-600 font-bold px-4 py-2.5 rounded-full text-sm transition-colors mb-3">
-          문의하기 (오픈채팅)
+          문의하기 (카카오톡 채널)
         </a>
         <button onClick={() => { setShowSuccess(false); reset() }}
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors">확인</button>
@@ -128,7 +128,7 @@ export default function EventRegEventPage() {
       <Modal isOpen={showDuplicate} onClose={() => setShowDuplicate(false)} title="이미 신청하셨어요">
         <p className="text-[#333] mb-1">이미 이번 이벤트에 신청하셨어요.</p>
         <p className="text-[#888] text-sm mb-5">문제가 있으시면 아래 버튼으로 문의해주세요.</p>
-        <a href="https://open.kakao.com/o/sQqCopki" target="_blank" rel="noopener noreferrer"
+        <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
           className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors mb-3">문의하기</a>
         <button onClick={() => setShowDuplicate(false)} className="block w-full text-center text-[#999] hover:text-black text-sm transition-colors">닫기</button>
       </Modal>
