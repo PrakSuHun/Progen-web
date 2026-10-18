@@ -3,14 +3,6 @@ import Link from 'next/link'
 
 const months = [
   {
-    month: '03',
-    title: 'AI 시대 대학생으로 살아남기',
-    headline: '대학생 실전 활용',
-    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
-    highlight: '종료 · 80명 참가, 7개 대학교',
-    ended: true,
-  },
-  {
     month: '04',
     title: 'AI로 완성하는 가성비 벼락치기 클래스',
     headline: '중간고사 집중 대비',
@@ -47,7 +39,15 @@ const months = [
     title: 'AI시대 대학생으로 살아남기',
     headline: '대학생 AI 실전 활용',
     desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
-    date: '2026. 9. 19 (토)',
+    highlight: '종료 · 대학생 AI 실전 활용',
+    ended: true,
+  },
+  {
+    month: '11',
+    title: '나만의 AI 비서 만들기 클래스',
+    headline: '일상·학업 자동화',
+    desc: '반복되는 일정 관리·자료 정리·정보 수집을 대신 처리해 주는 나만의 AI 비서를 직접 만들어 봅니다.',
+    date: '2026. 11. 7 (토)',
     highlight: '사전 신청 →',
     href: '/event-reg',
   },

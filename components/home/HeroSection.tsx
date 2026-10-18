@@ -29,7 +29,7 @@ export function HeroSection() {
                 <span className="absolute inset-0 rounded-full bg-sky-500 anim-ping-slow" />
                 <span className="relative w-1.5 h-1.5 rounded-full bg-sky-500" />
               </span>
-              1기 크루 모집 중 · 9월 클래스 사전 신청 OPEN
+              1기 크루 모집 중 · 11월 클래스 사전 신청 OPEN
             </div>
 
             <h1
@@ -77,7 +77,7 @@ export function HeroSection() {
               className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
               style={{ animationDelay: '420ms' }}
             >
-              3월 ~ 9월 · 월 1회 · 참가비 무료
+              4월 ~ 11월 · 월 1회 · 참가비 무료
             </p>
           </div>
 
@@ -86,17 +86,6 @@ export function HeroSection() {
             <FloatCard
               top="0%"
               left="10%"
-              delay="0s"
-              color="from-sky-500 to-blue-500"
-              label="3월 종료"
-              title="AI 시대 살아남기"
-              sub="80명 참가"
-              tags={['논문 파악', 'PPT 제작']}
-              tilt="-3deg"
-            />
-            <FloatCard
-              top="22%"
-              left="45%"
               delay="-1.5s"
               color="from-sky-500 to-sky-400"
               label="4월 종료"
@@ -106,8 +95,8 @@ export function HeroSection() {
               tilt="2deg"
             />
             <FloatCard
-              top="55%"
-              left="5%"
+              top="22%"
+              left="45%"
               delay="-3s"
               color="from-sky-500 to-sky-400"
               label="6월 종료"
@@ -117,14 +106,25 @@ export function HeroSection() {
               tilt="3deg"
             />
             <FloatCard
+              top="55%"
+              left="5%"
+              delay="-3s"
+              color="from-sky-500 to-sky-400"
+              label="9월 종료"
+              title="AI시대 대학생으로 살아남기"
+              sub="대학생 AI 실전 활용"
+              tags={['논문 파악', 'PPT 제작']}
+              tilt="3deg"
+            />
+            <FloatCard
               top="70%"
               left="50%"
               delay="-2s"
               color="from-sky-500 to-cyan-400"
-              label="9월 모집중"
-              title="AI시대 대학생으로 살아남기"
-              sub="9/19(토) · 사전 신청 OPEN"
-              tags={['논문 파악', 'PPT 제작']}
+              label="11월 모집중"
+              title="나만의 AI 비서 만들기"
+              sub="11/7(토) · 사전 신청 OPEN"
+              tags={['일정 관리', '자동화']}
               tilt="-2deg"
               highlight
             />

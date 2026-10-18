@@ -49,11 +49,18 @@ const seminars = [
     desc: '그날 배우고 즉시 업로드. 자본금 없이 시작하는 나만의 온라인 수익화 채널.',
   },
   {
-    status: '사전 신청 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    status: '종료', statusColor: 'bg-[#eee] text-[#888]',
     month: '09', title: 'AI시대 대학생으로 살아남기',
     date: '2026. 9. 19 (토)', speaker: '대표 박수훈', capacity: 80,
     tags: ['자료 서치', '논문 파악', 'PPT 제작', '보고서 제작'],
     desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치부터 논문 파악, PPT 제작, 보고서 제작까지 직접 실습으로 익혀 갑니다.',
+  },
+  {
+    status: '사전 신청 중', statusColor: 'bg-sky-50 text-sky-600 border border-sky-200',
+    month: '11', title: '나만의 AI 비서 만들기 클래스',
+    date: '2026. 11. 7 (토)', speaker: 'PROGEN 테크팀', capacity: 80,
+    tags: ['일정 관리', '자료 정리', '자동화'],
+    desc: '반복되는 일정 관리·자료 정리·정보 수집을 대신 처리해 주는 나만의 AI 비서를 직접 만들어 봅니다.',
   },
 ]
 
