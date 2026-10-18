@@ -77,7 +77,7 @@ export function HeroSection() {
               className="text-[#aaa] text-xs md:text-sm anim-fade-in-up"
               style={{ animationDelay: '420ms' }}
             >
-              4월 ~ 11월 · 월 1회 · 참가비 무료
+              3월 ~ 11월 · 월 1회 · 참가비 무료
             </p>
           </div>
 

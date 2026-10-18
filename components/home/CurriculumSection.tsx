@@ -1,7 +1,21 @@
+'use client'
+
+import { useState } from 'react'
 import { Reveal } from '@/components/Reveal'
 import Link from 'next/link'
 
+// 기본으로 보여줄 최신 클래스 개수 — 나머지(이전 회차)는 「지난 클래스 전체 보기」로 펼침
+const VISIBLE_COUNT = 5
+
 const months = [
+  {
+    month: '03',
+    title: 'AI 시대 대학생으로 살아남기',
+    headline: '대학생 실전 활용',
+    desc: '대학생이 가장 많이 쓰는 4가지 작업을 AI로 한 번에. 자료 서치, 논문 파악, PPT 제작, 보고서 제작까지 직접 손으로 익혀 갑니다.',
+    highlight: '종료 · 80명 참가, 7개 대학교',
+    ended: true,
+  },
   {
     month: '04',
     title: 'AI로 완성하는 가성비 벼락치기 클래스',
@@ -54,6 +68,10 @@ const months = [
 ]
 
 export function CurriculumSection() {
+  const [showAll, setShowAll] = useState(false)
+  const hiddenCount = Math.max(0, months.length - VISIBLE_COUNT)
+  const shown = showAll ? months : months.slice(hiddenCount)
+
   return (
     <section id="curriculum" className="py-14 md:py-24 px-5 lg:px-8 bg-[#fafafa]">
       <div className="max-w-7xl mx-auto">
@@ -71,8 +89,18 @@ export function CurriculumSection() {
           </p>
         </Reveal>
 
+        {hiddenCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowAll(v => !v)}
+            className="w-full mb-3 py-3 rounded-2xl border border-dashed border-[#ddd] bg-white text-[#888] hover:text-sky-500 hover:border-sky-200 text-xs md:text-sm font-bold transition-colors"
+          >
+            {showAll ? '지난 클래스 접기 ▴' : `지난 클래스 ${hiddenCount}개 더 보기 ▾`}
+          </button>
+        )}
+
         <div className="space-y-3">
-          {months.map((m, i) => (
+          {shown.map((m, i) => (
             <Reveal key={m.month} delay={i * 80}>
               <div className={`bg-white border border-[#eee] rounded-2xl p-4 md:p-7 card-lift hover:border-sky-200 ${m.ended ? 'opacity-75' : ''}`}>
                 <div className="flex gap-4 md:gap-5">
