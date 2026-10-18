@@ -123,8 +123,8 @@ export function HeroSection() {
               color="from-sky-500 to-cyan-400"
               label="11월 모집중"
               title="나만의 AI 비서 만들기"
-              sub="11/7(토) · 사전 신청 OPEN"
-              tags={['일정 관리', '자동화']}
+              sub="11/7(토) · 선착순 80명"
+              tags={['율무커피 특강', '실습']}
               tilt="-2deg"
               highlight
             />
