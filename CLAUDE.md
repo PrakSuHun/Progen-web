@@ -1,5 +1,19 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
+> **2026-10-19 수료식 일정 변경(DB만)**: 내부 행사 `'청년마을 만들기' X PROGEN 수료식`(ebe0d08f) event_date 11/7 → **2026-11-20 14:00 KST**, program_sessions #15(수료식) session_date도 2026-11-20. 이로써 11/7은 「나만의 AI 비서 만들기 클래스」 단독 → 체크인 행사 충돌 해소.
+
+> **2026-10-19 11월 클래스 실제 내용 반영**: 포스터·홍보문 기준으로 홈 커리큘럼(headline 「AI에게 묻기에서 맡기기로」, 율무커피 초청 특강, 14:00~17:30·경상대학 N413호 우림홀)·Hero FloatCard(선착순 80명)·세미나 카드(강사 율무커피, 장소·준비물·마감 11/3) 문구 갱신. 외부 페이지 툴 이름 비노출 정책에 따라 Grok Bot 등은 사이트에 미표기. events row(bedf90c7)에 location·materials(개인 노트북 (필수))·datetime_text(11월 7일(토) 14:00~17:30) 입력 — 채팅방 링크는 미입력.
+
+> **2026-10-19 홈·세미나 11월 클래스 반영 + 홈 3월 숨김**: `CurriculumSection` — 03 카드 제거, 09를 종료 처리, **11 「나만의 AI 비서 만들기 클래스」(11/7 토, 사전 신청 → /event-reg)** 추가. `HeroSection` — 배지 「11월 클래스 사전 신청 OPEN」, 기간 「4월 ~ 11월」, FloatCard 3월 제거 → 4월·6월·9월(종료)·11월(모집중 highlight). 세미나 페이지(`app/seminar`)는 3월 유지, 09 종료 + 11 「사전 신청 중」 카드 추가. 설명 문구는 임시 작성(툴 이름 미노출).
+
+> **2026-10-19 11/7 행사 추가(DB만)**: events row `나만의 AI 비서 만들기 클래스`(id `bedf90c7-eaaf-4c77-a1fe-8a18d55e2953`, 2026-11-07 14:00 KST, is_public=true, cohort 1) INSERT. 같은 날 내부 수료식(is_public=false)과 공존 — 웹 사전신청·어드민 기본선택은 이 행사로, 체크인(`getActiveEventId`, 날짜 기반)은 같은 날 두 행사 중 하나만 잡히므로 당일 확인 필요. 홈/세미나 하드코딩 카드는 미반영.
+
+> **2026-10-18 문의 채널 변경**: 사이트 전역 문의 링크(Footer 「카카오 문의」, 크루 지원·행사 신청(크루/게스트)·이벤트 신청 폼의 중복/오류 모달 문의 버튼 8곳)를 오픈채팅 `open.kakao.com/o/sQqCopki` → **카카오톡 채널 `https://pf.kakao.com/_nLiKX/chat`**으로 교체. 버튼 문구 「(오픈채팅)」→「(카카오톡 채널)」. 크루 합류 팀 채팅방(invite.kakao.com)·알림톡 행사 채팅방 버튼(`events.kakao_chat_url`)은 별개라 유지.
+
+> **2026-10-02 5월 사진 최종 선택**: 사용자가 재생성본을 선택하여 `/archive`의 5/16 단체사진을 `public/archive/0516-2-face-edited-v2.png`로 연결. 앞줄 두 명 제외, 뒷줄 얼굴 변경. 사용자 운영 배포 요청.
+
+> **2026-10-02 아카이브 단체사진 변경**: `/archive`의 4/11 단체사진은 사용자가 선택한 `public/archive/0411-1-face-edited.png`로 교체. 5/16 단체사진은 원본에서 앞쪽에 따로 앉은 두 명을 제외하고 뒷줄 얼굴을 변경한 `public/archive/0516-2-face-edited.png`로 교체. 내장 이미지 생성 도구 사용; 요청은 원본 기준 얼굴만 변경, 앞줄 유지, 인원·의상·배경 유지이며 AI 생성 특성상 미세한 차이가 있을 수 있음. 원본 파일과 다른 행사 사진은 유지.
+
 > **규칙**: 모든 코드 수정 후에는 반드시 이 문서를 업데이트하고, 다음 작업은 이 문서를 기준으로 시작한다.
 > 사용자가 직접 코드를 수정한 경우에도 변경 내용을 알려주면 즉시 이 문서에 반영한다.
 
@@ -282,7 +296,7 @@ CNUCARE_ANON_KEY=                 # 씨엔유케어 anon 키 (RLS 열려 있어 
 3. 신규 삽입 (role='participant', status='지원완료')
 4. **게스트→크루 전환**: 같은 phone의 guests가 있으면 그 게스트의 `feedbacks`만 새 crew_id로 마이그레이션. **`event_registrations`는 재배정하지 않음**(2026-08-03) — 각 행사 신청은 신청 시점 역할(게스트/크루)로 고정해 분석 탭 참여율·게스트 보증금 추적을 보존. 어드민 화면의 크루/게스트 판정은 `lib/registration-role.ts` `isCrewAtRegistration()`(크루 가입일 vs 신청일 비교)이 담당해 과거 flip된 행도 게스트로 표시. 전환율은 `full-stats`의 `crew_conversion_count`가 독립 집계
 5. 성공 → 완료 모달 (카카오톡 팀 채팅방: https://invite.kakao.com/tc/Y2VGimsEqA) → 닫으면 홈으로
-6. 중복(409) → 중앙 모달 (문의: https://open.kakao.com/o/sQqCopki)
+6. 중복(409) → 중앙 모달 (문의: https://pf.kakao.com/_nLiKX/chat (카카오톡 채널))
 
 ---
 
@@ -297,7 +311,7 @@ CNUCARE_ANON_KEY=                 # 씨엔유케어 anon 키 (RLS 열려 있어 
 - 크루: `crew_members`에서 `name+phone` 매칭 → 없으면 404 (이전: 토스트 → 현재: 모달 + 크루지원/비회원신청 안내)
 - 게스트: **먼저 phone이 `crew_members`에 있으면 409 `code:'crew_exists'` 반환 → 게스트 폼이 "크루로 등록된 번호예요" 모달로 크루 폼(`/event-reg/crew`) 안내**(2026-07-09 신설, 게스트/크루 이중 등록 방지). 아니면 `guests`에 phone 기준 upsert (신규면 source_event_id 설정)
 - 공통: `event_registrations`에 `status='사전신청'` 삽입
-- 중복 → 409, 중앙 Modal (문의: https://open.kakao.com/o/sQqCopki)
+- 중복 → 409, 중앙 Modal (문의: https://pf.kakao.com/_nLiKX/chat (카카오톡 채널))
 
 **보증금 안내 (게스트 한정)**:
 - 폼 위 노란색 안내 박스: 5,000원 보증금, 참석 시 전액 환불
