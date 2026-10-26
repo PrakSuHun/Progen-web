@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createAdminSessionToken, ADMIN_SESSION_MAX_AGE } from '@/lib/admin-session'
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,17 +30,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const token = await createAdminSessionToken()
+    if (!token) {
+      return NextResponse.json({ message: '서버 오류가 발생했습니다' }, { status: 500 })
+    }
+
     // Create response
     const response = NextResponse.json({
       message: '로그인 성공',
     })
 
     // Set httpOnly cookie
-    response.cookies.set('admin_session', 'authenticated', {
+    response.cookies.set('admin_session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge: ADMIN_SESSION_MAX_AGE, // 30 days
       path: '/',
     })
 
