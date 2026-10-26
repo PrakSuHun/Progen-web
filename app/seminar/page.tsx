@@ -64,6 +64,12 @@ const seminars = [
   },
 ]
 
+// 카드 date('2026. 11. 7 (토) …')에서 버튼용 'M/D' 추출 — 버튼 문구가 카드 날짜를 자동으로 따라가게
+const shortDate = (date: string) => {
+  const m = date.match(/\d{4}\.\s*(\d{1,2})\.\s*(\d{1,2})/)
+  return m ? `${Number(m[1])}/${Number(m[2])} ` : ''
+}
+
 export default function SeminarPage() {
   return (
     <main className="min-h-screen">
@@ -120,7 +126,7 @@ export default function SeminarPage() {
                       {s.status === '사전 신청 중' && (
                         <Link href="/event-reg"
                           className="inline-block px-6 py-2.5 bg-sky-500 hover:bg-sky-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30 text-white text-sm font-bold rounded-full transition-all duration-200">
-                          사전 신청 →
+                          {shortDate(s.date)}행사 사전 신청 →
                         </Link>
                       )}
                     </div>
