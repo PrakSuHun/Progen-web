@@ -108,22 +108,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
-    // ── 섹션 1: 이 행사 참여자(event_registrations) 기반 분석 ──
-    const { data: registrations } = await supabase
-      .from('event_registrations')
-      .select(`
-        status, crew_id, guest_id, deposit_status, registered_at,
-        crew_members ( name, phone, school, grade, age, major, path, gender, is_member, created_at ),
-        guests ( name, phone, school, grade, age, major, path, gender )
-      `)
-      .eq('event_id', eventId)
-
-    // 포도 phone 목록 (크루 테이블 기반)
-    const { data: podoListEarly } = await supabase
-      .from('crew_members')
-      .select('phone')
-      .eq('is_member', true)
-    const podoPhoneSetEarly = new Set((podoListEarly ?? []).map((c: any) => c.phone))
+    // ── 1단계: 이 행사 기준 독립 조회 병렬 실행 ──
+    // (리전 왕복 비용 때문에 순차 await 대신 묶어서 실행. 신청 목록은 섹션1·2가 같은 쿼리를 공유)
+    const [
+      { data: registrations },
+      { data: podoList },
+      { data: eventInfo },
+      { data: feedbacks },
+      { data: grapeFeedbacks },
+    ] = await Promise.all([
+      supabase
+        .from('event_registrations')
+        .select(`
+          status, crew_id, guest_id, deposit_status, registered_at,
+          crew_members ( name, phone, school, grade, age, major, path, gender, is_member, created_at ),
+          guests ( name, phone, school, grade, age, major, path, gender )
+        `)
+        .eq('event_id', eventId),
+      // 포도 phone 목록 (크루 테이블 기반)
+      supabase.from('crew_members').select('phone').eq('is_member', true),
+      supabase.from('events').select('event_date').eq('id', eventId).single(),
+      supabase
+        .from('feedbacks')
+        .select('good_tags, bad_tags, good_points, bad_points, would_return, join_interest')
+        .eq('event_id', eventId),
+      // 포도용 피드백 (/grapefeedback 기명 3문항)
+      supabase
+        .from('grape_feedbacks')
+        .select('name, q1, q2, q3, created_at')
+        .eq('event_id', eventId)
+        .order('created_at', { ascending: true }),
+    ])
+    const podoPhoneSetEarly = new Set((podoList ?? []).map((c: any) => c.phone))
+    const eventDate = eventInfo?.event_date ?? new Date().toISOString()
 
     const attendees = (registrations ?? []).map((r: any) => {
       const crew = r.crew_members
@@ -195,24 +212,9 @@ export async function GET(request: NextRequest) {
     const eventGuestsCheckedIn = eventGuests.filter((a: any) => a.status === '출석완료')
     const totalCheckedIn = nonPodo.filter((a: any) => a.status === '출석완료').length
 
-    // 이 행사 참가자들의 phone 수집 (포도 제외)
-    const { data: regsFull } = await supabase
-      .from('event_registrations')
-      .select(`
-        crew_id, guest_id, status, registered_at,
-        crew_members ( phone, is_member, created_at ),
-        guests ( phone )
-      `)
-      .eq('event_id', eventId)
+    const podoPhoneSet = podoPhoneSetEarly
 
-    // 포도 phone 목록
-    const { data: podoList } = await supabase
-      .from('crew_members')
-      .select('phone')
-      .eq('is_member', true)
-    const podoPhoneSet = new Set((podoList ?? []).map((c: any) => c.phone))
-
-    const thisEventPeople = (regsFull ?? []).map((r: any) => ({
+    const thisEventPeople = (registrations ?? []).map((r: any) => ({
       phone: r.crew_members?.phone ?? r.guests?.phone ?? '',
       // 신청 시점 역할 기준 (flip 된 행 → 게스트)
       is_crew: isCrewAtRegistration(r.crew_id, r.crew_members?.created_at, r.registered_at),
@@ -221,43 +223,93 @@ export async function GET(request: NextRequest) {
 
     const thisEventPhones = thisEventPeople.map((p: any) => p.phone)
 
-    // 이 행사 날짜 조회
-    const { data: eventInfo } = await supabase
-      .from('events')
-      .select('event_date')
-      .eq('id', eventId)
-      .single()
-    const eventDate = eventInfo?.event_date ?? new Date().toISOString()
-
-    // 이 행사보다 이전 행사의 event_id 목록
-    const { data: prevEvents } = await supabase
-      .from('events')
-      .select('id')
-      .lt('event_date', eventDate)
+    // ── 2단계: 행사 날짜 기준 조회 병렬 실행 ──
+    // 이전 행사 목록(최신순 — 첫 행이 직전 행사) + 이번 행사 전까지의 누적 크루 수(포도 제외)
+    const [{ data: prevEvents }, { count: crewBeforeEvent }] = await Promise.all([
+      supabase
+        .from('events')
+        .select('id, event_date')
+        .lt('event_date', eventDate)
+        .order('event_date', { ascending: false }),
+      supabase
+        .from('crew_members')
+        .select('*', { count: 'exact', head: true })
+        .lt('created_at', eventDate)
+        .or('is_member.is.null,is_member.eq.false'),
+    ])
     const prevEventIds = (prevEvents ?? []).map((e: any) => e.id)
+    const prevEventInfo = (prevEvents ?? [])[0] as { id: string; event_date: string } | undefined
 
-    // 이전 행사에 출석완료한 phone 수집
-    const prevPhoneSet = new Set<string>()
-    if (thisEventPhones.length > 0 && prevEventIds.length > 0) {
-      const { data: prevCrewRegs } = await supabase
-        .from('event_registrations')
-        .select('crew_members ( phone )')
-        .in('event_id', prevEventIds)
-        .eq('status', '출석완료')
-        .not('crew_id', 'is', null)
-      for (const r of prevCrewRegs ?? []) {
-        if ((r as any).crew_members?.phone) prevPhoneSet.add((r as any).crew_members.phone)
-      }
-      const { data: prevGuestRegs } = await supabase
-        .from('event_registrations')
-        .select('guests ( phone )')
-        .in('event_id', prevEventIds)
-        .eq('status', '출석완료')
-        .not('guest_id', 'is', null)
-      for (const r of prevGuestRegs ?? []) {
-        if ((r as any).guests?.phone) prevPhoneSet.add((r as any).guests.phone)
-      }
-    }
+    // 게스트→크루 전환 대상: 이 행사에 출석한 phone
+    const allCheckedInPhones = thisEventPeople
+      .filter((p: any) => p.status === '출석완료')
+      .map((p: any) => p.phone)
+      .filter((p: string) => !p.startsWith('PODO-'))
+
+    // ── 3단계: 서로 독립인 집계 조회 병렬 실행 ──
+    const [prevPhoneSet, crewConversionCount, betweenData] = await Promise.all([
+      // 이전 행사에 출석완료한 phone 수집
+      (async () => {
+        const set = new Set<string>()
+        if (thisEventPhones.length === 0 || prevEventIds.length === 0) return set
+        const [{ data: prevCrewRegs }, { data: prevGuestRegs }] = await Promise.all([
+          supabase
+            .from('event_registrations')
+            .select('crew_members ( phone )')
+            .in('event_id', prevEventIds)
+            .eq('status', '출석완료')
+            .not('crew_id', 'is', null),
+          supabase
+            .from('event_registrations')
+            .select('guests ( phone )')
+            .in('event_id', prevEventIds)
+            .eq('status', '출석완료')
+            .not('guest_id', 'is', null),
+        ])
+        for (const r of prevCrewRegs ?? []) {
+          if ((r as any).crew_members?.phone) set.add((r as any).crew_members.phone)
+        }
+        for (const r of prevGuestRegs ?? []) {
+          if ((r as any).guests?.phone) set.add((r as any).guests.phone)
+        }
+        return set
+      })(),
+      // 게스트→크루 전환: 이 행사에 출석 + guests에 phone 있음 + 이 행사 이후 크루 가입한 사람
+      (async () => {
+        if (allCheckedInPhones.length === 0) return 0
+        const { data: guestRecords } = await supabase
+          .from('guests')
+          .select('phone')
+          .in('phone', allCheckedInPhones)
+        const guestPhoneSet = new Set((guestRecords ?? []).map((g: any) => g.phone))
+        if (guestPhoneSet.size === 0) return 0
+        // 크루 가입일이 행사 날짜 이후인 사람만
+        const { data: crewRecords } = await supabase
+          .from('crew_members')
+          .select('phone')
+          .in('phone', [...guestPhoneSet])
+          .gte('created_at', eventDate)
+        return (crewRecords ?? []).length
+      })(),
+      // 직전 행사 이후 가입 크루 + 직전 행사 출석자 phone
+      (async () => {
+        if (!prevEventInfo) return null
+        const [{ data: betweenCrews }, { data: prevAttended }] = await Promise.all([
+          supabase
+            .from('crew_members')
+            .select('phone')
+            .gte('created_at', prevEventInfo.event_date)
+            .lt('created_at', eventDate)
+            .or('is_member.is.null,is_member.eq.false'),
+          supabase
+            .from('event_registrations')
+            .select('crew_members ( phone ), guests ( phone )')
+            .eq('event_id', prevEventInfo.id)
+            .eq('status', '출석완료'),
+        ])
+        return { betweenCrews, prevAttended }
+      })(),
+    ])
 
     const firstTimeCrew = thisEventPeople.filter((p: any) => p.is_crew && !prevPhoneSet.has(p.phone))
     const firstTimeGuest = thisEventPeople.filter((p: any) => !p.is_crew && !prevPhoneSet.has(p.phone))
@@ -266,65 +318,12 @@ export async function GET(request: NextRequest) {
     const firstTimeGuestCount = firstTimeGuest.length
     const firstTimeGuestCheckedIn = firstTimeGuest.filter((p: any) => p.status === '출석완료').length
 
-    // 게스트→크루 전환: 이 행사에 출석 + guests에 phone 있음 + 이 행사 이후 크루 가입한 사람
-    const allCheckedInPhones = thisEventPeople
-      .filter((p: any) => p.status === '출석완료')
-      .map((p: any) => p.phone)
-      .filter((p: string) => !p.startsWith('PODO-'))
-
-    let crewConversionCount = 0
-    if (allCheckedInPhones.length > 0) {
-      const { data: guestRecords } = await supabase
-        .from('guests')
-        .select('phone')
-        .in('phone', allCheckedInPhones)
-      const guestPhoneSet = new Set((guestRecords ?? []).map((g: any) => g.phone))
-
-      if (guestPhoneSet.size > 0) {
-        // 크루 가입일이 행사 날짜 이후인 사람만
-        const { data: crewRecords } = await supabase
-          .from('crew_members')
-          .select('phone')
-          .in('phone', [...guestPhoneSet])
-          .gte('created_at', eventDate)
-        crewConversionCount = (crewRecords ?? []).length
-      }
-    }
-
     // ── 누적 크루 계산 ──
-    // 이번 행사 전까지의 전체 크루 (포도 제외)
-    const { count: crewBeforeEvent } = await supabase
-      .from('crew_members')
-      .select('*', { count: 'exact', head: true })
-      .lt('created_at', eventDate)
-      .or('is_member.is.null,is_member.eq.false')
-
-    // 직전 행사 정보
     let betweenEventsCrew = 0
     let prevAccumulated = 0
-    const { data: prevEventInfo } = await supabase
-      .from('events')
-      .select('id, event_date')
-      .lt('event_date', eventDate)
-      .order('event_date', { ascending: false })
-      .limit(1)
-      .single()
-
     if (prevEventInfo) {
       // 직전 행사 이후 크루 가입한 사람 중, 직전 행사 미참석자 이고 현 행사 크루 전환도 아닌 사람 (직접 신청)
-      const { data: betweenCrews } = await supabase
-        .from('crew_members')
-        .select('phone')
-        .gte('created_at', prevEventInfo.event_date)
-        .lt('created_at', eventDate)
-        .or('is_member.is.null,is_member.eq.false')
-
-      // 직전 행사 출석자 phone
-      const { data: prevAttended } = await supabase
-        .from('event_registrations')
-        .select('crew_members ( phone ), guests ( phone )')
-        .eq('event_id', prevEventInfo.id)
-        .eq('status', '출석완료')
+      const { betweenCrews, prevAttended } = betweenData!
       const prevAttendedPhones = new Set<string>()
       for (const r of prevAttended ?? []) {
         const phone = (r as any).crew_members?.phone ?? (r as any).guests?.phone
@@ -383,11 +382,6 @@ export async function GET(request: NextRequest) {
     }
 
     // ── 섹션 3: 피드백 분석 ──
-    const { data: feedbacks } = await supabase
-      .from('feedbacks')
-      .select('good_tags, bad_tags, good_points, bad_points, would_return, join_interest')
-      .eq('event_id', eventId)
-
     const goodTagCount: Record<string, number> = {}
     const badTagCount: Record<string, number> = {}
     for (const f of feedbacks ?? []) {
@@ -400,13 +394,6 @@ export async function GET(request: NextRequest) {
     }
     const toSorted = (map: Record<string, number>) =>
       Object.entries(map).map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count)
-
-    // 포도용 피드백 (/grapefeedback 기명 3문항)
-    const { data: grapeFeedbacks } = await supabase
-      .from('grape_feedbacks')
-      .select('name, q1, q2, q3, created_at')
-      .eq('event_id', eventId)
-      .order('created_at', { ascending: true })
 
     const section3 = {
       total_responses: feedbacks?.length ?? 0,

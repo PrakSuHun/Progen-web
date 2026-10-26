@@ -14,10 +14,13 @@ export async function GET(request: NextRequest) {
 
   // ── 누적 크루 전체 ──
   if (mode === 'all') {
-    const { data, error } = await supabase
-      .from('crew_members')
-      .select('id, name, phone, school, grade, age, major, path, project, gender, motivation, role, status, is_member, noshow_count, created_at')
-      .order('created_at', { ascending: false })
+    const [{ data, error }, cnucareMap] = await Promise.all([
+      supabase
+        .from('crew_members')
+        .select('id, name, phone, school, grade, age, major, path, project, gender, motivation, role, status, is_member, noshow_count, created_at')
+        .order('created_at', { ascending: false }),
+      getCnucareEventsByPhone(),
+    ])
 
     if (error) return NextResponse.json({ message: error.message }, { status: 500 })
 
@@ -29,7 +32,7 @@ export async function GET(request: NextRequest) {
           reg_status: null,
           team_name: null,
         })),
-        await getCnucareEventsByPhone(),
+        cnucareMap,
       ),
     })
   }
@@ -40,31 +43,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: '행사를 찾을 수 없습니다' }, { status: 500 })
   }
 
-  const { data: regs, error } = await supabase
-    .from('event_registrations')
-    .select(`
-      id, status, team_name, crew_id, guest_id, registered_at, student_number, companion,
-      crew_members ( id, name, phone, school, grade, age, major, path, project, gender, motivation, is_member, noshow_count, created_at ),
-      guests ( id, name, phone, school, grade, age, major, path, gender, created_at )
-    `)
-    .eq('event_id', eventId)
-    .order('registered_at', { ascending: false })
+  // 신청 목록·포도 목록·행사 날짜·씨엔유케어 명단은 서로 독립 → 병렬 조회
+  const [{ data: regs, error }, { data: podoCrews }, { data: eventInfoData }, cnucareMap] = await Promise.all([
+    supabase
+      .from('event_registrations')
+      .select(`
+        id, status, team_name, crew_id, guest_id, registered_at, student_number, companion,
+        crew_members ( id, name, phone, school, grade, age, major, path, project, gender, motivation, is_member, noshow_count, created_at ),
+        guests ( id, name, phone, school, grade, age, major, path, gender, created_at )
+      `)
+      .eq('event_id', eventId)
+      .order('registered_at', { ascending: false }),
+    // 포도 감지: crew_members에서 is_member=true인 phone 목록
+    supabase.from('crew_members').select('phone').eq('is_member', true),
+    supabase.from('events').select('event_date').eq('id', eventId).single(),
+    getCnucareEventsByPhone(),
+  ])
 
   if (error) return NextResponse.json({ message: error.message }, { status: 500 })
 
-  // 포도 감지: crew_members에서 is_member=true인 phone 목록
-  const { data: podoCrews } = await supabase
-    .from('crew_members')
-    .select('phone')
-    .eq('is_member', true)
   const podoPhones = new Set((podoCrews ?? []).map((c: any) => c.phone))
-
-  // 이 행사 날짜 조회
-  const { data: eventInfoData } = await supabase
-    .from('events')
-    .select('event_date')
-    .eq('id', eventId)
-    .single()
   const thisEventDate = eventInfoData?.event_date ?? new Date().toISOString()
 
   // 이 행사보다 이전 행사 ID 목록
@@ -74,24 +72,26 @@ export async function GET(request: NextRequest) {
     .lt('event_date', thisEventDate)
   const prevEventIds = (prevEventsData ?? []).map((e: any) => e.id)
 
-  // 이전 행사에 출석완료한 phone 수집
+  // 이전 행사에 출석완료한 phone 수집 (크루·게스트 병렬)
   const prevPhoneSet = new Set<string>()
   if (prevEventIds.length > 0) {
-    const { data: prevCrewRegs } = await supabase
-      .from('event_registrations')
-      .select('crew_members ( phone )')
-      .in('event_id', prevEventIds)
-      .eq('status', '출석완료')
-      .not('crew_id', 'is', null)
+    const [{ data: prevCrewRegs }, { data: prevGuestRegs }] = await Promise.all([
+      supabase
+        .from('event_registrations')
+        .select('crew_members ( phone )')
+        .in('event_id', prevEventIds)
+        .eq('status', '출석완료')
+        .not('crew_id', 'is', null),
+      supabase
+        .from('event_registrations')
+        .select('guests ( phone )')
+        .in('event_id', prevEventIds)
+        .eq('status', '출석완료')
+        .not('guest_id', 'is', null),
+    ])
     for (const r of prevCrewRegs ?? []) {
       if ((r as any).crew_members?.phone) prevPhoneSet.add((r as any).crew_members.phone)
     }
-    const { data: prevGuestRegs } = await supabase
-      .from('event_registrations')
-      .select('guests ( phone )')
-      .in('event_id', prevEventIds)
-      .eq('status', '출석완료')
-      .not('guest_id', 'is', null)
     for (const r of prevGuestRegs ?? []) {
       if ((r as any).guests?.phone) prevPhoneSet.add((r as any).guests.phone)
     }
@@ -129,5 +129,5 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({ members: annotateCnucare(members, await getCnucareEventsByPhone()) })
+  return NextResponse.json({ members: annotateCnucare(members, cnucareMap) })
 }

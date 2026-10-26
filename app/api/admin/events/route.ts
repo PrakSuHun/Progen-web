@@ -43,14 +43,16 @@ export async function GET(request: NextRequest) {
     if (effectiveCohortId != null) query = query.eq('cohort_id', effectiveCohortId)
   }
 
-  const { data, error } = await query
-  if (error) return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
   // activeEventId: 날짜 기반 활성 행사(모든 행사, 자동문자 토글 등에 사용)
   // defaultEventId: 어드민 첫 진입 시 기본 선택 = 가장 가까운 외부(공개) 행사 → 내부 회차(7/18 등) 대신 8/1이 뜬다
-  const activeEventId = await getActiveEventId()
-  const defaultEventId = isEventKind
-    ? await getActivePromoEventId()
-    : (await getActivePublicEventId()) ?? activeEventId
+  // 목록·활성 행사·기본 선택은 서로 독립이라 병렬 조회
+  const [{ data, error }, activeEventId, defaultCandidate] = await Promise.all([
+    query,
+    getActiveEventId(),
+    isEventKind ? getActivePromoEventId() : getActivePublicEventId(),
+  ])
+  if (error) return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })
+  const defaultEventId = isEventKind ? defaultCandidate : defaultCandidate ?? activeEventId
   return NextResponse.json({ data, activeEventId, defaultEventId, cohorts: cohorts ?? [], currentCohortId, effectiveCohortId })
 }
 

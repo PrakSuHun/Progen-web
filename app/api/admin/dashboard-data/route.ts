@@ -23,44 +23,52 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: '현재 활성 행사를 찾을 수 없습니다' }, { status: 500 })
     }
 
-    // Fetch all registrations for active event with person info
-    const { data: registrations, error } = await supabase
-      .from('event_registrations')
-      .select(`
-        id,
-        status,
-        team_name,
-        crew_id,
-        guest_id,
-        deposit_status,
-        deposit_paid_at,
-        refund_account,
-        student_number,
-        companion,
-        registered_at,
-        checked_in_at,
-        crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count, created_at ),
-        guests ( name, phone, school, grade, age, gender, major )
-      `)
-      .eq('event_id', eventId)
+    // 신청 목록·포도 목록·알림 발송 이력·씨엔유케어 명단은 서로 독립 → 병렬 조회
+    const [
+      { data: registrations, error },
+      { data: crewList },
+      { data: alertLogs },
+      cnucareMap,
+    ] = await Promise.all([
+      supabase
+        .from('event_registrations')
+        .select(`
+          id,
+          status,
+          team_name,
+          crew_id,
+          guest_id,
+          deposit_status,
+          deposit_paid_at,
+          refund_account,
+          student_number,
+          companion,
+          registered_at,
+          checked_in_at,
+          crew_members ( name, phone, school, grade, age, gender, major, is_member, noshow_count, created_at ),
+          guests ( name, phone, school, grade, age, gender, major )
+        `)
+        .eq('event_id', eventId),
+      // crew_members phone→is_member map for guest matching
+      supabase
+        .from('crew_members')
+        .select('phone, is_member, noshow_count')
+        .eq('is_member', true),
+      // 보증금 탭: 알림 발송 이력 — 미입금 알림(11번, 최대 2회) 횟수 + 취소 알림(5번) 발송 여부
+      supabase
+        .from('alimtalk_logs')
+        .select('registration_id, template_code')
+        .eq('event_id', eventId)
+        .in('template_code', [ALIMTALK.DEPOSIT_REMINDER.code, ALIMTALK.REG_CANCELLED.code])
+        .eq('status', 'sent'),
+      // 씨엔유케어 행사 명단 교차 표시용
+      getCnucareEventsByPhone(),
+    ])
 
     if (error) throw error
 
-    // Fetch crew_members phone→is_member map for guest matching
-    const { data: crewList } = await supabase
-      .from('crew_members')
-      .select('phone, is_member, noshow_count')
-      .eq('is_member', true)
-
     const podoPhones = new Set((crewList ?? []).filter((c: any) => c.is_member).map((c: any) => c.phone))
 
-    // 보증금 탭: 알림 발송 이력 — 미입금 알림(11번, 최대 2회) 횟수 + 취소 알림(5번) 발송 여부
-    const { data: alertLogs } = await supabase
-      .from('alimtalk_logs')
-      .select('registration_id, template_code')
-      .eq('event_id', eventId)
-      .in('template_code', [ALIMTALK.DEPOSIT_REMINDER.code, ALIMTALK.REG_CANCELLED.code])
-      .eq('status', 'sent')
     const reminderCounts = new Map<string, number>()
     const cancelSent = new Set<string>()
     for (const log of alertLogs ?? []) {
@@ -104,7 +112,6 @@ export async function GET(request: NextRequest) {
     }
 
     // 씨엔유케어 행사 명단 교차 표시 — 포도 아닌 사람 중 전화번호 완전 일치자에 cnucare_events 부착
-    const cnucareMap = await getCnucareEventsByPhone()
     const all = annotateCnucare((registrations ?? []).map(toAttendee), cnucareMap)
     const preRegistered = all.filter((a) => a.status === '사전신청' || a.status === '출석완료' || a.status === '노쇼확정')
     const checkedIn = all.filter((a) => a.status === '출석완료')

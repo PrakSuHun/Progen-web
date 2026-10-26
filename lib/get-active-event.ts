@@ -28,9 +28,6 @@ async function resolveActiveEventId(publicOnly: boolean, eventOnly = false): Pro
   if (publicOnly) upcomingQuery = upcomingQuery.eq('is_public', true)
   if (eventOnly) upcomingQuery = upcomingQuery.eq('is_event', true)
 
-  const { data: upcoming } = await upcomingQuery.single()
-  if (upcoming) return upcoming.id
-
   let pastQuery = supabase
     .from('events')
     .select('id, event_date')
@@ -40,7 +37,9 @@ async function resolveActiveEventId(publicOnly: boolean, eventOnly = false): Pro
   if (publicOnly) pastQuery = pastQuery.eq('is_public', true)
   if (eventOnly) pastQuery = pastQuery.eq('is_event', true)
 
-  const { data: past } = await pastQuery.single()
+  // 미래·과거 후보를 병렬 조회 (미래 우선)
+  const [{ data: upcoming }, { data: past }] = await Promise.all([upcomingQuery.maybeSingle(), pastQuery.maybeSingle()])
+  if (upcoming) return upcoming.id
   if (!past) return null
 
   const pastDate = new Date(past.event_date)
