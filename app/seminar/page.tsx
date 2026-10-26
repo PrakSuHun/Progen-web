@@ -120,7 +120,7 @@ export default function SeminarPage() {
                       {s.status === '사전 신청 중' && (
                         <Link href="/event-reg"
                           className="inline-block px-6 py-2.5 bg-sky-500 hover:bg-sky-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30 text-white text-sm font-bold rounded-full transition-all duration-200">
-                          9/19 행사 사전 신청 →
+                          사전 신청 →
                         </Link>
                       )}
                     </div>

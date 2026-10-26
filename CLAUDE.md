@@ -1,5 +1,7 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
+> **2026-10-26 세미나 버튼 문구**: `/seminar` 「사전 신청 중」 카드(현재 11월 클래스) 버튼에 9/19 시절 문구 「9/19 행사 사전 신청 →」이 남아 있던 것을 「사전 신청 →」로 변경(링크 /event-reg 그대로).
+
 > **2026-10-26 소개 페이지 대표 소개 삭제**: `/about`에서 「Founder — 대표 소개」 섹션(박수훈 프로필·태그·인용문)과 그 아래 통계 띠(대표 누적 매출·정부지원금·1회차 참여자·만족도) 제거, `founderTags`·`stats` 상수 삭제. 이제 히어로 → 핵심 가치 → CTA 3섹션. 세미나 카드의 강사 표기(`대표 박수훈`)와 홈 CtaBanner 「대표 직강」 문구는 유지.
 
 > **2026-10-26 어드민 속도 개선 + 세션 보안**: 원인 = Vercel 함수가 미국(iad1)에서 돌고 Supabase는 서울(ap-northeast-2)이라 쿼리마다 태평양 왕복(빈 응답도 ~1초, full-stats ~7초). ① `vercel.json` `regions: ["icn1"]`(서울). ② 독립 쿼리 `Promise.all` 병렬화 — full-stats(순차 18회→3단계, 섹션1·2가 신청 목록 쿼리 공유), members-list·dashboard-data(씨엔유케어 조회 포함)·events(목록/활성/기본선택)·`resolveActiveEventId`(미래·과거 후보). 응답은 변경 전과 바이트 단위 동일(행사 5개+crew-all+kind=event 스냅샷 25건 비교). ③ `Dashboard.tsx` — full-stats를 첫 로딩에서 분리: `fetchAll`은 dashboard-data만 기다리고, 분석 데이터는 **분석 탭이 열려 있을 때만** 백그라운드 로드(`statsVersion`으로 fetchAll마다 무효화, 행사 바뀌면 이전 수치 비움, 늦게 온 이전 요청 무시). 분석 탭 로딩 중엔 스피너. ④ **보안: `admin_session` 쿠키가 고정값 'authenticated'라 누구나 위조 가능했음** → `lib/admin-session.ts` HMAC-SHA256 서명 토큰(`v1.<만료>.<서명>`, 키는 ADMIN_PASSWORD 파생 — 비번 바꾸면 전 세션 무효), 로그인이 발급·미들웨어가 검증(Web Crypto), 미인증 API는 307 대신 401 JSON. **배포 시 기존 로그인 전부 풀림 → 운영진 재로그인 필요.** 각 라우트의 `checkAuth`(쿠키 존재만 확인)는 미들웨어가 앞단에서 막으므로 그대로 둠.
