@@ -530,31 +530,65 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     loadEvents(val || undefined)
   }
 
+  // 분석 데이터(full-stats)는 가장 무거운 API라 첫 화면을 막지 않도록 분리 —
+  // 분석 탭이 열려 있을 때만 백그라운드로 불러오고, 다른 탭에선 "다시 불러올 필요 있음"으로만 표시해 둔다.
+  const [statsLoading, setStatsLoading] = useState(false)
+  const [statsVersion, setStatsVersion] = useState(0)
+  const statsLoadedKeyRef = useRef<string | null>(null) // 마지막으로 불러온 `${eventId}#${version}`
+  const statsEventRef = useRef<string | null>(null)      // 현재 fullStats가 속한 행사
+  const statsReqRef = useRef(0)
+
+  const fetchStats = async (eid: string, key: string) => {
+    const reqId = ++statsReqRef.current
+    setStatsLoading(true)
+    try {
+      const res = await fetch(`/api/admin/full-stats${eid ? `?eventId=${eid}` : ''}`)
+      if (reqId !== statsReqRef.current) return // 더 최신 요청이 있으면 버림
+      if (res.ok) {
+        setFullStats(await res.json())
+        statsEventRef.current = eid
+        statsLoadedKeyRef.current = key
+      }
+    } catch {
+      if (reqId === statsReqRef.current) showToast('분석 데이터를 불러올 수 없습니다', 'error')
+    } finally {
+      if (reqId === statsReqRef.current) setStatsLoading(false)
+    }
+  }
+
   const fetchAll = async (eventId?: string) => {
     setLoading(true)
     const eid = eventId || selectedEventId
     const qs = eid ? `?eventId=${eid}` : ''
+    // 분석 데이터 무효화 — 다른 행사로 바뀌었으면 이전 행사 수치가 보이지 않게 비움
+    if (statsEventRef.current !== eid) setFullStats(null)
+    setStatsVersion((v) => v + 1)
     try {
       // ※ 예전엔 여기서 compact-teams를 자동 호출해 팀 번호를 1,2,3…으로 재정렬했는데,
       //   그 때문에 새로고침마다 빈 팀이 사라지고 뒤 팀이 앞당겨졌다(행사 당일 팀 뒤섞임).
       //   이제 번호 재정렬은 운영진의 명시적 팀 삭제 때만 하고, 자동 호출은 하지 않는다.
-      const [dashRes, statsRes] = await Promise.all([
-        fetch(`/api/admin/dashboard-data${qs}`),
-        fetch(`/api/admin/full-stats${qs}`),
-      ])
+      const dashRes = await fetch(`/api/admin/dashboard-data${qs}`)
       if (dashRes.status === 401) { router.push('/admin'); return }
       if (dashRes.ok) {
         const newData: DashboardData = await dashRes.json()
         // 빈 팀은 렌더 시 DB 팀 번호의 빈 번호(gap)로 계산한다(localStorage 미사용).
         setData(newData)
       }
-      if (statsRes.ok) setFullStats(await statsRes.json())
     } catch {
       showToast('데이터를 불러올 수 없습니다', 'error')
     } finally {
       setLoading(false)
     }
   }
+
+  // 분석 탭이 열려 있고 최신 분석 데이터가 아니면 불러옴 (행사 변경·새로고침·데이터 변경 후 fetchAll 시 갱신)
+  useEffect(() => {
+    if (activeTab !== 'analysis' || loading) return
+    const key = `${selectedEventId}#${statsVersion}`
+    if (statsLoadedKeyRef.current === key) return
+    fetchStats(selectedEventId, key)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedEventId, statsVersion, loading])
 
   const isCrewMode = selectedEventId === 'crew-all'
 
@@ -1406,6 +1440,16 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
 
   // ── Tab 3: 전체 분석 ──
   const renderAnalysis = () => {
+    if (!fullStats) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            {statsLoading && <div className="w-7 h-7 border-3 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />}
+            <p className="text-slate-500 text-sm">{statsLoading ? '분석 데이터 불러오는 중...' : '분석 데이터가 없습니다'}</p>
+          </div>
+        </div>
+      )
+    }
     const s1 = fullStats?.section1
     const s2 = fullStats?.section2 as any
     const s3 = fullStats?.section3 as any

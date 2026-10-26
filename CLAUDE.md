@@ -1,5 +1,7 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
+> **2026-10-26 어드민 속도 개선 + 세션 보안**: 원인 = Vercel 함수가 미국(iad1)에서 돌고 Supabase는 서울(ap-northeast-2)이라 쿼리마다 태평양 왕복(빈 응답도 ~1초, full-stats ~7초). ① `vercel.json` `regions: ["icn1"]`(서울). ② 독립 쿼리 `Promise.all` 병렬화 — full-stats(순차 18회→3단계, 섹션1·2가 신청 목록 쿼리 공유), members-list·dashboard-data(씨엔유케어 조회 포함)·events(목록/활성/기본선택)·`resolveActiveEventId`(미래·과거 후보). 응답은 변경 전과 바이트 단위 동일(행사 5개+crew-all+kind=event 스냅샷 25건 비교). ③ `Dashboard.tsx` — full-stats를 첫 로딩에서 분리: `fetchAll`은 dashboard-data만 기다리고, 분석 데이터는 **분석 탭이 열려 있을 때만** 백그라운드 로드(`statsVersion`으로 fetchAll마다 무효화, 행사 바뀌면 이전 수치 비움, 늦게 온 이전 요청 무시). 분석 탭 로딩 중엔 스피너. ④ **보안: `admin_session` 쿠키가 고정값 'authenticated'라 누구나 위조 가능했음** → `lib/admin-session.ts` HMAC-SHA256 서명 토큰(`v1.<만료>.<서명>`, 키는 ADMIN_PASSWORD 파생 — 비번 바꾸면 전 세션 무효), 로그인이 발급·미들웨어가 검증(Web Crypto), 미인증 API는 307 대신 401 JSON. **배포 시 기존 로그인 전부 풀림 → 운영진 재로그인 필요.** 각 라우트의 `checkAuth`(쿠키 존재만 확인)는 미들웨어가 앞단에서 막으므로 그대로 둠.
+
 > **2026-10-26 사전 공지 1차/2차 템플릿 분리**: 솔라피에 「4. 행사 2차 공지」(`KA01TP260926062527460d0MuCLPqNc3`, "참여 전 안내드립니다", APPROVED) 연결 — `ALIMTALK.EVENT_D1_NOTICE_2` 신설, 기존 `EVENT_D1_NOTICE`(`KA01TP260915...`)는 「4. 행사 1차 공지」("신청해주셔서 감사합니다")로 1차 전용. 변수·버튼은 두 템플릿 동일(varsEventD1Notice 공용, 2차는 materials2). `send-alimtalk-batch` d1은 round에 따라 템플릿 선택, **중복 방지는 회차별 템플릿 발송 여부**(종전 1차 코드 발송 횟수>=round 방식 폐기 — 단 분리 이전에 1차 코드로 2회 받은 건은 2차 완료로 간주). `event-settings` d1 recipients는 `count` 대신 `sent1`/`sent2` 반환, 설정 탭 명단·기본선택도 회차별 플래그 기준. 🧪 테스트 드롭다운에 「4. 행사 2차 공지」 추가. 검증: 11/7 행사 대상 8명 1차·2차 모두 미발송(어제 로그 4건은 테스트 발송이라 미집계).
 
 > **2026-10-19 홈 커리큘럼 접기**: 3월 카드 복원(숨김 철회) + `CurriculumSection`을 client 컴포넌트로 바꿔 **최신 5개(`VISIBLE_COUNT`)만 기본 노출**, 그 이전 회차는 목록 위 「지난 클래스 N개 더 보기 ▾」 버튼으로 펼침/접기. Hero 기간 문구 「3월 ~ 11월」로 복원(FloatCard는 4·6·9·11월 유지).
@@ -585,11 +587,11 @@ AI 보고서 영역:
 
 ## 7. 인증 구조
 
-- 쿠키 이름: `admin_session`, 값: `authenticated`
+- 쿠키 이름: `admin_session`, 값: **HMAC 서명 토큰** `v1.<만료epoch>.<sha256 hex>` (`lib/admin-session.ts`, 2026-10-26 — 종전 고정값 `authenticated`는 위조 가능해 폐기). 서명 키는 `ADMIN_PASSWORD`에서 파생 → 비밀번호 변경 시 모든 세션 무효
 - 속성: httpOnly, secure(프로덕션), sameSite=lax, **30일 유효**
 - 보호 범위 ([middleware.ts](middleware.ts)):
   - 통과: `/admin` 로그인 페이지, `/api/admin/login`, `/api/admin/logout`
-  - 검증: `/admin/**`, `/api/admin/**` → 쿠키 없으면 `/admin`으로 리다이렉트
+  - 검증: `/admin/**`, `/api/admin/**` → 토큰 서명·만료 검증 실패 시 페이지는 `/admin`으로 리다이렉트, API는 401 JSON
 
 ---
 
