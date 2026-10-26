@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const idFilter = Array.isArray(registrationIds) && registrationIds.length > 0
       ? new Set(registrationIds)
       : null
-    // 사전 공지(d1)는 1차/2차 두 번 발송 가능 — 회차별 중복 방지는 발송 로그 횟수로 판정
+    // 사전 공지(d1)는 1차/2차 템플릿이 분리됨 — 회차별로 해당 템플릿 발송 여부로 중복 방지
     const d1Round = template === 'd1' ? (Number((body as any).round) === 2 ? 2 : 1) : 1
 
     const supabase = createAdminClient()
@@ -101,23 +101,30 @@ export async function POST(request: NextRequest) {
     }
 
     // confirm은 크루/게스트별로 다른 템플릿. d1·change는 단일.
-    const fixedTpl = template === 'd1' ? ALIMTALK.EVENT_D1_NOTICE : template === 'change' ? ALIMTALK.EVENT_CHANGED : null
+    const d1Tpl = d1Round === 2 ? ALIMTALK.EVENT_D1_NOTICE_2 : ALIMTALK.EVENT_D1_NOTICE
+    const fixedTpl = template === 'd1' ? d1Tpl : template === 'change' ? ALIMTALK.EVENT_CHANGED : null
     // change(8번)는 행사가 바뀔 때마다 재발송 가능하도록 중복 체크 안 함. confirm/d1는 미발송자만.
     const dedup = template !== 'change'
 
-    let d1Counts: Map<string, number> | null = null
+    // 회차별 발송 완료 registration id. 2차는 템플릿 분리(2026-10-26) 이전에 1차 코드로 2회 받은 경우도 완료로 간주
+    let d1Done: Set<string> | null = null
     if (template === 'd1') {
       const { data: d1Logs } = await supabase
         .from('alimtalk_logs')
-        .select('registration_id')
+        .select('registration_id, template_code')
         .eq('event_id', eventId)
-        .eq('template_code', ALIMTALK.EVENT_D1_NOTICE.code)
+        .in('template_code', [ALIMTALK.EVENT_D1_NOTICE.code, ALIMTALK.EVENT_D1_NOTICE_2.code])
         .eq('status', 'sent')
-      d1Counts = new Map()
+      const firstCounts = new Map<string, number>()
+      const secondSet = new Set<string>()
       for (const l of d1Logs ?? []) {
         if (!l.registration_id) continue
-        d1Counts.set(l.registration_id, (d1Counts.get(l.registration_id) ?? 0) + 1)
+        if (l.template_code === ALIMTALK.EVENT_D1_NOTICE_2.code) secondSet.add(l.registration_id)
+        else firstCounts.set(l.registration_id, (firstCounts.get(l.registration_id) ?? 0) + 1)
       }
+      d1Done = new Set<string>()
+      for (const [id, c] of firstCounts) if (d1Round === 1 || c >= 2) d1Done.add(id)
+      if (d1Round === 2) for (const id of secondSet) d1Done.add(id)
     }
 
     let sent = 0, failed = 0, skipped = 0, alreadyDone = 0
@@ -130,8 +137,8 @@ export async function POST(request: NextRequest) {
 
         const tpl = fixedTpl ?? (p.crewId != null ? ALIMTALK.EVENT_CONFIRMED_CREW : ALIMTALK.EVENT_CONFIRMED)
         if (template === 'd1') {
-          // n차 발송: 이미 n회 이상 받은 사람은 건너뜀 (1차=미발송자만, 2차=1회 받은 사람까지)
-          if ((d1Counts?.get(r.id) ?? 0) >= d1Round) { alreadyDone++; return }
+          // 해당 회차를 이미 받은 사람만 건너뜀 (1차를 안 받은 사람도 2차 발송 가능)
+          if (d1Done?.has(r.id)) { alreadyDone++; return }
         } else if (dedup && (await alreadySent(tpl.code, { registrationId: r.id }))) { alreadyDone++; return }
 
         let variables: Record<string, string>

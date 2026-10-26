@@ -31,7 +31,8 @@ interface Recipient {
   name: string
   type: 'crew' | 'guest'
   sent: boolean
-  count?: number
+  sent1?: boolean
+  sent2?: boolean
 }
 
 interface RecipientsInfo {
@@ -83,7 +84,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
         // 미발송자 기본 전체 선택
         if (recs) {
           setD1Round(1)
-          setSelectedD1(new Set(recs.d1.filter((r) => (r.count ?? 0) < 1).map((r) => r.id)))
+          setSelectedD1(new Set(recs.d1.filter((r) => !r.sent1).map((r) => r.id)))
         } else {
           setSelectedD1(new Set())
         }
@@ -299,7 +300,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
               </div>
             ) : (
               <div className="space-y-4">
-                {/* 행사 사전 공지 — 같은 템플릿을 1차(확정 대체)·2차(행사 전날) 두 번 발송 */}
+                {/* 행사 사전 공지 — 1차(확정 대체)·2차(행사 전날)는 별도 템플릿, 회차별 발송 여부 따로 집계 */}
                 <div className="border border-slate-200 rounded-xl p-3.5">
                   <div className="text-sm font-bold text-slate-700 mb-1">행사 사전 공지 (4번)</div>
                   <div className="text-xs text-slate-500 mb-2.5">
@@ -315,7 +316,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                         type="button"
                         onClick={() => {
                           setD1Round(r)
-                          setSelectedD1(new Set((recipients?.d1 ?? []).filter((x) => (x.count ?? 0) < r).map((x) => x.id)))
+                          setSelectedD1(new Set((recipients?.d1 ?? []).filter((x) => !(r === 1 ? x.sent1 : x.sent2)).map((x) => x.id)))
                         }}
                         className={`rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors ${
                           d1Round === r ? 'border-sky-500 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'
@@ -326,7 +327,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                     ))}
                   </div>
                   <RecipientChecklist
-                    list={(recipients?.d1 ?? []).map((r) => ({ ...r, sent: (r.count ?? 0) >= d1Round }))}
+                    list={(recipients?.d1 ?? []).map((r) => ({ ...r, sent: !!(d1Round === 1 ? r.sent1 : r.sent2) }))}
                     selected={selectedD1}
                     setSelected={setSelectedD1}
                     emptyText="발송 대상이 없습니다"
@@ -384,7 +385,8 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       <option value="DEPOSIT_RECEIVED">2. 보증금 입금완료(게스트)</option>
                       <option value="EVENT_CONFIRMED">3. 행사 참석 확정(게스트)</option>
                       <option value="EVENT_CONFIRMED_CREW">3. 행사 참석 확정(크루)</option>
-                      <option value="EVENT_D1_NOTICE">4. 행사 사전 공지</option>
+                      <option value="EVENT_D1_NOTICE">4. 행사 1차 공지</option>
+                      <option value="EVENT_D1_NOTICE_2">4. 행사 2차 공지</option>
                       <option value="DEPOSIT_REMINDER">5. 보증금 미입금 안내</option>
                       <option value="REG_CANCELLED">5. 신청 취소 확인</option>
                       <option value="CHECKIN_WITH_TEAM">6. 현장 출석 완료 + 팀 안내</option>

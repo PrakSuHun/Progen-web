@@ -19,8 +19,10 @@ export const ALIMTALK = {
   // 2 참석 확정 — 크루용(보증금 문구 없음). 2026-09-08 신규 템플릿 교체(변수: 이름·프로그램명·일시·url — varsEventConfirmedCrew 사용)
   EVENT_CONFIRMED_CREW: { code: 'KA01TP260906112122409DXPjnrJCl2k', name: '행사 참석 확정 (크루)' },
   CREW_CONFIRMED:     { code: 'KA01TP260511070701744h8gIXOphWEW', name: '크루원 신청 접수' },    // 3
-  // 4 행사 사전 공지 — 2026-09-18 「4. 행사 사전 공지(사본)」으로 교체(승인 확인). 변수 축소: 입장시간·진행내용 삭제 → 이름·프로그램명·일시·장소·준비물·url
-  EVENT_D1_NOTICE:    { code: 'KA01TP260915043622989u7WTWk06rij', name: '행사 사전 공지' },
+  // 4 행사 사전 공지 1차 — 솔라피 「4. 행사 1차 공지」("신청해주셔서 감사합니다"). 변수: 이름·프로그램명·일시·장소·준비물·url
+  EVENT_D1_NOTICE:    { code: 'KA01TP260915043622989u7WTWk06rij', name: '행사 사전 공지 (1차)' },
+  // 4 행사 사전 공지 2차 — 솔라피 「4. 행사 2차 공지」("참여 전 안내드립니다", 2026-10-26 연결). 변수 1차와 동일
+  EVENT_D1_NOTICE_2:  { code: 'KA01TP260926062527460d0MuCLPqNc3', name: '행사 사전 공지 (2차)' },
   REG_CANCELLED:      { code: 'KA01TP260511072253259HLsKXmMYVoG', name: '신청 취소 확인' },      // 5
   CHECKIN_WITH_TEAM:  { code: 'KA01TP260511073547316F1HdnAUi1RJ', name: '현장 출석 완료 + 팀 안내' }, // 6
   CHECKIN_NO_TEAM:    { code: 'KA01TP260511075330965NCintRaUSWU', name: '팀 미배정' },           // 7

@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     .eq('status', 'sent')
 
   const sentSet = new Set((logs ?? []).map((l) => `${l.template_code}::${l.registration_id}`))
-  // 같은 템플릿 복수 발송(사전 공지 1차/2차) 판정용 발송 횟수
+  // 사전 공지 1차 코드 발송 횟수 — 템플릿 분리(2026-10-26) 이전엔 1차 코드로 2차까지 보냈으므로 2회=2차 완료로 간주
   const sentCounts = new Map<string, number>()
   for (const l of logs ?? []) {
     const k = `${l.template_code}::${l.registration_id}`
@@ -86,11 +86,13 @@ export async function GET(request: NextRequest) {
 
   const d1Eligible = list.filter(eligibleForD1)
   const d1Recipients = d1Eligible.map((r) => {
-    const count = sentCounts.get(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`) ?? 0
-    return { id: r.id, name: nameOf(r), type: typeOf(r), sent: count >= 1, count }
+    const firstCount = sentCounts.get(`${ALIMTALK.EVENT_D1_NOTICE.code}::${r.id}`) ?? 0
+    const sent1 = firstCount >= 1
+    const sent2 = sentSet.has(`${ALIMTALK.EVENT_D1_NOTICE_2.code}::${r.id}`) || firstCount >= 2
+    return { id: r.id, name: nameOf(r), type: typeOf(r), sent: sent1, sent1, sent2 }
   }).sort(byName)
-  const d1Sent = d1Recipients.filter((r) => r.sent).length
-  const d1Sent2 = d1Recipients.filter((r) => r.count >= 2).length
+  const d1Sent = d1Recipients.filter((r) => r.sent1).length
+  const d1Sent2 = d1Recipients.filter((r) => r.sent2).length
   // 전체(노쇼확정 제외) vs 대상(크루+입금) 차이 = 미입금 게스트 수
   const allCount = list.filter((r) => r.status !== '노쇼확정').length
   const unpaidCount = allCount - confirmEligible.length

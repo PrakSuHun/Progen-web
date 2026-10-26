@@ -1,5 +1,7 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
+> **2026-10-26 사전 공지 1차/2차 템플릿 분리**: 솔라피에 「4. 행사 2차 공지」(`KA01TP260926062527460d0MuCLPqNc3`, "참여 전 안내드립니다", APPROVED) 연결 — `ALIMTALK.EVENT_D1_NOTICE_2` 신설, 기존 `EVENT_D1_NOTICE`(`KA01TP260915...`)는 「4. 행사 1차 공지」("신청해주셔서 감사합니다")로 1차 전용. 변수·버튼은 두 템플릿 동일(varsEventD1Notice 공용, 2차는 materials2). `send-alimtalk-batch` d1은 round에 따라 템플릿 선택, **중복 방지는 회차별 템플릿 발송 여부**(종전 1차 코드 발송 횟수>=round 방식 폐기 — 단 분리 이전에 1차 코드로 2회 받은 건은 2차 완료로 간주). `event-settings` d1 recipients는 `count` 대신 `sent1`/`sent2` 반환, 설정 탭 명단·기본선택도 회차별 플래그 기준. 🧪 테스트 드롭다운에 「4. 행사 2차 공지」 추가. 검증: 11/7 행사 대상 8명 1차·2차 모두 미발송(어제 로그 4건은 테스트 발송이라 미집계).
+
 > **2026-10-19 홈 커리큘럼 접기**: 3월 카드 복원(숨김 철회) + `CurriculumSection`을 client 컴포넌트로 바꿔 **최신 5개(`VISIBLE_COUNT`)만 기본 노출**, 그 이전 회차는 목록 위 「지난 클래스 N개 더 보기 ▾」 버튼으로 펼침/접기. Hero 기간 문구 「3월 ~ 11월」로 복원(FloatCard는 4·6·9·11월 유지).
 
 > **2026-10-19 수료식 일정 변경(DB만)**: 내부 행사 `'청년마을 만들기' X PROGEN 수료식`(ebe0d08f) event_date 11/7 → **2026-11-20 14:00 KST**, program_sessions #15(수료식) session_date도 2026-11-20. 이로써 11/7은 「나만의 AI 비서 만들기 클래스」 단독 → 체크인 행사 충돌 해소.
@@ -568,7 +570,7 @@ AI 보고서 영역:
 | 2-게스트 | EVENT_CONFIRMED | `KA01TP260906103529205rx0U0oQ90Q7` ✅승인 (2026-09-08 신규 교체) | 이름·프로그램명 + 버튼 `#{url}`(오픈채팅 코드) — `varsEventConfirmedGuest` | `toggle-deposit` 미입금→입금 / **`/api/sms-hook` 자동 입금 확인 시** / `send-alimtalk-batch` template=confirm (게스트). **발송 조건 완화: `confirmChatReady`(채팅방 링크만 있으면 됨 — 종전 5개 필드 요구하던 `eventConfirmReady`·`varsEventConfirmed` 삭제)**. 본문에 보증금 환불 안내 포함 |
 | 2-크루 | EVENT_CONFIRMED_CREW | `KA01TP260906112122409DXPjnrJCl2k` ✅승인 (2026-09-08 신규 교체) | 이름·프로그램명·일시 + 버튼 `#{url}` — `varsEventConfirmedCrew` | `/api/event-reg` mode=crew / `add-registration` / `send-alimtalk-batch` template=confirm (크루). 발송 조건 동일하게 `confirmChatReady`. 보증금 문구 없음 |
 | 3 | CREW_CONFIRMED | `KA01TP260511070701744h8gIXOphWEW` | 이름 (버튼 고정 링크) | `/api/apply` 성공 즉시 |
-| 4 | EVENT_D1_NOTICE | `KA01TP260915043622989u7WTWk06rij` ✅승인 (2026-09-18 「행사 사전 공지(사본)」으로 교체 — **변수 축소: 입장시간·진행내용 삭제**. 구 `KA01TP260907...`은 솔라피에 잔존하나 코드 미사용) | 이름·프로그램명·일시·장소·준비물 + 버튼 `#{url}` | `send-alimtalk-batch` template=d1 + `round`(1|2) (설정 탭 「행사 사전 공지」 1차/2차 토글, 수동). **같은 템플릿 2회 발송 운영(1차=확정 대체, 2차=행사 전날) — 회차별 중복 방지는 alimtalk_logs 발송 횟수(count>=round) 기준이며 template_code 단위라 코드 교체 시 횟수 0부터 재집계**. cron 미구현 |
+| 4 | EVENT_D1_NOTICE (1차) / EVENT_D1_NOTICE_2 (2차) | 1차 `KA01TP260915043622989u7WTWk06rij` ✅승인 「4. 행사 1차 공지」 / 2차 `KA01TP260926062527460d0MuCLPqNc3` ✅승인 「4. 행사 2차 공지」 (2026-10-26 분리) | 이름·프로그램명·일시·장소·준비물 + 버튼 `#{url}` (두 템플릿 동일, 2차 준비물은 materials2) | `send-alimtalk-batch` template=d1 + `round`(1|2) — round별 템플릿 선택(설정 탭 「행사 사전 공지」 1차/2차 토글, 수동). 회차별 중복 방지 = 해당 회차 템플릿 sent 로그 유무(분리 이전 1차 코드 2회 수신은 2차 완료로 간주). cron 미구현 |
 | 5 | REG_CANCELLED | `KA01TP260511072253259HLsKXmMYVoG` ✅승인 | 이름·프로그램명 | `send-cancel-alimtalk` (보증금 탭 「취소 알림」 버튼, 수동). 자동 취소 cron은 없음 |
 | 6 | CHECKIN_WITH_TEAM | `KA01TP260511073547316F1HdnAUi1RJ` | 이름·프로그램명·팀명 | `/api/checkin` 출석완료 + team_name 있음(**활성 행사 `auto_checkin_alimtalk=true`일 때만**) / `send-individual-alimtalk` type=checkin 수동 |
 | 7 | CHECKIN_NO_TEAM | `KA01TP260511075330965NCintRaUSWU` | 이름·프로그램명 | `/api/checkin` 출석완료 + team_name 없음(**활성 행사 `auto_checkin_alimtalk=true`일 때만**) / `send-individual-alimtalk` type=checkin 수동 |
