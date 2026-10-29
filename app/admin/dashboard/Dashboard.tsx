@@ -1774,9 +1774,11 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
                   <MiniBarChart data={s3.bad_tags.map((t: TagItem) => ({ name: t.tag, count: t.count }))} color="#f87171" />
                 </div>
               )}
-              {s3.responses && s3.responses.length > 0 && (
+              {/* 행사 피드백 원문 — 포도용 피드백처럼 응답이 없어도 카드를 항상 표시 */}
+              {!crewMode && (
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-                  <h3 className="text-slate-700 font-medium mb-4">피드백 원문 ({s3.responses.length}개)</h3>
+                  <h3 className="text-slate-700 font-medium mb-4">📝 행사 피드백 ({s3.responses?.length ?? 0}개)</h3>
+                  {s3.responses && s3.responses.length > 0 ? (
                   <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                     {s3.responses.map((r: any, i: number) => (
                       <div key={i} className="bg-slate-50 rounded-xl p-4 space-y-2 border border-slate-200">
@@ -1795,6 +1797,9 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
                       </div>
                     ))}
                   </div>
+                  ) : (
+                    <p className="text-slate-400 text-sm">아직 응답이 없습니다 (/feedback)</p>
+                  )}
                 </div>
               )}
               {!crewMode && (
