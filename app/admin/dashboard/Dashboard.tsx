@@ -971,10 +971,6 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     ]
 
     // 보증금 통계 (게스트만 대상, 노쇼확정 제외)
-    const allGuests = [...allCheckedIn, ...notArrived].filter((p) => !p.is_crew)
-    const guestPaid = allGuests.filter((p) => p.deposit_status === '입금').length
-    const guestRefunded = allGuests.filter((p) => p.deposit_status === '환불').length
-    const guestUnpaid = allGuests.filter((p) => p.deposit_status === '미입금' || !p.deposit_status).length
 
     const q = searchQuery.toLowerCase()
     const filterFn = (p: Attendee) => !q || p.name.toLowerCase().includes(q) || p.school.toLowerCase().includes(q)
@@ -1002,7 +998,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     return (
       <div className="p-4 md:p-6 overflow-y-auto overflow-x-hidden h-full">
         {/* 숫자 카드 */}
-        <div className="grid grid-cols-4 gap-2 md:gap-4 mb-3">
+        <div className="grid grid-cols-4 gap-2 md:gap-4 mb-5">
           {[
             { label: '오기로 한 인원', value: pre, color: 'text-sky-700', bg: 'bg-sky-50 border-sky-200' },
             { label: '출석', value: arrived, color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
@@ -1015,20 +1011,6 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
             </div>
           ))}
         </div>
-
-        {/* 게스트 보증금 입금 현황 */}
-        {allGuests.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-3 md:p-4 mb-5 flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500">게스트 보증금</span>
-              <span className="text-emerald-700 font-bold text-sm bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">입금 {guestPaid}</span>
-              <span className="text-amber-700 font-bold text-sm bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">미입금 {guestUnpaid}</span>
-              <span className="text-sky-700 font-bold text-sm bg-sky-50 border border-sky-200 rounded-full px-2 py-0.5">환불 {guestRefunded}</span>
-              <span className="text-slate-400 text-xs">/ 총 {allGuests.length}명</span>
-            </div>
-            <p className="text-slate-400 text-[11px]">뱃지 클릭 시 미입금 → 입금 → 환불 순서로 변경됩니다.</p>
-          </div>
-        )}
 
         {/* 검색 + 정렬 */}
         <div className="flex items-center gap-2 md:gap-3 mb-4 flex-wrap">
@@ -1067,7 +1049,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
               )}
               {filteredNotArrived.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <StatusBtn label="출석" color="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200" onClick={() => handleUpdateStatus(p.registration_id, '출석완료')} />
                     <StatusBtn label="노쇼" color="bg-red-50 text-red-500 hover:bg-red-100 border border-red-200" onClick={() => handleUpdateStatus(p.registration_id, '노쇼확정')} />
@@ -1103,7 +1085,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
               )}
               {filteredCheckedIn.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1 min-w-0"><PersonCard person={p} showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     <StatusBtn label="출석문자" color="bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200" onClick={() => handleSendIndividual(p.registration_id, 'checkin', '출석 문자')} />
                     <StatusBtn label="미출석" color="bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" onClick={() => handleUpdateStatus(p.registration_id, '사전신청')} />
@@ -1125,7 +1107,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
               )}
               {filteredNoshow.map((p) => (
                 <div key={p.registration_id} className="flex items-center gap-1.5">
-                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone showDeposit onCycleDeposit={handleCycleDeposit} /></div>
+                  <div className="flex-1 min-w-0"><PersonCard person={p} showPhone /></div>
                   <div className="flex flex-col gap-1 shrink-0">
                     {/* 노쇼 경고는 크루 한정 (게스트는 보증금 미환불 페널티) */}
                     {p.is_crew && (

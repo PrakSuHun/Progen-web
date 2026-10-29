@@ -1,5 +1,7 @@
 # PROGEN 웹사이트 기획서 (지침서)
 
+> **2026-10-29 출석 탭 보증금 표시 제거**: 출석 탭 상단 「게스트 보증금 입금/미입금/환불」 현황 박스와 출석 카드(미출석·출석완료·노쇼 3컬럼)의 「보증금 ✓ 입금」 뱃지 제거 — 보증금 확인·변경은 보증금 탭에서만. `PersonCard`의 `showDeposit` prop과 `handleCycleDeposit`(보증금 탭 사용)은 유지.
+
 > **2026-10-26 세미나 버튼 문구**: `/seminar` 「사전 신청 중」 카드 버튼이 9/19 홍보 때 하드코딩한 「9/19 행사 사전 신청 →」 그대로라 11월 카드에 지난 날짜가 붙어 있던 문제 — 버튼 문구를 카드 `date`에서 `shortDate()`로 'M/D'를 뽑아 「{M/D} 행사 사전 신청 →」로 자동 생성(현재 「11/7 행사 사전 신청 →」). 다음 회차도 카드 date만 맞추면 버튼이 따라감. 링크 /event-reg 그대로.
 
 > **2026-10-26 소개 페이지 대표 소개 삭제**: `/about`에서 「Founder — 대표 소개」 섹션(박수훈 프로필·태그·인용문)과 그 아래 통계 띠(대표 누적 매출·정부지원금·1회차 참여자·만족도) 제거, `founderTags`·`stats` 상수 삭제. 이제 히어로 → 핵심 가치 → CTA 3섹션. 세미나 카드의 강사 표기(`대표 박수훈`)와 홈 CtaBanner 「대표 직강」 문구는 유지.
@@ -449,7 +451,7 @@ robots: noindex.
 
 ### 5-13. 관리자 대시보드 `/admin/dashboard` ([app/admin/dashboard/page.tsx](app/admin/dashboard/page.tsx))
 
-**보증금 3-상태 관리 (2026-05-06 갱신)**: 체크인 탭 게스트 카드 뱃지 / 보증금 탭 행 / 분석 탭 게스트 섹션 모두 3-상태 표시 (미입금=amber, 입금=emerald, 환불=sky). 클릭마다 [/api/admin/toggle-deposit](app/api/admin/toggle-deposit/route.ts)이 미입금 → 입금 → 환불 → 미입금 사이클로 변경 (서버에서 현재 값을 읽어 다음 상태로 update). full-stats `section2.guest_deposit_paid` / `guest_deposit_pending` / `guest_deposit_refunded` 3 카운트 노출.
+**보증금 3-상태 관리 (2026-05-06 갱신)**: 보증금 탭 행 / 분석 탭 게스트 섹션에서 3-상태 표시(체크인 탭 카드 뱃지·현황 박스는 2026-10-29 제거) (미입금=amber, 입금=emerald, 환불=sky). 클릭마다 [/api/admin/toggle-deposit](app/api/admin/toggle-deposit/route.ts)이 미입금 → 입금 → 환불 → 미입금 사이클로 변경 (서버에서 현재 값을 읽어 다음 상태로 update). full-stats `section2.guest_deposit_paid` / `guest_deposit_pending` / `guest_deposit_refunded` 3 카운트 노출.
 **통합 운영 화면**. 행사 선택자 + 5개 탭.
 
 **상단 컨트롤**:
