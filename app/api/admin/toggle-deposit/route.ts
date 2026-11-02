@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow, programNameOf } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow, programNameOf, alreadySent } from '@/lib/solapi'
 import { NextRequest, NextResponse } from 'next/server'
 
 const NEXT_STATUS: Record<string, string> = {
@@ -45,12 +45,19 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     // 미입금 → 입금: 입금완료 안내(2번 신규)만 자동 발송 — 확정(3번)은 설정 탭에서 수동(운영 방침, 2026-09-08)
+    // 이미 이 신청 건에 입금완료 안내를 보낸 적 있으면(실수로 미입금 되돌린 뒤 재입금 등) 재발송하지 않음
+    let depositNotice: 'sent' | 'skipped_already_sent' | null = null
     if (current === '미입금' && next === '입금' && row.guest_id && row.event_id && row.status !== '노쇼확정') {
       try {
+        if (await alreadySent(ALIMTALK.DEPOSIT_RECEIVED.code, { registrationId: registration_id })) {
+          depositNotice = 'skipped_already_sent'
+          return NextResponse.json({ message: `${next}으로 변경됨`, deposit_status: next, deposit_notice: depositNotice })
+        }
         const { data: guest } = await supabase
           .from('guests').select('name, phone').eq('id', row.guest_id).maybeSingle()
         const ev = await loadEventRow(row.event_id)
         if (guest?.phone) {
+          depositNotice = 'sent'
           await sendAlimtalk(
             ALIMTALK.DEPOSIT_RECEIVED, guest.phone,
             { '#{이름}': guest.name || '게스트', '#{프로그램명}': programNameOf(ev) },
@@ -62,7 +69,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ message: `${next}으로 변경됨`, deposit_status: next })
+    return NextResponse.json({ message: `${next}으로 변경됨`, deposit_status: next, deposit_notice: depositNotice })
   } catch (error) {
     console.error('cycle-deposit error:', error)
     return NextResponse.json({ message: '오류가 발생했습니다' }, { status: 500 })

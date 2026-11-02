@@ -34,6 +34,7 @@ interface Attendee {
   deposit_status: DepositStatus
   deposit_reminder_count?: number
   cancel_notice_sent?: boolean
+  deposit_notice_sent?: boolean
   refund_account: string | null
   student_number?: string | null
   companion?: string | null
@@ -781,9 +782,14 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
       ...(data?.unassigned ?? []), ...(data?.not_arrived ?? []), ...(data?.noshow ?? []),
       ...Object.values(data?.assigned ?? {}).flat(),
     ]
-    const curDeposit = (allAttendees.find((a) => a.registration_id === registration_id)?.deposit_status ?? '미입금') as DepositStatus
+    const target = allAttendees.find((a) => a.registration_id === registration_id)
+    const curDeposit = (target?.deposit_status ?? '미입금') as DepositStatus
     if (curDeposit === '미입금') {
-      if (!window.confirm('보증금을 입금 처리합니다.\n게스트에게 「입금완료 안내」 알림톡이 발송됩니다.\n(참석 확정 알림톡은 설정 → 알림톡 발송 탭에서 별도 발송)\n계속할까요?')) return
+      // 이미 입금완료 안내를 받은 사람(실수로 미입금 되돌린 경우 등)은 문자 재발송 없이 상태만 변경
+      const msg = target?.deposit_notice_sent
+        ? '보증금을 입금 처리합니다.\n이미 「입금완료 안내」를 받은 분이라 문자는 다시 보내지 않습니다.\n계속할까요?'
+        : '보증금을 입금 처리합니다.\n게스트에게 「입금완료 안내」 알림톡이 발송됩니다.\n(참석 확정 알림톡은 설정 → 알림톡 발송 탭에서 별도 발송)\n계속할까요?'
+      if (!window.confirm(msg)) return
     }
     const NEXT: Record<DepositStatus, DepositStatus> = { '미입금': '입금', '입금': '환불', '환불': '미입금' }
     let nextStatus: DepositStatus = '입금'

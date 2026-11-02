@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         .from('alimtalk_logs')
         .select('registration_id, template_code')
         .eq('event_id', eventId)
-        .in('template_code', [ALIMTALK.DEPOSIT_REMINDER.code, ALIMTALK.REG_CANCELLED.code])
+        .in('template_code', [ALIMTALK.DEPOSIT_REMINDER.code, ALIMTALK.REG_CANCELLED.code, ALIMTALK.DEPOSIT_RECEIVED.code])
         .eq('status', 'sent'),
       // 씨엔유케어 행사 명단 교차 표시용
       getCnucareEventsByPhone(),
@@ -71,10 +71,13 @@ export async function GET(request: NextRequest) {
 
     const reminderCounts = new Map<string, number>()
     const cancelSent = new Set<string>()
+    const depositNoticeSent = new Set<string>() // 입금완료 안내(재입금 시 재발송 안 함 표시용)
     for (const log of alertLogs ?? []) {
       if (!log.registration_id) continue
       if (log.template_code === ALIMTALK.DEPOSIT_REMINDER.code) {
         reminderCounts.set(log.registration_id, (reminderCounts.get(log.registration_id) ?? 0) + 1)
+      } else if (log.template_code === ALIMTALK.DEPOSIT_RECEIVED.code) {
+        depositNoticeSent.add(log.registration_id)
       } else {
         cancelSent.add(log.registration_id)
       }
@@ -105,6 +108,7 @@ export async function GET(request: NextRequest) {
         deposit_status: (reg.deposit_status as string) ?? '미입금',
         deposit_reminder_count: reminderCounts.get(reg.id) ?? 0,
         cancel_notice_sent: cancelSent.has(reg.id),
+        deposit_notice_sent: depositNoticeSent.has(reg.id),
         refund_account: (reg.refund_account as string) ?? null,
         student_number: (reg.student_number as string) ?? null,
         companion: (reg.companion as string) ?? null,

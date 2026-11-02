@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, programLabel } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, programLabel, alreadySent } from '@/lib/solapi'
 import { sendPushToAdmins } from '@/lib/push'
 
 // 보증금 입금 SMS 웹훅 — 공기계(SmsForwarder)가 하나은행 입출금 문자를 받는 즉시 POST.
@@ -131,7 +131,8 @@ async function handle(request: NextRequest) {
     // 입금완료 안내(2번 신규)만 자동 발송 — 확정(3번)은 설정 탭에서 수동(운영 방침, 2026-09-08)
     let receiptSent = false
     try {
-      if (reg.phone) {
+      // 이미 이 신청 건에 입금완료 안내를 보낸 적 있으면 재발송하지 않음
+      if (reg.phone && !(await alreadySent(ALIMTALK.DEPOSIT_RECEIVED.code, { registrationId: reg.id }))) {
         const res = await sendAlimtalk(
           ALIMTALK.DEPOSIT_RECEIVED, reg.phone,
           { '#{이름}': reg.name, '#{프로그램명}': programLabel(reg.programName) },
