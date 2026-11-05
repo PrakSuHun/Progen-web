@@ -121,12 +121,12 @@ export default function FeedbackPage() {
           {step === 3 && (
             <div className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
               {stepIndicator(3)}
-              <h2 className="text-xl font-black text-black">PROGEN 가입 관심</h2>
+              <h2 className="text-xl font-black text-black">겨울방학 AX 프로젝트 관심</h2>
               <p className="text-[#888] text-sm">관심 있는 분만 체크해주세요. 원하지 않으면 바로 제출하셔도 됩니다.</p>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer p-4 bg-[#fafafa] border border-[#eee] rounded-xl hover:border-sky-200 transition">
                   <input type="checkbox" checked={formData.join_interest} onChange={(e) => setFormData({ ...formData, join_interest: e.target.checked })} className="w-5 h-5 accent-sky-500" />
-                  <span className="text-[#333] text-sm">PROGEN 단체 가입에 관심이 있습니다</span>
+                  <span className="text-[#333] text-sm">겨울방학 AX 프로젝트에 관심이 있습니다</span>
                 </label>
               </div>
               <div className="flex gap-3">
@@ -144,8 +144,8 @@ export default function FeedbackPage() {
               <p className="text-[#555] text-sm">귀중한 피드백을 제출해주셔서 감사합니다.<br />더 좋은 행사를 만들기 위해 적극 반영할게요.</p>
               {formData.join_interest && (
                 <div className="bg-sky-50 border border-sky-100 p-5 rounded-xl">
-                  <p className="text-sky-600 text-sm mb-3 font-semibold">PROGEN에 관심을 가져주셔서 감사해요!</p>
-                  <Button className="w-full" onClick={() => router.push('/apply')}>크루 지원하러 가기</Button>
+                  <p className="text-sky-600 text-sm mb-3 font-semibold">AX 프로젝트에 관심을 가져주셔서 감사해요!</p>
+                  <Button className="w-full" onClick={() => router.push('/ax')}>AX 프로젝트 신청하기</Button>
                 </div>
               )}
               <Button variant="secondary" onClick={() => router.push('/')} className="w-full">홈으로 돌아가기</Button>

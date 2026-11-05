@@ -1,9 +1,13 @@
 import { createAdminClient } from '@/lib/supabase-admin'
 import { getActiveEventId } from '@/lib/get-active-event'
 import { ALIMTALK, sendAlimtalk } from '@/lib/solapi'
+import { CREW_APPLY_CLOSED } from '@/lib/ax-project'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
+  if (CREW_APPLY_CLOSED) {
+    return NextResponse.json({ message: '크루 신청 기간이 아닙니다' }, { status: 403 })
+  }
   try {
     const body = await request.json()
     const {

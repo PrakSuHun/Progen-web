@@ -13,6 +13,8 @@ import {
   SCHOOLS, GRADES, PATHS, PROJECTS, GENDERS,
   isValidPhone, formatPhone,
 } from '@/lib/constants'
+import { CREW_APPLY_CLOSED } from '@/lib/ax-project'
+import Link from 'next/link'
 
 interface FormData {
   name: string; phone: string; school: string; grade: string; age: string
@@ -80,6 +82,18 @@ export default function ApplyPage() {
           <h1 className="text-3xl md:text-4xl font-black text-black mb-2">1기 크루 지원</h1>
           <p className="text-[#888] text-sm mb-8">지원과 동시에 크루 확정! 무료 · 전공 무관</p>
 
+          {CREW_APPLY_CLOSED ? (
+            <div className="bg-white border border-[#eee] rounded-2xl p-6 md:p-8 text-center space-y-4">
+              <div className="w-14 h-14 rounded-2xl bg-sky-100 text-sky-500 font-black text-2xl flex items-center justify-center mx-auto">!</div>
+              <h2 className="text-xl font-black text-black">크루 신청 기간이 아닙니다</h2>
+              <p className="text-[#888] text-sm break-keep">다음 모집 때 다시 안내해드릴게요. 궁금한 점은 카카오톡 채널로 문의해주세요.</p>
+              <a href="https://pf.kakao.com/_nLiKX/chat" target="_blank" rel="noopener noreferrer"
+                className="block w-full text-center bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-3 rounded-full transition-colors">
+                문의하기 (카카오톡 채널)
+              </a>
+              <Link href="/" className="block text-[#999] hover:text-black text-sm transition-colors">홈으로</Link>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit} className="bg-white border border-[#eee] rounded-2xl p-5 md:p-8 space-y-5">
             <Input label="이름" placeholder="홍길동" value={formData.name} onChange={(e) => set('name', e.target.value)} error={errors.name} />
             <Select label="성별" options={GENDERS} value={formData.gender} onChange={(e) => set('gender', e.target.value)} error={errors.gender} />
@@ -105,6 +119,7 @@ export default function ApplyPage() {
               {loading ? '제출 중...' : '지원하기'}
             </Button>
           </form>
+          )}
 
         </div>
       </div>
