@@ -142,9 +142,10 @@ export default function FeedbackPage() {
               <div className="w-16 h-16 rounded-2xl bg-sky-100 text-sky-500 font-black text-2xl flex items-center justify-center mx-auto">!</div>
               <h2 className="text-2xl font-black text-black">감사합니다!</h2>
               <p className="text-[#555] text-sm">귀중한 피드백을 제출해주셔서 감사합니다.<br />더 좋은 행사를 만들기 위해 적극 반영할게요.</p>
-              {formData.join_interest && (
+              {/* 관심 체크 여부와 무관하게 AX 프로젝트 신청 버튼 항상 노출 */}
+              {(
                 <div className="bg-sky-50 border border-sky-100 p-5 rounded-xl">
-                  <p className="text-sky-600 text-sm mb-3 font-semibold">AX 프로젝트에 관심을 가져주셔서 감사해요!</p>
+                  <p className="text-sky-600 text-sm mb-3 font-semibold">{formData.join_interest ? 'AX 프로젝트에 관심을 가져주셔서 감사해요!' : '겨울방학 AX 프로젝트 신청을 받고 있어요!'}</p>
                   <Button className="w-full" onClick={() => router.push('/ax')}>AX 프로젝트 신청하기</Button>
                 </div>
               )}
