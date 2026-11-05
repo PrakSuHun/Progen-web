@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase-admin'
-import { ALIMTALK, sendAlimtalk, loadEventRow, varsEventRegReceived } from '@/lib/solapi'
+import { ALIMTALK, sendAlimtalk, loadEventRow } from '@/lib/solapi'
 import { sendPushToAdmins } from '@/lib/push'
 import { AX_EVENT_ID, AX_SOURCE_EVENT_ID } from '@/lib/ax-project'
 import { NextRequest, NextResponse } from 'next/server'
@@ -61,18 +61,12 @@ export async function POST(request: NextRequest) {
     if (insErr) throw insErr
     const registrationId: string | null = data?.[0]?.id ?? null
 
-    // 알림톡: 행사신청폼(/api/event-reg)과 동일 — 게스트 1번 신청 접수 / 크루 접수(크루)
+    // 알림톡: AX 전용 접수 템플릿(크루·게스트 공통, 변수 이름만)
     let eventTitle: string | null = null
     try {
       const ev = await loadEventRow(AX_EVENT_ID)
       eventTitle = ev?.title ?? null
-      if (ev) {
-        if (crewId) {
-          await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED_CREW, person.phone, varsEventRegReceived(ev, person.name), { crewId, registrationId, eventId: AX_EVENT_ID })
-        } else {
-          await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, person.phone, varsEventRegReceived(ev, person.name), { guestId, registrationId, eventId: AX_EVENT_ID })
-        }
-      }
+      await sendAlimtalk(ALIMTALK.AX_RECEIVED, person.phone, { '#{이름}': person.name }, { crewId, guestId, registrationId, eventId: AX_EVENT_ID })
     } catch (e) {
       console.error('ax-quick alimtalk send failed:', e)
     }

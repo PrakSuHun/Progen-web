@@ -30,6 +30,7 @@ const BUILDERS: Record<string, (ev: EventRow) => Record<string, string>> = {
     '#{변경장소}': '(테스트) 변경 후 장소',
   }),
   DEPOSIT_REMINDER: (ev) => ({ '#{이름}': TEST_NAME, '#{프로그램명}': programNameOf(ev) }),
+  AX_RECEIVED: () => ({ '#{이름}': TEST_NAME }),
 }
 
 export async function POST(request: NextRequest) {

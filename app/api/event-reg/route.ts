@@ -3,6 +3,7 @@ import { getActivePublicEventId, getActivePromoEventId } from '@/lib/get-active-
 import { ALIMTALK, sendAlimtalk, loadEventRow, varsEventRegReceived } from '@/lib/solapi'
 import { isValidStudentNumber } from '@/lib/constants'
 import { sendPushToAdmins } from '@/lib/push'
+import { AX_EVENT_ID } from '@/lib/ax-project'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -174,6 +175,11 @@ export async function POST(request: NextRequest) {
       if (ev) {
         if (isEventKind) {
           // 이벤트 신청은 알림톡 미발송 — 접수 템플릿에 보증금 안내가 있어 부적합
+        } else if (eventId === AX_EVENT_ID) {
+          // AX 프로젝트는 크루·게스트 공통 전용 접수 템플릿(면접 선발 안내, 보증금 문구 없음)
+          await sendAlimtalk(ALIMTALK.AX_RECEIVED, phone, { '#{이름}': name }, {
+            crewId, guestId, registrationId, eventId,
+          })
         } else if (mode === 'guest') {
           await sendAlimtalk(ALIMTALK.EVENT_REG_RECEIVED, phone, varsEventRegReceived(ev, name), {
             guestId, registrationId, eventId,

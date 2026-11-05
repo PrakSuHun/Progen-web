@@ -32,6 +32,8 @@ export const ALIMTALK = {
   CREW_REVOKED:       { code: 'KA01TP260511074559176oBaEuf8Dkaq', name: '크루 자격 박탈' },      // 10 (솔라피에서 삭제됨)
   // 5 보증금 미입금 안내(승인됨) — 보증금 탭 「미입금 알림」 버튼
   DEPOSIT_REMINDER:   { code: 'KA01TP260906071133136qAave0oFtch', name: '보증금 미입금 안내' },
+  // 겨울방학 AX 프로젝트 신청 접수(2026-11-05 등록, 검수중) — 크루·게스트 공통, 변수: 이름. 보증금 문구 없음(면접 선발 안내)
+  AX_RECEIVED:        { code: 'KA01TP261105103240369vAtNGeKlVc5', name: '겨울방학 AX프로젝트 신청 접수' },
 } as const
 
 export type AlimtalkTemplate = (typeof ALIMTALK)[keyof typeof ALIMTALK]

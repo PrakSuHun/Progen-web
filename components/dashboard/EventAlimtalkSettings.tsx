@@ -388,6 +388,7 @@ export function EventAlimtalkSettings({ isOpen, onClose, eventId }: Props) {
                       <option value="EVENT_D1_NOTICE">4. 행사 1차 공지</option>
                       <option value="EVENT_D1_NOTICE_2">4. 행사 2차 공지</option>
                       <option value="DEPOSIT_REMINDER">5. 보증금 미입금 안내</option>
+                      <option value="AX_RECEIVED">겨울방학 AX프로젝트 신청 접수</option>
                       <option value="REG_CANCELLED">5. 신청 취소 확인</option>
                       <option value="CHECKIN_WITH_TEAM">6. 현장 출석 완료 + 팀 안내</option>
                       <option value="CHECKIN_NO_TEAM">7. 팀 미배정</option>
