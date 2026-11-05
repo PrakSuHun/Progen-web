@@ -375,13 +375,16 @@ function PersonCard({ person, showPhone = false, dimmed = false, draggable: isDr
   )
 }
 
-function TeamCard({ teamName, members, allTeams, onDrop, onDragStartMember, onSwap, onDelete, onTapAssign, onTapSelectMember, selectedId }: {
+const INSERT_BEFORE = '__insert_before__'
+
+function TeamCard({ teamName, members, allTeams, onDrop, onDragStartMember, onSwap, onInsertBefore, onDelete, onTapAssign, onTapSelectMember, selectedId }: {
   teamName: string
   members: Attendee[]
   allTeams: string[]
   onDrop: (t: string) => void
   onDragStartMember: (p: Attendee, from: string) => void
   onSwap: (a: string, b: string) => void
+  onInsertBefore: (t: string) => void
   onDelete: (t: string) => void
   onTapAssign?: () => void
   onTapSelectMember?: (p: Attendee) => void
@@ -413,10 +416,15 @@ function TeamCard({ teamName, members, allTeams, onDrop, onDragStartMember, onSw
       <div className="mb-2">
         {swapping ? (
           <select autoFocus value={teamName}
-            onChange={(e) => { const to = e.target.value; setSwapping(false); if (to !== teamName) onSwap(teamName, to) }}
+            onChange={(e) => {
+              const to = e.target.value; setSwapping(false)
+              if (to === INSERT_BEFORE) onInsertBefore(teamName)
+              else if (to !== teamName) onSwap(teamName, to)
+            }}
             onBlur={() => setSwapping(false)}
             className="bg-slate-50 text-slate-800 text-sm font-semibold px-1.5 py-0.5 rounded w-full outline-none border border-sky-400 cursor-pointer"
           >
+            {!isNaN(parseInt(teamName)) && <option value={INSERT_BEFORE}>＋ 앞에 빈 팀 추가</option>}
             {allTeams.map((t) => (
               <option key={t} value={t}>{t === teamName ? `${t} (현재)` : `${t}와 교체`}</option>
             ))}
@@ -715,6 +723,36 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
     membersA.forEach((m) => assignTeam(m.registration_id, b))
     membersB.forEach((m) => assignTeam(m.registration_id, a))
     showToast(`${a} ↔ ${b} 교체 완료`, 'success')
+  }
+
+  // 앞에 빈 팀 추가: N팀 자리에 빈 팀을 끼우고 N팀 이상 번호 팀을 모두 +1 (빈 팀은 gap으로 렌더)
+  const handleInsertTeamBefore = async (teamName: string) => {
+    if (!data) return
+    const insNum = parseInt(teamName)
+    if (isNaN(insNum)) return
+    const shifts: { from: string; to: string }[] = []
+    const dbOps: Promise<Response>[] = []
+    for (const t of Object.keys(data.assigned)) {
+      const n = parseInt(t)
+      if (!isNaN(n) && n >= insNum) {
+        shifts.push({ from: t, to: `${n + 1}팀` })
+        for (const m of (data.assigned[t] ?? [])) dbOps.push(assignTeam(m.registration_id, `${n + 1}팀`))
+      }
+    }
+    if (shifts.length === 0) return
+    setData((prev) => {
+      if (!prev) return prev
+      const newAssigned: Record<string, Attendee[]> = {}
+      for (const [t, arr] of Object.entries(prev.assigned)) {
+        const s = shifts.find((x) => x.from === t)
+        const key = s ? s.to : t
+        newAssigned[key] = (arr ?? []).map((p) => ({ ...p, team_name: key }))
+      }
+      return { ...prev, assigned: newAssigned }
+    })
+    showToast(`${teamName} 앞에 빈 팀 추가 — 이후 팀 번호 +1`, 'success')
+    await Promise.all(dbOps)
+    await fetchAll()
   }
 
   const handleAutoMatch = async () => {
@@ -1321,6 +1359,7 @@ export function AdminDashboard({ kind = 'regular' }: { kind?: 'regular' | 'event
             onDrop={handleDrop}
             onDragStartMember={(p, from) => { dragRef.current = { person: p, fromTeam: from } }}
             onSwap={handleSwapTeams}
+            onInsertBefore={handleInsertTeamBefore}
             onDelete={handleDeleteTeam}
             onTapAssign={() => handleTapAssign(t)}
             onTapSelectMember={(p) => handleTapSelect(p, t)}
